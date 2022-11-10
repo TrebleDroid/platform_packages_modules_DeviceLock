@@ -18,11 +18,9 @@ package android.devicelock;
 
 import android.annotation.IntDef;
 import android.annotation.NonNull;
-import android.os.OutcomeReceiver;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.concurrent.Executor;
 
 /** The response returned from {@link DeviceLockManager#getDeviceId} on success. */
 public final class DeviceId {

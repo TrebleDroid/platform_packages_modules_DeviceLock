@@ -19,8 +19,13 @@ package {
 android_test {
     name: "CtsDeviceLockTestCases",
     manifest: "AndroidManifest.xml",
-    srcs: ["src/**/*.java"],
+    defaults: ["cts_defaults"],
+    srcs: [
+        "src/**/*.java",
+        ":service-devicelock-sources-shared-with-tests",
+        ":framework-devicelock-sources-shared-with-tests",
+    ],
     static_libs: ["androidx.test.rules", "truth-prebuilt", "androidx.test.core"],
     test_suites: ["general-tests", "cts"],
-    sdk_version: "test_current",
+    platform_apis: true,
 }
