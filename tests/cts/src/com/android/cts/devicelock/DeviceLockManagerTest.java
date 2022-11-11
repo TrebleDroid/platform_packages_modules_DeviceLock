@@ -169,11 +169,6 @@ public final class DeviceLockManagerTest {
                 });
     }
 
-    @BeforeClass
-    public static void setupClass() {
-        dropShellPermissions();
-    }
-
     @Test
     public void lockDevicePermissionCheck() {
         ListenableFuture<Void> lockDeviceFuture = getLockDeviceFuture();
@@ -233,24 +228,26 @@ public final class DeviceLockManagerTest {
     @Test
     public void deviceShouldLockAndUnlock() throws InterruptedException, ExecutionException,
             TimeoutException {
-        adoptShellPermissions();
+        try {
+            adoptShellPermissions();
 
-        getUnlockDeviceFuture().get(TIMEOUT, TimeUnit.SECONDS);
+            getUnlockDeviceFuture().get(TIMEOUT, TimeUnit.SECONDS);
 
-        boolean locked = getIsDeviceLockedFuture().get(TIMEOUT, TimeUnit.SECONDS);
-        assertThat(locked).isFalse();
+            boolean locked = getIsDeviceLockedFuture().get(TIMEOUT, TimeUnit.SECONDS);
+            assertThat(locked).isFalse();
 
-        getLockDeviceFuture().get(TIMEOUT, TimeUnit.SECONDS);
+            getLockDeviceFuture().get(TIMEOUT, TimeUnit.SECONDS);
 
-        locked = getIsDeviceLockedFuture().get(TIMEOUT, TimeUnit.SECONDS);
-        assertThat(locked).isTrue();
+            locked = getIsDeviceLockedFuture().get(TIMEOUT, TimeUnit.SECONDS);
+            assertThat(locked).isTrue();
 
-        getUnlockDeviceFuture().get(TIMEOUT, TimeUnit.SECONDS);
+            getUnlockDeviceFuture().get(TIMEOUT, TimeUnit.SECONDS);
 
-        locked = getIsDeviceLockedFuture().get(TIMEOUT, TimeUnit.SECONDS);
-        assertThat(locked).isFalse();
-
-        dropShellPermissions();
+            locked = getIsDeviceLockedFuture().get(TIMEOUT, TimeUnit.SECONDS);
+            assertThat(locked).isFalse();
+        } finally {
+            dropShellPermissions();
+        }
     }
 
     private void skipIfNoIdAvailable() {
@@ -274,15 +271,17 @@ public final class DeviceLockManagerTest {
     @Test
     public void getDeviceIdShouldReturnAnId()
             throws ExecutionException, InterruptedException, TimeoutException {
-        adoptShellPermissions();
+        try {
+            adoptShellPermissions();
 
-        skipIfNoIdAvailable();
+            skipIfNoIdAvailable();
 
-        DeviceId deviceId = getDeviceIdFuture().get(TIMEOUT, TimeUnit.SECONDS);
-        assertThat(deviceId.getType()).isAnyOf(DEVICE_ID_TYPE_IMEI, DEVICE_ID_TYPE_MEID);
-        assertThat(deviceId.getId()).isNotEmpty();
-
-        dropShellPermissions();
+            DeviceId deviceId = getDeviceIdFuture().get(TIMEOUT, TimeUnit.SECONDS);
+            assertThat(deviceId.getType()).isAnyOf(DEVICE_ID_TYPE_IMEI, DEVICE_ID_TYPE_MEID);
+            assertThat(deviceId.getId()).isNotEmpty();
+        } finally {
+            dropShellPermissions();
+        }
     }
 
     @Test
