@@ -18,6 +18,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.android.cts.devicelock" >
 
+    <!-- Needed for getResourcesForApplication -->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
+
     <application>
         <uses-library android:name="android.test.runner" />
     </application>

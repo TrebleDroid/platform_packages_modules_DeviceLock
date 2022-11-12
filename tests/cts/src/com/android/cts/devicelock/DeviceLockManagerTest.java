@@ -16,18 +16,24 @@
 
 package com.android.cts.devicelock;
 
+import static android.devicelock.DeviceId.DEVICE_ID_TYPE_IMEI;
+import static android.devicelock.DeviceId.DEVICE_ID_TYPE_MEID;
+
 import static com.google.common.truth.Truth.assertThat;
 
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assume.assumeTrue;
 
 import android.content.Context;
 import android.devicelock.DeviceId;
 import android.devicelock.DeviceLockManager;
-
 import android.os.OutcomeReceiver;
+import android.telephony.TelephonyManager;
 
 import androidx.concurrent.futures.CallbackToFutureAdapter;
 import androidx.test.platform.app.InstrumentationRegistry;
+
+import com.android.server.devicelock.DeviceLockControllerPackageUtils;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -50,9 +56,16 @@ import java.util.concurrent.TimeoutException;
 public final class DeviceLockManagerTest {
     private final ExecutorService mExecutorService = Executors.newCachedThreadPool();
 
+    private final Context mContext = InstrumentationRegistry.getInstrumentation().getContext();
+
     private final DeviceLockManager mDeviceLockManager =
-            (DeviceLockManager) InstrumentationRegistry.getInstrumentation()
-                    .getContext().getSystemService(Context.DEVICE_LOCK_SERVICE);
+            mContext.getSystemService(DeviceLockManager.class);
+
+    private final TelephonyManager mTelephonyManager =
+            mContext.getSystemService(TelephonyManager.class);
+
+    private final DeviceLockControllerPackageUtils mPackageUtils =
+            new DeviceLockControllerPackageUtils(mContext);
 
     private static final int TIMEOUT = 1;
 
@@ -240,14 +253,33 @@ public final class DeviceLockManagerTest {
         dropShellPermissions();
     }
 
+    private void skipIfNoIdAvailable() {
+        final StringBuilder errorMessage = new StringBuilder();
+        final int deviceIdTypeBitmap =
+                mPackageUtils.getDeviceIdTypeBitmap(errorMessage);
+        assertThat(deviceIdTypeBitmap).isGreaterThan(-1);
+
+        final String imei = mTelephonyManager.getImei();
+        final String meid = mTelephonyManager.getMeid();
+
+        final boolean imeiAvailable = (imei != null)
+                && ((deviceIdTypeBitmap & (1 << DEVICE_ID_TYPE_IMEI)) != 0);
+        final boolean meidAvailable = (meid != null)
+                && ((deviceIdTypeBitmap & (1 << DEVICE_ID_TYPE_MEID)) != 0);
+        final boolean idAvailable = imeiAvailable || meidAvailable;
+
+        assumeTrue("No id available", idAvailable);
+    }
+
     @Test
     public void getDeviceIdShouldReturnAnId()
             throws ExecutionException, InterruptedException, TimeoutException {
         adoptShellPermissions();
 
+        skipIfNoIdAvailable();
+
         DeviceId deviceId = getDeviceIdFuture().get(TIMEOUT, TimeUnit.SECONDS);
-        assertThat(deviceId.getType()).isAnyOf(DeviceId.DEVICE_ID_TYPE_IMEI,
-                DeviceId.DEVICE_ID_TYPE_MEID);
+        assertThat(deviceId.getType()).isAnyOf(DEVICE_ID_TYPE_IMEI, DEVICE_ID_TYPE_MEID);
         assertThat(deviceId.getId()).isNotEmpty();
 
         dropShellPermissions();

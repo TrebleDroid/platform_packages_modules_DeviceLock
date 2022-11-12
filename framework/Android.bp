@@ -29,6 +29,15 @@ filegroup {
     ],
 }
 
+filegroup {
+    name: "framework-devicelock-sources-shared-with-tests",
+    srcs: ["java/**/DeviceId.java"],
+    path: "java",
+    visibility: [
+        "//packages/modules/DeviceLock:__subpackages__",
+    ],
+}
+
 java_sdk_library {
     name: "framework-devicelock",
     srcs: [":framework-devicelock-sources" ],

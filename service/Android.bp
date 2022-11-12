@@ -23,6 +23,15 @@ filegroup {
     ],
 }
 
+filegroup {
+    name: "service-devicelock-sources-shared-with-tests",
+    srcs: ["java/**/DeviceLockControllerPackageUtils.java"],
+    path: "java",
+    visibility: [
+        "//packages/modules/DeviceLock:__subpackages__",
+    ],
+}
+
 java_library {
     name: "service-devicelock",
     srcs: [

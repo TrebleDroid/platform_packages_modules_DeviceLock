@@ -57,70 +57,24 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
 
     private final Context mContext;
 
-    private final ServiceInfo mServiceInfo;
-
     @SuppressWarnings("unused") // TODO: remove annotation once field is used
     private final DeviceLockControllerConnector mDeviceLockControllerConnector;
 
-    private static final String SERVICE_ACTION =
-            "android.app.action.DEVICE_LOCK_CONTROLLER_SERVICE";
-
-    // resources.arsc still uses the original package name (b/147434671)
-    private static final String RESOURCE_PACKAGE_NAME = "com.android.devicelockcontroller";
-
-    private static final UserHandle USER_HANDLE_SYSTEM = UserHandle.of(0);
-
+    private final DeviceLockControllerPackageUtils mPackageUtils;
     private volatile boolean mIsDeviceLocked = false;
 
     // Last supported device id type
     private static final @DeviceIdType int LAST_DEVICE_ID_TYPE = DEVICE_ID_TYPE_MEID;
 
-    private static @Nullable ServiceInfo findService(@NonNull Context context,
-            @NonNull String serviceAction,
-            @NonNull StringBuilder errorMessage) {
-        final Intent intent = new Intent(serviceAction);
-
-        final PackageManager pm = context.getPackageManager();
-
-        errorMessage.setLength(0);
-        final List<ResolveInfo> resolveInfoList = pm.queryIntentServicesAsUser(intent,
-                PackageManager.MATCH_DIRECT_BOOT_UNAWARE
-                        | PackageManager.MATCH_DIRECT_BOOT_AWARE, USER_HANDLE_SYSTEM);
-
-        if (resolveInfoList == null || resolveInfoList.isEmpty()) {
-            errorMessage.append("Service with " + serviceAction + " not found.");
-
-            return null;
-        }
-
-        ServiceInfo resultServiceInfo = null;
-
-        for (ResolveInfo resolveInfo: resolveInfoList) {
-            final ServiceInfo serviceInfo = resolveInfo.serviceInfo;
-
-            if ((serviceInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0) {
-                continue;
-            }
-
-            if (resultServiceInfo != null) {
-                errorMessage.append("Multiple system services handle " + serviceAction + ".");
-
-                return null;
-            }
-
-            resultServiceInfo = serviceInfo;
-        }
-
-        return resultServiceInfo;
-    }
-
     DeviceLockServiceImpl(@NonNull Context context) {
         mContext = context;
 
-        StringBuilder errorMessage = new StringBuilder();
-        mServiceInfo = findService(context, SERVICE_ACTION, errorMessage);
+        mPackageUtils = new DeviceLockControllerPackageUtils(context);
 
-        if (mServiceInfo == null) {
+        final StringBuilder errorMessage = new StringBuilder();
+        final ServiceInfo serviceInfo = mPackageUtils.findService(errorMessage);
+
+        if (serviceInfo == null) {
             mDeviceLockControllerConnector = null;
 
             Slog.e(TAG, errorMessage.toString());
@@ -128,34 +82,10 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
             return;
         }
 
-        ComponentName componentName = new ComponentName(mServiceInfo.packageName,
-                mServiceInfo.name);
+        final ComponentName componentName = new ComponentName(serviceInfo.packageName,
+                serviceInfo.name);
 
         mDeviceLockControllerConnector = new DeviceLockControllerConnector(context, componentName);
-    }
-
-    /* Get the allowed device id type bitmap or -1 if it cannot be determined */
-    private int getDeviceIdTypeBitmap() {
-        final long identity = Binder.clearCallingIdentity();
-        final PackageManager pm = mContext.getPackageManager();
-        int deviceIdType = -1;
-        try {
-            final Resources resources = pm.getResourcesForApplication(mServiceInfo.packageName);
-            final int resId = resources.getIdentifier("device_id_type_bitmap", "integer",
-                    RESOURCE_PACKAGE_NAME);
-            if (resId == 0) {
-                Slog.e(TAG, "Cannot get device_id_type_bitmap");
-
-                return -1;
-            }
-            deviceIdType = resources.getInteger(resId);
-        } catch (PackageManager.NameNotFoundException e) {
-            Slog.e(TAG, "Cannot get resources for package: " + mServiceInfo.packageName);
-        } finally {
-            Binder.restoreCallingIdentity(identity);
-        }
-
-        return deviceIdType;
     }
 
     private boolean checkCallerPermission() {
@@ -284,7 +214,15 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
             return;
         }
 
-        final int deviceIdTypeBitmap = getDeviceIdTypeBitmap();
+        final StringBuilder errorBuilder = new StringBuilder();
+
+        final long identity = Binder.clearCallingIdentity();
+        final int deviceIdTypeBitmap = mPackageUtils.getDeviceIdTypeBitmap(errorBuilder);
+        Binder.restoreCallingIdentity(identity);
+
+        if (deviceIdTypeBitmap < 0) {
+            Slog.e(TAG, "getDeviceId: " + errorBuilder);
+        }
 
         getDeviceId(callback, deviceIdTypeBitmap);
     }
@@ -294,7 +232,7 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
         // Caller is not necessarily a kiosk app, and no particular permission enforcing is needed.
 
         // TODO: return proper kiosk app info.
-        ArrayMap kioskApps = new ArrayMap<Integer, String>();
+        final ArrayMap kioskApps = new ArrayMap<Integer, String>();
 
         try {
             callback.onKioskAppsReceived(kioskApps);
