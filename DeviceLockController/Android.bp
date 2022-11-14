@@ -57,6 +57,20 @@ java_library {
     ],
 }
 
+java_library {
+    name: "devicelockcontroller-grpclib",
+    sdk_version: "module_current",
+    min_sdk_version: "module_current",
+    apex_available: ["com.android.devicelock"],
+    static_libs: [
+        "grpc-java-core-android",
+        "grpc-java-okhttp-client-lite",
+        "libprotobuf-java-lite",
+        "opencensus-java-api",
+        "opencensus-java-contrib-grpc-metrics",
+    ],
+}
+
 android_app {
     name: "DeviceLockController",
     sdk_version: "module_current",
@@ -73,11 +87,7 @@ android_app {
         "devicelockcontroller-interface",
         "androidx.annotation_annotation",
         "androidx.collection_collection",
-        "grpc-java-core",
-        "grpc-java-okhttp",
-        "grpc-java-protobuf-lite",
-        "grpc-java-stub",
-        "okio-lib",
+        "devicelockcontroller-grpclib",
         "guava",
         "firebase-encoders-jar",
         "firebase-common-aar",
