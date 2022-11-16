@@ -77,7 +77,7 @@ public final class DeviceLockManager {
         return new Exception("Unknown error");
     }
 
-    private static final Map<Class, Map<Integer, Exception>> errorMap = Map.of(
+    private static final Map<Class, Map<Integer, Exception>> ERROR_MAP = Map.of(
             ILockUnlockDeviceCallback.class, Map.of(
                     ILockUnlockDeviceCallback.ERROR_UNKNOWN, getUnknwnException(),
                     ILockUnlockDeviceCallback.ERROR_SECURITY, getSecurityException()
@@ -94,13 +94,13 @@ public final class DeviceLockManager {
                     IGetDeviceIdCallback.ERROR_CANNOT_GET_DEVICE_ID,
                         new Exception("Unable to get device id")
             ),
-            IGetKioskAppsCallback.class,Map.of(
+            IGetKioskAppsCallback.class, Map.of(
                     IGetKioskAppsCallback.ERROR_UNKNOWN, getUnknwnException()
             )
     );
 
     private static Exception getException(Class clazz, int error) {
-        final Map<Integer, Exception> map = errorMap.get(clazz);
+        final Map<Integer, Exception> map = ERROR_MAP.get(clazz);
         if (map == null) {
             Log.e(TAG, "Cannot find error map for: " + clazz.getSimpleName());
 
@@ -139,7 +139,7 @@ public final class DeviceLockManager {
                     new ILockUnlockDeviceCallback.Stub() {
                         @Override
                         public void onDeviceLockedUnlocked() {
-                            executor.execute(() -> { callback.onResult(null); });
+                            executor.execute(() -> callback.onResult(null));
                         }
 
                         @Override
@@ -149,7 +149,7 @@ public final class DeviceLockManager {
                         }
                     });
         } catch (RemoteException e) {
-            executor.execute(() -> { callback.onError(e); });
+            executor.execute(() -> callback.onError(e));
         }
     }
 
@@ -170,7 +170,7 @@ public final class DeviceLockManager {
                     new ILockUnlockDeviceCallback.Stub() {
                         @Override
                         public void onDeviceLockedUnlocked() {
-                            executor.execute(() -> { callback.onResult(null); });
+                            executor.execute(() -> callback.onResult(null));
                         }
 
                         @Override
@@ -180,7 +180,7 @@ public final class DeviceLockManager {
                         }
                     });
         } catch (RemoteException e) {
-            executor.execute(() -> { callback.onError(e); });
+            executor.execute(() -> callback.onError(e));
         }
     }
 
@@ -201,19 +201,18 @@ public final class DeviceLockManager {
                     new IIsDeviceLockedCallback.Stub() {
                         @Override
                         public void onIsDeviceLocked(boolean locked) {
-                            executor.execute(() -> { callback.onResult(locked); });
+                            executor.execute(() -> callback.onResult(locked));
                         }
 
                         @Override
                         public void onError(int error) {
-                            executor.execute(() -> {
-                                callback.onError(getException(IIsDeviceLockedCallback.class,
-                                        error));
-                            });
+                            executor.execute(() ->
+                                    callback.onError(getException(IIsDeviceLockedCallback.class,
+                                            error)));
                         }
                     });
         } catch (RemoteException e) {
-            executor.execute(() -> { callback.onError(e); });
+            executor.execute(() -> callback.onError(e));
         }
     }
 
@@ -253,7 +252,7 @@ public final class DeviceLockManager {
                     }
             );
         } catch (RemoteException e) {
-            executor.execute(() -> { callback.onError(e); });
+            executor.execute(() -> callback.onError(e));
         }
     }
 
@@ -278,7 +277,7 @@ public final class DeviceLockManager {
                     new IGetKioskAppsCallback.Stub() {
                         @Override
                         public void onKioskAppsReceived(Map kioskApps) {
-                            executor.execute(() -> { callback.onResult(kioskApps); });
+                            executor.execute(() -> callback.onResult(kioskApps));
                         }
 
                         @Override
@@ -289,7 +288,7 @@ public final class DeviceLockManager {
                     }
             );
         } catch (RemoteException e) {
-            executor.execute(() -> { callback.onError(e); });
+            executor.execute(() -> callback.onError(e));
         }
     }
 }

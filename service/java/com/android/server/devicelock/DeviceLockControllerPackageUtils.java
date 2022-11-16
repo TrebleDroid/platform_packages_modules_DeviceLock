@@ -27,8 +27,13 @@ import android.content.pm.ServiceInfo;
 import android.content.res.Resources;
 import android.os.UserHandle;
 
+import com.android.internal.annotations.VisibleForTesting;
+
 import java.util.List;
 
+/**
+ * Utility class to find properties of the device lock controller package.
+ */
 public final class DeviceLockControllerPackageUtils {
     private final Context mContext;
 
@@ -48,9 +53,14 @@ public final class DeviceLockControllerPackageUtils {
 
     private int mDeviceIdTypeBitmap = -1;
 
-    synchronized
-    public @Nullable
-    ServiceInfo findService(@NonNull StringBuilder errorMessage) {
+    /**
+     * Find the service for device lock controller.
+     *
+     * @param errorMessage Reason why the service could not be found.
+     * @return Service information or null for an error.
+     */
+    @VisibleForTesting
+    public synchronized @Nullable ServiceInfo findService(@NonNull StringBuilder errorMessage) {
         errorMessage.setLength(0);
 
         if (mServiceInfo == null) {
@@ -60,8 +70,7 @@ public final class DeviceLockControllerPackageUtils {
         return mServiceInfo;
     }
 
-    private @Nullable
-    ServiceInfo findServiceInternal(@NonNull StringBuilder errorMessage) {
+    private @Nullable ServiceInfo findServiceInternal(@NonNull StringBuilder errorMessage) {
         final Intent intent = new Intent(SERVICE_ACTION);
         final PackageManager pm = mContext.getPackageManager();
 
@@ -98,9 +107,11 @@ public final class DeviceLockControllerPackageUtils {
         return resultServiceInfo;
     }
 
-    /* Get the allowed device id type bitmap or -1 if it cannot be determined */
-    synchronized
-    public int getDeviceIdTypeBitmap(@NonNull StringBuilder errorMessage) {
+    /**
+     * Get the allowed device id type bitmap or -1 if it cannot be determined.
+     */
+    @VisibleForTesting
+    public synchronized int getDeviceIdTypeBitmap(@NonNull StringBuilder errorMessage) {
         errorMessage.setLength(0);
 
         if (mDeviceIdTypeBitmap < 0) {

@@ -18,10 +18,14 @@ package com.android.devicelockcontroller;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Slog;
+import android.os.RemoteCallback;
 
-import com.android.devicelockcontroller.IDeviceLockControllerService;
+import com.android.devicelockcontroller.policy.DeviceStateController;
+import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
+import com.android.devicelockcontroller.policy.StateTransitionException;
+import com.android.devicelockcontroller.util.LogUtil;
 
 /**
  * Device Lock Controller Service. This is hosted in an APK and is bound
@@ -29,15 +33,59 @@ import com.android.devicelockcontroller.IDeviceLockControllerService;
  */
 public final class DeviceLockControllerService extends Service {
     private static final String TAG = "DeviceLockControllerService";
+    private DeviceStateController mStateController;
 
     private final IDeviceLockControllerService.Stub mBinder =
             new IDeviceLockControllerService.Stub() {
-        // TODO: add methods declared in AIDL.
+        @Override
+        public void lockDevice(RemoteCallback remoteCallback) {
+            boolean success;
+            try {
+                mStateController.setNextStateForEvent(
+                        DeviceStateController.DeviceEvent.LOCK_DEVICE);
+                success = true;
+            } catch (StateTransitionException e) {
+                success = false;
+                LogUtil.e(TAG, "Failed to lock device", e);
+            }
+
+            final Bundle bundle = new Bundle();
+            bundle.putBoolean(IDeviceLockControllerService.KEY_LOCK_DEVICE_RESULT, success);
+            remoteCallback.sendResult(bundle);
+        }
+
+        @Override
+        public void unlockDevice(RemoteCallback remoteCallback) {
+            boolean success;
+            try {
+                mStateController.setNextStateForEvent(
+                        DeviceStateController.DeviceEvent.UNLOCK_DEVICE);
+                success = true;
+            } catch (StateTransitionException e) {
+                success = false;
+                LogUtil.e(TAG, "Failed to unlock device", e);
+            }
+
+            final Bundle bundle = new Bundle();
+            bundle.putBoolean(IDeviceLockControllerService.KEY_UNLOCK_DEVICE_RESULT, success);
+            remoteCallback.sendResult(bundle);
+        }
+
+        @Override
+        public void isDeviceLocked(RemoteCallback remoteCallback) {
+            final boolean isLocked = mStateController.isLocked();
+            final Bundle bundle = new Bundle();
+            bundle.putBoolean(IDeviceLockControllerService.KEY_IS_DEVICE_LOCKED_RESULT, isLocked);
+            remoteCallback.sendResult(bundle);
+        }
     };
 
     @Override
     public void onCreate() {
-        Slog.d(TAG, "onCreate");
+        LogUtil.d(TAG, "onCreate");
+
+        final PolicyObjectsInterface policyObjects = (PolicyObjectsInterface) getApplication();
+        mStateController = policyObjects.getStateController();
     }
 
     @Override
