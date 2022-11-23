@@ -16,36 +16,27 @@
 
 package com.android.server.devicelock;
 
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+import static android.devicelock.DeviceId.DEVICE_ID_TYPE_IMEI;
+import static android.devicelock.DeviceId.DEVICE_ID_TYPE_MEID;
+
 import android.Manifest;
 import android.annotation.NonNull;
-import android.annotation.Nullable;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.content.pm.ServiceInfo;
-import android.content.res.Resources;
 import android.devicelock.DeviceId.DeviceIdType;
 import android.devicelock.IDeviceLockService;
-import android.devicelock.IGetKioskAppsCallback;
 import android.devicelock.IGetDeviceIdCallback;
+import android.devicelock.IGetKioskAppsCallback;
 import android.devicelock.IIsDeviceLockedCallback;
 import android.devicelock.ILockUnlockDeviceCallback;
 import android.os.Binder;
+import android.os.OutcomeReceiver;
 import android.os.RemoteException;
-import android.os.UserHandle;
 import android.telephony.TelephonyManager;
 import android.util.ArrayMap;
 import android.util.Slog;
-
-import java.util.List;
-
-import static android.content.pm.PackageManager.PERMISSION_GRANTED;
-
-import static android.devicelock.DeviceId.DEVICE_ID_TYPE_IMEI;
-import static android.devicelock.DeviceId.DEVICE_ID_TYPE_MEID;
 
 import com.android.internal.annotations.VisibleForTesting;
 
@@ -57,11 +48,9 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
 
     private final Context mContext;
 
-    @SuppressWarnings("unused") // TODO: remove annotation once field is used
     private final DeviceLockControllerConnector mDeviceLockControllerConnector;
 
     private final DeviceLockControllerPackageUtils mPackageUtils;
-    private volatile boolean mIsDeviceLocked = false;
 
     // Last supported device id type
     private static final @DeviceIdType int LAST_DEVICE_ID_TYPE = DEVICE_ID_TYPE_MEID;
@@ -93,6 +82,37 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
                 == PERMISSION_GRANTED;
     }
 
+    private void reportDeviceLockedUnlocked(@NonNull ILockUnlockDeviceCallback callback,
+            boolean success) {
+        try {
+            if (success) {
+                callback.onDeviceLockedUnlocked();
+            } else {
+                callback.onError(ILockUnlockDeviceCallback.ERROR_UNKNOWN);
+            }
+        } catch (RemoteException e) {
+            Slog.e(TAG, "Unable to send result to the callback", e);
+        }
+    }
+
+    private OutcomeReceiver<Void, Exception>
+            getLockUnlockOutcomeReceiver(@NonNull ILockUnlockDeviceCallback callback,
+                @NonNull String successMessage) {
+        return new OutcomeReceiver<>() {
+            @Override
+            public void onResult(Void ignored) {
+                Slog.i(TAG, successMessage);
+                reportDeviceLockedUnlocked(callback, true /* success */);
+            }
+
+            @Override
+            public void onError(Exception ex) {
+                Slog.e(TAG, "Exception: ", ex);
+                reportDeviceLockedUnlocked(callback, false /* success */);
+            }
+        };
+    }
+
     @Override
     public void lockDevice(@NonNull ILockUnlockDeviceCallback callback) {
         if (!checkCallerPermission()) {
@@ -104,19 +124,8 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
             return;
         }
 
-        // TODO: lock the device.
-        mIsDeviceLocked = true;
-        final boolean lockSuccessful = true;
-
-        try {
-            if (lockSuccessful) {
-                callback.onDeviceLockedUnlocked();
-            } else {
-                callback.onError(ILockUnlockDeviceCallback.ERROR_UNKNOWN);
-            }
-        } catch (RemoteException e) {
-            Slog.e(TAG, "lockDevice() - Unable to send result to the callback", e);
-        }
+        mDeviceLockControllerConnector.lockDevice(
+                getLockUnlockOutcomeReceiver(callback, "Device locked"));
     }
 
     @Override
@@ -129,19 +138,9 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
             }
             return;
         }
-        // TODO: unlock the device.
-        mIsDeviceLocked = false;
-        final boolean unlockSuccessful = true;
 
-        try {
-            if (unlockSuccessful) {
-                callback.onDeviceLockedUnlocked();
-            } else {
-                callback.onError(ILockUnlockDeviceCallback.ERROR_UNKNOWN);
-            }
-        } catch (RemoteException e) {
-            Slog.e(TAG, "unlockDevice() - Unable to send result to the callback", e);
-        }
+        mDeviceLockControllerConnector.unlockDevice(
+                getLockUnlockOutcomeReceiver(callback, "Device unlocked"));
     }
 
     @Override
@@ -155,14 +154,30 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
             return;
         }
 
-        // TODO: report the correct state.
-        final boolean isLocked = mIsDeviceLocked;
+        mDeviceLockControllerConnector.isDeviceLocked(
+                new OutcomeReceiver<>() {
+                    @Override
+                    public void onResult(Boolean isLocked) {
+                        Slog.i(TAG, "Device Locked ");
+                        try {
+                            callback.onIsDeviceLocked(isLocked);
+                        } catch (RemoteException e) {
+                            Slog.e(TAG, "isDeviceLocked() - Unable to send result to the "
+                                    + "callback", e);
+                        }
+                    }
 
-        try {
-            callback.onIsDeviceLocked(isLocked);
-        } catch (RemoteException e) {
-            Slog.e(TAG, "isDeviceLocked() - Unable to send result to the callback", e);
-        }
+                    @Override
+                    public void onError(Exception ex) {
+                            Slog.e(TAG, "Exception: ", ex);
+                            try {
+                                callback.onError(ILockUnlockDeviceCallback.ERROR_UNKNOWN);
+                            } catch (RemoteException e) {
+                                Slog.e(TAG, "isDeviceLocked() - Unable to send error to the "
+                                        + "callback", e);
+                            }
+                        }
+                });
     }
 
     @VisibleForTesting

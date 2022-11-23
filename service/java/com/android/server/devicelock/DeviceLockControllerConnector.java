@@ -49,7 +49,7 @@ final class DeviceLockControllerConnector {
     private static final String TAG = "DeviceLockControllerConnector";
 
     @GuardedBy("mLock")
-    private IDeviceLockControllerService mService;
+    private IDeviceLockControllerService mDeviceLockControllerService;
 
     @GuardedBy("mLock")
     private ServiceConnection mServiceConnection;
@@ -79,7 +79,6 @@ final class DeviceLockControllerConnector {
         unbind();
     };
 
-    @SuppressWarnings("unused") // TODO: remove annotation once method is used
     private <Result> void callControllerApi(Callable<Void> body,
             OutcomeReceiver<Result, Exception> callback) {
         Runnable r = () -> {
@@ -91,7 +90,7 @@ final class DeviceLockControllerConnector {
             synchronized (mLock) {
                 // First, bind if not already bound.
                 if (bindLocked()) {
-                    while (mService == null) {
+                    while (mDeviceLockControllerService == null) {
                         try {
                             mLock.wait();
                         } catch (InterruptedException e) {
@@ -147,7 +146,6 @@ final class DeviceLockControllerConnector {
         return !removed;
     }
 
-    @SuppressWarnings("unused") // TODO: remove annotation once method is used
     private RemoteCallback.OnResultListener checkTimeout(OutcomeReceiver callback,
             RemoteCallback.OnResultListener listener) {
         return (@Nullable Bundle bundle) -> {
@@ -170,7 +168,8 @@ final class DeviceLockControllerConnector {
 
                 Slog.i(TAG, "Connected to " + mComponentName.flattenToShortString());
 
-                mService = IDeviceLockControllerService.Stub.asInterface(service);
+                mDeviceLockControllerService =
+                        IDeviceLockControllerService.Stub.asInterface(service);
 
                 mLock.notifyAll();
             }
@@ -212,7 +211,7 @@ final class DeviceLockControllerConnector {
      * @param context the context for this call.
      * @param componentName Device Lock Controller service component name.
      */
-    public DeviceLockControllerConnector(@NonNull Context context,
+    DeviceLockControllerConnector(@NonNull Context context,
             @NonNull ComponentName componentName) {
         mContext = context;
         mComponentName = componentName;
@@ -259,7 +258,7 @@ final class DeviceLockControllerConnector {
 
         mContext.unbindService(mServiceConnection);
 
-        mService = null;
+        mDeviceLockControllerService = null;
         mServiceConnection = null;
     }
 
@@ -279,5 +278,65 @@ final class DeviceLockControllerConnector {
         synchronized (mLock) {
             unbindLocked();
         }
+    }
+
+    public void lockDevice(OutcomeReceiver<Void, Exception> callback) {
+        RemoteCallback remoteCallback = new RemoteCallback(checkTimeout(callback, result -> {
+            final boolean success =
+                    result.getBoolean(IDeviceLockControllerService.KEY_LOCK_DEVICE_RESULT);
+            if (success) {
+                mHandler.post(() -> callback.onResult(null));
+            } else {
+                mHandler.post(() -> callback.onError(new Exception("Failed to lock device")));
+            }
+        }));
+
+        callControllerApi(new Callable<Void>() {
+            @Override
+            @SuppressWarnings("GuardedBy") // mLock already held in callControllerApi (error prone).
+            public Void call() throws Exception {
+                mDeviceLockControllerService.lockDevice(remoteCallback);
+                return null;
+            }
+        } , callback);
+
+    }
+
+    public void unlockDevice(OutcomeReceiver<Void, Exception> callback) {
+        RemoteCallback remoteCallback = new RemoteCallback(checkTimeout(callback, result -> {
+            final boolean success =
+                    result.getBoolean(IDeviceLockControllerService.KEY_UNLOCK_DEVICE_RESULT);
+            if (success) {
+                mHandler.post(() -> callback.onResult(null));
+            } else {
+                mHandler.post(() -> callback.onError(new Exception("Failed to unlock device")));
+            }
+        }));
+
+        callControllerApi(new Callable<Void>() {
+            @Override
+            @SuppressWarnings("GuardedBy") // mLock already held in callControllerApi (error prone).
+            public Void call() throws Exception {
+                mDeviceLockControllerService.unlockDevice(remoteCallback);
+                return null;
+            }
+        }, callback);
+    }
+
+    public void isDeviceLocked(OutcomeReceiver<Boolean, Exception> callback) {
+        RemoteCallback remoteCallback = new RemoteCallback(checkTimeout(callback, result -> {
+            final boolean isLocked =
+                    result.getBoolean(IDeviceLockControllerService.KEY_IS_DEVICE_LOCKED_RESULT);
+            mHandler.post(() -> callback.onResult(isLocked));
+        }));
+
+        callControllerApi(new Callable<Void>() {
+            @Override
+            @SuppressWarnings("GuardedBy") // mLock already held in callControllerApi (error prone).
+            public Void call() throws Exception {
+                mDeviceLockControllerService.isDeviceLocked(remoteCallback);
+                return null;
+            }
+        }, callback);
     }
 }

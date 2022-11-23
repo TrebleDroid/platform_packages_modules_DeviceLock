@@ -16,10 +16,19 @@
 
 package com.android.devicelockcontroller;
 
+import android.os.RemoteCallback;
+
 /**
  * Binder interface to communicate with DeviceLockController.
  * {@hide}
  */
 oneway interface IDeviceLockControllerService {
-    // TODO: add methods
+    const String KEY_LOCK_DEVICE_RESULT = "KEY_LOCK_DEVICE_RESULT";
+    void lockDevice(in RemoteCallback callback);
+
+    const String KEY_UNLOCK_DEVICE_RESULT = "KEY_UNLOCK_DEVICE_RESULT";
+    void unlockDevice(in RemoteCallback callback);
+
+    const String KEY_IS_DEVICE_LOCKED_RESULT = "KEY_IS_DEVICE_LOCKED_RESULT";
+    void isDeviceLocked(in RemoteCallback callback);
 }
