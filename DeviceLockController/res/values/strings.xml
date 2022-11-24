@@ -14,8 +14,66 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-
-<resources>
-  <!-- Application name. [CHAR_LIMIT=30] -->
-  <string name="app_name">DeviceLockController</string>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- Application name. [CHAR_LIMIT=30] -->
+    <string name="app_name">DeviceLockController</string>
+    <!-- Text for next button to move to the next UI screen [CHAR_LIMIT=20] -->
+    <string name="next_button">Next</string>
+    <!-- Text for a reset button when setup has failed [CHAR_LIMIT=20] -->
+    <string name="reset_button">Reset</string>
+    <!-- Text on button to scroll down revealing more content [CHAR_LIMIT=20] -->
+    <string name="setup_more_button">More</string>
+    <!-- Title text shown on the setup info screen [CHAR_LIMIT=80] -->
+    <string name="setup_info_title_text">How <xliff:g id="creditor_app">%1$s</xliff:g> can manage this device</string>
+    <!-- Title text shown when setup failed [CHAR_LIMIT=80] -->
+    <string name="setup_failed_title_text">Can\'t install <xliff:g id="creditor_app">%1$s</xliff:g> app</string>
+    <!-- Text shown to the user when the reset timer reaches zero to let them know that the device is resetting itself [CHAR_LIMIT=80] -->
+    <string name="setup_failed_reset_device_text">Resetting device to try again.</string>
+    <!-- Timer string letting the user know they need to reset the device before the device resets itself [CHAR_LIMIT=100] -->
+    <string name="setup_failed_reset_device_timer_text">
+        {count, plural,
+            =1    {Reset this device, then try setting it up again. It\'ll reset automatically in 1 second.}
+            other {Reset this device, then try setting it up again. It\'ll reset automatically in # seconds.}
+        }
+    </string>
+    <!-- Title text for setup progress screen. [CHAR_LIMIT=80] -->
+    <string name="setup_progress_title_text">Installing <xliff:g id="creditor_app">%1$s</xliff:g> app<xliff:g id="ellipsis">\u2026</xliff:g></string>
+    <!-- Title of an in-progress screen. This screen appears when the user is almost finished setting up their device, and the creditor app is about to open. [CHAR_LIMIT=80] -->
+    <string name="setup_finish_title_text">Opening <xliff:g id="creditor_app">%1$s</xliff:g> app<xliff:g id="ellipsis">\u2026</xliff:g></string>
+    <!-- Title for an error message. This message lets the user know that the creditor app won't open, and they can either try again or reset their phone to start over. [CHAR_LIMIT=NONE] -->
+    <string name="setup_error_title_text">Can\'t open <xliff:g id="creditor_app">%1$s</xliff:g> app</string>
+    <!-- Button for an error message. The message lets the user know that the creditor app won't open, and they can tap this button to try opening the app again. [CHAR_LIMIT=21] -->
+    <string name="try_again">Try again</string>
+    <!-- Button for an error message. The message lets the user know that the creditor app won't open, and they can tap this button to reset their phone and start over. [CHAR_LIMIT=34] -->
+    <string name="reset_phone">Reset phone</string>
+    <!-- Title text for section describing what control creditor has. [CHAR_LIMIT=80] -->
+    <string name="control_section_title">What can <xliff:g id="creditor_app">%1$s</xliff:g> control\u003F</string>
+    <!-- Text explaining policy of locking device. [CHAR_LIMIT=80] -->
+    <string name="control_lock_device_text">Lock this device if you don\'t make a payment</string>
+    <!-- Text explaining policy of downloading creditor app. [CHAR_LIMIT=80] -->
+    <string name="control_download_text">Download and install the <xliff:g id="creditor_app">%1$s</xliff:g> app</string>
+    <!-- Text explaining policy of disabling debug features. [CHAR_LIMIT=80] -->
+    <string name="control_disable_debug_text">Turn off debugging and user management features</string>
+    <!-- Title text for section describing abilities in locked mode. [CHAR_LIMIT=80] -->
+    <string name="locked_section_title">What works if this device is restricted\u003F</string>
+    <!-- Text explaining availability of emergency calling in locked mode. [CHAR_LIMIT=80] -->
+    <string name="locked_emergency_text">Emergency calling services</string>
+    <!-- Text explaining availability of incoming calls in locked mode. [CHAR_LIMIT=80] -->
+    <string name="locked_phone_usage_text">Incoming and some outgoing calls</string>
+    <!-- List item on a screen. This item lets a user know that they won't be able to access Settings if the device is restricted by the credit provider. [CHAR_LIMIT=80] -->
+    <string name="locked_settings_usage_text">Settings</string>
+    <!-- Title text for section describing data available to creditor. [CHAR_LIMIT=80] -->
+    <string name="exposure_section_title">What\'s visible to <xliff:g id="creditor_app">%1$s</xliff:g>\u003F</string>
+    <!-- Text explaining install and uninstall of creditor app. [CHAR_LIMIT=80] -->
+    <string name="exposure_install_text">When the <xliff:g id="creditor_app">%1$s</xliff:g> app is installed or uninstalled</string>
+    <!-- List item on a screen. This item lets a user know that their credit provider can see any lock or unlock requests on the user's device. The placeholder is the name of the credit provider. [CHAR_LIMIT=80] -->
+    <string name="exposure_lock_unlock_text">Any lock or unlock requests from <xliff:g id="creditor_app">%1$s</xliff:g></string>
+    <!-- List item on a screen. This item lets a user know that their credit provider can see when the credit provider's app isn't available on the user's device. The placeholder is the name of the credit provider's app. [CHAR_LIMIT=80] -->
+    <string name="exposure_disable_dlc_text">If the <xliff:g id="creditor_app">%1$s</xliff:g> app isn\'t available</string>
+    <!-- Overflow menu describing open source licenses. [CHAR_LIMIT=80] -->
+    <string name="open_source_licenses">Open-source licenses</string>
+    <!-- Informational text at the bottom of a screen. This text lets a user know that the info listed in the "Financed device info" section in Settings doesn't apply to their device. [CHAR_LIMIT=200] -->
+    <string name="footer_notice">The other management capabilities in <b>Settings > Security > Financed device info</b> don\'t apply to this device</string>
+    <!-- Accessibility text for the footer notice. [CHAR_LIMIT=NONE] -->
+    <string name="footer_notice_content_description">The management capabilities in the financed device section of Security settings don\'t apply to this device.</string>
 </resources>
