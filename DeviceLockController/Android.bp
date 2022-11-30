@@ -36,12 +36,81 @@ filegroup {
     srcs: [
         "src/**/*.java",
     ],
+    exclude_srcs: [
+        "src/com/android/devicelockcontroller/activities/*.java",
+        "src/com/android/devicelockcontroller/util/*.java",
+    ],
+}
+
+filegroup {
+    name: "devicelockcontroller-activities-sources",
+    srcs: [
+        "src/com/android/devicelockcontroller/activities/*.java",
+    ],
+}
+
+filegroup {
+    name: "devicelockcontroller-util-sources",
+    srcs: [
+        "src/com/android/devicelockcontroller/util/*.java",
+    ],
 }
 
 filegroup {
     name: "devicelockcontroller-aidl",
     srcs: [
         "src/**/*.aidl",
+    ],
+}
+
+android_library {
+    name: "devicelockcontroller-res-lib",
+    sdk_version: "module_current",
+    min_sdk_version: "module_current",
+    resource_dirs: [
+        "res",
+    ],
+    static_libs: [
+        // TODO: Check if we have an alternate for this
+        "com.google.android.material_material",
+    ],
+    apex_available: [
+        "com.android.devicelock",
+    ],
+    manifest: "AndroidManifest.xml",
+    visibility: [
+        "//packages/modules/DeviceLock:__subpackages__",
+    ],
+}
+
+java_library {
+    name: "devicelockcontroller-util-lib",
+    srcs: [":devicelockcontroller-util-sources"],
+    sdk_version: "module_current",
+    min_sdk_version: "module_current",
+    apex_available: [
+        "com.android.devicelock",
+    ],
+    visibility: [
+        "//packages/modules/DeviceLock:__subpackages__",
+    ],
+}
+
+java_library {
+    name: "devicelockcontroller-activities-lib",
+    srcs: [":devicelockcontroller-activities-sources"],
+    sdk_version: "module_current",
+    min_sdk_version: "module_current",
+    static_libs: [
+        "androidx.appcompat_appcompat",
+        "devicelockcontroller-res-lib",
+        "devicelockcontroller-util-lib",
+    ],
+    apex_available: [
+        "com.android.devicelock",
+    ],
+    visibility: [
+        "//packages/modules/DeviceLock:__subpackages__",
     ],
 }
 
@@ -84,12 +153,15 @@ android_app {
     srcs: [":devicelockcontroller-sources"],
 
     static_libs: [
-        "devicelockcontroller-interface",
         "androidx.annotation_annotation",
         "androidx.collection_collection",
         "androidx.lifecycle_lifecycle-extensions",
         "androidx.work_work-runtime",
+        "devicelockcontroller-activities-lib",
         "devicelockcontroller-grpclib",
+        "devicelockcontroller-interface",
+        "devicelockcontroller-res-lib",
+        "devicelockcontroller-util-lib",
         "guava",
         "firebase-encoders-jar",
         "firebase-common-aar",
