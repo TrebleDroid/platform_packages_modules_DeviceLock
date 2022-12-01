@@ -87,6 +87,8 @@ android_app {
         "devicelockcontroller-interface",
         "androidx.annotation_annotation",
         "androidx.collection_collection",
+        "androidx.lifecycle_lifecycle-extensions",
+        "androidx.work_work-runtime",
         "devicelockcontroller-grpclib",
         "guava",
         "firebase-encoders-jar",
