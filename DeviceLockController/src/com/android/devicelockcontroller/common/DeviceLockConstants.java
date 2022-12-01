@@ -16,6 +16,11 @@
 
 package com.android.devicelockcontroller.common;
 
+import androidx.annotation.IntDef;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 /** Constants being used by more than one class in the Device Lock application. */
 public final class DeviceLockConstants {
     // TODO: properly set to an activity. Additionally, package could be com.android... or
@@ -23,6 +28,21 @@ public final class DeviceLockConstants {
     public static final String SETUP_FAILED_ACTIVITY =
             "com.android.devicelockcontroller/"
                     + "com.android.devicelockcontroller.SetupFailedActivity";
+
+    // Constants related to unique device identifiers.
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef(value = {
+            DEVICE_ID_TYPE_IMEI,
+            DEVICE_ID_TYPE_MEID,
+    })
+    public @interface DeviceIdType {}
+    // The device id is a IMEI
+    public static final int DEVICE_ID_TYPE_IMEI = 0;
+    // The device id is a MEID
+    public static final int DEVICE_ID_TYPE_MEID = 1;
+    @DeviceIdType
+    private static final int LAST_DEVICE_ID_TYPE = DEVICE_ID_TYPE_MEID;
+    public static final int TOTAL_DEVICE_ID_TYPES = LAST_DEVICE_ID_TYPE + 1;
 
     /** Restrict instantiation. */
     private DeviceLockConstants() {}
