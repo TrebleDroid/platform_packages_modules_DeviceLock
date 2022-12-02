@@ -29,13 +29,12 @@ import android.os.SystemProperties;
 import android.os.UserManager;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 
 import com.android.devicelockcontroller.common.DeviceLockConstants;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
 import com.android.devicelockcontroller.setup.SetupParameters;
 import com.android.devicelockcontroller.util.LogUtil;
-
-import com.google.common.annotations.VisibleForTesting;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,14 +56,14 @@ public final class DevicePolicyControllerImpl
     /**
      * Create a new policy controller.
      *
-     * @param context The context used by this policy controller.
-     * @param componentName Admin component name.
+     * @param context         The context used by this policy controller.
+     * @param componentName   Admin component name.
      * @param stateController State controller.
      */
     public DevicePolicyControllerImpl(
             Context context, ComponentName componentName, DeviceStateController stateController) {
         this(context, componentName, stateController,
-             context.getSystemService(DevicePolicyManager.class));
+                context.getSystemService(DevicePolicyManager.class));
     }
 
     @VisibleForTesting
@@ -156,8 +155,8 @@ public final class DevicePolicyControllerImpl
             case DeviceState.SETUP_SUCCEEDED:
             case DeviceState.SETUP_FAILED:
                 return new Intent()
-                    .setComponent(ComponentName
-                            .unflattenFromString(DeviceLockConstants.SETUP_FAILED_ACTIVITY));
+                        .setComponent(ComponentName
+                                .unflattenFromString(DeviceLockConstants.SETUP_FAILED_ACTIVITY));
             case DeviceState.KIOSK_SETUP:
                 return getKioskSetupActivityIntent();
             case DeviceState.LOCKED:
@@ -200,7 +199,7 @@ public final class DevicePolicyControllerImpl
         final Intent launchIntent = packageManager.getLaunchIntentForPackage(kioskPackage);
         if (launchIntent == null) {
             LogUtil.e(TAG, String.format(Locale.US, "Failed to get launch intent for %s",
-                        kioskPackage));
+                    kioskPackage));
             return null;
         }
 
