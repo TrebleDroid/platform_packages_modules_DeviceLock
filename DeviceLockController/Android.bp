@@ -193,8 +193,6 @@ android_app {
         proguard_flags_files: ["proguard.flags"],
     },
 
-    plugins: ["java_api_finder"],
-
     apex_available: [
         "//apex_available:platform",
         "com.android.devicelock",
