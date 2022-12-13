@@ -31,7 +31,10 @@ import com.android.devicelockcontroller.util.LogUtil;
 /**
  * Application class for Device Lock Controller.
  */
-public final class DeviceLockControllerApplication extends Application implements
+// TODO(b/261883789): Mark the class as final and remove following comment after we can use
+//  ShadowTelephonyManager in our Robolectric tests.
+// Do not extend. This class is not marked as final solely for testing purposes.
+public class DeviceLockControllerApplication extends Application implements
         PolicyObjectsInterface {
     private static final String TAG = "DeviceLockControllerApplication";
 

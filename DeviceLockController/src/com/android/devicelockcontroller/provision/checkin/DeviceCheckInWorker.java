@@ -18,9 +18,9 @@ package com.android.devicelockcontroller.provision.checkin;
 
 import android.content.Context;
 import android.util.ArraySet;
-import android.util.Pair;
 
 import androidx.annotation.NonNull;
+import androidx.core.util.Pair;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
@@ -30,21 +30,18 @@ import com.android.devicelockcontroller.util.LogUtil;
  * A worker class dedicated to execute the check-in operation for device lock program.
  */
 final class DeviceCheckInWorker extends Worker {
-    static final String KEY_DEVICE_IDS = "device_ids";
-    private final ArraySet<Pair<Integer, String>> mDeviceIds;
 
     DeviceCheckInWorker(@NonNull Context context,
             @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
-        mDeviceIds =
-                (ArraySet<Pair<Integer, String>>)
-                        workerParams.getInputData().getKeyValueMap().get(KEY_DEVICE_IDS);
     }
 
     @NonNull
     @Override
     public Result doWork() {
-        if (mDeviceIds == null || mDeviceIds.isEmpty()) {
+        final ArraySet<Pair<Integer, String>> deviceIds = new DeviceCheckInHelper(
+                getApplicationContext()).getDeviceUniqueIds();
+        if (deviceIds.isEmpty()) {
             LogUtil.e("DeviceCheckInWorker", "CheckIn failed. Device Id is null or empty");
             return Result.failure();
         }
