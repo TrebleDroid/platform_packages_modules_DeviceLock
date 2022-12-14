@@ -21,9 +21,6 @@ import static com.android.devicelockcontroller.common.DeviceLockConstants.DEVICE
 
 import static com.google.common.truth.Truth.assertThat;
 
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
-
 import android.content.Context;
 import android.telephony.TelephonyManager;
 import android.util.ArraySet;
@@ -34,9 +31,9 @@ import androidx.test.core.app.ApplicationProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.Shadows;
+import org.robolectric.shadows.ShadowTelephonyManager;
 
 import java.util.Objects;
 
@@ -59,25 +56,22 @@ public final class DeviceCheckInHelperImplTest {
             (1 << DEVICE_ID_TYPE_IMEI) | (1 << DEVICE_ID_TYPE_MEID);
     private DeviceCheckInHelperImpl mHelper;
 
-    @Mock
-    private TelephonyManager mTelephonyManager;
+    private ShadowTelephonyManager mTelephonyManager;
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
-        final Context context = spy(ApplicationProvider.getApplicationContext());
-        when(context.getSystemService(TelephonyManager.class)).thenReturn(mTelephonyManager);
+        final Context context = ApplicationProvider.getApplicationContext();
+        mTelephonyManager = Shadows.shadowOf(context.getSystemService(TelephonyManager.class));
         mHelper = new DeviceCheckInHelperImpl(context);
     }
 
     @Test
     public void getDeviceAvailableUniqueIds_shouldReturnAllAvailableUniqueIds() {
-        when(mTelephonyManager.getActiveModemCount()).thenReturn(TOTAL_SLOT_COUNT);
-        when(mTelephonyManager.getImei(/* slotIndex= */ 0)).thenReturn(IMEI_1);
-        when(mTelephonyManager.getImei(/* slotIndex= */ 1)).thenReturn(IMEI_2);
-        when(mTelephonyManager.getMeid(/* slotIndex= */ 0)).thenReturn(MEID_1);
-        when(mTelephonyManager.getMeid(/* slotIndex= */ 1)).thenReturn(MEID_2);
-
+        mTelephonyManager.setActiveModemCount(TOTAL_SLOT_COUNT);
+        mTelephonyManager.setImei(/* slotIndex= */ 0, IMEI_1);
+        mTelephonyManager.setImei(/* slotIndex= */ 1, IMEI_2);
+        mTelephonyManager.setMeid(/* slotIndex= */ 0, MEID_1);
+        mTelephonyManager.setMeid(/* slotIndex= */ 1, MEID_2);
         final ArraySet<Pair<Integer, String>> deviceIds = mHelper.getDeviceAvailableUniqueIds(
                 DEVICE_ID_TYPE_BITMAP);
         assertThat(Objects.requireNonNull(deviceIds).size()).isEqualTo(TOTAL_ID_COUNT);
