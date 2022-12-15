@@ -39,7 +39,7 @@ final class DeviceCheckInWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        final ArraySet<Pair<Integer, String>> deviceIds = new DeviceCheckInHelper(
+        final ArraySet<Pair<Integer, String>> deviceIds = new DeviceCheckInHelperImpl(
                 getApplicationContext()).getDeviceUniqueIds();
         if (deviceIds.isEmpty()) {
             LogUtil.e("DeviceCheckInWorker", "CheckIn failed. Device Id is null or empty");

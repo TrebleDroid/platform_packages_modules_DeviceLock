@@ -19,6 +19,7 @@ package {
 android_robolectric_test {
     name: "DeviceLockControllerRoboTests",
     instrumentation_for: "DeviceLockController",
+    upstream: true,
     java_resource_dirs: [
         "config",
     ],

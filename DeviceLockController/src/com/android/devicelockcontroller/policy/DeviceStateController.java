@@ -27,6 +27,29 @@ import java.lang.annotation.RetentionPolicy;
  * Interface for the device lock controller state machine.
  */
 public interface DeviceStateController {
+    /**
+     * Moves the device to a new state based on the input event
+     *
+     * @throws StateTransitionException when the input event does not match the current state.
+     */
+    void setNextStateForEvent(@DeviceEvent int event) throws StateTransitionException;
+
+    /** Returns the current state of the device */
+    @DeviceState
+    int getState();
+
+    /** Returns true if the device is in locked state. */
+    boolean isLocked();
+
+    /** Returns true if the device needs to check in with DeviceLock server */
+    boolean isCheckInNeeded();
+
+    /** Register a callback to get notified on state change. */
+    void addCallback(StateListener listener);
+
+    /** Remove a previously registered callback. */
+    void removeCallback(StateListener listener);
+
     /** Device state definitions */
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({
@@ -100,26 +123,6 @@ public interface DeviceStateController {
         /* Clear device lock restrictions */
         int CLEAR = 6;
     }
-
-    /**
-     * Moves the device to a new state based on the input event
-     *
-     * @throws StateTransitionException when the input event does not match the current state.
-     */
-    void setNextStateForEvent(@DeviceEvent int event) throws StateTransitionException;
-
-    /** Returns the current state of the device */
-    @DeviceState
-    int getState();
-
-    /** Returns true if the device is in locked state. */
-    boolean isLocked();
-
-    /** Register a callback to get notified on state change. */
-    void addCallback(StateListener listener);
-
-    /** Remove a previously registered callback. */
-    void removeCallback(StateListener listener);
 
     /** Listener interface for state changes. */
     interface StateListener {

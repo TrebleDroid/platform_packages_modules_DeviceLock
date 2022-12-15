@@ -41,7 +41,7 @@ import org.robolectric.RobolectricTestRunner;
 import java.util.Objects;
 
 @RunWith(RobolectricTestRunner.class)
-public final class DeviceCheckInHelperTest {
+public final class DeviceCheckInHelperImplTest {
     static final int TOTAL_SLOT_COUNT = 2;
     static final int TOTAL_ID_COUNT = 4;
     static final String IMEI_1 = "IMEI1";
@@ -57,7 +57,7 @@ public final class DeviceCheckInHelperTest {
             });
     static final int DEVICE_ID_TYPE_BITMAP =
             (1 << DEVICE_ID_TYPE_IMEI) | (1 << DEVICE_ID_TYPE_MEID);
-    private DeviceCheckInHelper mHelper;
+    private DeviceCheckInHelperImpl mHelper;
 
     @Mock
     private TelephonyManager mTelephonyManager;
@@ -67,7 +67,7 @@ public final class DeviceCheckInHelperTest {
         MockitoAnnotations.initMocks(this);
         final Context context = spy(ApplicationProvider.getApplicationContext());
         when(context.getSystemService(TelephonyManager.class)).thenReturn(mTelephonyManager);
-        mHelper = new DeviceCheckInHelper(context);
+        mHelper = new DeviceCheckInHelperImpl(context);
     }
 
     @Test
