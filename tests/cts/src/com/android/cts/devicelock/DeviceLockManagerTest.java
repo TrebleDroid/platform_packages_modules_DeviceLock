@@ -30,10 +30,12 @@ import android.content.Context;
 import android.content.pm.ServiceInfo;
 import android.devicelock.DeviceId;
 import android.devicelock.DeviceLockManager;
+import android.os.Build;
 import android.os.OutcomeReceiver;
 import android.telephony.TelephonyManager;
 
 import androidx.concurrent.futures.CallbackToFutureAdapter;
+import androidx.test.filters.SdkSuppress;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.android.server.devicelock.DeviceLockControllerPackageUtils;
@@ -184,6 +186,7 @@ public final class DeviceLockManagerTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     public void lockDevicePermissionCheck() {
         ListenableFuture<Void> lockDeviceFuture = getLockDeviceFuture();
 
@@ -198,6 +201,7 @@ public final class DeviceLockManagerTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     public void unlockDevicePermissionCheck() {
         ListenableFuture<Void> unlockDeviceFuture = getUnlockDeviceFuture();
 
@@ -212,6 +216,7 @@ public final class DeviceLockManagerTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     public void isDeviceLockedPermissionCheck() {
         ListenableFuture<Boolean> isDeviceLockedFuture = getIsDeviceLockedFuture();
 
@@ -226,6 +231,7 @@ public final class DeviceLockManagerTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     public void getDeviceIdPermissionCheck() {
         ListenableFuture<DeviceId> deviceIdFuture = getDeviceIdFuture();
 
@@ -240,6 +246,7 @@ public final class DeviceLockManagerTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     public void deviceShouldLockAndUnlock() throws InterruptedException, ExecutionException,
             TimeoutException {
         skipTestIfNotDeviceOwner();
@@ -285,6 +292,7 @@ public final class DeviceLockManagerTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     public void getDeviceIdShouldReturnAnId()
             throws ExecutionException, InterruptedException, TimeoutException {
         try {
@@ -301,6 +309,7 @@ public final class DeviceLockManagerTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     public void getKioskAppShouldReturnMapping()
             throws ExecutionException, InterruptedException, TimeoutException {
         Map<Integer, String> kioskAppsMap = getKioskAppsFuture().get(TIMEOUT, TimeUnit.SECONDS);
