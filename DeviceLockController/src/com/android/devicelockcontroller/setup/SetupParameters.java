@@ -35,7 +35,7 @@ import java.util.Set;
 public final class SetupParameters {
     private static final String TAG = "SetupParameters";
 
-    public static final String FILENAME = "setup-prefs";
+    private static final String FILENAME = "setup-prefs";
     private static final String KEY_KIOSK_PACKAGE = "kiosk-package-name";
     private static final String KEY_KIOSK_DOWNLOAD_URL = "kiosk-download-url";
     private static final String KEY_KIOSK_SIGNATURE_CHECKSUM = "kiosk-signature-checksum";
@@ -81,7 +81,8 @@ public final class SetupParameters {
      */
     public static final String EXTRA_KIOSK_ENABLE_NOTIFICATIONS_IN_LOCK_TASK_MODE =
             "com.android.devicelockcontroller.KIOSK_ENABLE_NOTIFICATIONS_IN_LOCK_TASK_MODE";
-
+    public static final String EXTRA_KIOSK_ALLOWLIST =
+            "com.android.devicelockcontroller.KIOSK_ALLOWLIST";
     private SetupParameters() {}
 
     private static SharedPreferences getSharedPreferences(Context context) {
@@ -119,7 +120,7 @@ public final class SetupParameters {
         editor.putBoolean(KEY_KIOSK_ENABLE_NOTIFICATIONS_IN_LOCK_TASK_MODE,
                 bundle.getBoolean(EXTRA_KIOSK_ENABLE_NOTIFICATIONS_IN_LOCK_TASK_MODE));
         editor.putStringSet(KEY_KIOSK_ALLOWLIST,
-                new ArraySet<>(bundle.getStringArrayList(KEY_KIOSK_ALLOWLIST)));
+                new ArraySet<>(bundle.getStringArrayList(EXTRA_KIOSK_ALLOWLIST)));
         editor.apply();
     }
 
