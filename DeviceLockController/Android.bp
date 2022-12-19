@@ -66,7 +66,7 @@ filegroup {
 android_library {
     name: "devicelockcontroller-res-lib",
     sdk_version: "module_current",
-    min_sdk_version: "34",
+    min_sdk_version: "UpsideDownCake",
     resource_dirs: [
         "res",
     ],
@@ -87,7 +87,7 @@ java_library {
     name: "devicelockcontroller-util-lib",
     srcs: [":devicelockcontroller-util-sources"],
     sdk_version: "module_current",
-    min_sdk_version: "34",
+    min_sdk_version: "UpsideDownCake",
     apex_available: [
         "com.android.devicelock",
     ],
@@ -100,7 +100,7 @@ java_library {
     name: "devicelockcontroller-activities-lib",
     srcs: [":devicelockcontroller-activities-sources"],
     sdk_version: "module_current",
-    min_sdk_version: "34",
+    min_sdk_version: "UpsideDownCake",
     static_libs: [
         "androidx.appcompat_appcompat",
         "devicelockcontroller-res-lib",
@@ -117,7 +117,7 @@ java_library {
 java_library {
     name: "devicelockcontroller-interface",
     sdk_version: "module_current",
-    min_sdk_version: "34",
+    min_sdk_version: "33", // AIDL compiler does not know about UpsideDownCake
     srcs: [":devicelockcontroller-aidl"],
     apex_available: [
         "com.android.devicelock",
@@ -130,7 +130,7 @@ java_library {
 java_library {
     name: "devicelockcontroller-grpclib",
     sdk_version: "module_current",
-    min_sdk_version: "34",
+    min_sdk_version: "UpsideDownCake",
     apex_available: ["com.android.devicelock"],
     static_libs: [
         "grpc-java-core-android",
@@ -144,7 +144,7 @@ java_library {
 android_app {
     name: "DeviceLockController",
     sdk_version: "module_current",
-    min_sdk_version: "34",
+    min_sdk_version: "UpsideDownCake",
     updatable: true,
     privileged: true,
     certificate: "platform",
