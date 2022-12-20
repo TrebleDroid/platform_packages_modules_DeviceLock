@@ -18,6 +18,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.android.devicelockcontroller">
 
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
     <application
         android:name=".DeviceLockControllerApplication"
         android:allowBackup="false"
@@ -47,11 +49,18 @@
             </intent-filter>
         </receiver>
         <receiver android:name="com.android.devicelockcontroller.receivers.DlcBootCompletedReceiver"
-                  android:permission="android.permission.RECEIVE_BOOT_COMPLETED"
-                  android:enabled="false"
-                  android:exported="true">
+                  android:exported="false"
+                  android:enabled="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="com.android.devicelockcontroller.receivers.DlcMultiUserBootCompletedReceiver"
+            android:directBootAware="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
     </application>
