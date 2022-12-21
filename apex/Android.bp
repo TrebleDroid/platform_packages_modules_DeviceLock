@@ -71,7 +71,7 @@ systemserverclasspath_fragment {
 
 apex {
     name: "com.android.devicelock",
-    min_sdk_version: "current",
+    min_sdk_version: "UpsideDownCake",
     bootclasspath_fragments: ["com.android.devicelock-bootclasspath-fragment"],
     systemserverclasspath_fragments: ["com.android.devicelock-systemserverclasspath-fragment"],
     prebuilts: [
