@@ -38,7 +38,6 @@ final class UserRestrictionsPolicyHandler implements PolicyHandler {
 
     private static final String[] RESTRICTIONS_ALL_BUILDS = {
             UserManager.DISALLOW_SAFE_BOOT,
-            UserManager.DISALLOW_ADD_USER, // TODO: this should not be needed
             UserManager.DISALLOW_CONFIG_DATE_TIME
     };
 
