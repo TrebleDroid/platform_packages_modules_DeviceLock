@@ -58,6 +58,10 @@ public final class DlcMultiUserBootCompletedReceiver extends BroadcastReceiver {
     private static void addComponentNamesToEnabledList(
             List<ComponentEnabledSetting> componentEnabledSettings,
             ComponentInfo[] componentInfoList) {
+        if (componentInfoList == null) {
+            return;
+        }
+
         for (ComponentInfo componentInfo: componentInfoList) {
             if (!sComponentAllowlist.contains(componentInfo.name)) {
                 final ComponentName componentName =
@@ -97,7 +101,9 @@ public final class DlcMultiUserBootCompletedReceiver extends BroadcastReceiver {
         addComponentNamesToEnabledList(componentEnabledSettings, packageInfo.receivers);
         addComponentNamesToEnabledList(componentEnabledSettings, packageInfo.providers);
 
-        pm.setComponentEnabledSettings(componentEnabledSettings);
+        if (!componentEnabledSettings.isEmpty()) {
+            pm.setComponentEnabledSettings(componentEnabledSettings);
+        }
     }
 
     @Override
