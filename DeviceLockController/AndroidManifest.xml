@@ -16,9 +16,12 @@
   -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.android.devicelockcontroller">
+    xmlns:androidprv="http://schemas.android.com/apk/prv/res/android"
+    package="com.android.devicelockcontroller">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <!-- TODO: Remove once this permission is part of the role -->
+    <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS"/>
 
     <application
         android:name=".DeviceLockControllerApplication"
@@ -31,7 +34,8 @@
             android:exported="false"/>
         <service android:name="com.android.devicelockcontroller.DeviceLockControllerService"
                  android:directBootAware="true"
-                 android:exported="false">
+                 android:exported="false"
+                 androidprv:systemUserOnly="true">
             <intent-filter>
                 <action android:name="android.app.action.DEVICE_LOCK_CONTROLLER_SERVICE"/>
             </intent-filter>
@@ -40,7 +44,8 @@
              this receiver component name as first argument. -->
         <receiver android:name="com.android.devicelockcontroller.receivers.DlcDeviceAdminReceiver"
                   android:permission="android.permission.BIND_DEVICE_ADMIN"
-                  android:exported="true">
+                  android:exported="false"
+                  androidprv:systemUserOnly="true">
             <meta-data
                 android:name="android.app.device_admin"
                 android:resource="@xml/device_admin"/>
@@ -48,17 +53,21 @@
                 <action android:name="android.app.action.DEVICE_ADMIN_ENABLED"/>
             </intent-filter>
         </receiver>
+        <!-- Single user boot completed broadcast receiver -->
         <receiver android:name="com.android.devicelockcontroller.receivers.DlcBootCompletedReceiver"
                   android:exported="false"
-                  android:enabled="false">
+                  android:enabled="false"
+                  androidprv:systemUserOnly="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
+        <!-- Multi user locked boot completed broadcast receiver -->
         <receiver
             android:name="com.android.devicelockcontroller.receivers.DlcMultiUserBootCompletedReceiver"
             android:directBootAware="true"
-            android:exported="false">
+            android:exported="false"
+            android:singleUser="false">
             <intent-filter>
                 <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
             </intent-filter>
