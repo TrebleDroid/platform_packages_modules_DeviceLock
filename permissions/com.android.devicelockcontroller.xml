@@ -19,5 +19,7 @@
     <feature name="android.software.device_lock" />
     <!-- Permission allowlist for device lock controller -->
     <privapp-permissions package="com.android.devicelockcontroller">
+        <!-- TODO: Remove once the role is created -->
+        <permission name="android.permission.INTERACT_ACROSS_USERS"/>
     </privapp-permissions>
 </permissions>
