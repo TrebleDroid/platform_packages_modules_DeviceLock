@@ -18,6 +18,7 @@ package com.android.devicelockcontroller;
 
 import android.app.Application;
 import android.content.ComponentName;
+import android.content.Context;
 
 import androidx.annotation.MainThread;
 
@@ -41,9 +42,12 @@ public final class DeviceLockControllerApplication extends Application implement
     private DeviceStateController mStateController;
     private DevicePolicyController mPolicyController;
 
+    private static Context sApplicationContext;
+
     @Override
     public void onCreate() {
         super.onCreate();
+        sApplicationContext = getApplicationContext();
         LogUtil.i(TAG, "onCreate");
     }
 
@@ -69,5 +73,9 @@ public final class DeviceLockControllerApplication extends Application implement
         }
 
         return mPolicyController;
+    }
+
+    public static Context getAppContext() {
+        return sApplicationContext;
     }
 }

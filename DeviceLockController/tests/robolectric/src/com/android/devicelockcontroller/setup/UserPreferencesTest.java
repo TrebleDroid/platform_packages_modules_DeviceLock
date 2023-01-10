@@ -33,11 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RunWith(RobolectricTestRunner.class)
-public class UserPreferencesTest {
-
-    private static final String ALLOWLIST_PACKAGE_0 = "allowlist.package.0";
-    private static final String ALLOWLIST_PACKAGE_1 = "allowlist.package.1";
-    private static final String PACKAGE_OVERRIDING_HOME = "com.home.package";
+public class UserPreferencesTest extends AbstractUserPreferencesTest {
     private Context mContext;
 
     @Before
@@ -70,11 +66,11 @@ public class UserPreferencesTest {
     @Test
     public void getLockTaskAllowlist_shouldReturnExpectedAllowlist() {
         assertThat(UserPreferences.getLockTaskAllowlist(mContext)).isEmpty();
-        ArrayList<String> expectedAllowlist = new ArrayList<>();
+        final ArrayList<String> expectedAllowlist = new ArrayList<>();
         expectedAllowlist.add(ALLOWLIST_PACKAGE_0);
         expectedAllowlist.add(ALLOWLIST_PACKAGE_1);
         UserPreferences.setLockTaskAllowlist(mContext, expectedAllowlist);
-        List<String> actualAllowlist = UserPreferences.getLockTaskAllowlist(mContext);
+        final List<String> actualAllowlist = UserPreferences.getLockTaskAllowlist(mContext);
         assertThat(actualAllowlist).containsExactlyElementsIn(expectedAllowlist);
     }
 }
