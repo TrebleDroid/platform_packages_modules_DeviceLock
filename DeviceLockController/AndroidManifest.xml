@@ -54,7 +54,7 @@
             </intent-filter>
         </receiver>
         <!-- Single user boot completed broadcast receiver -->
-        <receiver android:name="com.android.devicelockcontroller.receivers.DlcBootCompletedReceiver"
+        <receiver android:name="com.android.devicelockcontroller.receivers.CheckInBootCompletedReceiver"
                   android:exported="false"
                   android:enabled="false"
                   androidprv:systemUserOnly="true">
@@ -62,9 +62,17 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
-        <!-- Multi user locked boot completed broadcast receiver -->
+        <!-- Multi users boot completed broadcast receiver -->
+        <receiver android:name="com.android.devicelockcontroller.receivers.LockTaskBootCompletedReceiver"
+                  android:exported="false"
+                  android:singleUser="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
+        <!-- Multi users locked boot completed broadcast receiver -->
         <receiver
-            android:name="com.android.devicelockcontroller.receivers.DlcMultiUserBootCompletedReceiver"
+            android:name="com.android.devicelockcontroller.receivers.DlcLockedBootCompletedReceiver"
             android:directBootAware="true"
             android:exported="false"
             android:singleUser="false">

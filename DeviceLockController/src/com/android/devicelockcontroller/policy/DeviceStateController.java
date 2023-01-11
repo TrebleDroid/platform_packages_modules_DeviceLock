@@ -44,6 +44,9 @@ public interface DeviceStateController {
     /** Returns true if the device needs to check in with DeviceLock server */
     boolean isCheckInNeeded();
 
+    /** Returns true if the device is in setup flow. */
+    boolean isInSetupState();
+
     /** Register a callback to get notified on state change. */
     void addCallback(StateListener listener);
 

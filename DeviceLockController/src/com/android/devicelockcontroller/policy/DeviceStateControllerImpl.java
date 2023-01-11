@@ -71,7 +71,15 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
 
     @Override
     public boolean isCheckInNeeded() {
+        // TODO: Persist the isCheckInNeeded state into storage to prevent unnecessary check-ins.
         return mState == DeviceState.UNPROVISIONED;
+    }
+
+    @Override
+    public boolean isInSetupState() {
+        return mState == DeviceState.SETUP_IN_PROGRESS
+                || mState == DeviceState.SETUP_SUCCEEDED
+                || mState == DeviceState.SETUP_FAILED;
     }
 
     @Override
