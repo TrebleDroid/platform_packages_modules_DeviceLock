@@ -1,0 +1,69 @@
+//
+// Copyright (C) 2023 The Android Open Source Project
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+package {
+    default_applicable_licenses: [
+        "packages_modules_DeviceLock_DeviceLockController_license",
+    ],
+}
+
+// Generate gRPC client code
+LITE_PROTO_CMD = "$(location aprotoc) " +
+    "--plugin=protoc-gen-grpc-java=$(location protoc-gen-grpc-java-plugin) " +
+    "--grpc-java_out=lite:$(genDir) $(in) && " +
+    "$(location soong_zip) -o $(out) -C $(genDir) -D $(genDir)"
+
+genrule {
+    name: "checkIn-service-stub-lite",
+    tools: [
+        "aprotoc",
+        "protoc-gen-grpc-java-plugin",
+        "soong_zip",
+    ],
+    cmd: LITE_PROTO_CMD,
+    srcs: [
+        "*.proto",
+    ],
+    out: [
+        "protos.srcjar",
+    ],
+}
+
+java_library {
+    name: "devicelockcontroller-protos-lite",
+    host_supported: true,
+    proto: {
+        type: "lite",
+        include_dirs: [
+            "external/protobuf/src",
+            "external/protobuf/java",
+        ],
+    },
+    srcs: [
+        ":checkIn-service-stub-lite",
+        "*.proto",
+    ],
+    libs: ["javax_annotation-api_1.3.2"],
+    static_libs: [
+        "libprotobuf-java-lite",
+        "guava",
+        "grpc-java-core-android",
+        "grpc-java-okhttp-client-lite",
+    ],
+    apex_available: ["com.android.devicelock"],
+    sdk_version: "module_current",
+    min_sdk_version: "UpsideDownCake",
+}
