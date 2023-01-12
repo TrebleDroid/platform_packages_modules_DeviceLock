@@ -22,10 +22,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import android.content.Intent;
-
-import androidx.test.core.app.ApplicationProvider;
-
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.provision.checkin.DeviceCheckInHelper;
 
@@ -37,28 +33,23 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
-public class DlcBootCompletedReceiverTest {
-
-    static final Intent BOOT_COMPLETED_INTENT = new Intent(Intent.ACTION_BOOT_COMPLETED);
+public class CheckInBootCompletedReceiverTest {
 
     @Mock
-    DeviceStateController mDeviceStateController;
+    private DeviceStateController mDeviceStateController;
     @Mock
-    DeviceCheckInHelper mDeviceCheckInHelper;
-    private DlcBootCompletedReceiver mDlcBootCompletedReceiver;
+    private DeviceCheckInHelper mDeviceCheckInHelper;
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
-        mDlcBootCompletedReceiver = new DlcBootCompletedReceiver(mDeviceStateController,
-                mDeviceCheckInHelper);
+        MockitoAnnotations.initMocks(/* testClass= */ this);
     }
 
     @Test
     public void onReceive_checkInIsNeeded_shouldEnqueueCheckInWork() {
         when(mDeviceStateController.isCheckInNeeded()).thenReturn(true);
-        mDlcBootCompletedReceiver.onReceive(ApplicationProvider.getApplicationContext(),
-                BOOT_COMPLETED_INTENT);
+
+        CheckInBootCompletedReceiver.checkInIfNeeded(mDeviceStateController, mDeviceCheckInHelper);
 
         verify(mDeviceCheckInHelper).enqueueDeviceCheckInWork(eq(false));
     }
@@ -66,8 +57,8 @@ public class DlcBootCompletedReceiverTest {
     @Test
     public void onReceive_checkInNotNeeded_shouldNotEnqueueCheckInWork() {
         when(mDeviceStateController.isCheckInNeeded()).thenReturn(false);
-        mDlcBootCompletedReceiver.onReceive(ApplicationProvider.getApplicationContext(),
-                BOOT_COMPLETED_INTENT);
+
+        CheckInBootCompletedReceiver.checkInIfNeeded(mDeviceStateController, mDeviceCheckInHelper);
 
         verify(mDeviceCheckInHelper, never()).enqueueDeviceCheckInWork(anyBoolean());
     }
