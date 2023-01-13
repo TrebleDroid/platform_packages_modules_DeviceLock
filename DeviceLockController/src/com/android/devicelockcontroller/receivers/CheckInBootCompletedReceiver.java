@@ -30,6 +30,8 @@ import com.android.devicelockcontroller.provision.checkin.DeviceCheckInHelperImp
 /**
  * Boot completed broadcast receiver to enqueue the check-in work for provision when device boots
  * for the first time.
+ * Note that this boot completed receiver differs with {@link LockTaskBootCompletedReceiver} in the
+ * way that it only runs for system user.
  */
 public final class CheckInBootCompletedReceiver extends BroadcastReceiver {
 

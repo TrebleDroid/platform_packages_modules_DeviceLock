@@ -120,6 +120,8 @@ public final class DlcLockedBootCompletedReceiver extends BroadcastReceiver {
                 LockTaskBootCompletedReceiver.class);
         if (((PolicyObjectsInterface) context.getApplicationContext())
                 .getStateController().isInSetupState()) {
+            // b/172281939: WorkManager is not available at this moment, and we may not launch
+            // lock task mode successfully. Therefore, defer it to LockTaskBootCompletedReceiver.
             LogUtil.i(TAG,
                     "Setup has not completed yet when ACTION_LOCKED_BOOT_COMPLETED is received. "
                             + "We can not start lock task mode here.");
