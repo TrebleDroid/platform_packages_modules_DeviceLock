@@ -72,10 +72,21 @@ public class DlcLockedBootCompletedReceiverTest {
 
     }
 
+    private void resetComponentsToDefaultState() {
+        for (String component : sComponents) {
+            final ComponentName componentName =
+                    new ComponentName(mTestApplication, component);
+            mPm.setComponentEnabledSetting(componentName,
+                    PackageManager.COMPONENT_ENABLED_STATE_DEFAULT, PackageManager.DONT_KILL_APP);
+        }
+    }
+
     @Test
     public void disableComponentsForNonSystemUsers_shouldNotDisableComponentsForSystemUser() {
         Shadows.shadowOf(mTestApplication.getSystemService(UserManager.class))
                 .switchUser(UserHandle.USER_SYSTEM);
+
+        resetComponentsToDefaultState();
 
         DlcLockedBootCompletedReceiver.disableComponentsForNonSystemUser(mTestApplication);
 
@@ -94,6 +105,8 @@ public class DlcLockedBootCompletedReceiverTest {
                 .addUser(userId, "guest", UserInfo.FLAG_GUEST);
         Shadows.shadowOf(mTestApplication.getSystemService(UserManager.class))
                 .switchUser(userId);
+
+        resetComponentsToDefaultState();
 
         DlcLockedBootCompletedReceiver.disableComponentsForNonSystemUser(mTestApplication);
 
