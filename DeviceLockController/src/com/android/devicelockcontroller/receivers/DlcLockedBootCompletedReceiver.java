@@ -37,6 +37,8 @@ import androidx.annotation.VisibleForTesting;
 
 import com.android.devicelockcontroller.DeviceLockControllerService;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
+import com.android.devicelockcontroller.setup.SetupParametersService;
+import com.android.devicelockcontroller.setup.UserPreferencesService;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import java.util.ArrayList;
@@ -60,7 +62,9 @@ public final class DlcLockedBootCompletedReceiver extends BroadcastReceiver {
             DeviceLockControllerService.class.getCanonicalName(),
             CheckInBootCompletedReceiver.class.getCanonicalName(),
             LockTaskBootCompletedReceiver.class.getCanonicalName(),
-            DlcDeviceAdminReceiver.class.getCanonicalName()));
+            DlcDeviceAdminReceiver.class.getCanonicalName(),
+            SetupParametersService.class.getCanonicalName(),
+            UserPreferencesService.class.getCanonicalName()));
 
     private static void addComponentNamesToEnabledList(
             List<ComponentEnabledSetting> componentEnabledSettings,
