@@ -49,7 +49,6 @@ public final class BootUtilsTest {
     @Test
     public void startLockTaskModeAtBoot_success() {
         when(mStateController.isLocked()).thenReturn(true);
-        when(mPolicyController.launchActivityInLockedMode()).thenReturn(true);
         BootUtils.startLockTaskModeAtBoot(mTestApplication);
         verify(mPolicyController).launchActivityInLockedMode();
     }

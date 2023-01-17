@@ -16,6 +16,7 @@
 
 package com.android.devicelockcontroller.policy;
 
+import static com.android.devicelockcontroller.policy.DevicePolicyControllerImpl.START_LOCK_TASK_MODE_WORK_NAME;
 import static com.android.devicelockcontroller.setup.SetupParameters.isNotificationsInLockTaskModeEnabled;
 
 import android.app.admin.DevicePolicyManager;
@@ -30,9 +31,9 @@ import android.provider.Settings.Secure;
 import android.telecom.TelecomManager;
 
 import androidx.annotation.VisibleForTesting;
+import androidx.work.WorkManager;
 
 import com.android.devicelockcontroller.R;
-import com.android.devicelockcontroller.common.DeviceLockConstants;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
 import com.android.devicelockcontroller.setup.SetupParameters;
 import com.android.devicelockcontroller.setup.UserPreferences;
@@ -45,15 +46,13 @@ import java.util.Locale;
 
 /** Handles lock task mode features. */
 final class LockTaskModePolicyHandler implements PolicyHandler {
-    private static final String TAG = "LockTaskModePolicyHandler";
-
     @VisibleForTesting
     static final int DEFAULT_LOCK_TASK_FEATURES =
             (DevicePolicyManager.LOCK_TASK_FEATURE_SYSTEM_INFO
                     | DevicePolicyManager.LOCK_TASK_FEATURE_KEYGUARD
                     | DevicePolicyManager.LOCK_TASK_FEATURE_HOME
                     | DevicePolicyManager.LOCK_TASK_FEATURE_GLOBAL_ACTIONS);
-
+    private static final String TAG = "LockTaskModePolicyHandler";
     private final Context mContext;
     private final ComponentName mComponentName;
     private final DevicePolicyManager mDpm;
@@ -64,6 +63,13 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
         mContext = context;
         mComponentName = adminComponentName;
         mDpm = dpm;
+    }
+
+    private static IntentFilter getHomeIntentFilter() {
+        final IntentFilter filter = new IntentFilter(Intent.ACTION_MAIN);
+        filter.addCategory(Intent.CATEGORY_HOME);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        return filter;
     }
 
     @Override
@@ -78,22 +84,6 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
         } else {
             enableLockTaskMode();
         }
-
-        if (state == DeviceState.SETUP_IN_PROGRESS) {
-            final ComponentName activity =
-                    ComponentName.unflattenFromString(DeviceLockConstants.SETUP_FAILED_ACTIVITY);
-            if (activity == null) {
-                LogUtil.e(TAG, "Activity to override home not found");
-                return FAILURE;
-            }
-
-            if (!setPreferredActivityForHome(activity)) {
-                return FAILURE;
-            }
-
-            LogUtil.i(TAG, String.format(Locale.US, "Set package override home = %s", activity));
-        }
-
         return SUCCESS;
     }
 
@@ -129,7 +119,8 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
         ArrayList<String> allowlist = UserPreferences.getLockTaskAllowlist(mContext);
         if (allowlist.isEmpty()) {
             allowlist = new ArrayList<>(
-                Arrays.asList(mContext.getResources().getStringArray(R.array.lock_task_allowlist)));
+                    Arrays.asList(
+                            mContext.getResources().getStringArray(R.array.lock_task_allowlist)));
         }
 
         final TelecomManager telecomManager = mContext.getSystemService(TelecomManager.class);
@@ -155,21 +146,16 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
     }
 
     private void disableLockTaskMode() {
+        WorkManager.getInstance(mContext).cancelUniqueWork(START_LOCK_TASK_MODE_WORK_NAME);
+
         final String currentPackage = UserPreferences.getPackageOverridingHome(mContext);
+        // This will stop the lock task mode
         mDpm.setLockTaskPackages(mComponentName, new String[0]);
         LogUtil.i(TAG, "Clear Lock task allowlist");
         if (currentPackage != null) {
             mDpm.clearPackagePersistentPreferredActivities(mComponentName, currentPackage);
             UserPreferences.setPackageOverridingHome(mContext, null /* packageName */);
         }
-    }
-
-    private static IntentFilter getHomeIntentFilter() {
-        final IntentFilter filter = new IntentFilter(Intent.ACTION_MAIN);
-        filter.addCategory(Intent.CATEGORY_HOME);
-        filter.addCategory(Intent.CATEGORY_DEFAULT);
-
-        return filter;
     }
 
     /*
@@ -206,7 +192,7 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
                 pm.queryIntentActivities(intent, PackageManager.MATCH_SYSTEM_ONLY);
         if (resolveInfoList.isEmpty()) {
             LogUtil.e(TAG,
-                        String.format(Locale.US, "Could not find the system app for %s", action));
+                    String.format(Locale.US, "Could not find the system app for %s", action));
 
             return;
         }
