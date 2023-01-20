@@ -31,20 +31,14 @@ import android.content.pm.PackageManager.ComponentEnabledSetting;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.PackageManager.PackageInfoFlags;
 import android.os.UserManager;
-import android.util.ArraySet;
 
 import androidx.annotation.VisibleForTesting;
 
-import com.android.devicelockcontroller.DeviceLockControllerService;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
-import com.android.devicelockcontroller.setup.SetupParametersService;
-import com.android.devicelockcontroller.setup.UserPreferencesService;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Handle {@link  Intent#ACTION_LOCKED_BOOT_COMPLETED}. This receiver runs for any user
@@ -57,14 +51,7 @@ import java.util.Set;
 public final class DlcLockedBootCompletedReceiver extends BroadcastReceiver {
     private static final String TAG = "BootCompletedBroadcastReceiver";
 
-    private static final Set<String> sComponentAllowlist = new ArraySet<>(Arrays.asList(
-            DlcLockedBootCompletedReceiver.class.getCanonicalName(),
-            DeviceLockControllerService.class.getCanonicalName(),
-            CheckInBootCompletedReceiver.class.getCanonicalName(),
-            LockTaskBootCompletedReceiver.class.getCanonicalName(),
-            DlcDeviceAdminReceiver.class.getCanonicalName(),
-            SetupParametersService.class.getCanonicalName(),
-            UserPreferencesService.class.getCanonicalName()));
+    private static final String DEVICE_LOCK_CONTROLLER_PREFIX = "com.android.devicelockcontroller.";
 
     private static void addComponentNamesToEnabledList(
             List<ComponentEnabledSetting> componentEnabledSettings,
@@ -74,7 +61,7 @@ public final class DlcLockedBootCompletedReceiver extends BroadcastReceiver {
         }
 
         for (ComponentInfo componentInfo : componentInfoList) {
-            if (!sComponentAllowlist.contains(componentInfo.name)) {
+            if (!componentInfo.name.startsWith(DEVICE_LOCK_CONTROLLER_PREFIX)) {
                 final ComponentName componentName =
                         new ComponentName(componentInfo.packageName, componentInfo.name);
                 final ComponentEnabledSetting componentEnabledSetting =
