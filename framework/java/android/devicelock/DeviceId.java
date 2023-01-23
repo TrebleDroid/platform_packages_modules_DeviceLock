@@ -22,7 +22,11 @@ import android.annotation.NonNull;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-/** The response returned from {@link DeviceLockManager#getDeviceId} on success. */
+/**
+ * The response returned from {@link DeviceLockManager#getDeviceId} on success.
+ * A DeviceId represents a stable identifier (i.e. an identifier that is preserved after a factory
+ * reset). At this moment, the only supported identifiers are IMEI and MEID.
+ */
 public final class DeviceId {
     /** @hide */
     @Retention(RetentionPolicy.SOURCE)
