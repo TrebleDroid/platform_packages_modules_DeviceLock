@@ -42,12 +42,11 @@ final class DeviceCheckInWorker extends Worker {
         final ArraySet<Pair<Integer, String>> deviceIds = new DeviceCheckInHelperImpl(
                 getApplicationContext()).getDeviceUniqueIds();
         if (deviceIds.isEmpty()) {
-            LogUtil.e("DeviceCheckInWorker", "CheckIn failed. Device Id is null or empty");
+            LogUtil.e("DeviceCheckInWorker#doWork", "CheckIn failed. Device Id not available");
             return Result.failure();
         }
+        LogUtil.i("DeviceCheckInWorker#doWork", "perform check-in request");
         //TODO(b/258711334): Implement device check-in gRPC request.
         return Result.success();
     }
-
-
 }
