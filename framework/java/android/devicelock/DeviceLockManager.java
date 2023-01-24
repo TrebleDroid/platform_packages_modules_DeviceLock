@@ -149,7 +149,7 @@ public final class DeviceLockManager {
                         }
                     });
         } catch (RemoteException e) {
-            executor.execute(() -> callback.onError(e));
+            executor.execute(() -> callback.onError(new RuntimeException(e)));
         }
     }
 
@@ -180,7 +180,7 @@ public final class DeviceLockManager {
                         }
                     });
         } catch (RemoteException e) {
-            executor.execute(() -> callback.onError(e));
+            executor.execute(() -> callback.onError(new RuntimeException(e)));
         }
     }
 
@@ -212,7 +212,7 @@ public final class DeviceLockManager {
                         }
                     });
         } catch (RemoteException e) {
-            executor.execute(() -> callback.onError(e));
+            executor.execute(() -> callback.onError(new RuntimeException(e)));
         }
     }
 
@@ -252,7 +252,7 @@ public final class DeviceLockManager {
                     }
             );
         } catch (RemoteException e) {
-            executor.execute(() -> callback.onError(e));
+            executor.execute(() -> callback.onError(new RuntimeException(e)));
         }
     }
 
@@ -288,7 +288,7 @@ public final class DeviceLockManager {
                     }
             );
         } catch (RemoteException e) {
-            executor.execute(() -> callback.onError(e));
+            executor.execute(() -> callback.onError(new RuntimeException(e)));
         }
     }
 }
