@@ -18,6 +18,7 @@ package com.android.devicelockcontroller.policy;
 
 import static com.android.devicelockcontroller.policy.PolicyHandler.SUCCESS;
 
+import android.app.ActivityManager;
 import android.app.ActivityOptions;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
@@ -28,14 +29,23 @@ import android.content.pm.ResolveInfo;
 import android.os.SystemProperties;
 import android.os.UserManager;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+import androidx.work.BackoffPolicy;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.OutOfQuotaPolicy;
+import androidx.work.WorkManager;
+import androidx.work.Worker;
+import androidx.work.WorkerParameters;
 
 import com.android.devicelockcontroller.common.DeviceLockConstants;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
 import com.android.devicelockcontroller.setup.SetupParameters;
 import com.android.devicelockcontroller.util.LogUtil;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -45,8 +55,9 @@ import java.util.Locale;
  */
 public final class DevicePolicyControllerImpl
         implements DevicePolicyController, DeviceStateController.StateListener {
+    static final String START_LOCK_TASK_MODE_WORK_NAME = StartLockTaskModeWorker.TAG;
     private static final String TAG = "DevicePolicyControllerImpl";
-
+    private static final int START_LOCK_TASK_MODE_WORKER_INTERVAL = 35;
     private final List<PolicyHandler> mPolicyList = new ArrayList<>();
     private final Context mContext;
     private final DevicePolicyManager mDpm;
@@ -83,25 +94,18 @@ public final class DevicePolicyControllerImpl
     }
 
     @Override
-    public boolean launchActivityInLockedMode() {
-        final Intent launchIntent = getLockedActivity();
-
-        if (launchIntent == null) {
-            return false;
-        }
-
-        final ComponentName activity = launchIntent.getComponent();
-        if (activity == null || !mLockTaskHandler.setPreferredActivityForHome(activity)) {
-            LogUtil.w(TAG, "Failed to set preferred activity");
-            return false;
-        }
-
-        launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        LogUtil.i(TAG, String.format(Locale.US, "Launching activity: %s", activity));
-        mContext.startActivity(
-                launchIntent, ActivityOptions.makeBasic().setLockTaskEnabled(true).toBundle());
-
-        return true;
+    public void launchActivityInLockedMode() {
+        final OneTimeWorkRequest startLockTaskModeRequest =
+                new OneTimeWorkRequest.Builder(
+                        StartLockTaskModeWorker.class)
+                        .setBackoffCriteria(BackoffPolicy.LINEAR, Duration.ofSeconds(
+                                START_LOCK_TASK_MODE_WORKER_INTERVAL))
+                        .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+                        .build();
+        WorkManager.getInstance(mContext)
+                .enqueueUniqueWork(START_LOCK_TASK_MODE_WORK_NAME,
+                        ExistingWorkPolicy.KEEP,
+                        startLockTaskModeRequest);
     }
 
     @Override
@@ -216,5 +220,51 @@ public final class DevicePolicyControllerImpl
         }
 
         return new Intent().setComponent(ComponentName.unflattenFromString(setupActivity));
+    }
+
+
+    /**
+     * A worker class dedicated to start lock task mode when device is locked.
+     */
+    //TODO: Make this class as a static class.
+    public final class StartLockTaskModeWorker extends Worker {
+
+        private static final String TAG = "StartLockTaskModeWorker";
+
+        public StartLockTaskModeWorker(
+                @NonNull Context context,
+                @NonNull WorkerParameters workerParams) {
+            super(context, workerParams);
+        }
+
+        @NonNull
+        @Override
+        public Result doWork() {
+            final Context context = getApplicationContext();
+            final ActivityManager am = context.getSystemService(ActivityManager.class);
+            if (am != null && am.getLockTaskModeState() == ActivityManager.LOCK_TASK_MODE_LOCKED) {
+                return Result.success();
+            }
+
+
+            final Intent launchIntent = getLockedActivity();
+
+            if (launchIntent == null) {
+                return Result.failure();
+            }
+
+            final ComponentName activity = launchIntent.getComponent();
+            if (activity == null || !mLockTaskHandler.setPreferredActivityForHome(activity)) {
+                LogUtil.w(TAG, "Failed to set preferred activity");
+                return Result.failure();
+            }
+
+            launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            LogUtil.i(TAG, String.format(Locale.US, "Launching activity: %s", activity));
+            mContext.startActivity(
+                    launchIntent, ActivityOptions.makeBasic().setLockTaskEnabled(true).toBundle());
+
+            return Result.retry();
+        }
     }
 }

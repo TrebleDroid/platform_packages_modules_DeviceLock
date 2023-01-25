@@ -19,31 +19,19 @@ package com.android.devicelockcontroller.receivers;
 import android.content.Context;
 
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
-import com.android.devicelockcontroller.util.LogUtil;
 
 /** A utility class used when device is booting. */
 final class BootUtils {
 
-    static final String TAG = "BootUtils";
-
-    private BootUtils() {
-    }
-
     /**
-     * Checks if device is in a "locked" state. If yes, enable the lock task mode and launches
+     * Checks if the device is in a "locked" state. If yes, enable the lock task mode and launches
      * applicable activity.
      */
     static void startLockTaskModeAtBoot(Context context) {
-        PolicyObjectsInterface policies =
-                ((PolicyObjectsInterface) context.getApplicationContext());
-        if (!policies.getStateController().isLocked()) {
-            return;
+        PolicyObjectsInterface policyObjects =
+                (PolicyObjectsInterface) context.getApplicationContext();
+        if (policyObjects.getStateController().isLocked()) {
+            policyObjects.getPolicyController().launchActivityInLockedMode();
         }
-
-        boolean result = policies.getPolicyController().launchActivityInLockedMode();
-        if (!result) {
-            LogUtil.e(TAG, "Failed to launch activity in lock task mode");
-        }
-        // TODO: Create a periodic worker to launch lock task mode.
     }
 }

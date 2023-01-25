@@ -28,6 +28,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.core.util.Pair;
 import androidx.work.Constraints;
+import androidx.work.ExistingWorkPolicy;
 import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.OutOfQuotaPolicy;
@@ -40,6 +41,7 @@ import com.android.devicelockcontroller.util.LogUtil;
  * Helper class to perform the device check in process with device lock backend server
  */
 public final class DeviceCheckInHelperImpl implements DeviceCheckInHelper {
+    static final String CHECK_IN_WORK_NAME = "checkIn";
     private static final String TAG = "DeviceCheckInHelper";
     private final Context mContext;
 
@@ -59,8 +61,9 @@ public final class DeviceCheckInHelperImpl implements DeviceCheckInHelper {
                         .setConstraints(
                                 new Constraints.Builder().setRequiredNetworkType(
                                         NetworkType.CONNECTED).build());
-        if (!isExpedited) builder.setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST);
-        WorkManager.getInstance(mContext).enqueue(builder.build());
+        if (isExpedited) builder.setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST);
+        WorkManager.getInstance(mContext)
+                .enqueueUniqueWork(CHECK_IN_WORK_NAME, ExistingWorkPolicy.KEEP, builder.build());
     }
 
 
