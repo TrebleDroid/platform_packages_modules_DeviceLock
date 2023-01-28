@@ -44,19 +44,25 @@ service DeviceLockCheckinService {
 
 // Request to retrieve the check-in status of the device.
 message GetDeviceCheckinStatusRequest {
-  // The device identifiers associated with the device provided by Device Lock
-  // Android client. The Device Lock Android client would provide only one
+  // The device identifiers associated with the device provided by the Device
+  // Lock Android client. The Device Lock Android client would provide only one
   // device identifier once the Device Lock Check-in service determines which
   // of the device identifiers is registered with a locking program.
-  repeated string device_identifiers = 1;
-  optional DeviceIdentifierType device_identifier_type = 2;
+  repeated ClientDeviceIdentifier client_device_identifiers = 1;
   // The Mobile Network Code for the carrier, the Device Lock Android client
   // would fetch it from TelephonyManager#getSimOperator().
-  optional string carrier_mccmnc = 3;
+  optional string carrier_mccmnc = 2;
   // The Firebase Cloud Messaging (FCM) registration token associated with the
   // device provided by the Device Lock Android client. The token is only used
   // for GMS devices.
-  optional string fcm_registration_token = 4;
+  optional string fcm_registration_token = 3;
+}
+
+message ClientDeviceIdentifier {
+  // The device identifier associated with the device.
+  optional string device_identifier = 1;
+  // The type of the device identifier.
+  optional DeviceIdentifierType device_identifier_type = 2;
 }
 
 // The different check-in status the Device Lock Android client can be in.
