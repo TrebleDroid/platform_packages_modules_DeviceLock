@@ -20,8 +20,15 @@
     package="com.android.devicelockcontroller">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-    <!-- TODO: Remove once this permission is part of the role -->
+    <uses-permission android:name="android.permission.READ_PRIVILEGED_PHONE_STATE"/>
     <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS"/>
+    <uses-permission android:name="android.permission.MASTER_CLEAR"/>
+    <uses-permission android:name="android.permission.MANAGE_DEVICE_POLICY_APPS_CONTROL"/>
+    <uses-permission android:name="android.permission.MANAGE_DEVICE_POLICY_CALLS"/>
+    <uses-permission android:name="android.permission.MANAGE_DEVICE_POLICY_DEBUGGING_FEATURES"/>
+    <uses-permission android:name="android.permission.MANAGE_DEVICE_POLICY_LOCK_TASK"/>
+    <uses-permission android:name="android.permission.MANAGE_DEVICE_POLICY_SAFE_BOOT"/>
+    <uses-permission android:name="android.permission.MANAGE_DEVICE_POLICY_TIME"/>
 
     <application
         android:name=".DeviceLockControllerApplication"
