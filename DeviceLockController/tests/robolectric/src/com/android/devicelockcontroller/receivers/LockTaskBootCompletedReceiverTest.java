@@ -59,6 +59,6 @@ public class LockTaskBootCompletedReceiverTest {
     public void onReceive_startLockTaskMode() {
         mLockTaskBootCompletedReceiver.onReceive(mTestApplication, BOOT_COMPLETED_INTENT);
 
-        verify(mPolicyController).launchActivityInLockedMode();
+        verify(mPolicyController).enqueueStartLockTaskModeWorker();
     }
 }
