@@ -96,15 +96,14 @@ public final class DevicePolicyControllerImpl
     @Override
     public void launchActivityInLockedMode() {
         final OneTimeWorkRequest startLockTaskModeRequest =
-                new OneTimeWorkRequest.Builder(
-                        StartLockTaskModeWorker.class)
-                        .setBackoffCriteria(BackoffPolicy.LINEAR, Duration.ofSeconds(
-                                START_LOCK_TASK_MODE_WORKER_INTERVAL))
+                new OneTimeWorkRequest.Builder(StartLockTaskModeWorker.class)
+                        .setBackoffCriteria(BackoffPolicy.LINEAR,
+                                Duration.ofSeconds(START_LOCK_TASK_MODE_WORKER_INTERVAL))
                         .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                         .build();
         WorkManager.getInstance(mContext)
                 .enqueueUniqueWork(START_LOCK_TASK_MODE_WORK_NAME,
-                        ExistingWorkPolicy.KEEP,
+                        ExistingWorkPolicy.APPEND_OR_REPLACE,
                         startLockTaskModeRequest);
     }
 
@@ -133,8 +132,8 @@ public final class DevicePolicyControllerImpl
             if (newState == DeviceState.SETUP_IN_PROGRESS) {
                 final String kioskPackage = SetupParameters.getKioskPackage(mContext);
                 if (kioskPackage == null) {
-                    throw new NullPointerException("SetupParameters must be present before"
-                            + " finalization.");
+                    throw new NullPointerException(
+                            "SetupParameters must be present before finalization.");
                 }
                 policy.setSetupParametersValid();
             }
@@ -158,9 +157,8 @@ public final class DevicePolicyControllerImpl
             case DeviceState.SETUP_IN_PROGRESS:
             case DeviceState.SETUP_SUCCEEDED:
             case DeviceState.SETUP_FAILED:
-                return new Intent()
-                        .setComponent(ComponentName
-                                .unflattenFromString(DeviceLockConstants.SETUP_FAILED_ACTIVITY));
+                return new Intent().setComponent(ComponentName.unflattenFromString(
+                        DeviceLockConstants.SETUP_FAILED_ACTIVITY));
             case DeviceState.KIOSK_SETUP:
                 return getKioskSetupActivityIntent();
             case DeviceState.LOCKED:
@@ -190,9 +188,10 @@ public final class DevicePolicyControllerImpl
                         .addCategory(Intent.CATEGORY_HOME)
                         .setPackage(kioskPackage);
         final ResolveInfo resolvedInfo =
-                packageManager.resolveActivity(
-                        homeIntent,
-                        PackageManager.MATCH_DEFAULT_ONLY);
+                packageManager
+                        .resolveActivity(
+                                homeIntent,
+                                PackageManager.MATCH_DEFAULT_ONLY);
         if (resolvedInfo != null && resolvedInfo.activityInfo != null) {
             return homeIntent.setComponent(
                     new ComponentName(kioskPackage, resolvedInfo.activityInfo.name));
@@ -202,8 +201,8 @@ public final class DevicePolicyControllerImpl
         // Note that in this case, Kiosk App can't be effectively set as the default home activity.
         final Intent launchIntent = packageManager.getLaunchIntentForPackage(kioskPackage);
         if (launchIntent == null) {
-            LogUtil.e(TAG, String.format(Locale.US, "Failed to get launch intent for %s",
-                    kioskPackage));
+            LogUtil.e(TAG,
+                    String.format(Locale.US, "Failed to get launch intent for %s", kioskPackage));
             return null;
         }
 

@@ -34,6 +34,7 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.OutOfQuotaPolicy;
 import androidx.work.WorkManager;
 
+import com.android.devicelockcontroller.DeviceLockControllerApplication;
 import com.android.devicelockcontroller.R;
 import com.android.devicelockcontroller.util.LogUtil;
 
@@ -41,13 +42,10 @@ import com.android.devicelockcontroller.util.LogUtil;
  * Helper class to perform the device check in process with device lock backend server
  */
 public final class DeviceCheckInHelperImpl implements DeviceCheckInHelper {
-    static final String CHECK_IN_WORK_NAME = "checkIn";
-    private static final String TAG = "DeviceCheckInHelper";
-    private final Context mContext;
-
-    public DeviceCheckInHelperImpl(Context context) {
-        mContext = context;
-    }
+    private static final String CHECK_IN_WORK_NAME = "checkIn";
+    private static final String TAG = "DeviceCheckInHelperImpl";
+    @VisibleForTesting
+    Context mAppContext = DeviceLockControllerApplication.getAppContext();
 
     /**
      * Get the check-in status of this device for device lock program.
@@ -56,20 +54,19 @@ public final class DeviceCheckInHelperImpl implements DeviceCheckInHelper {
      */
     @Override
     public void enqueueDeviceCheckInWork(boolean isExpedited) {
-        final OneTimeWorkRequest.Builder builder =
-                new OneTimeWorkRequest.Builder(DeviceCheckInWorker.class)
-                        .setConstraints(
-                                new Constraints.Builder().setRequiredNetworkType(
-                                        NetworkType.CONNECTED).build());
+        LogUtil.i(TAG, "enqueueDeviceCheckInWork");
+        final OneTimeWorkRequest.Builder builder = new OneTimeWorkRequest.Builder(
+                DeviceCheckInWorker.class).setConstraints(
+                new Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build());
         if (isExpedited) builder.setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST);
-        WorkManager.getInstance(mContext)
-                .enqueueUniqueWork(CHECK_IN_WORK_NAME, ExistingWorkPolicy.KEEP, builder.build());
+        WorkManager.getInstance(mAppContext).enqueueUniqueWork(CHECK_IN_WORK_NAME,
+                ExistingWorkPolicy.APPEND_OR_REPLACE, builder.build());
     }
 
 
     @NonNull
     ArraySet<Pair<Integer, String>> getDeviceUniqueIds() {
-        final int deviceIdTypeBitmap = mContext.getResources().getInteger(
+        final int deviceIdTypeBitmap = mAppContext.getResources().getInteger(
                 R.integer.device_id_type_bitmap);
         if (deviceIdTypeBitmap < 0) {
             LogUtil.e(TAG, "getDeviceId: Cannot get device_id_type_bitmap");
@@ -79,10 +76,10 @@ public final class DeviceCheckInHelperImpl implements DeviceCheckInHelper {
     }
 
     @VisibleForTesting
-    ArraySet<Pair<Integer, String>> getDeviceAvailableUniqueIds(
-            int deviceIdTypeBitmap) {
+    ArraySet<Pair<Integer, String>> getDeviceAvailableUniqueIds(int deviceIdTypeBitmap) {
 
-        final TelephonyManager telephonyManager = mContext.getSystemService(TelephonyManager.class);
+        final TelephonyManager telephonyManager = mAppContext.getSystemService(
+                TelephonyManager.class);
         final int totalSlotCount =
                 telephonyManager != null ? telephonyManager.getActiveModemCount() : 0;
         final int maximumIdCount = TOTAL_DEVICE_ID_TYPES * totalSlotCount;

@@ -29,9 +29,11 @@ import com.android.devicelockcontroller.util.LogUtil;
 /**
  * A worker class dedicated to execute the check-in operation for device lock program.
  */
-final class DeviceCheckInWorker extends Worker {
+public final class DeviceCheckInWorker extends Worker {
 
-    DeviceCheckInWorker(@NonNull Context context,
+    private static final String TAG = "DeviceCheckInWorker";
+
+    public DeviceCheckInWorker(@NonNull Context context,
             @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
     }
@@ -39,14 +41,15 @@ final class DeviceCheckInWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        final ArraySet<Pair<Integer, String>> deviceIds = new DeviceCheckInHelperImpl(
-                getApplicationContext()).getDeviceUniqueIds();
+        LogUtil.i(TAG, "perform check-in request");
+        final ArraySet<Pair<Integer, String>> deviceIds =
+                new DeviceCheckInHelperImpl().getDeviceUniqueIds();
         if (deviceIds.isEmpty()) {
             LogUtil.e("DeviceCheckInWorker#doWork", "CheckIn failed. Device Id not available");
             return Result.failure();
         }
-        LogUtil.i("DeviceCheckInWorker#doWork", "perform check-in request");
         //TODO(b/258711334): Implement device check-in gRPC request.
+        LogUtil.d(TAG, "checkin succeed");
         return Result.success();
     }
 }

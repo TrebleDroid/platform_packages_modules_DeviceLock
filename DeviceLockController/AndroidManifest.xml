@@ -16,8 +16,9 @@
   -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:androidprv="http://schemas.android.com/apk/prv/res/android"
-    package="com.android.devicelockcontroller">
+          xmlns:androidprv="http://schemas.android.com/apk/prv/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
+          package="com.android.devicelockcontroller">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.READ_PRIVILEGED_PHONE_STATE"/>
@@ -48,14 +49,14 @@
             </intent-filter>
         </service>
         <service android:name="com.android.devicelockcontroller.setup.SetupParametersService"
-            android:directBootAware="true"
-            android:exported="false"
-            android:singleUser="true">
+                 android:directBootAware="true"
+                 android:exported="false"
+                 android:singleUser="true">
         </service>
         <service android:name="com.android.devicelockcontroller.setup.UserPreferencesService"
-            android:directBootAware="true"
-            android:exported="false"
-            android:singleUser="true">
+                 android:directBootAware="true"
+                 android:exported="false"
+                 android:singleUser="true">
         </service>
         <!-- The following component is needed because many Device Policy Manager APIs require
              this receiver component name as first argument. -->
@@ -71,18 +72,19 @@
             </intent-filter>
         </receiver>
         <!-- Single user boot completed broadcast receiver -->
-        <receiver android:name="com.android.devicelockcontroller.receivers.CheckInBootCompletedReceiver"
-                  android:exported="false"
-                  android:enabled="false"
-                  androidprv:systemUserOnly="true">
+        <receiver
+            android:name="com.android.devicelockcontroller.receivers.CheckInBootCompletedReceiver"
+            android:exported="false"
+            androidprv:systemUserOnly="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
         <!-- Multi users boot completed broadcast receiver -->
-        <receiver android:name="com.android.devicelockcontroller.receivers.LockTaskBootCompletedReceiver"
-                  android:exported="false"
-                  android:singleUser="false">
+        <receiver
+            android:name="com.android.devicelockcontroller.receivers.LockTaskBootCompletedReceiver"
+            android:exported="false"
+            android:singleUser="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
@@ -94,9 +96,16 @@
             android:exported="false"
             android:singleUser="false">
             <intent-filter>
-                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
+        <!-- b/267355744: Disable the default initializer used by WorkManager, so that we can ensure
+         WorkManager is initialized when needed. -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            tools:node="remove">
+        </provider>
     </application>
 
 </manifest>
