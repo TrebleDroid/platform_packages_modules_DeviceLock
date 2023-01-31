@@ -38,6 +38,8 @@ import com.android.devicelockcontroller.DeviceLockControllerApplication;
 import com.android.devicelockcontroller.R;
 import com.android.devicelockcontroller.util.LogUtil;
 
+import java.util.Objects;
+
 /**
  * Helper class to perform the device check in process with device lock backend server
  */
@@ -46,6 +48,7 @@ public final class DeviceCheckInHelperImpl implements DeviceCheckInHelper {
     private static final String TAG = "DeviceCheckInHelperImpl";
     @VisibleForTesting
     Context mAppContext = DeviceLockControllerApplication.getAppContext();
+    private TelephonyManager mTelephonyManager;
 
     /**
      * Get the check-in status of this device for device lock program.
@@ -78,17 +81,14 @@ public final class DeviceCheckInHelperImpl implements DeviceCheckInHelper {
     @VisibleForTesting
     ArraySet<Pair<Integer, String>> getDeviceAvailableUniqueIds(int deviceIdTypeBitmap) {
 
-        final TelephonyManager telephonyManager = mAppContext.getSystemService(
-                TelephonyManager.class);
-        final int totalSlotCount =
-                telephonyManager != null ? telephonyManager.getActiveModemCount() : 0;
+        final int totalSlotCount = getTelephonyManager().getActiveModemCount();
         final int maximumIdCount = TOTAL_DEVICE_ID_TYPES * totalSlotCount;
         final ArraySet<Pair<Integer, String>> deviceIds = new ArraySet<>(maximumIdCount);
         if (maximumIdCount == 0) return deviceIds;
 
         for (int i = 0; i < totalSlotCount; i++) {
             if ((deviceIdTypeBitmap & (1 << DEVICE_ID_TYPE_IMEI)) != 0) {
-                final String imei = telephonyManager.getImei(i);
+                final String imei = mTelephonyManager.getImei(i);
 
                 if (imei != null) {
                     deviceIds.add(new Pair<>(DEVICE_ID_TYPE_IMEI, imei));
@@ -96,7 +96,7 @@ public final class DeviceCheckInHelperImpl implements DeviceCheckInHelper {
             }
 
             if ((deviceIdTypeBitmap & (1 << DEVICE_ID_TYPE_MEID)) != 0) {
-                final String meid = telephonyManager.getMeid(i);
+                final String meid = mTelephonyManager.getMeid(i);
 
                 if (meid != null) {
                     deviceIds.add(new Pair<>(DEVICE_ID_TYPE_MEID, meid));
@@ -105,5 +105,19 @@ public final class DeviceCheckInHelperImpl implements DeviceCheckInHelper {
         }
 
         return deviceIds;
+    }
+
+    @NonNull
+    String getCarrierInfo() {
+        // TODO: Figure out if we need carrier info of all sims.
+        return getTelephonyManager().getSimOperator();
+    }
+
+    private TelephonyManager getTelephonyManager() {
+        if (mTelephonyManager == null) {
+            mTelephonyManager = mAppContext.getSystemService(TelephonyManager.class);
+        }
+        return Objects.requireNonNull(mTelephonyManager,
+                "Check in operation can not be performed when TelephonyManager is not available");
     }
 }
