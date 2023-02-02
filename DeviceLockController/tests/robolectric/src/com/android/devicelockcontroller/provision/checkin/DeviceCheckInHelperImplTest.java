@@ -62,7 +62,8 @@ public final class DeviceCheckInHelperImplTest {
     public void setUp() {
         final Context context = ApplicationProvider.getApplicationContext();
         mTelephonyManager = Shadows.shadowOf(context.getSystemService(TelephonyManager.class));
-        mHelper = new DeviceCheckInHelperImpl(context);
+        mHelper = new DeviceCheckInHelperImpl();
+        mHelper.mAppContext = context;
     }
 
     @Test

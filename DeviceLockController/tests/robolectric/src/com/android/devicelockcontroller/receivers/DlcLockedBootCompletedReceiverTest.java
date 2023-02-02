@@ -172,7 +172,7 @@ public class DlcLockedBootCompletedReceiverTest {
 
         DlcLockedBootCompletedReceiver.startLockTaskModeIfApplicable(mTestApplication);
 
-        verify(mPolicyController, never()).launchActivityInLockedMode();
+        verify(mPolicyController, never()).enqueueStartLockTaskModeWorker();
 
         final ComponentName componentName =
                 new ComponentName(mTestApplication, LockTaskBootCompletedReceiver.class);
@@ -190,7 +190,7 @@ public class DlcLockedBootCompletedReceiverTest {
 
         DlcLockedBootCompletedReceiver.startLockTaskModeIfApplicable(mTestApplication);
 
-        verify(mPolicyController).launchActivityInLockedMode();
+        verify(mPolicyController).enqueueStartLockTaskModeWorker();
 
         final ComponentName componentName =
                 new ComponentName(mTestApplication, LockTaskBootCompletedReceiver.class);

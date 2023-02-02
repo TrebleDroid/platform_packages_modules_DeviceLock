@@ -31,7 +31,7 @@ final class BootUtils {
         PolicyObjectsInterface policyObjects =
                 (PolicyObjectsInterface) context.getApplicationContext();
         if (policyObjects.getStateController().isLocked()) {
-            policyObjects.getPolicyController().launchActivityInLockedMode();
+            policyObjects.getPolicyController().enqueueStartLockTaskModeWorker();
         }
     }
 }

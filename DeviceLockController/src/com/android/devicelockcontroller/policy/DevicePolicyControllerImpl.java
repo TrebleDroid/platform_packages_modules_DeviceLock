@@ -40,6 +40,7 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.android.devicelockcontroller.DeviceLockControllerApplication;
 import com.android.devicelockcontroller.common.DeviceLockConstants;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
 import com.android.devicelockcontroller.setup.SetupParameters;
@@ -94,17 +95,38 @@ public final class DevicePolicyControllerImpl
     }
 
     @Override
-    public void launchActivityInLockedMode() {
+    public boolean launchActivityInLockedMode() {
+        final Intent launchIntent = getLockedActivity();
+
+        if (launchIntent == null) {
+            LogUtil.w(TAG, "Failed to get the locked activity");
+            return false;
+        }
+
+        final ComponentName activity = launchIntent.getComponent();
+        if (activity == null || !mLockTaskHandler.setPreferredActivityForHome(activity)) {
+            LogUtil.w(TAG, "Failed to set preferred activity");
+            return false;
+        }
+
+        launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        LogUtil.i(TAG, String.format(Locale.US, "Launching activity: %s", activity));
+        mContext.startActivity(launchIntent,
+                ActivityOptions.makeBasic().setLockTaskEnabled(true).toBundle());
+        return true;
+    }
+
+    @Override
+    public void enqueueStartLockTaskModeWorker() {
         final OneTimeWorkRequest startLockTaskModeRequest =
-                new OneTimeWorkRequest.Builder(
-                        StartLockTaskModeWorker.class)
-                        .setBackoffCriteria(BackoffPolicy.LINEAR, Duration.ofSeconds(
-                                START_LOCK_TASK_MODE_WORKER_INTERVAL))
+                new OneTimeWorkRequest.Builder(StartLockTaskModeWorker.class)
+                        .setBackoffCriteria(BackoffPolicy.LINEAR,
+                                Duration.ofSeconds(START_LOCK_TASK_MODE_WORKER_INTERVAL))
                         .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                         .build();
         WorkManager.getInstance(mContext)
                 .enqueueUniqueWork(START_LOCK_TASK_MODE_WORK_NAME,
-                        ExistingWorkPolicy.KEEP,
+                        ExistingWorkPolicy.APPEND_OR_REPLACE,
                         startLockTaskModeRequest);
     }
 
@@ -133,8 +155,8 @@ public final class DevicePolicyControllerImpl
             if (newState == DeviceState.SETUP_IN_PROGRESS) {
                 final String kioskPackage = SetupParameters.getKioskPackage(mContext);
                 if (kioskPackage == null) {
-                    throw new NullPointerException("SetupParameters must be present before"
-                            + " finalization.");
+                    throw new NullPointerException(
+                            "SetupParameters must be present before finalization.");
                 }
                 policy.setSetupParametersValid();
             }
@@ -158,9 +180,8 @@ public final class DevicePolicyControllerImpl
             case DeviceState.SETUP_IN_PROGRESS:
             case DeviceState.SETUP_SUCCEEDED:
             case DeviceState.SETUP_FAILED:
-                return new Intent()
-                        .setComponent(ComponentName
-                                .unflattenFromString(DeviceLockConstants.SETUP_FAILED_ACTIVITY));
+                return new Intent().setComponent(ComponentName.unflattenFromString(
+                        DeviceLockConstants.SETUP_FAILED_ACTIVITY));
             case DeviceState.KIOSK_SETUP:
                 return getKioskSetupActivityIntent();
             case DeviceState.LOCKED:
@@ -190,9 +211,10 @@ public final class DevicePolicyControllerImpl
                         .addCategory(Intent.CATEGORY_HOME)
                         .setPackage(kioskPackage);
         final ResolveInfo resolvedInfo =
-                packageManager.resolveActivity(
-                        homeIntent,
-                        PackageManager.MATCH_DEFAULT_ONLY);
+                packageManager
+                        .resolveActivity(
+                                homeIntent,
+                                PackageManager.MATCH_DEFAULT_ONLY);
         if (resolvedInfo != null && resolvedInfo.activityInfo != null) {
             return homeIntent.setComponent(
                     new ComponentName(kioskPackage, resolvedInfo.activityInfo.name));
@@ -202,8 +224,8 @@ public final class DevicePolicyControllerImpl
         // Note that in this case, Kiosk App can't be effectively set as the default home activity.
         final Intent launchIntent = packageManager.getLaunchIntentForPackage(kioskPackage);
         if (launchIntent == null) {
-            LogUtil.e(TAG, String.format(Locale.US, "Failed to get launch intent for %s",
-                    kioskPackage));
+            LogUtil.e(TAG,
+                    String.format(Locale.US, "Failed to get launch intent for %s", kioskPackage));
             return null;
         }
 
@@ -222,12 +244,10 @@ public final class DevicePolicyControllerImpl
         return new Intent().setComponent(ComponentName.unflattenFromString(setupActivity));
     }
 
-
     /**
      * A worker class dedicated to start lock task mode when device is locked.
      */
-    //TODO: Make this class as a static class.
-    public final class StartLockTaskModeWorker extends Worker {
+    public static final class StartLockTaskModeWorker extends Worker {
 
         private static final String TAG = "StartLockTaskModeWorker";
 
@@ -240,30 +260,20 @@ public final class DevicePolicyControllerImpl
         @NonNull
         @Override
         public Result doWork() {
-            final Context context = getApplicationContext();
+            final Context context = DeviceLockControllerApplication.getAppContext();
             final ActivityManager am = context.getSystemService(ActivityManager.class);
             if (am != null && am.getLockTaskModeState() == ActivityManager.LOCK_TASK_MODE_LOCKED) {
+                LogUtil.i(TAG, "successfully entered lock task mode");
                 return Result.success();
             }
 
-
-            final Intent launchIntent = getLockedActivity();
-
-            if (launchIntent == null) {
+            if (!((PolicyObjectsInterface) context).getPolicyController()
+                    .launchActivityInLockedMode()) {
+                LogUtil.i(TAG, "failed entering lock task mode");
                 return Result.failure();
             }
 
-            final ComponentName activity = launchIntent.getComponent();
-            if (activity == null || !mLockTaskHandler.setPreferredActivityForHome(activity)) {
-                LogUtil.w(TAG, "Failed to set preferred activity");
-                return Result.failure();
-            }
-
-            launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            LogUtil.i(TAG, String.format(Locale.US, "Launching activity: %s", activity));
-            mContext.startActivity(
-                    launchIntent, ActivityOptions.makeBasic().setLockTaskEnabled(true).toBundle());
-
+            LogUtil.i(TAG, "Retry entering lock task mode");
             return Result.retry();
         }
     }
