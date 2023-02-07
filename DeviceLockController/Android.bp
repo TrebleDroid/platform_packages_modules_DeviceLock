@@ -187,6 +187,10 @@ android_app {
         "dagger2",
     ],
 
+    libs: [
+        "framework-tethering",
+    ],
+
     lint: {
         strict_updatability_linting: true,
     },
