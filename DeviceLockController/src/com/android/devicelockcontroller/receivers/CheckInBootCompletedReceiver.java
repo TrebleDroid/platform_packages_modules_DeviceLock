@@ -25,7 +25,6 @@ import androidx.annotation.VisibleForTesting;
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
 import com.android.devicelockcontroller.provision.checkin.DeviceCheckInHelper;
-import com.android.devicelockcontroller.provision.checkin.DeviceCheckInHelperImpl;
 import com.android.devicelockcontroller.util.LogUtil;
 
 /**
@@ -55,6 +54,6 @@ public final class CheckInBootCompletedReceiver extends BroadcastReceiver {
 
         checkInIfNeeded(
                 ((PolicyObjectsInterface) context.getApplicationContext()).getStateController(),
-                new DeviceCheckInHelperImpl());
+                new DeviceCheckInHelper(context));
     }
 }

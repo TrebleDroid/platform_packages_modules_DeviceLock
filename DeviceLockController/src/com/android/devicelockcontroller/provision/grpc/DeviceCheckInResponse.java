@@ -39,24 +39,19 @@ abstract class DeviceCheckInResponse {
     }
 
     public boolean hasRecoverableError() {
-        if (mStatus != null) {
-            return mStatus.getCode() == Code.UNAVAILABLE;
-        }
-        return false;
+        return mStatus != null && mStatus.getCode() == Code.UNAVAILABLE;
+    }
+
+    public boolean isSuccessful() {
+        return mStatus == null;
     }
 
     public boolean isStatusAlreadyExists() {
-        if (mStatus != null) {
-            return mStatus.getCode() == Code.ALREADY_EXISTS;
-        }
-        return false;
+        return mStatus != null && mStatus.getCode() == Code.ALREADY_EXISTS;
     }
 
     public boolean hasFatalError() {
-        if (mStatus != null) {
-            return mStatus.getCode() != Code.OK && mStatus.getCode() != Code.UNAVAILABLE;
-        }
-        return false;
+        return mStatus.getCode() != Code.OK && mStatus.getCode() != Code.UNAVAILABLE;
     }
 
     @Override
