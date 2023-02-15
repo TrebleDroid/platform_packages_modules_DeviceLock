@@ -20,6 +20,8 @@
 
     <!-- Needed for getResourcesForApplication -->
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
+    <!-- Permission acquired through the ROLE_FINANCED_DEVICE_KIOSK role -->
+    <uses-permission android:name="android.permission.MANAGE_DEVICE_LOCK_STATE" />
 
     <application>
         <uses-library android:name="android.test.runner" />
