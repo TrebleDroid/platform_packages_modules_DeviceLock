@@ -25,7 +25,15 @@ android_test {
         ":service-devicelock-sources-shared-with-tests",
         ":framework-devicelock-sources-shared-with-tests",
     ],
-    static_libs: ["androidx.test.rules", "truth-prebuilt", "androidx.test.core"],
-    test_suites: ["general-tests", "cts"],
+    static_libs: [
+        "androidx.test.rules",
+        "truth-prebuilt",
+        "androidx.test.core",
+        "compatibility-device-util-axt",
+    ],
+    test_suites: [
+        "general-tests",
+        "cts",
+    ],
     platform_apis: true,
 }
