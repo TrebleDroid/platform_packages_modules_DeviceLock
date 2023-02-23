@@ -16,14 +16,17 @@
 
 package com.android.devicelockcontroller.provision.grpc;
 
+import androidx.annotation.VisibleForTesting;
 import androidx.annotation.WorkerThread;
 
+import com.android.devicelockcontroller.proto.DeviceLockCheckinServiceGrpc;
 import com.android.devicelockcontroller.proto.DeviceLockCheckinServiceGrpc.DeviceLockCheckinServiceBlockingStub;
 import com.android.devicelockcontroller.proto.GetDeviceCheckinStatusRequest;
 import com.android.devicelockcontroller.proto.PauseDeviceProvisioningRequest;
 import com.android.devicelockcontroller.proto.ReportDeviceProvisionCompleteRequest;
 
 import io.grpc.StatusRuntimeException;
+import io.grpc.okhttp.OkHttpChannelBuilder;
 
 /**
  * A client for the DeviceLockCheckinServiceGrpc service.
@@ -31,6 +34,14 @@ import io.grpc.StatusRuntimeException;
 public final class DeviceCheckInClient {
     private final DeviceLockCheckinServiceBlockingStub mBlockingStub;
 
+    public DeviceCheckInClient(String host, int port) {
+        mBlockingStub = DeviceLockCheckinServiceGrpc.newBlockingStub(
+                OkHttpChannelBuilder
+                        .forAddress(host, port)
+                        .build());
+    }
+
+    @VisibleForTesting
     public DeviceCheckInClient(
             DeviceLockCheckinServiceBlockingStub blockingStub) {
         mBlockingStub = blockingStub;
