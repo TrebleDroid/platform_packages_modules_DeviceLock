@@ -16,7 +16,7 @@
 
 syntax = "proto2";
 
-package devicelock;
+package devicelockcontroller;
 
 option java_package = "com.android.devicelockcontroller.proto";
 option java_multiple_files = true;
