@@ -24,6 +24,7 @@ import androidx.core.util.Pair;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.android.devicelockcontroller.R;
 import com.android.devicelockcontroller.proto.ClientDeviceIdentifier;
 import com.android.devicelockcontroller.proto.DeviceIdentifierType;
 import com.android.devicelockcontroller.proto.DeviceLockCheckinServiceGrpc;
@@ -41,38 +42,45 @@ public final class DeviceCheckInWorker extends Worker {
 
     private static final String TAG = "DeviceCheckInWorker";
 
-    // TODO: Feed server address when it is available.
-    private static final String CHECK_IN_SERVER_HOST = "";
-    private static final int CHECK_IN_SERVER_PORT = -1;
+    // TODO: Temporary address for testing purpose. Replace with the real server address when it is
+    //  available.
+    private final String mHostName;
+    private final int mPortNumber;
+    private final DeviceCheckInHelper mCheckInHelper;
 
     public DeviceCheckInWorker(@NonNull Context context,
             @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
+        mCheckInHelper = new DeviceCheckInHelper(context);
+        mHostName = context.getResources().getString(R.string.check_in_server_host_name);
+        mPortNumber = context.getResources().getInteger(R.integer.check_in_server_port_number);
     }
 
     @NonNull
     @Override
     public Result doWork() {
         LogUtil.i(TAG, "perform check-in request");
-        final DeviceCheckInHelperImpl checkInHelper = new DeviceCheckInHelperImpl();
-        final ArraySet<Pair<Integer, String>> deviceIds = checkInHelper.getDeviceUniqueIds();
-        final String carrierInfo = checkInHelper.getCarrierInfo();
+        final ArraySet<Pair<Integer, String>> deviceIds = mCheckInHelper.getDeviceUniqueIds();
+        final String carrierInfo = mCheckInHelper.getCarrierInfo();
         if (deviceIds.isEmpty() || carrierInfo.isEmpty()) {
             LogUtil.w(TAG, "CheckIn failed. Required device information not available");
             return Result.failure();
         }
-        if (CHECK_IN_SERVER_HOST.isEmpty() || CHECK_IN_SERVER_PORT < 0) return Result.failure();
         final DeviceCheckInClient client =
                 new DeviceCheckInClient(
                         DeviceLockCheckinServiceGrpc.newBlockingStub(
                                 OkHttpChannelBuilder
-                                        .forAddress(CHECK_IN_SERVER_HOST, CHECK_IN_SERVER_PORT)
+                                        .forAddress(mHostName, mPortNumber)
                                         .build()));
         GetDeviceCheckInStatusResponseWrapper response =
                 client.getDeviceCheckInStatus(
                         createGetDeviceCheckinStatusRequest(deviceIds, carrierInfo));
-        LogUtil.d(TAG, "checkin succeed: " + response);
-        return Result.success();
+        if (response.isSuccessful()) {
+            return mCheckInHelper.handleGetDeviceCheckInStatusResponse(response)
+                    ? Result.success()
+                    : Result.retry();
+        }
+        return Result.failure();
     }
 
     private GetDeviceCheckinStatusRequest createGetDeviceCheckinStatusRequest(
