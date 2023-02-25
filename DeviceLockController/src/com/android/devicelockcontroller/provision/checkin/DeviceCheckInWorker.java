@@ -27,13 +27,10 @@ import androidx.work.WorkerParameters;
 import com.android.devicelockcontroller.R;
 import com.android.devicelockcontroller.proto.ClientDeviceIdentifier;
 import com.android.devicelockcontroller.proto.DeviceIdentifierType;
-import com.android.devicelockcontroller.proto.DeviceLockCheckinServiceGrpc;
 import com.android.devicelockcontroller.proto.GetDeviceCheckinStatusRequest;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusResponseWrapper;
 import com.android.devicelockcontroller.util.LogUtil;
-
-import io.grpc.okhttp.OkHttpChannelBuilder;
 
 /**
  * A worker class dedicated to execute the check-in operation for device lock program.
@@ -42,18 +39,18 @@ public final class DeviceCheckInWorker extends Worker {
 
     private static final String TAG = "DeviceCheckInWorker";
 
-    // TODO: Temporary address for testing purpose. Replace with the real server address when it is
-    //  available.
-    private final String mHostName;
-    private final int mPortNumber;
     private final DeviceCheckInHelper mCheckInHelper;
+    private final DeviceCheckInClient mClient;
 
     public DeviceCheckInWorker(@NonNull Context context,
             @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
+        final String hostName = context.getResources().getString(
+                R.string.check_in_server_host_name);
+        final int portNumber = context.getResources().getInteger(
+                R.integer.check_in_server_port_number);
+        mClient = new DeviceCheckInClient(hostName, portNumber);
         mCheckInHelper = new DeviceCheckInHelper(context);
-        mHostName = context.getResources().getString(R.string.check_in_server_host_name);
-        mPortNumber = context.getResources().getInteger(R.integer.check_in_server_port_number);
     }
 
     @NonNull
@@ -66,20 +63,15 @@ public final class DeviceCheckInWorker extends Worker {
             LogUtil.w(TAG, "CheckIn failed. Required device information not available");
             return Result.failure();
         }
-        final DeviceCheckInClient client =
-                new DeviceCheckInClient(
-                        DeviceLockCheckinServiceGrpc.newBlockingStub(
-                                OkHttpChannelBuilder
-                                        .forAddress(mHostName, mPortNumber)
-                                        .build()));
-        GetDeviceCheckInStatusResponseWrapper response =
-                client.getDeviceCheckInStatus(
+        final GetDeviceCheckInStatusResponseWrapper response =
+                mClient.getDeviceCheckInStatus(
                         createGetDeviceCheckinStatusRequest(deviceIds, carrierInfo));
         if (response.isSuccessful()) {
             return mCheckInHelper.handleGetDeviceCheckInStatusResponse(response)
                     ? Result.success()
                     : Result.retry();
         }
+        LogUtil.w(TAG, "CheckIn failed: " + response);
         return Result.failure();
     }
 
@@ -89,7 +81,9 @@ public final class DeviceCheckInWorker extends Worker {
         for (Pair<Integer, String> deviceId : deviceIds) {
             builder.addClientDeviceIdentifiers(
                     ClientDeviceIdentifier.newBuilder()
-                            .setDeviceIdentifierType(DeviceIdentifierType.forNumber(deviceId.first))
+                            .setDeviceIdentifierType(
+                                    // TODO: b/270392813
+                                    DeviceIdentifierType.forNumber(deviceId.first + 1))
                             .setDeviceIdentifier(deviceId.second));
         }
         builder.setCarrierMccmnc(carrierInfo);
