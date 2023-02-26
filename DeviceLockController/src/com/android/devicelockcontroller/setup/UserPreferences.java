@@ -36,8 +36,10 @@ public final class UserPreferences {
     private static final String KEY_DEVICE_STATE = "device_state";
     private static final String KEY_HOME_PACKAGE_OVERRIDE = "home_override_package";
     private static final String KEY_LOCK_TASK_ALLOWLIST = "lock_task_allowlist";
+    private static final String KEY_NEED_CHECK_IN = "need_check_in";
 
-    private UserPreferences() {}
+    private UserPreferences() {
+    }
 
     private static SharedPreferences getSharedPreferences(Context context) {
         final Context deviceContext = context.createDeviceProtectedStorageContext();
@@ -139,6 +141,29 @@ public final class UserPreferences {
         getSharedPreferences(context)
                 .edit()
                 .putStringSet(KEY_LOCK_TASK_ALLOWLIST, allowlistSet)
+                .apply();
+    }
+
+    /**
+     * Checks if a check-in request needs to be performed.
+     *
+     * @param context Context used to get the shared preferences.
+     * @return true if check-in request needs to be performed.
+     */
+    public static boolean needCheckIn(Context context) {
+        return getSharedPreferences(context).getBoolean(KEY_NEED_CHECK_IN, /* defValue= */ true);
+    }
+
+    /**
+     * Sets the value of whether this device needs to perform check-in request.
+     *
+     * @param context     Context used to get the shared preferences.
+     * @param needCheckIn new state of whether the device needs to perform check-in request.
+     */
+    public static void setNeedCheckIn(Context context, boolean needCheckIn) {
+        getSharedPreferences(context)
+                .edit()
+                .putBoolean(KEY_NEED_CHECK_IN, needCheckIn)
                 .apply();
     }
 }

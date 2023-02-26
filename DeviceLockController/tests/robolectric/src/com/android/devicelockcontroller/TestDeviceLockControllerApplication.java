@@ -61,5 +61,4 @@ public final class TestDeviceLockControllerApplication extends Application imple
     public DevicePolicyController getPolicyController() {
         return getMockPolicyController();
     }
-
 }
