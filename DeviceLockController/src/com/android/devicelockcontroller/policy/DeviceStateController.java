@@ -64,6 +64,8 @@ public interface DeviceStateController {
             DeviceState.UNLOCKED,
             DeviceState.LOCKED,
             DeviceState.CLEARED,
+            DeviceState.PSEUDO_LOCKED,
+            DeviceState.PSEUDO_UNLOCKED,
     })
     @interface DeviceState {
 
@@ -90,6 +92,12 @@ public interface DeviceStateController {
 
         /* Fully cleared from locking */
         int CLEARED = 7;
+
+        /* Device appears to be locked. No Actual locking is performed. Used for testing */
+        int PSEUDO_LOCKED = 8;
+
+        /* Device appears to be unlocked. No Actual unlocking is performed. Used for testing */
+        int PSEUDO_UNLOCKED = 9;
     }
 
     /** Device event definitions */
@@ -101,7 +109,8 @@ public interface DeviceStateController {
             DeviceEvent.SETUP_COMPLETE,
             DeviceEvent.LOCK_DEVICE,
             DeviceEvent.UNLOCK_DEVICE,
-            DeviceEvent.CLEAR
+            DeviceEvent.CLEAR,
+            DeviceEvent.RESET,
     })
     @interface DeviceEvent {
 
@@ -125,6 +134,9 @@ public interface DeviceStateController {
 
         /* Clear device lock restrictions */
         int CLEAR = 6;
+
+        /* Reset the state machine from pseudo locked/unlocked state back to UNPROVISIONED */
+        int RESET = 7;
     }
 
     /** Listener interface for state changes. */

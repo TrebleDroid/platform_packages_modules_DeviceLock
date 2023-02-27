@@ -66,7 +66,8 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
                 || mState == DeviceState.SETUP_SUCCEEDED
                 || mState == DeviceState.SETUP_FAILED
                 || mState == DeviceState.KIOSK_SETUP
-                || mState == DeviceState.LOCKED;
+                || mState == DeviceState.LOCKED
+                || mState == DeviceState.PSEUDO_LOCKED;
     }
 
     @Override
@@ -111,11 +112,17 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
             case DeviceEvent.SETUP_COMPLETE:
                 break;
             case DeviceEvent.LOCK_DEVICE:
+                if (mState == DeviceState.UNPROVISIONED || mState == DeviceState.PSEUDO_UNLOCKED) {
+                    return DeviceState.PSEUDO_LOCKED;
+                }
                 if (mState == DeviceState.UNLOCKED || forceLockUnlock) {
                     return DeviceState.LOCKED;
                 }
                 break;
             case DeviceEvent.UNLOCK_DEVICE:
+                if (mState == DeviceState.PSEUDO_LOCKED) {
+                    return DeviceState.PSEUDO_UNLOCKED;
+                }
                 if (mState == DeviceState.LOCKED || mState == DeviceState.KIOSK_SETUP
                         || forceLockUnlock) {
                     return DeviceState.UNLOCKED;
@@ -126,6 +133,12 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
                         || mState == DeviceState.UNLOCKED
                         || mState == DeviceState.KIOSK_SETUP) {
                     return DeviceState.CLEARED;
+                }
+                break;
+            case DeviceEvent.RESET:
+                if (mState == DeviceState.PSEUDO_LOCKED
+                        || mState == DeviceState.PSEUDO_UNLOCKED) {
+                    return DeviceState.UNPROVISIONED;
                 }
                 break;
             default:
