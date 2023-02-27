@@ -20,14 +20,12 @@ import static android.devicelock.DeviceId.DEVICE_ID_TYPE_IMEI;
 import static android.devicelock.DeviceId.DEVICE_ID_TYPE_MEID;
 
 import static com.google.common.truth.Truth.assertThat;
-import static com.google.common.truth.Truth.assertWithMessage;
 
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assume.assumeTrue;
 
 import android.app.admin.DevicePolicyManager;
 import android.content.Context;
-import android.content.pm.ServiceInfo;
 import android.devicelock.DeviceId;
 import android.devicelock.DeviceLockManager;
 import android.os.Build;
@@ -78,15 +76,6 @@ public final class DeviceLockManagerTest {
             new DeviceLockControllerPackageUtils(mContext);
 
     private static final int TIMEOUT = 1;
-
-    // TODO: remove once Device Policy Engine is implemented.
-    private void skipTestIfNotDeviceOwner() {
-        final StringBuilder errorStringBuilder = new StringBuilder();
-        ServiceInfo serviceInfo = mPackageUtils.findService(errorStringBuilder);
-        assertWithMessage(errorStringBuilder.toString()).that(serviceInfo).isNotNull();
-
-        assumeTrue(mDevicePolicyManager.isDeviceOwnerApp(serviceInfo.packageName));
-    }
 
     private void addFinancedDeviceKioskRole() {
         final String cmd =
@@ -265,7 +254,6 @@ public final class DeviceLockManagerTest {
     @Test
     public void deviceShouldLockAndUnlock() throws InterruptedException, ExecutionException,
             TimeoutException {
-        skipTestIfNotDeviceOwner();
 
         try {
             addFinancedDeviceKioskRole();
