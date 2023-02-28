@@ -37,11 +37,12 @@ import androidx.work.testing.WorkManagerTestInitHelper;
 
 import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
 import com.android.devicelockcontroller.proto.ClientCheckinStatus;
-import com.android.devicelockcontroller.proto.DateProto;
 import com.android.devicelockcontroller.proto.GetDeviceCheckinStatusResponse;
 import com.android.devicelockcontroller.proto.NextCheckinInformation;
 import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusResponseWrapper;
 import com.android.devicelockcontroller.setup.UserPreferences;
+
+import com.google.protobuf.Timestamp;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -50,7 +51,8 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.Shadows;
 import org.robolectric.shadows.ShadowTelephonyManager;
 
-import java.time.LocalDate;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
@@ -59,7 +61,7 @@ import java.util.concurrent.TimeoutException;
 
 @RunWith(RobolectricTestRunner.class)
 public final class DeviceCheckInHelperTest {
-    static final int TEST_CHECK_RETRY_DAYS = 30;
+    static final Duration TEST_CHECK_RETRY_DURATION = Duration.ofDays(30);
     private TestDeviceLockControllerApplication mTestApplication;
     static final int TOTAL_SLOT_COUNT = 2;
     static final int TOTAL_ID_COUNT = 4;
@@ -121,7 +123,7 @@ public final class DeviceCheckInHelperTest {
             throws ExecutionException, InterruptedException, TimeoutException {
         final GetDeviceCheckInStatusResponseWrapper response = createMockResponse(
                 CLIENT_CHECKIN_STATUS_RETRY_CHECKIN,
-                LocalDate.now().plusDays(TEST_CHECK_RETRY_DAYS));
+                Instant.now().plus(TEST_CHECK_RETRY_DURATION));
 
         assertThat(mHelper.handleGetDeviceCheckInStatusResponse(response)).isTrue();
 
@@ -139,18 +141,17 @@ public final class DeviceCheckInHelperTest {
 
     private static GetDeviceCheckInStatusResponseWrapper createMockResponse(
             ClientCheckinStatus checkInStatus,
-            @Nullable LocalDate nextCheckInDate) {
-        GetDeviceCheckinStatusResponse.Builder builder = GetDeviceCheckinStatusResponse.newBuilder()
-                .setClientCheckinStatus(checkInStatus);
+            @Nullable Instant nextCheckInTime) {
+        GetDeviceCheckinStatusResponse.Builder builder =
+                GetDeviceCheckinStatusResponse.newBuilder()
+                        .setClientCheckinStatus(checkInStatus);
 
-        if (nextCheckInDate != null) {
+        if (nextCheckInTime != null) {
             builder.setNextCheckinInformation(
-                    NextCheckinInformation.newBuilder().setNextCheckinDate(
-                            DateProto.Date.newBuilder()
-                                    .setYear(nextCheckInDate.getYear())
-                                    .setMonth(nextCheckInDate.getMonthValue())
-                                    .setDay(nextCheckInDate.getDayOfMonth())
-                                    .build()));
+                    NextCheckinInformation.newBuilder().setNextCheckinTimestamp(
+                            Timestamp.newBuilder()
+                                    .setSeconds(nextCheckInTime.getEpochSecond())
+                                    .setNanos(nextCheckInTime.getNano())));
         }
 
         return new GetDeviceCheckInStatusResponseWrapper(builder.build());
