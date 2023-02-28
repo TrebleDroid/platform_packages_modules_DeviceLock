@@ -16,76 +16,77 @@
 
 package com.android.devicelockcontroller.provision.grpc;
 
-import androidx.annotation.VisibleForTesting;
+import android.content.Context;
+import android.util.ArraySet;
+
+import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
-import com.android.devicelockcontroller.proto.DeviceLockCheckinServiceGrpc;
-import com.android.devicelockcontroller.proto.DeviceLockCheckinServiceGrpc.DeviceLockCheckinServiceBlockingStub;
-import com.android.devicelockcontroller.proto.GetDeviceCheckinStatusRequest;
-import com.android.devicelockcontroller.proto.PauseDeviceProvisioningRequest;
-import com.android.devicelockcontroller.proto.ReportDeviceProvisionCompleteRequest;
-
-import io.grpc.StatusRuntimeException;
-import io.grpc.okhttp.OkHttpChannelBuilder;
+import com.android.devicelockcontroller.common.DeviceId;
+import com.android.devicelockcontroller.common.DeviceLockConstants.PauseDeviceProvisioningReason;
 
 /**
- * A client for the DeviceLockCheckinServiceGrpc service.
+ * An abstract class that's intended for implementation of class that manages communication with
+ * DeviceLock backend server.
  */
-public final class DeviceCheckInClient {
-    private final DeviceLockCheckinServiceBlockingStub mBlockingStub;
+public abstract class DeviceCheckInClient {
+    @Nullable
+    protected final String mRegisteredId;
+    protected final String mHostName;
+    protected final int mPortNumber;
 
-    public DeviceCheckInClient(String host, int port) {
-        mBlockingStub = DeviceLockCheckinServiceGrpc.newBlockingStub(
-                OkHttpChannelBuilder
-                        .forAddress(host, port)
-                        .build());
-    }
-
-    @VisibleForTesting
-    public DeviceCheckInClient(
-            DeviceLockCheckinServiceBlockingStub blockingStub) {
-        mBlockingStub = blockingStub;
+    protected DeviceCheckInClient(String hostName, int portNumber, @Nullable String registeredId) {
+        mRegisteredId = registeredId;
+        mHostName = hostName;
+        mPortNumber = portNumber;
     }
 
     /**
-     * Get the device check in status from device lock server
+     * Get a new instance of DeviceCheckInClient object.
      */
-    @WorkerThread
-    public GetDeviceCheckInStatusResponseWrapper getDeviceCheckInStatus(
-            GetDeviceCheckinStatusRequest request) {
+    public static DeviceCheckInClient newInstance(String className, String hostName, int portNumber,
+            @Nullable String registeredId) {
         try {
-            return new GetDeviceCheckInStatusResponseWrapper(
-                    mBlockingStub.getDeviceCheckinStatus(request));
-        } catch (StatusRuntimeException e) {
-            return new GetDeviceCheckInStatusResponseWrapper(e.getStatus());
+            Class<?> clazz = Class.forName(className);
+            return (DeviceCheckInClient) clazz.getDeclaredConstructor(
+                            Context.class, String.class)
+                    .newInstance(hostName, portNumber, registeredId);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get DeviceCheckInClient instance", e);
         }
     }
 
     /**
-     * Client request to pause device provisioning for a later time
+     * Check In with DeviceLock backend server and get the next step for the device
+     *
+     * @param deviceIds            A set of all device unique identifiers, this could include IMEIs,
+     *                             MEIDs, etc.
+     * @param carrierInfo          The information of the device's sim operator which is used to
+     *                             determine the device's geological location and eventually
+     *                             eligibility of the DeviceLock program.
+     * @param fcmRegistrationToken The fcm registration token
+     * @return A class that encapsulate the response from the backend server.
      */
     @WorkerThread
-    public PauseDeviceProvisioningResponseWrapper pauseDeviceProvisioning(
-            PauseDeviceProvisioningRequest request) {
-        try {
-            return new PauseDeviceProvisioningResponseWrapper(
-                    mBlockingStub.pauseDeviceProvisioning(request));
-        } catch (StatusRuntimeException e) {
-            return new PauseDeviceProvisioningResponseWrapper(e.getStatus());
-        }
-    }
+    public abstract GetDeviceCheckInStatusGrpcResponse getDeviceCheckInStatus(
+            ArraySet<DeviceId> deviceIds, String carrierInfo,
+            @Nullable String fcmRegistrationToken);
 
     /**
-     * Client to report provision has completed to the Device Lock server.
+     * Inform the server that device provisioning has been paused for a certain amount of time.
+     *
+     * @param reason The reason that provisioning has been paused.
+     * @return A class that encapsulate the response from the backend sever.
      */
     @WorkerThread
-    public ReportDeviceProvisionCompleteResponseWrapper reportDeviceProvisioningComplete(
-            ReportDeviceProvisionCompleteRequest request) {
-        try {
-            return new ReportDeviceProvisionCompleteResponseWrapper(
-                    mBlockingStub.reportDeviceProvisionComplete(request));
-        } catch (StatusRuntimeException e) {
-            return new ReportDeviceProvisionCompleteResponseWrapper(e.getStatus());
-        }
-    }
+    public abstract PauseDeviceProvisioningGrpcResponse pauseDeviceProvisioning(
+            @PauseDeviceProvisioningReason int reason);
+
+    /**
+     * Inform the server that device provisioning has been completed.
+     *
+     * @return A class that encapsulate the response from the backend server.
+     */
+    @WorkerThread
+    public abstract ReportDeviceProvisionCompleteGrpcResponse reportDeviceProvisioningComplete();
 }

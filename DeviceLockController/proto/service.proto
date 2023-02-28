@@ -167,9 +167,7 @@ message ReportDeviceProvisionCompleteRequest {
 // Response to a request reporting that device provisioning of an eligible
 // device is complete.
 message ReportDeviceProvisionCompleteResponse {
-  // Ids the client can send back for faster look-ups for reporting device
-  // events throughout the locking program.
-  optional int64 company_id = 1;
-  optional int64 device_id = 2;
-  optional int64 configuration_id = 3;
+  // An enrollment token the Device Lock Android client can use for future
+  // communication with the Device Lock server post-provisioning.
+  optional string enrollment_token = 1;
 }
