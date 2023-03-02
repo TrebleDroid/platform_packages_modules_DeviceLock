@@ -21,6 +21,7 @@
             <item type="integer" name="device_id_type_bitmap" />
             <item type="string" name="check_in_server_host_name" />
             <item type="integer" name="check_in_server_port_number" />
+            <item type="string" name="device_check_in_client_class_name" />
         </policy>
     </overlayable>
 </resources>
