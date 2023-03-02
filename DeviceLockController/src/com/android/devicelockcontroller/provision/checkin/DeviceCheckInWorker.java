@@ -20,16 +20,14 @@ import android.content.Context;
 import android.util.ArraySet;
 
 import androidx.annotation.NonNull;
-import androidx.core.util.Pair;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import com.android.devicelockcontroller.R;
-import com.android.devicelockcontroller.proto.ClientDeviceIdentifier;
-import com.android.devicelockcontroller.proto.DeviceIdentifierType;
-import com.android.devicelockcontroller.proto.GetDeviceCheckinStatusRequest;
+import com.android.devicelockcontroller.common.DeviceId;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
-import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusResponseWrapper;
+import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrpcResponse;
+import com.android.devicelockcontroller.setup.UserPreferences;
 import com.android.devicelockcontroller.util.LogUtil;
 
 /**
@@ -49,7 +47,10 @@ public final class DeviceCheckInWorker extends Worker {
                 R.string.check_in_server_host_name);
         final int portNumber = context.getResources().getInteger(
                 R.integer.check_in_server_port_number);
-        mClient = new DeviceCheckInClient(hostName, portNumber);
+        final String className = context.getResources().getString(
+                R.string.device_check_in_client_class_name);
+        mClient = DeviceCheckInClient.newInstance(className, hostName, portNumber,
+                UserPreferences.getRegisteredDeviceId(context));
         mCheckInHelper = new DeviceCheckInHelper(context);
     }
 
@@ -57,15 +58,15 @@ public final class DeviceCheckInWorker extends Worker {
     @Override
     public Result doWork() {
         LogUtil.i(TAG, "perform check-in request");
-        final ArraySet<Pair<Integer, String>> deviceIds = mCheckInHelper.getDeviceUniqueIds();
+        final ArraySet<DeviceId> deviceIds = mCheckInHelper.getDeviceUniqueIds();
         final String carrierInfo = mCheckInHelper.getCarrierInfo();
         if (deviceIds.isEmpty() || carrierInfo.isEmpty()) {
             LogUtil.w(TAG, "CheckIn failed. Required device information not available");
             return Result.failure();
         }
-        final GetDeviceCheckInStatusResponseWrapper response =
-                mClient.getDeviceCheckInStatus(
-                        createGetDeviceCheckinStatusRequest(deviceIds, carrierInfo));
+        final GetDeviceCheckInStatusGrpcResponse response =
+                mClient.getDeviceCheckInStatus(deviceIds, carrierInfo,
+                        /* fcmRegistrationToken= */ null);
         if (response.isSuccessful()) {
             return mCheckInHelper.handleGetDeviceCheckInStatusResponse(response)
                     ? Result.success()
@@ -73,21 +74,5 @@ public final class DeviceCheckInWorker extends Worker {
         }
         LogUtil.w(TAG, "CheckIn failed: " + response);
         return Result.failure();
-    }
-
-    private GetDeviceCheckinStatusRequest createGetDeviceCheckinStatusRequest(
-            ArraySet<Pair<Integer, String>> deviceIds, String carrierInfo) {
-        GetDeviceCheckinStatusRequest.Builder builder = GetDeviceCheckinStatusRequest.newBuilder();
-        for (Pair<Integer, String> deviceId : deviceIds) {
-            builder.addClientDeviceIdentifiers(
-                    ClientDeviceIdentifier.newBuilder()
-                            .setDeviceIdentifierType(
-                                    // TODO: b/270392813
-                                    DeviceIdentifierType.forNumber(deviceId.first + 1))
-                            .setDeviceIdentifier(deviceId.second));
-        }
-        builder.setCarrierMccmnc(carrierInfo);
-        //TODO: add fcm registration token.
-        return builder.build();
     }
 }

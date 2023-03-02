@@ -39,6 +39,7 @@ filegroup {
     exclude_srcs: [
         "src/com/android/devicelockcontroller/activities/*.java",
         "src/com/android/devicelockcontroller/util/*.java",
+        "src/com/android/devicelockcontroller/provision/grpc/*.java",
     ],
 }
 
@@ -53,6 +54,13 @@ filegroup {
     name: "devicelockcontroller-util-sources",
     srcs: [
         "src/com/android/devicelockcontroller/util/*.java",
+    ],
+}
+
+filegroup {
+    name: "devicelockcontroller-grpc-sources",
+    srcs: [
+        "src/com/android/devicelockcontroller/provision/grpc/*.java",
     ],
 }
 
@@ -128,11 +136,27 @@ java_library {
 }
 
 java_library {
-    name: "devicelockcontroller-grpclib",
+    name: "devicelockcontroller-common-lib",
+    srcs: ["src/com/android/devicelockcontroller/common/*.java"],
     sdk_version: "module_current",
     min_sdk_version: "UpsideDownCake",
     apex_available: ["com.android.devicelock"],
     static_libs: [
+        "androidx.annotation_annotation",
+    ],
+}
+
+java_library {
+    name: "devicelockcontroller-grpc-lib",
+    srcs: [
+        ":devicelockcontroller-grpc-sources",
+    ],
+    sdk_version: "module_current",
+    min_sdk_version: "UpsideDownCake",
+    apex_available: ["com.android.devicelock"],
+    static_libs: [
+        "devicelockcontroller-common-lib",
+        "androidx.annotation_annotation",
         "grpc-java-core-android",
         "grpc-java-okhttp-client-lite",
         "libprotobuf-java-lite",
@@ -159,8 +183,8 @@ android_app {
         "androidx.lifecycle_lifecycle-extensions",
         "androidx.work_work-runtime",
         "devicelockcontroller-activities-lib",
-        "devicelockcontroller-grpclib",
-        "devicelockcontroller-grpc-lite",
+        "devicelockcontroller-grpc-lib",
+        "devicelockcontroller-proto-lite",
         "devicelockcontroller-interface",
         "devicelockcontroller-res-lib",
         "devicelockcontroller-util-lib",

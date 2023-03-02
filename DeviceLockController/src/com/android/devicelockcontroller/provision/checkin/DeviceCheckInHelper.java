@@ -18,6 +18,10 @@ package com.android.devicelockcontroller.provision.checkin;
 
 import static com.android.devicelockcontroller.common.DeviceLockConstants.DEVICE_ID_TYPE_IMEI;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.DEVICE_ID_TYPE_MEID;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.READY_FOR_PROVISION;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.RETRY_CHECK_IN;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.STATUS_UNSPECIFIED;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.STOP_CHECK_IN;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.TOTAL_DEVICE_ID_TYPES;
 
 import android.content.Context;
@@ -26,7 +30,6 @@ import android.util.ArraySet;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
-import androidx.core.util.Pair;
 import androidx.work.BackoffPolicy;
 import androidx.work.Constraints;
 import androidx.work.ExistingWorkPolicy;
@@ -36,11 +39,10 @@ import androidx.work.OutOfQuotaPolicy;
 import androidx.work.WorkManager;
 
 import com.android.devicelockcontroller.R;
-import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusResponseWrapper;
+import com.android.devicelockcontroller.common.DeviceId;
+import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrpcResponse;
 import com.android.devicelockcontroller.setup.UserPreferences;
 import com.android.devicelockcontroller.util.LogUtil;
-
-import com.google.protobuf.Timestamp;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -93,7 +95,7 @@ public final class DeviceCheckInHelper {
 
 
     @NonNull
-    ArraySet<Pair<Integer, String>> getDeviceUniqueIds() {
+    ArraySet<DeviceId> getDeviceUniqueIds() {
         final int deviceIdTypeBitmap = mAppContext.getResources().getInteger(
                 R.integer.device_id_type_bitmap);
         if (deviceIdTypeBitmap < 0) {
@@ -104,11 +106,11 @@ public final class DeviceCheckInHelper {
     }
 
     @VisibleForTesting
-    ArraySet<Pair<Integer, String>> getDeviceAvailableUniqueIds(int deviceIdTypeBitmap) {
+    ArraySet<DeviceId> getDeviceAvailableUniqueIds(int deviceIdTypeBitmap) {
 
         final int totalSlotCount = mTelephonyManager.getActiveModemCount();
         final int maximumIdCount = TOTAL_DEVICE_ID_TYPES * totalSlotCount;
-        final ArraySet<Pair<Integer, String>> deviceIds = new ArraySet<>(maximumIdCount);
+        final ArraySet<DeviceId> deviceIds = new ArraySet<>(maximumIdCount);
         if (maximumIdCount == 0) return deviceIds;
 
         for (int i = 0; i < totalSlotCount; i++) {
@@ -116,7 +118,7 @@ public final class DeviceCheckInHelper {
                 final String imei = mTelephonyManager.getImei(i);
 
                 if (imei != null) {
-                    deviceIds.add(new Pair<>(DEVICE_ID_TYPE_IMEI, imei));
+                    deviceIds.add(new DeviceId(DEVICE_ID_TYPE_IMEI, imei));
                 }
             }
 
@@ -124,7 +126,7 @@ public final class DeviceCheckInHelper {
                 final String meid = mTelephonyManager.getMeid(i);
 
                 if (meid != null) {
-                    deviceIds.add(new Pair<>(DEVICE_ID_TYPE_MEID, meid));
+                    deviceIds.add(new DeviceId(DEVICE_ID_TYPE_MEID, meid));
                 }
             }
         }
@@ -139,27 +141,22 @@ public final class DeviceCheckInHelper {
     }
 
     boolean handleGetDeviceCheckInStatusResponse(
-            GetDeviceCheckInStatusResponseWrapper response) {
+            GetDeviceCheckInStatusGrpcResponse response) {
         if (response == null) return false;
+        UserPreferences.setRegisteredDeviceId(mAppContext,
+                response.getRegisteredDeviceIdentifier());
         LogUtil.d(TAG, "checkin succeed: " + response);
         switch (response.getDeviceCheckInStatus()) {
-            case CLIENT_CHECKIN_STATUS_READY_FOR_PROVISION:
+            case READY_FOR_PROVISION:
                 //TODO: Handle provision configs
                 return true;
-            case CLIENT_CHECKIN_STATUS_RETRY_CHECKIN:
-                GetDeviceCheckInStatusResponseWrapper.NextStepInformation nextStep =
-                        response.getNextStepInformation();
-                if (!nextStep.isNextCheckInInformationAvailable()) {
-                    LogUtil.w(TAG, "Received retry response with out next check-in information");
-                    return false;
-                }
-                Timestamp nextCheckinTime =
-                        nextStep.getNextCheckInInformation().getNextCheckinTimestamp();
+            case RETRY_CHECK_IN:
+                Instant nextCheckinTime = response.getNextCheckInTime();
 
                 final Duration delay = Duration.between(Instant.now(),
                         Instant.ofEpochSecond(
-                                nextCheckinTime.getSeconds(),
-                                nextCheckinTime.getNanos()));
+                                nextCheckinTime.getEpochSecond(),
+                                nextCheckinTime.getNano()));
                 //TODO: Figure out whether there should be a minimum delay?
                 if (delay.isNegative()) {
                     LogUtil.w(TAG, "Next check in date is not in the future");
@@ -167,9 +164,12 @@ public final class DeviceCheckInHelper {
                 }
                 enqueueDeviceCheckInWork(false, delay);
                 return true;
-            case CLIENT_CHECKIN_STATUS_STOP_CHECKIN:
+            case STOP_CHECK_IN:
                 UserPreferences.setNeedCheckIn(mAppContext, false);
                 return true;
+            case STATUS_UNSPECIFIED:
+            default:
+                // fall through
         }
         return false;
     }
