@@ -46,7 +46,6 @@ genrule {
 
 java_library {
     name: "devicelockcontroller-proto-lite",
-    host_supported: true,
     proto: {
         type: "lite",
         include_dirs: [
