@@ -36,13 +36,14 @@ import androidx.work.OutOfQuotaPolicy;
 import androidx.work.WorkManager;
 
 import com.android.devicelockcontroller.R;
-import com.android.devicelockcontroller.proto.DateProto;
 import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusResponseWrapper;
 import com.android.devicelockcontroller.setup.UserPreferences;
 import com.android.devicelockcontroller.util.LogUtil;
 
+import com.google.protobuf.Timestamp;
+
 import java.time.Duration;
-import java.time.LocalDate;
+import java.time.Instant;
 
 /**
  * Helper class to perform the device check in process with device lock backend server
@@ -133,7 +134,7 @@ public final class DeviceCheckInHelper {
 
     @NonNull
     String getCarrierInfo() {
-        // TODO: Figure out if we need carrier info of all sims.
+        // TODO(b/267507927): Figure out if we need carrier info of all sims.
         return mTelephonyManager.getSimOperator();
     }
 
@@ -152,13 +153,15 @@ public final class DeviceCheckInHelper {
                     LogUtil.w(TAG, "Received retry response with out next check-in information");
                     return false;
                 }
-                DateProto.Date nextCheckInDate =
-                        nextStep.getNextCheckInInformation().getNextCheckinDate();
+                Timestamp nextCheckinTime =
+                        nextStep.getNextCheckInInformation().getNextCheckinTimestamp();
 
-                final Duration delay = Duration.between(LocalDate.now().atStartOfDay(),
-                        LocalDate.of(nextCheckInDate.getYear(), nextCheckInDate.getMonth(),
-                                nextCheckInDate.getDay()).atStartOfDay());
-                if (delay.isZero() || delay.isNegative()) {
+                final Duration delay = Duration.between(Instant.now(),
+                        Instant.ofEpochSecond(
+                                nextCheckinTime.getSeconds(),
+                                nextCheckinTime.getNanos()));
+                //TODO: Figure out whether there should be a minimum delay?
+                if (delay.isNegative()) {
                     LogUtil.w(TAG, "Next check in date is not in the future");
                     return false;
                 }

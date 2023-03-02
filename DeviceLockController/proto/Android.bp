@@ -21,10 +21,12 @@ package {
 }
 
 // Generate gRPC client code
-LITE_PROTO_CMD = "$(location aprotoc) " +
+LITE_PROTO_CMD = "mkdir -p $(genDir)/gen && " +
+    "$(location aprotoc) --java_opt=annotate_code=false " +
+    "-Iexternal/protobuf/src -Ipackages/modules/DeviceLock/DeviceLockController/proto " +
     "--plugin=protoc-gen-grpc-java=$(location protoc-gen-grpc-java-plugin) " +
-    "--grpc-java_out=lite:$(genDir) $(in) && " +
-    "$(location soong_zip) -o $(out) -C $(genDir) -D $(genDir)"
+    "--grpc-java_out=lite:$(genDir)/gen $(in) && " +
+    "$(location soong_zip) -o $(out) -C $(genDir)/gen -D $(genDir)/gen"
 
 genrule {
     name: "checkIn-service-stub-lite",
@@ -43,18 +45,20 @@ genrule {
 }
 
 java_library {
-    name: "devicelockcontroller-protos-lite",
+    name: "devicelockcontroller-grpc-lite",
     host_supported: true,
     proto: {
         type: "lite",
         include_dirs: [
             "external/protobuf/src",
             "external/protobuf/java",
+            "packages/modules/DeviceLock/DeviceLockController/proto",
         ],
     },
     srcs: [
         ":checkIn-service-stub-lite",
         "*.proto",
+        ":libprotobuf-internal-protos",
     ],
     libs: ["javax_annotation-api_1.3.2"],
     static_libs: [
