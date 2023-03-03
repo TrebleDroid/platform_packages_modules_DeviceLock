@@ -14,43 +14,40 @@
  * limitations under the License.
  */
 
-package com.android.devicelockcontroller.provision.grpc;
+package com.android.devicelockcontroller.provision.grpc.impl;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.android.devicelockcontroller.proto.ReportDeviceProvisionCompleteResponse;
+import com.android.devicelockcontroller.provision.grpc.ReportDeviceProvisionCompleteGrpcResponse;
 
 import io.grpc.Status;
 
 /**
  * Wrapper for response and status objects for a ReportDeviceProvisionCompleteRequest
  */
-public final class ReportDeviceProvisionCompleteResponseWrapper extends DeviceCheckInResponse {
+final class ReportDeviceProvisionCompleteGrpcResponseWrapper extends
+        ReportDeviceProvisionCompleteGrpcResponse {
     @Nullable
-    private final ReportDeviceProvisionCompleteResponse mResponse;
+    private final ReportDeviceProvisionCompleteResponse
+            mResponse;
 
     //TODO: Consider to use a builder pattern to ensure at least one of the below fields is
     // not null value so that we can eliminate the need of two separate constructors.
-    public ReportDeviceProvisionCompleteResponseWrapper(@NonNull Status status) {
+    ReportDeviceProvisionCompleteGrpcResponseWrapper(@NonNull Status status) {
         super(status);
         mResponse = null;
     }
 
-    public ReportDeviceProvisionCompleteResponseWrapper(
+    ReportDeviceProvisionCompleteGrpcResponseWrapper(
             @NonNull ReportDeviceProvisionCompleteResponse response) {
         mResponse = response;
     }
 
-    public long getCompanyId() {
-        return mResponse != null ? mResponse.getCompanyId() : 0L;
-    }
-
-    public long getDeviceId() {
-        return mResponse != null ? mResponse.getDeviceId() : 0L;
-    }
-
-    public long getConfigurationId() {
-        return mResponse != null ? mResponse.getConfigurationId() : 0L;
+    @Override
+    @Nullable
+    public String getEnrollmentToken() {
+        return mResponse != null ? mResponse.getEnrollmentToken() : null;
     }
 }

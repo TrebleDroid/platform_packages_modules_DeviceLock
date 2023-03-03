@@ -37,6 +37,7 @@ public final class UserPreferences {
     private static final String KEY_HOME_PACKAGE_OVERRIDE = "home_override_package";
     private static final String KEY_LOCK_TASK_ALLOWLIST = "lock_task_allowlist";
     private static final String KEY_NEED_CHECK_IN = "need_check_in";
+    static final String KEY_REGISTERED_DEVICE_ID = "registered_device_id";
 
     private UserPreferences() {
     }
@@ -164,6 +165,32 @@ public final class UserPreferences {
         getSharedPreferences(context)
                 .edit()
                 .putBoolean(KEY_NEED_CHECK_IN, needCheckIn)
+                .apply();
+    }
+
+    /**
+     * Gets the unique identifier that is regisered to DeviceLock backend server.
+     *
+     * @param context Context used to get the shared preferences.
+     * @return The registered device unique identifier; null if device has never checked in with
+     * backed server.
+     */
+    @Nullable
+    public static String getRegisteredDeviceId(Context context) {
+        SharedPreferences preferences = getSharedPreferences(context);
+        return preferences.getString(KEY_REGISTERED_DEVICE_ID, null);
+    }
+
+    /**
+     * Set the unique identifier that is registered to DeviceLock backend server.
+     *
+     * @param context            Context used to get the shared preferences.
+     * @param registeredDeviceId The registered device unique identifier.
+     */
+    public static void setRegisteredDeviceId(Context context, String registeredDeviceId) {
+        getSharedPreferences(context)
+                .edit()
+                .putString(KEY_REGISTERED_DEVICE_ID, registeredDeviceId)
                 .apply();
     }
 }
