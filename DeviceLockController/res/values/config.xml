@@ -26,4 +26,7 @@
     </string-array>
     <string name="check_in_server_host_name">localhost</string>
     <integer name="check_in_server_port_number">8843</integer>
+    <string name="device_check_in_client_class_name">
+        com.android.devicelockcontroller.provision.grpc.impl.DeviceCheckInClientImpl
+    </string>
 </resources>

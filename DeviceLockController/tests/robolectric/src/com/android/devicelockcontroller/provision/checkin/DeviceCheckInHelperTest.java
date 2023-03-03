@@ -18,8 +18,8 @@ package com.android.devicelockcontroller.provision.checkin;
 
 import static com.android.devicelockcontroller.common.DeviceLockConstants.DEVICE_ID_TYPE_IMEI;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.DEVICE_ID_TYPE_MEID;
-import static com.android.devicelockcontroller.proto.ClientCheckinStatus.CLIENT_CHECKIN_STATUS_RETRY_CHECKIN;
-import static com.android.devicelockcontroller.proto.ClientCheckinStatus.CLIENT_CHECKIN_STATUS_STOP_CHECKIN;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.RETRY_CHECK_IN;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.STOP_CHECK_IN;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -27,7 +27,6 @@ import android.telephony.TelephonyManager;
 import android.util.ArraySet;
 
 import androidx.annotation.Nullable;
-import androidx.core.util.Pair;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.work.Configuration;
 import androidx.work.WorkInfo;
@@ -36,17 +35,15 @@ import androidx.work.testing.SynchronousExecutor;
 import androidx.work.testing.WorkManagerTestInitHelper;
 
 import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
-import com.android.devicelockcontroller.proto.ClientCheckinStatus;
-import com.android.devicelockcontroller.proto.GetDeviceCheckinStatusResponse;
-import com.android.devicelockcontroller.proto.NextCheckinInformation;
-import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusResponseWrapper;
+import com.android.devicelockcontroller.common.DeviceId;
+import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceCheckInStatus;
+import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrpcResponse;
 import com.android.devicelockcontroller.setup.UserPreferences;
-
-import com.google.protobuf.Timestamp;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.Shadows;
 import org.robolectric.shadows.ShadowTelephonyManager;
@@ -69,12 +66,12 @@ public final class DeviceCheckInHelperTest {
     static final String IMEI_2 = "IMEI2";
     static final String MEID_1 = "MEID1";
     static final String MEID_2 = "MEID2";
-    static final ArraySet<Pair<Integer, String>> ACTUAL_DEVICE_IDs =
-            new ArraySet<Pair<Integer, String>>(new Pair[]{
-                    new Pair<>(DEVICE_ID_TYPE_IMEI, IMEI_1),
-                    new Pair<>(DEVICE_ID_TYPE_IMEI, IMEI_2),
-                    new Pair<>(DEVICE_ID_TYPE_MEID, MEID_1),
-                    new Pair<>(DEVICE_ID_TYPE_MEID, MEID_2),
+    static final ArraySet<DeviceId> ACTUAL_DEVICE_IDs =
+            new ArraySet<>(new DeviceId[]{
+                    new DeviceId(DEVICE_ID_TYPE_IMEI, IMEI_1),
+                    new DeviceId(DEVICE_ID_TYPE_IMEI, IMEI_2),
+                    new DeviceId(DEVICE_ID_TYPE_MEID, MEID_1),
+                    new DeviceId(DEVICE_ID_TYPE_MEID, MEID_2),
             });
     static final int DEVICE_ID_TYPE_BITMAP =
             (1 << DEVICE_ID_TYPE_IMEI) | (1 << DEVICE_ID_TYPE_MEID);
@@ -102,16 +99,15 @@ public final class DeviceCheckInHelperTest {
         mTelephonyManager.setImei(/* slotIndex= */ 1, IMEI_2);
         mTelephonyManager.setMeid(/* slotIndex= */ 0, MEID_1);
         mTelephonyManager.setMeid(/* slotIndex= */ 1, MEID_2);
-        final ArraySet<Pair<Integer, String>> deviceIds = mHelper.getDeviceAvailableUniqueIds(
+        final ArraySet<DeviceId> deviceIds = mHelper.getDeviceAvailableUniqueIds(
                 DEVICE_ID_TYPE_BITMAP);
         assertThat(Objects.requireNonNull(deviceIds).size()).isEqualTo(TOTAL_ID_COUNT);
-        assertThat(deviceIds).containsAnyIn(ACTUAL_DEVICE_IDs);
+        assertThat(deviceIds).containsExactlyElementsIn(ACTUAL_DEVICE_IDs);
     }
 
     @Test
     public void testHandleGetDeviceCheckInStatusResponse_stopCheckIn_shouldSetNeedCheckInFalse() {
-        final GetDeviceCheckInStatusResponseWrapper response = createMockResponse(
-                CLIENT_CHECKIN_STATUS_STOP_CHECKIN);
+        final GetDeviceCheckInStatusGrpcResponse response = createMockResponse(STOP_CHECK_IN);
 
         assertThat(mHelper.handleGetDeviceCheckInStatusResponse(response)).isTrue();
 
@@ -121,8 +117,8 @@ public final class DeviceCheckInHelperTest {
     @Test
     public void testHandleGetDeviceCheckInStatusResponse_retryCheckIn_shouldEnqueueNewCheckInWork()
             throws ExecutionException, InterruptedException, TimeoutException {
-        final GetDeviceCheckInStatusResponseWrapper response = createMockResponse(
-                CLIENT_CHECKIN_STATUS_RETRY_CHECKIN,
+        final GetDeviceCheckInStatusGrpcResponse response = createMockResponse(
+                RETRY_CHECK_IN,
                 Instant.now().plus(TEST_CHECK_RETRY_DURATION));
 
         assertThat(mHelper.handleGetDeviceCheckInStatusResponse(response)).isTrue();
@@ -134,26 +130,20 @@ public final class DeviceCheckInHelperTest {
         assertThat(workInfo.size()).isEqualTo(1);
     }
 
-    private static GetDeviceCheckInStatusResponseWrapper createMockResponse(
-            ClientCheckinStatus checkInStatus) {
+    private static GetDeviceCheckInStatusGrpcResponse createMockResponse(
+            @DeviceCheckInStatus int checkInStatus) {
         return createMockResponse(checkInStatus, /* nextCheckInDate= */ null);
     }
 
-    private static GetDeviceCheckInStatusResponseWrapper createMockResponse(
-            ClientCheckinStatus checkInStatus,
+    private static GetDeviceCheckInStatusGrpcResponse createMockResponse(
+            @DeviceCheckInStatus int checkInStatus,
             @Nullable Instant nextCheckInTime) {
-        GetDeviceCheckinStatusResponse.Builder builder =
-                GetDeviceCheckinStatusResponse.newBuilder()
-                        .setClientCheckinStatus(checkInStatus);
-
+        GetDeviceCheckInStatusGrpcResponse response = Mockito.mock(
+                GetDeviceCheckInStatusGrpcResponse.class);
+        Mockito.when(response.getDeviceCheckInStatus()).thenReturn(checkInStatus);
         if (nextCheckInTime != null) {
-            builder.setNextCheckinInformation(
-                    NextCheckinInformation.newBuilder().setNextCheckinTimestamp(
-                            Timestamp.newBuilder()
-                                    .setSeconds(nextCheckInTime.getEpochSecond())
-                                    .setNanos(nextCheckInTime.getNano())));
+            Mockito.when(response.getNextCheckInTime()).thenReturn(nextCheckInTime);
         }
-
-        return new GetDeviceCheckInStatusResponseWrapper(builder.build());
+        return response;
     }
 }
