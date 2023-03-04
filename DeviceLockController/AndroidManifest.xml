@@ -40,6 +40,15 @@
             android:name="com.android.devicelockcontroller.activities.HelpActivity"
             android:theme="@style/Theme.Materialu"
             android:exported="false"/>
+        <activity
+            android:name="com.android.devicelockcontroller.activities.LandingActivity"
+            android:theme="@style/Theme.Materialu"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.android.devicelockcontroller.action.START_DEVICE_LOCK_PROVISIONING"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
         <service android:name="com.android.devicelockcontroller.DeviceLockControllerService"
                  android:directBootAware="true"
                  android:exported="false"
