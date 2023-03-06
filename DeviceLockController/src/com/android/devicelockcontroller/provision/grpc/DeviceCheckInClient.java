@@ -16,7 +16,6 @@
 
 package com.android.devicelockcontroller.provision.grpc;
 
-import android.content.Context;
 import android.util.ArraySet;
 
 import androidx.annotation.Nullable;
@@ -49,7 +48,7 @@ public abstract class DeviceCheckInClient {
         try {
             Class<?> clazz = Class.forName(className);
             return (DeviceCheckInClient) clazz.getDeclaredConstructor(
-                            Context.class, String.class)
+                            String.class, Integer.TYPE, String.class)
                     .newInstance(hostName, portNumber, registeredId);
         } catch (Exception e) {
             throw new RuntimeException("Failed to get DeviceCheckInClient instance", e);
