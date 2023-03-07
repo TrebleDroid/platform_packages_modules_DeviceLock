@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RunWith(RobolectricTestRunner.class)
-public class UserPreferencesServiceTest extends AbstractUserPreferencesTest {
+public class UserPreferencesServiceTest extends AbstractUserPreferencesTestBase {
     private IUserPreferencesService mIUserPreferencesService;
 
     @Before
