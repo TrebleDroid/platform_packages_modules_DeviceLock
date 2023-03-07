@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RunWith(RobolectricTestRunner.class)
-public class UserPreferencesTest extends AbstractUserPreferencesTest {
+public class UserPreferencesTest extends AbstractUserPreferencesTestBase {
     private Context mContext;
 
     @Before

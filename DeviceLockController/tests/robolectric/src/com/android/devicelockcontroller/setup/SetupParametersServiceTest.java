@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RunWith(RobolectricTestRunner.class)
-public final class SetupParametersServiceTest extends AbstractSetupParametersTest {
+public final class SetupParametersServiceTest extends AbstractSetupParametersTestBase {
     private ISetupParametersService mISetupParametersService;
 
     @Before
