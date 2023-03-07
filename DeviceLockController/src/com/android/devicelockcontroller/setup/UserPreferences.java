@@ -34,6 +34,7 @@ public final class UserPreferences {
     private static final String FILENAME = "prefs";
     private static final String KEY_LOCK_TASK_MODE_ACTIVE = "lock_task_mode_active";
     private static final String KEY_DEVICE_STATE = "device_state";
+    private static final String KEY_KIOSK_SIGNING_CERT = "kiosk_signing_cert";
     private static final String KEY_HOME_PACKAGE_OVERRIDE = "home_override_package";
     private static final String KEY_LOCK_TASK_ALLOWLIST = "lock_task_allowlist";
     private static final String KEY_NEED_CHECK_IN = "need_check_in";
@@ -81,6 +82,17 @@ public final class UserPreferences {
     }
 
     /**
+     * Get the kiosk app signature.
+     *
+     * @param context Context used to get the shared preferences.
+     * @return the kiosk app signature.
+     */
+    @Nullable
+    public static String getKioskSignature(Context context) {
+        return getSharedPreferences(context).getString(KEY_KIOSK_SIGNING_CERT, null);
+    }
+
+    /**
      * Sets the current device state.
      *
      * @param context Context used to get the shared preferences.
@@ -88,6 +100,16 @@ public final class UserPreferences {
      */
     public static void setDeviceState(Context context, @DeviceState int state) {
         getSharedPreferences(context).edit().putInt(KEY_DEVICE_STATE, state).apply();
+    }
+
+    /**
+     * Sets the kiosk app signature.
+     *
+     * @param context Context used to get the shared preferences.
+     * @param signature Kiosk app signature.
+     */
+    public static void setKioskSignature(Context context, String signature) {
+        getSharedPreferences(context).edit().putString(KEY_KIOSK_SIGNING_CERT, signature).apply();
     }
 
     /**
