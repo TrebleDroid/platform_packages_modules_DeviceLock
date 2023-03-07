@@ -22,12 +22,14 @@ import android.content.Context;
 
 import androidx.annotation.MainThread;
 import androidx.work.Configuration;
+import androidx.work.DelegatingWorkerFactory;
 
 import com.android.devicelockcontroller.policy.DevicePolicyController;
 import com.android.devicelockcontroller.policy.DevicePolicyControllerImpl;
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.DeviceStateControllerImpl;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
+import com.android.devicelockcontroller.policy.TaskWorkerFactory;
 import com.android.devicelockcontroller.util.LogUtil;
 
 /**
@@ -83,7 +85,10 @@ public final class DeviceLockControllerApplication extends Application implement
     //b/267355744: Required to initialize WorkManager on-demand.
     @Override
     public Configuration getWorkManagerConfiguration() {
+        final DelegatingWorkerFactory factory = new DelegatingWorkerFactory();
+        factory.addFactory(new TaskWorkerFactory());
         return new Configuration.Builder()
+                .setWorkerFactory(factory)
                 .setMinimumLoggingLevel(android.util.Log.INFO)
                 .build();
     }
