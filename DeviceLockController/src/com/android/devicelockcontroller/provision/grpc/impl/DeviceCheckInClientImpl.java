@@ -18,6 +18,8 @@ package com.android.devicelockcontroller.provision.grpc.impl;
 
 import android.util.ArraySet;
 
+import androidx.annotation.Keep;
+
 import com.android.devicelockcontroller.common.DeviceId;
 import com.android.devicelockcontroller.common.DeviceLockConstants;
 import com.android.devicelockcontroller.proto.ClientDeviceIdentifier;
@@ -42,10 +44,11 @@ import io.grpc.okhttp.OkHttpChannelBuilder;
  * A client for the {@link  com.android.devicelockcontroller.proto.DeviceLockCheckinServiceGrpc}
  * service.
  */
-final class DeviceCheckInClientImpl extends DeviceCheckInClient {
+@Keep
+public final class DeviceCheckInClientImpl extends DeviceCheckInClient {
     private final DeviceLockCheckinServiceBlockingStub mBlockingStub;
 
-    DeviceCheckInClientImpl(String hostName, int portNumber, @Nullable String registeredId) {
+    public DeviceCheckInClientImpl(String hostName, int portNumber, @Nullable String registeredId) {
         super(hostName, portNumber, registeredId);
         mBlockingStub = DeviceLockCheckinServiceGrpc.newBlockingStub(
                 OkHttpChannelBuilder
