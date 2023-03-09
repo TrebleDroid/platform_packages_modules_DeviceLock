@@ -40,9 +40,6 @@ public final class DeviceLockControllerPackageUtils {
     private static final String SERVICE_ACTION =
             "android.app.action.DEVICE_LOCK_CONTROLLER_SERVICE";
 
-    // resources.arsc still uses the original package name (b/147434671)
-    private static final String RESOURCE_PACKAGE_NAME = "com.android.devicelockcontroller";
-
     private static final UserHandle USER_HANDLE_SYSTEM = UserHandle.of(0);
 
     public DeviceLockControllerPackageUtils(Context context) {
@@ -60,7 +57,8 @@ public final class DeviceLockControllerPackageUtils {
      * @return Service information or null for an error.
      */
     @VisibleForTesting
-    public synchronized @Nullable ServiceInfo findService(@NonNull StringBuilder errorMessage) {
+    @Nullable
+    public synchronized ServiceInfo findService(@NonNull StringBuilder errorMessage) {
         errorMessage.setLength(0);
 
         if (mServiceInfo == null) {
@@ -70,7 +68,8 @@ public final class DeviceLockControllerPackageUtils {
         return mServiceInfo;
     }
 
-    private @Nullable ServiceInfo findServiceInternal(@NonNull StringBuilder errorMessage) {
+    @Nullable
+    private ServiceInfo findServiceInternal(@NonNull StringBuilder errorMessage) {
         final Intent intent = new Intent(SERVICE_ACTION);
         final PackageManager pm = mContext.getPackageManager();
 
@@ -88,7 +87,7 @@ public final class DeviceLockControllerPackageUtils {
 
         ServiceInfo resultServiceInfo = null;
 
-        for (ResolveInfo resolveInfo: resolveInfoList) {
+        for (ResolveInfo resolveInfo : resolveInfoList) {
             final ServiceInfo serviceInfo = resolveInfo.serviceInfo;
 
             if ((serviceInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0) {
@@ -137,9 +136,9 @@ public final class DeviceLockControllerPackageUtils {
         try {
             final Resources resources = pm.getResourcesForApplication(packageName);
             final int resId = resources.getIdentifier("device_id_type_bitmap", "integer",
-                    RESOURCE_PACKAGE_NAME);
+                    packageName);
             if (resId == 0) {
-                errorMessage.append("Cannot get device_id_type_bitmap");
+                errorMessage.append("Cannot get device_id_type_bitmap from: " + packageName);
 
                 return -1;
             }
