@@ -16,7 +16,7 @@
 
 package com.android.devicelockcontroller.setup;
 
-abstract class AbstractUserPreferencesTest {
+abstract class AbstractUserPreferencesTestBase {
     protected static final String ALLOWLIST_PACKAGE_0 = "allowlist.package.0";
     protected static final String ALLOWLIST_PACKAGE_1 = "allowlist.package.1";
     protected static final String PACKAGE_OVERRIDING_HOME = "com.home.package";

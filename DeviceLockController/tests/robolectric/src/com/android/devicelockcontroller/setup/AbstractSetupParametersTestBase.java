@@ -29,7 +29,7 @@ import android.os.Bundle;
 
 import java.util.ArrayList;
 
-abstract class AbstractSetupParametersTest {
+abstract class AbstractSetupParametersTestBase {
     protected static final String KIOSK_PACKAGE = "package";
     protected static final String KIOSK_OVERRIDE_PACKAGE = "override.package";
     protected static final String DOWNLOAD_URL = "https://www.example.com/apk";
