@@ -49,6 +49,8 @@ public final class TaskWorkerFactory extends WorkerFactory {
                 return new DownloadPackageTask(context, workerParameters, mExecutorService);
             } else if (clazz == VerifyPackageTask.class) {
                 return new VerifyPackageTask(context, workerParameters, mExecutorService);
+            } else if (clazz == InstallPackageTask.class) {
+                return new InstallPackageTask(context, workerParameters, mExecutorService);
             }
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException("Task not found " + workerClassName, e);
