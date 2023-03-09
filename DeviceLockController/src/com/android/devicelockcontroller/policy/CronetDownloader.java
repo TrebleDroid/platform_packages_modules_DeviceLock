@@ -103,7 +103,7 @@ public final class CronetDownloader implements Downloader {
         Executor executor = Executors.newSingleThreadExecutor();
         UrlRequest.Builder requestBuilder =
                 mHttpEngine.newUrlRequestBuilder(
-                        mDownloadUrl, new CronetDownloadHandler(mFile, mListener), executor);
+                        mDownloadUrl, executor, new CronetDownloadHandler(mFile, mListener));
         UrlRequest request = requestBuilder.build();
         request.start();
     }
