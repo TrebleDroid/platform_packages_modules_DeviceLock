@@ -20,6 +20,7 @@ import static android.devicelock.DeviceId.DEVICE_ID_TYPE_IMEI;
 import static android.devicelock.DeviceId.DEVICE_ID_TYPE_MEID;
 
 import static com.google.common.truth.Truth.assertThat;
+import static com.google.common.truth.Truth.assertWithMessage;
 
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assume.assumeTrue;
@@ -281,7 +282,7 @@ public final class DeviceLockManagerTest {
         final StringBuilder errorMessage = new StringBuilder();
         final int deviceIdTypeBitmap =
                 mPackageUtils.getDeviceIdTypeBitmap(errorMessage);
-        assertThat(deviceIdTypeBitmap).isGreaterThan(-1);
+        assertWithMessage(errorMessage.toString()).that(deviceIdTypeBitmap).isGreaterThan(-1);
 
         String imei;
         String meid;
