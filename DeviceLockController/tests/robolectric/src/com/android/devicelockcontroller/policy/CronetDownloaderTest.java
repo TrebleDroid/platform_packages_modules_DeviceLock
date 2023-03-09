@@ -71,7 +71,7 @@ public class CronetDownloaderTest {
         mContext = ApplicationProvider.getApplicationContext();
 
         when(mMockHttpEngine.newUrlRequestBuilder(
-                anyString(), any(UrlRequest.Callback.class), any(Executor.class)))
+                anyString(), any(Executor.class), any(UrlRequest.Callback.class)))
                 .thenReturn(mMockUrlRequestBuilder);
         when(mMockUrlRequestBuilder.build()).thenReturn(mMockUrlRequest);
         // retry is not allowed by default
@@ -244,7 +244,7 @@ public class CronetDownloaderTest {
     private CronetDownloadHandler captureDownloadHandler() {
         verify(mMockHttpEngine)
                 .newUrlRequestBuilder(
-                        eq(TEST_DOWNLOAD_URL), mDownloadHandlerArgumentCaptor.capture(), any());
+                        eq(TEST_DOWNLOAD_URL), any(), mDownloadHandlerArgumentCaptor.capture());
         verify(mMockUrlRequest).start();
         return mDownloadHandlerArgumentCaptor.getValue();
     }
