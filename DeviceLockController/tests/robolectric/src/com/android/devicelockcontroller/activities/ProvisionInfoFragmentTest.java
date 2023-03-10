@@ -18,8 +18,9 @@ package com.android.devicelockcontroller.activities;
 
 import static com.google.common.truth.Truth.assertThat;
 
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentContainerView;
+import static org.robolectric.Shadows.shadowOf;
+
+import android.widget.ImageView;
 
 import com.android.devicelockcontroller.R;
 
@@ -30,16 +31,14 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
-public final class LandingActivityTest {
+public final class ProvisionInfoFragmentTest {
 
     @Ignore("http://b/269463682")
     @Test
-    public void landingActivity_setsProvisionInfoFragment() {
+    public void onCreateView_viewIsInflated() {
         LandingActivity activity = Robolectric.buildActivity(LandingActivity.class).setup().get();
-        FragmentContainerView fragmentContainerView = activity.findViewById(
-                R.id.provision_info_fragment);
-
-        assertThat((Fragment) fragmentContainerView.getFragment()).isInstanceOf(
-                ProvisionInfoFragment.class);
+        ImageView imageView = activity.findViewById(R.id.header_icon);
+        assertThat(shadowOf(imageView.getDrawable()).getCreatedFromResId()).isEqualTo(
+                R.drawable.ic_info_24px);
     }
 }
