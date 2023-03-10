@@ -18,6 +18,8 @@ package com.android.devicelockcontroller.provision.checkin;
 
 import static com.android.devicelockcontroller.common.DeviceLockConstants.DEVICE_ID_TYPE_IMEI;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.DEVICE_ID_TYPE_MEID;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_MANDATORY_PROVISION;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_PROVISIONING_TYPE;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.READY_FOR_PROVISION;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.RETRY_CHECK_IN;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.STATUS_UNSPECIFIED;
@@ -25,6 +27,7 @@ import static com.android.devicelockcontroller.common.DeviceLockConstants.STOP_C
 import static com.android.devicelockcontroller.common.DeviceLockConstants.TOTAL_DEVICE_ID_TYPES;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.util.ArraySet;
 
@@ -41,6 +44,8 @@ import androidx.work.WorkManager;
 import com.android.devicelockcontroller.R;
 import com.android.devicelockcontroller.common.DeviceId;
 import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrpcResponse;
+import com.android.devicelockcontroller.provision.grpc.ProvisioningConfiguration;
+import com.android.devicelockcontroller.setup.SetupParameters;
 import com.android.devicelockcontroller.setup.UserPreferences;
 import com.android.devicelockcontroller.util.LogUtil;
 
@@ -145,10 +150,25 @@ public final class DeviceCheckInHelper {
         if (response == null) return false;
         UserPreferences.setRegisteredDeviceId(mAppContext,
                 response.getRegisteredDeviceIdentifier());
-        LogUtil.d(TAG, "checkin succeed: " + response);
+        LogUtil.d(TAG, "check in succeed: " + response);
         switch (response.getDeviceCheckInStatus()) {
             case READY_FOR_PROVISION:
-                //TODO: Handle provision configs
+                UserPreferences.setProvisionForced(mAppContext, response.isProvisionForced());
+                final ProvisioningConfiguration configuration = response.getProvisioningConfig();
+                if (configuration == null) {
+                    LogUtil.e(TAG, "Provisioning Configuration is not provided by server!");
+                    return false;
+                }
+                final Bundle provisionBundle = configuration.toBundle();
+                provisionBundle.putInt(EXTRA_PROVISIONING_TYPE, response.getProvisioningType());
+                provisionBundle.putBoolean(EXTRA_MANDATORY_PROVISION,
+                        response.isProvisioningMandatory());
+                SetupParameters.createPrefs(mAppContext, provisionBundle);
+                //We are only handling the non-mandatory provision case here. For mandatory
+                // provision, we will handle when receiving the intent from SUW,
+                if (!response.isProvisioningMandatory()) {
+                    // TODO(b/272497885): Schedule to launch the provision activity at some time.
+                }
                 return true;
             case RETRY_CHECK_IN:
                 Instant nextCheckinTime = response.getNextCheckInTime();
