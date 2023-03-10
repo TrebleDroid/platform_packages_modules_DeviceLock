@@ -82,6 +82,44 @@ public final class DeviceLockConstants {
     public static final int TYPE_UNDEFINED = 0;
     public static final int TYPE_FINANCED = 1;
 
+    public static final String EXTRA_KIOSK_PACKAGE =
+            "com.android.devicelockcontroller.KIOSK_PACKAGE";
+
+    /**
+     * URL to download the kiosk app.
+     *
+     * <p>DLC will look for a pre-installed package with the name defined by {@link
+     * #EXTRA_KIOSK_PACKAGE}. If the package is not present, DLC will try to download the package
+     * from the URL provided.
+     */
+    public static final String EXTRA_KIOSK_DOWNLOAD_URL =
+            "com.android.devicelockcontroller.KIOSK_DOWNLOAD_URL";
+
+    /**
+     * Intent's extras key for Base64 encoded SHA-256 hash checksum of the kiosk app's signing
+     * certificate.
+     */
+    public static final String EXTRA_KIOSK_SIGNATURE_CHECKSUM =
+            "com.android.devicelockcontroller.KIOSK_SIGNATURE_CHECKSUM";
+
+    public static final String EXTRA_KIOSK_SETUP_ACTIVITY =
+            "com.android.devicelockcontroller.KIOSK_SETUP_ACTIVITY";
+    public static final String EXTRA_KIOSK_DISABLE_OUTGOING_CALLS =
+            "com.android.devicelockcontroller.KIOSK_DISABLE_OUTGOING_CALLS";
+    /**
+     * Used to control if notifications are enabled in lock task mode. The default value is false.
+     *
+     * @see android.app.admin.DevicePolicyManager#LOCK_TASK_FEATURE_NOTIFICATIONS
+     */
+    public static final String EXTRA_KIOSK_ENABLE_NOTIFICATIONS_IN_LOCK_TASK_MODE =
+            "com.android.devicelockcontroller.KIOSK_ENABLE_NOTIFICATIONS_IN_LOCK_TASK_MODE";
+    public static final String EXTRA_KIOSK_ALLOWLIST =
+            "com.android.devicelockcontroller.KIOSK_ALLOWLIST";
+    public static final String EXTRA_PROVISIONING_TYPE =
+            "com.android.devicelockcontroller.PROVISIONING_TYPE";
+    public static final String EXTRA_MANDATORY_PROVISION =
+            "com.android.devicelockcontroller.MANDATORY_PROVISION";
+
     /** Restrict instantiation. */
     private DeviceLockConstants() {}
 }
