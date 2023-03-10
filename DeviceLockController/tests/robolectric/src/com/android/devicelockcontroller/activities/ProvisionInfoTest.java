@@ -18,28 +18,26 @@ package com.android.devicelockcontroller.activities;
 
 import static com.google.common.truth.Truth.assertThat;
 
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentContainerView;
-
-import com.android.devicelockcontroller.R;
-
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
-import org.robolectric.RobolectricTestRunner;
+import org.junit.runners.JUnit4;
 
-@RunWith(RobolectricTestRunner.class)
-public final class LandingActivityTest {
+@RunWith(JUnit4.class)
+public final class ProvisionInfoTest {
 
-    @Ignore("http://b/269463682")
     @Test
-    public void landingActivity_setsProvisionInfoFragment() {
-        LandingActivity activity = Robolectric.buildActivity(LandingActivity.class).setup().get();
-        FragmentContainerView fragmentContainerView = activity.findViewById(
-                R.id.provision_info_fragment);
+    public void equals_withDifferentFieldValues_returnsFalse() {
+        ProvisionInfo p1 = new ProvisionInfo(/* drawableId= */0, /* textId= */1);
+        ProvisionInfo p2 = new ProvisionInfo(/* drawableId= */100, /* textId= */101);
 
-        assertThat((Fragment) fragmentContainerView.getFragment()).isInstanceOf(
-                ProvisionInfoFragment.class);
+        assertThat(p1.equals(p2)).isFalse();
+    }
+
+    @Test
+    public void equals_withSameFieldValues_returnsTrue() {
+        ProvisionInfo p1 = new ProvisionInfo(/* drawableId= */0, /* textId= */1);
+        ProvisionInfo p2 = new ProvisionInfo(/* drawableId= */0, /* textId= */1);
+
+        assertThat(p1.equals(p2)).isTrue();
     }
 }
