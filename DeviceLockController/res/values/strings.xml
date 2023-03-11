@@ -76,4 +76,20 @@
     <string name="footer_notice">The other management capabilities in <b>Settings > Security > Financed device info</b> don\'t apply to this device</string>
     <!-- Accessibility text for the footer notice. [CHAR_LIMIT=NONE] -->
     <string name="footer_notice_content_description">The management capabilities in the financed device section of Security settings don\'t apply to this device.</string>
+    <!-- Text explaining that this device is provided by the creditor. [CHAT_LIMIT=80] -->
+    <!-- TODO: use the real credit provider name here -->
+    <string name="device_provided_by_creditor">This device is provided by Creditor XYZ</string>
+    <!-- Text explaining the kiosk app will be downloaded and installed. [CHAR_LIMIT=NONE]-->
+    <string name="download_kiosk_app">The Kiosk app will be downloaded and installed automatically</string>
+    <!-- Text explaining that the device can be restricted if payment is missing. [CHAR_LIMIT=NONE] -->
+    <!-- TODO: use the real credit provider name here -->
+    <string name="restrict_device_if_missing_payment">Creditor XYZ can restrict this device if you miss a payment</string>
+    <!-- Button text. This button lets a user go back to previous screen. [CHAR_LIMIT=20] -->
+    <string name="previous">Previous</string>
+    <!-- Button text. This button lets a user go to the next screen. [CHAR_LIMIT=20] -->
+    <string name="next">Next</string>
+    <!-- Content description for the icon in the header. [CHAR_LIMIT=20] -->
+    <string name="header_icon_content_description">Info</string>
+    <!-- Content description for the icons  of items in the provision info list. [CHAR_LIMIT=20] -->
+    <string name="provision_info_item_icon_content_description">Provision info</string>
 </resources>
