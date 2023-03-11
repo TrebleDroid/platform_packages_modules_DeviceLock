@@ -39,6 +39,8 @@ public final class UserPreferences {
     private static final String KEY_LOCK_TASK_ALLOWLIST = "lock_task_allowlist";
     private static final String KEY_NEED_CHECK_IN = "need_check_in";
     static final String KEY_REGISTERED_DEVICE_ID = "registered_device_id";
+    private static final String KEY_FORCED_PROVISION = "forced_provision";
+
 
     private UserPreferences() {
     }
@@ -213,6 +215,29 @@ public final class UserPreferences {
         getSharedPreferences(context)
                 .edit()
                 .putString(KEY_REGISTERED_DEVICE_ID, registeredDeviceId)
+                .apply();
+    }
+
+    /**
+     * Check if provision should be forced.
+     *
+     * @param context Context used to get the shared preferences.
+     * @return True if the provision should be forced without any delays.
+     */
+    public static boolean isProvisionForced(Context context) {
+        return getSharedPreferences(context).getBoolean(KEY_FORCED_PROVISION, false);
+    }
+
+    /**
+     * Set provision is forced
+     *
+     * @param context  Context used to get the shared preferences.
+     * @param isForced The new value of the forced provision flag.
+     */
+    public static void setProvisionForced(Context context, boolean isForced) {
+        getSharedPreferences(context)
+                .edit()
+                .putBoolean(KEY_FORCED_PROVISION, isForced)
                 .apply();
     }
 }

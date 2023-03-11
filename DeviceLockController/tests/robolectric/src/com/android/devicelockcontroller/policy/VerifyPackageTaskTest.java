@@ -19,6 +19,8 @@ package com.android.devicelockcontroller.policy;
 import static androidx.work.WorkInfo.State.FAILED;
 import static androidx.work.WorkInfo.State.SUCCEEDED;
 
+import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_PACKAGE;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_SIGNATURE_CHECKSUM;
 import static com.android.devicelockcontroller.policy.AbstractTask.ERROR_CODE_NO_PACKAGE_INFO;
 import static com.android.devicelockcontroller.policy.AbstractTask.ERROR_CODE_NO_VALID_DOWNLOADED_FILE;
 import static com.android.devicelockcontroller.policy.AbstractTask.ERROR_CODE_NO_VALID_SIGNING_INFO;
@@ -28,8 +30,6 @@ import static com.android.devicelockcontroller.policy.AbstractTask.ERROR_CODE_SI
 import static com.android.devicelockcontroller.policy.AbstractTask.TASK_RESULT_DOWNLOADED_FILE_LOCATION_KEY;
 import static com.android.devicelockcontroller.policy.AbstractTask.TASK_RESULT_ERROR_CODE_KEY;
 import static com.android.devicelockcontroller.policy.VerifyPackageTask.computeHashValue;
-import static com.android.devicelockcontroller.setup.SetupParameters.EXTRA_KIOSK_PACKAGE;
-import static com.android.devicelockcontroller.setup.SetupParameters.EXTRA_KIOSK_SIGNATURE_CHECKSUM;
 import static com.android.devicelockcontroller.setup.UserPreferences.getKioskSignature;
 
 import static com.google.common.truth.Truth.assertThat;
