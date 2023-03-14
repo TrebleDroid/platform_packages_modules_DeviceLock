@@ -86,6 +86,8 @@ apex {
     apps: [
         "DeviceLockController",
     ],
+    updatable: false,
+    future_updatable: true,
 }
 
 sdk {
