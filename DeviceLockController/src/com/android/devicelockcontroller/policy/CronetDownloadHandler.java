@@ -41,7 +41,7 @@ import java.nio.channels.FileChannel;
 import java.util.Locale;
 
 /** The callback which handles the response of the download request. */
-public class CronetDownloadHandler extends UrlRequest.Callback {
+public class CronetDownloadHandler implements UrlRequest.Callback {
     private static final String TAG = "CronetDownloadHandler";
 
     private static final int BYTE_BUFFER_SIZE = 32 * 1024;
