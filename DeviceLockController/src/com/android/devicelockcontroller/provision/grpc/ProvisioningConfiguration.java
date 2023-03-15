@@ -17,6 +17,7 @@
 package com.android.devicelockcontroller.provision.grpc;
 
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_ALLOWLIST;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_APP_PROVIDER_NAME;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_DISABLE_OUTGOING_CALLS;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_DOWNLOAD_URL;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_ENABLE_NOTIFICATIONS_IN_LOCK_TASK_MODE;
@@ -115,6 +116,7 @@ public final class ProvisioningConfiguration {
                 isKioskAppEnableEnableNotifications());
         bundle.putStringArrayList(EXTRA_KIOSK_ALLOWLIST,
                 new ArrayList<>(mKioskAppAllowlistPackages));
+        bundle.putString(EXTRA_KIOSK_APP_PROVIDER_NAME, getKioskAppProviderName());
         return bundle;
     }
 }
