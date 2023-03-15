@@ -62,6 +62,7 @@ public final class SetupParametersTest extends AbstractSetupParametersTestBase {
         assertThat(SetupParameters.isProvisionMandatory(mContext)).isEqualTo(MANDATORY_PROVISION);
         assertThat(SetupParameters.getKioskAppProviderName(mContext)).isEqualTo(
                 KIOSK_APP_PROVIDER_NAME);
+        assertThat(SetupParameters.isInstallingFromUnknownSourcesDisallowed(mContext)).isTrue();
     }
 
     @Test

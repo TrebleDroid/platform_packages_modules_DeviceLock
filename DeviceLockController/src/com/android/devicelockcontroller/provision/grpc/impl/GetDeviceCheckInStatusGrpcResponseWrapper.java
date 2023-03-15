@@ -58,8 +58,7 @@ final class GetDeviceCheckInStatusGrpcResponseWrapper extends GetDeviceCheckInSt
     }
 
     GetDeviceCheckInStatusGrpcResponseWrapper(
-            @NonNull
-            GetDeviceCheckinStatusResponse response) {
+            @NonNull GetDeviceCheckinStatusResponse response) {
         super();
         mResponse = response;
         mNextStep = getNextStepInformation();
@@ -116,7 +115,8 @@ final class GetDeviceCheckInStatusGrpcResponseWrapper extends GetDeviceCheckInSt
                 info.getKioskAppMainActivity(),
                 info.getKioskAppAllowlistPackagesList(),
                 info.getKioskAppEnableOutgoingCalls(),
-                info.getKioskAppEnableNotifications());
+                info.getKioskAppEnableNotifications(),
+                info.getDisallowInstallingFromUnknownSources());
     }
 
     @Override
