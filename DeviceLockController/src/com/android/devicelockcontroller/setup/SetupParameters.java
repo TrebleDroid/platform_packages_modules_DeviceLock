@@ -16,6 +16,7 @@
 
 package com.android.devicelockcontroller.setup;
 
+import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_DISALLOW_INSTALLING_FROM_UNKNOWN_SOURCES;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_ALLOWLIST;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_APP_PROVIDER_NAME;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_DISABLE_OUTGOING_CALLS;
@@ -61,6 +62,8 @@ public final class SetupParameters {
     private static final String KEY_PROVISIONING_TYPE = "provisioning-type";
     private static final String KEY_MANDATORY_PROVISION = "mandatory-provision";
     private static final String KEY_KIOSK_APP_PROVIDER_NAME = "kiosk-app-provider-name";
+    private static final String KEY_DISALLOW_INSTALLING_FROM_UNKNOWN_SOURCES =
+            "disallow-installing-from-unknown-sources";
 
     private SetupParameters() {
     }
@@ -105,6 +108,8 @@ public final class SetupParameters {
         editor.putBoolean(KEY_MANDATORY_PROVISION, bundle.getBoolean(EXTRA_MANDATORY_PROVISION));
         editor.putString(KEY_KIOSK_APP_PROVIDER_NAME,
                 bundle.getString(EXTRA_KIOSK_APP_PROVIDER_NAME));
+        editor.putBoolean(KEY_DISALLOW_INSTALLING_FROM_UNKNOWN_SOURCES,
+                bundle.getBoolean(EXTRA_DISALLOW_INSTALLING_FROM_UNKNOWN_SOURCES));
         editor.apply();
     }
 
@@ -218,6 +223,17 @@ public final class SetupParameters {
      */
     public static String getKioskAppProviderName(Context context) {
         return getSharedPreferences(context).getString(KEY_KIOSK_APP_PROVIDER_NAME,
-                null /* defValue3*/);
+                null /* defValue */);
+    }
+
+    /**
+     * Check if installing from unknown sources should be disallowed on this device after provision
+     *
+     * @param context Context used to get the shared preferences.
+     * @return True if installing from unknown sources is disallowed.
+     */
+    public static Boolean isInstallingFromUnknownSourcesDisallowed(Context context) {
+        return getSharedPreferences(context).getBoolean(
+                KEY_DISALLOW_INSTALLING_FROM_UNKNOWN_SOURCES, /* defValue= */ false);
     }
 }
