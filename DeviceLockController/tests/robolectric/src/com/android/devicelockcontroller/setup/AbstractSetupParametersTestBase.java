@@ -17,6 +17,7 @@
 package com.android.devicelockcontroller.setup;
 
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_ALLOWLIST;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_APP_PROVIDER_NAME;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_DISABLE_OUTGOING_CALLS;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_DOWNLOAD_URL;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_ENABLE_NOTIFICATIONS_IN_LOCK_TASK_MODE;
@@ -47,6 +48,7 @@ abstract class AbstractSetupParametersTestBase {
     @ProvisioningType
     protected static final int PROVISIONING_TYPE = TYPE_FINANCED;
     protected static final boolean MANDATORY_PROVISION = true;
+    protected static final String KIOSK_APP_PROVIDER_NAME = "test name";
 
     protected static Bundle createParamsBundle() {
         final Bundle bundle = new Bundle();
@@ -64,6 +66,7 @@ abstract class AbstractSetupParametersTestBase {
         bundle.putStringArrayList(EXTRA_KIOSK_ALLOWLIST, actualKioskAllowlist);
         bundle.putInt(EXTRA_PROVISIONING_TYPE, PROVISIONING_TYPE);
         bundle.putBoolean(EXTRA_MANDATORY_PROVISION, MANDATORY_PROVISION);
+        bundle.putString(EXTRA_KIOSK_APP_PROVIDER_NAME, KIOSK_APP_PROVIDER_NAME);
         return bundle;
     }
 
