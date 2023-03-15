@@ -60,6 +60,8 @@ public final class SetupParametersTest extends AbstractSetupParametersTestBase {
                 .containsExactlyElementsIn(expectedKioskAllowlist);
         assertThat(SetupParameters.getProvisioningType(mContext)).isEqualTo(PROVISIONING_TYPE);
         assertThat(SetupParameters.isProvisionMandatory(mContext)).isEqualTo(MANDATORY_PROVISION);
+        assertThat(SetupParameters.getKioskAppProviderName(mContext)).isEqualTo(
+                KIOSK_APP_PROVIDER_NAME);
     }
 
     @Test
