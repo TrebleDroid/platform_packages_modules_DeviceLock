@@ -66,4 +66,8 @@ message ConfigurationInfo {
 
   // Whether notifications are shown to the user when the device is locked.
   optional bool kiosk_app_enable_notifications = 8;
+
+  // Whether installing application from unknown sources is disallowed on this device once
+  // provisioned.
+  optional bool disallow_installing_from_unknown_sources = 9;
 }
