@@ -19,15 +19,11 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:orientation="vertical">
-    <ImageView
-        android:id="@+id/image_view_item_provision_info"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_margin="8dp"
-        android:contentDescription="@string/provision_info_item_icon_content_description"/>
     <TextView
         android:id="@+id/text_view_item_provision_info"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"/>
+        android:textSize="16sp"
+        android:drawablePadding="12dp"
+        android:layout_marginTop="12dp"/>
 </LinearLayout>
