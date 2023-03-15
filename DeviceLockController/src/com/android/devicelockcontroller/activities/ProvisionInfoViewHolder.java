@@ -17,11 +17,9 @@
 package com.android.devicelockcontroller.activities;
 
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.devicelockcontroller.R;
@@ -32,19 +30,18 @@ import com.android.devicelockcontroller.R;
  */
 public final class ProvisionInfoViewHolder extends RecyclerView.ViewHolder {
 
-    private final ImageView mImageView;
-
     private final TextView mTextView;
 
     public ProvisionInfoViewHolder(@NonNull View itemView) {
         super(itemView);
-        mImageView = itemView.findViewById(R.id.image_view_item_provision_info);
         mTextView = itemView.findViewById(R.id.text_view_item_provision_info);
     }
 
     void bind(ProvisionInfo provisionInfo) {
-        mImageView.setImageDrawable(
-                ContextCompat.getDrawable(mImageView.getContext(), provisionInfo.getDrawableId()));
         mTextView.setText(provisionInfo.getTextId());
+        mTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(provisionInfo.getDrawableId(),
+                /* top=*/ 0,
+                /* end=*/ 0,
+                /* bottom=*/ 0);
     }
 }
