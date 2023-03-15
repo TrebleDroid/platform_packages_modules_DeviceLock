@@ -17,6 +17,7 @@
 package com.android.devicelockcontroller.setup;
 
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_ALLOWLIST;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_APP_PROVIDER_NAME;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_DISABLE_OUTGOING_CALLS;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_DOWNLOAD_URL;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_ENABLE_NOTIFICATIONS_IN_LOCK_TASK_MODE;
@@ -59,6 +60,7 @@ public final class SetupParameters {
             "kiosk-enable-notifications-in-lock-task-mode";
     private static final String KEY_PROVISIONING_TYPE = "provisioning-type";
     private static final String KEY_MANDATORY_PROVISION = "mandatory-provision";
+    private static final String KEY_KIOSK_APP_PROVIDER_NAME = "kiosk-app-provider-name";
 
     private SetupParameters() {
     }
@@ -101,6 +103,8 @@ public final class SetupParameters {
                 new ArraySet<>(bundle.getStringArrayList(EXTRA_KIOSK_ALLOWLIST)));
         editor.putInt(KEY_PROVISIONING_TYPE, bundle.getInt(EXTRA_PROVISIONING_TYPE));
         editor.putBoolean(KEY_MANDATORY_PROVISION, bundle.getBoolean(EXTRA_MANDATORY_PROVISION));
+        editor.putString(KEY_KIOSK_APP_PROVIDER_NAME,
+                bundle.getString(EXTRA_KIOSK_APP_PROVIDER_NAME));
         editor.apply();
     }
 
@@ -204,5 +208,16 @@ public final class SetupParameters {
      */
     public static boolean isProvisionMandatory(Context context) {
         return getSharedPreferences(context).getBoolean(KEY_MANDATORY_PROVISION, false);
+    }
+
+    /**
+     * Get the name of the provider of the kiosk app.
+     *
+     * @param context Context used to get the shared preferences.
+     * @return the name of the provider.
+     */
+    public static String getKioskAppProviderName(Context context) {
+        return getSharedPreferences(context).getString(KEY_KIOSK_APP_PROVIDER_NAME,
+                null /* defValue3*/);
     }
 }

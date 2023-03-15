@@ -119,6 +119,8 @@ public final class DeviceLockConstants {
             "com.android.devicelockcontroller.PROVISIONING_TYPE";
     public static final String EXTRA_MANDATORY_PROVISION =
             "com.android.devicelockcontroller.MANDATORY_PROVISION";
+    public static final String EXTRA_KIOSK_APP_PROVIDER_NAME =
+            "com.android.devicelockcontroller.KIOSK_APP_PROVIDER_NAME";
 
     /** Restrict instantiation. */
     private DeviceLockConstants() {}
