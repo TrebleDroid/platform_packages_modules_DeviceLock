@@ -31,13 +31,9 @@ import com.android.devicelockcontroller.common.DeviceLockConstants.PauseDevicePr
 public abstract class DeviceCheckInClient {
     @Nullable
     protected final String mRegisteredId;
-    protected final String mHostName;
-    protected final int mPortNumber;
 
-    protected DeviceCheckInClient(String hostName, int portNumber, @Nullable String registeredId) {
+    protected DeviceCheckInClient(@Nullable String registeredId) {
         mRegisteredId = registeredId;
-        mHostName = hostName;
-        mPortNumber = portNumber;
     }
 
     /**
