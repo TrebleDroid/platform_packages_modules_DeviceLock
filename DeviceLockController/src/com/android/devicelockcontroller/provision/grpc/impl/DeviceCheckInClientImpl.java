@@ -49,10 +49,10 @@ public final class DeviceCheckInClientImpl extends DeviceCheckInClient {
     private final DeviceLockCheckinServiceBlockingStub mBlockingStub;
 
     public DeviceCheckInClientImpl(String hostName, int portNumber, @Nullable String registeredId) {
-        super(hostName, portNumber, registeredId);
+        super(registeredId);
         mBlockingStub = DeviceLockCheckinServiceGrpc.newBlockingStub(
                 OkHttpChannelBuilder
-                        .forAddress(mHostName, mPortNumber)
+                        .forAddress(hostName, portNumber)
                         .build());
     }
 
