@@ -16,7 +16,9 @@
 
 package com.android.devicelockcontroller.setup;
 
+import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_DISALLOW_INSTALLING_FROM_UNKNOWN_SOURCES;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_ALLOWLIST;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_APP_PROVIDER_NAME;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_DISABLE_OUTGOING_CALLS;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_DOWNLOAD_URL;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_ENABLE_NOTIFICATIONS_IN_LOCK_TASK_MODE;
@@ -40,13 +42,14 @@ abstract class AbstractSetupParametersTestBase {
     protected static final String SIGNATURE_CHECKSUM = "12345678";
     protected static final String SETUP_ACTIVITY = "setup-activity";
     protected static final boolean DISABLE_OUTGOING_CALLS = true;
-    protected static final boolean READ_IMEI_ALLOWED = true;
     protected static final boolean ENABLE_NOTIFICATIONS_IN_LOCK_TASK_MODE = true;
     protected static final String KIOSK_ALLOWLIST_PACKAGE_0 = "package.name.0";
     protected static final String KIOSK_ALLOWLIST_PACKAGE_1 = "package.name.1";
     @ProvisioningType
     protected static final int PROVISIONING_TYPE = TYPE_FINANCED;
     protected static final boolean MANDATORY_PROVISION = true;
+    protected static final boolean DISALLOW_INSTALLING_FROM_UNKNOWN_SOURCES = true;
+    protected static final String KIOSK_APP_PROVIDER_NAME = "test name";
 
     protected static Bundle createParamsBundle() {
         final Bundle bundle = new Bundle();
@@ -64,6 +67,9 @@ abstract class AbstractSetupParametersTestBase {
         bundle.putStringArrayList(EXTRA_KIOSK_ALLOWLIST, actualKioskAllowlist);
         bundle.putInt(EXTRA_PROVISIONING_TYPE, PROVISIONING_TYPE);
         bundle.putBoolean(EXTRA_MANDATORY_PROVISION, MANDATORY_PROVISION);
+        bundle.putString(EXTRA_KIOSK_APP_PROVIDER_NAME, KIOSK_APP_PROVIDER_NAME);
+        bundle.putBoolean(EXTRA_DISALLOW_INSTALLING_FROM_UNKNOWN_SOURCES,
+                DISALLOW_INSTALLING_FROM_UNKNOWN_SOURCES);
         return bundle;
     }
 

@@ -16,7 +16,9 @@
 
 package com.android.devicelockcontroller.provision.grpc;
 
+import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_DISALLOW_INSTALLING_FROM_UNKNOWN_SOURCES;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_ALLOWLIST;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_APP_PROVIDER_NAME;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_DISABLE_OUTGOING_CALLS;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_DOWNLOAD_URL;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_ENABLE_NOTIFICATIONS_IN_LOCK_TASK_MODE;
@@ -56,11 +58,16 @@ public final class ProvisioningConfiguration {
     // Whether notifications are shown to the user when the device is locked.
     private final boolean mKioskAppEnableEnableNotifications;
 
+    // Whether installing application from unknown sources is disallowed on this device once
+    // provisioned.
+    private final boolean mDisallowInstallingFromUnknownSources;
+
     public ProvisioningConfiguration(
             String kioskAppDownloadUrl, String kioskAppProviderName,
             String kioskAppPackageName, String kioskAppSignatureChecksum,
             String kioskAppMainActivity, List<String> kioskAppAllowlistPackages,
-            boolean kioskAppEnableOutgoingCalls, boolean kioskAppEnableEnableNotifications) {
+            boolean kioskAppEnableOutgoingCalls, boolean kioskAppEnableEnableNotifications,
+            boolean disallowInstallingFromUnknownSources) {
         mKioskAppDownloadUrl = kioskAppDownloadUrl;
         mKioskAppProviderName = kioskAppProviderName;
         mKioskAppPackageName = kioskAppPackageName;
@@ -69,52 +76,23 @@ public final class ProvisioningConfiguration {
         mKioskAppAllowlistPackages = kioskAppAllowlistPackages;
         mKioskAppEnableOutgoingCalls = kioskAppEnableOutgoingCalls;
         mKioskAppEnableEnableNotifications = kioskAppEnableEnableNotifications;
-    }
-
-    public String getKioskAppDownloadUrl() {
-        return mKioskAppDownloadUrl;
-    }
-
-    public String getKioskAppProviderName() {
-        return mKioskAppProviderName;
-    }
-
-    public String getKioskAppPackageName() {
-        return mKioskAppPackageName;
-    }
-
-    public String getKioskAppSignatureChecksum() {
-        return mKioskAppSignatureChecksum;
-    }
-
-    public String getKioskAppMainActivity() {
-        return mKioskAppMainActivity;
-    }
-
-    public List<String> getKioskAppAllowlistPackages() {
-        return mKioskAppAllowlistPackages;
-    }
-
-    public boolean isKioskAppEnableOutgoingCalls() {
-        return mKioskAppEnableOutgoingCalls;
-    }
-
-    public boolean isKioskAppEnableEnableNotifications() {
-        return mKioskAppEnableEnableNotifications;
+        mDisallowInstallingFromUnknownSources = disallowInstallingFromUnknownSources;
     }
 
     public Bundle toBundle() {
         final Bundle bundle = new Bundle();
-        bundle.putString(EXTRA_KIOSK_PACKAGE, getKioskAppPackageName());
-        bundle.putString(EXTRA_KIOSK_DOWNLOAD_URL, getKioskAppDownloadUrl());
-        bundle.putString(EXTRA_KIOSK_SIGNATURE_CHECKSUM, getKioskAppSignatureChecksum());
-        bundle.putString(EXTRA_KIOSK_SETUP_ACTIVITY, getKioskAppMainActivity());
-        bundle.putBoolean(EXTRA_KIOSK_DISABLE_OUTGOING_CALLS, isKioskAppEnableOutgoingCalls());
-        bundle.putBoolean(
-                EXTRA_KIOSK_ENABLE_NOTIFICATIONS_IN_LOCK_TASK_MODE,
-                isKioskAppEnableEnableNotifications());
+        bundle.putString(EXTRA_KIOSK_PACKAGE, mKioskAppPackageName);
+        bundle.putString(EXTRA_KIOSK_DOWNLOAD_URL, mKioskAppDownloadUrl);
+        bundle.putString(EXTRA_KIOSK_SIGNATURE_CHECKSUM, mKioskAppSignatureChecksum);
+        bundle.putString(EXTRA_KIOSK_SETUP_ACTIVITY, mKioskAppMainActivity);
+        bundle.putBoolean(EXTRA_KIOSK_DISABLE_OUTGOING_CALLS, mKioskAppEnableOutgoingCalls);
+        bundle.putBoolean(EXTRA_KIOSK_ENABLE_NOTIFICATIONS_IN_LOCK_TASK_MODE,
+                mKioskAppEnableEnableNotifications);
         bundle.putStringArrayList(EXTRA_KIOSK_ALLOWLIST,
                 new ArrayList<>(mKioskAppAllowlistPackages));
+        bundle.putString(EXTRA_KIOSK_APP_PROVIDER_NAME, mKioskAppProviderName);
+        bundle.putBoolean(EXTRA_DISALLOW_INSTALLING_FROM_UNKNOWN_SOURCES,
+                mDisallowInstallingFromUnknownSources);
         return bundle;
     }
 }
