@@ -221,6 +221,7 @@ public final class SetupParameters {
      * @param context Context used to get the shared preferences.
      * @return the name of the provider.
      */
+    @Nullable
     public static String getKioskAppProviderName(Context context) {
         return getSharedPreferences(context).getString(KEY_KIOSK_APP_PROVIDER_NAME,
                 null /* defValue */);
