@@ -17,9 +17,11 @@
 package com.android.devicelockcontroller.activities;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,19 +30,35 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.devicelockcontroller.R;
+import com.android.devicelockcontroller.setup.SetupParameters;
+import com.android.devicelockcontroller.util.LogUtil;
 
 /**
  * The screen that provides information about the provision.
  */
 public final class ProvisionInfoFragment extends Fragment {
 
+    private static final String TAG = "ProvisionInfoFragment";
     @Nullable
     @Override
     public View onCreateView(
             @NonNull LayoutInflater inflater,
             @Nullable ViewGroup container,
             @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_provision_info, container, false);
+        View view = inflater.inflate(R.layout.fragment_provision_info, container, false);
+        TextView headerTextView = view.findViewById(R.id.header_text);
+        String providerName = SetupParameters.getKioskAppProviderName(getActivity());
+        if (TextUtils.isEmpty(providerName)) {
+            LogUtil.e(TAG, "Device provider name is empty, should not reach here.");
+            return view;
+        }
+        if (headerTextView == null) {
+            LogUtil.e(TAG, "Could not find header TextView, should not reach here.");
+            return view;
+        }
+        headerTextView.setText(getString(R.string.device_provided_by_creditor, providerName));
+
+        return view;
     }
 
     @Override
