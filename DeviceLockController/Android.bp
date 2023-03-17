@@ -32,13 +32,6 @@ license {
 }
 
 filegroup {
-    name: "devicelockcontroller-activities-sources",
-    srcs: [
-        "src/com/android/devicelockcontroller/activities/*.java",
-    ],
-}
-
-filegroup {
     name: "devicelockcontroller-util-sources",
     srcs: [
         "src/com/android/devicelockcontroller/util/*.java",
@@ -72,7 +65,6 @@ filegroup {
         "src/**/*.java",
     ],
     exclude_srcs: [
-        ":devicelockcontroller-activities-sources",
         ":devicelockcontroller-util-sources",
         ":devicelockcontroller-grpc-impl-sources",
     ],
@@ -103,24 +95,6 @@ java_library {
     srcs: [":devicelockcontroller-util-sources"],
     sdk_version: "module_current",
     min_sdk_version: "UpsideDownCake",
-    apex_available: [
-        "com.android.devicelock",
-    ],
-    visibility: [
-        "//packages/modules/DeviceLock:__subpackages__",
-    ],
-}
-
-java_library {
-    name: "devicelockcontroller-activities-lib",
-    srcs: [":devicelockcontroller-activities-sources"],
-    sdk_version: "module_current",
-    min_sdk_version: "UpsideDownCake",
-    static_libs: [
-        "androidx.appcompat_appcompat",
-        "devicelockcontroller-res-lib",
-        "devicelockcontroller-util-lib",
-    ],
     apex_available: [
         "com.android.devicelock",
     ],
@@ -191,7 +165,6 @@ android_library {
         "androidx.collection_collection",
         "androidx.lifecycle_lifecycle-extensions",
         "androidx.work_work-runtime",
-        "devicelockcontroller-activities-lib",
         "devicelockcontroller-grpc-interface-lib",
         "devicelockcontroller-interface",
         "devicelockcontroller-res-lib",
