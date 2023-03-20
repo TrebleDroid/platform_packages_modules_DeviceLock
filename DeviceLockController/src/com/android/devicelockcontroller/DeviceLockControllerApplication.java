@@ -21,8 +21,10 @@ import android.content.ComponentName;
 import android.content.Context;
 
 import androidx.annotation.MainThread;
+import androidx.annotation.Nullable;
 import androidx.work.Configuration;
 import androidx.work.DelegatingWorkerFactory;
+import androidx.work.ListenableWorker;
 
 import com.android.devicelockcontroller.policy.DevicePolicyController;
 import com.android.devicelockcontroller.policy.DevicePolicyControllerImpl;
@@ -35,7 +37,7 @@ import com.android.devicelockcontroller.util.LogUtil;
 /**
  * Application class for Device Lock Controller.
  */
-public final class DeviceLockControllerApplication extends Application implements
+public class DeviceLockControllerApplication extends Application implements
         PolicyObjectsInterface, Configuration.Provider {
     private static final String TAG = "DeviceLockControllerApplication";
 
@@ -91,5 +93,10 @@ public final class DeviceLockControllerApplication extends Application implement
                 .setWorkerFactory(factory)
                 .setMinimumLoggingLevel(android.util.Log.INFO)
                 .build();
+    }
+
+    @Nullable
+    public Class<? extends ListenableWorker> getPlayInstallPackageTaskClass() {
+        return null;
     }
 }
