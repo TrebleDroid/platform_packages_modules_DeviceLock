@@ -27,6 +27,7 @@ import androidx.work.WorkerParameters;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.Executors;
 
 /** A factory which produces {@link AbstractTask}s with parameters. */
@@ -45,16 +46,16 @@ public final class TaskWorkerFactory extends WorkerFactory {
             @NonNull WorkerParameters workerParameters) {
         try {
             Class<?> clazz = Class.forName(workerClassName);
-            if (clazz == DownloadPackageTask.class) {
-                return new DownloadPackageTask(context, workerParameters, mExecutorService);
-            } else if (clazz == VerifyPackageTask.class) {
-                return new VerifyPackageTask(context, workerParameters, mExecutorService);
-            } else if (clazz == InstallPackageTask.class) {
-                return new InstallPackageTask(context, workerParameters, mExecutorService);
-            }
+            return (ListenableWorker) clazz.getDeclaredConstructor(
+                            Context.class, WorkerParameters.class, ListeningExecutorService.class)
+                    .newInstance(context, workerParameters, mExecutorService);
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException("Task not found " + workerClassName, e);
+        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException
+                | InvocationTargetException e) {
+            // Unable to create an instance of the ListenableWorker.
+            return null;
         }
-        return null;
+        // unreachable
     }
 }
