@@ -150,7 +150,7 @@ public final class DeviceCheckInHelper {
         if (response == null) return false;
         UserPreferences.setRegisteredDeviceId(mAppContext,
                 response.getRegisteredDeviceIdentifier());
-        LogUtil.d(TAG, "check in succeed: " + response);
+        LogUtil.d(TAG, "check in succeed: " + response.getDeviceCheckInStatus());
         switch (response.getDeviceCheckInStatus()) {
             case READY_FOR_PROVISION:
                 UserPreferences.setProvisionForced(mAppContext, response.isProvisionForced());
