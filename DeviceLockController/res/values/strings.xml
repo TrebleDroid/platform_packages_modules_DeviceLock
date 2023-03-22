@@ -90,4 +90,8 @@
     <string name="header_icon_content_description">Info</string>
     <!-- Content description for the icons  of items in the provision info list. [CHAR_LIMIT=20] -->
     <string name="provision_info_item_icon_content_description">Provision info</string>
+    <!-- Screen header text explaining that the user can now enroll this device into device financing program. [CHAR_LIMIT=40] -->
+    <string name="enroll_your_device_header">Enroll your device</string>
+    <!-- Screen subheader text explaining that the user can now enroll this device into device provider's device financing program. [CHAR_LIMIT=80] -->
+    <string name="enroll_your_device_subheader">You can now enroll your device in <xliff:g id="provider name">%1$s</xliff:g>\'s financing program</string>
 </resources>
