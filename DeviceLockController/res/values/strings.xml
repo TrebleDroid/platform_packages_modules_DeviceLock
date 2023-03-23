@@ -82,6 +82,8 @@
     <string name="download_kiosk_app">The Kiosk app will be downloaded and installed automatically</string>
     <!-- Text explaining that the device can be restricted if payment is missing. [CHAR_LIMIT=NONE] -->
     <string name="restrict_device_if_missing_payment"><xliff:g id="provider name">%1$s</xliff:g> can restrict this device if you miss a payment</string>
+    <!-- Text explaining that the device can be restricted if the user does not make payments. [CHAR_LIMIT=NONE] -->
+    <string name="restrict_device_if_dont_make_payment"><xliff:g id="provider name">%1$s</xliff:g> can restrict this device if you don\'t make the necessary payments. For details, view the Terms &amp; Conditions.</string>
     <!-- Button text. This button lets a user go back to previous screen. [CHAR_LIMIT=20] -->
     <string name="previous">Previous</string>
     <!-- Button text. This button lets a user go to the next screen. [CHAR_LIMIT=20] -->
@@ -94,4 +96,6 @@
     <string name="enroll_your_device_header">Enroll your device</string>
     <!-- Screen subheader text explaining that the user can now enroll this device into device provider's device financing program. [CHAR_LIMIT=80] -->
     <string name="enroll_your_device_subheader">You can now enroll your device in <xliff:g id="provider name">%1$s</xliff:g>\'s financing program</string>
+    <!-- Screen header text explaining that the user is on a device subsidy program. [CHAR_LIMIT=40] -->
+    <string name="subsidy_program_header">You\'re on <xliff:g id="provider name">%1$s</xliff:g>\'s subsidy program</string>
 </resources>
