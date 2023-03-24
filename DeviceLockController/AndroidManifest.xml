@@ -62,6 +62,15 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity-alias>
+        <activity-alias
+            android:name="com.android.devicelockcontroller.activities.DeviceSubsidyProvisioningLandingActivity"
+            android:targetActivity=".activities.LandingActivity"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.android.devicelockcontroller.action.START_DEVICE_SUBSIDY_PROVISIONING"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity-alias>
         <service android:name="com.android.devicelockcontroller.DeviceLockControllerService"
                  android:directBootAware="true"
                  android:exported="false"
