@@ -59,7 +59,7 @@ public final class DeviceCheckInHelper {
     @VisibleForTesting
     public static final String CHECK_IN_WORK_NAME = "checkIn";
     private static final String TAG = "DeviceCheckInHelper";
-    private static final int CHECK_IN_INTERVAL_DAYS = 1;
+    private static final int CHECK_IN_INTERVAL_HOURS = 1;
     private final Context mAppContext;
     private final TelephonyManager mTelephonyManager;
 
@@ -84,7 +84,7 @@ public final class DeviceCheckInHelper {
      * @param delay       The duration that need to be delayed before performing check-in.
      */
     public void enqueueDeviceCheckInWork(boolean isExpedited, Duration delay) {
-        LogUtil.i(TAG, "enqueueDeviceCheckInWork");
+        LogUtil.i(TAG, "enqueueDeviceCheckInWork with delay: " + delay);
         final OneTimeWorkRequest.Builder builder =
                 new OneTimeWorkRequest.Builder(DeviceCheckInWorker.class)
                         .setConstraints(
@@ -92,7 +92,7 @@ public final class DeviceCheckInHelper {
                                         NetworkType.CONNECTED).build())
                         .setInitialDelay(delay)
                         .setBackoffCriteria(BackoffPolicy.LINEAR,
-                                Duration.ofDays(CHECK_IN_INTERVAL_DAYS));
+                                Duration.ofHours(CHECK_IN_INTERVAL_HOURS));
         if (isExpedited) builder.setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST);
         WorkManager.getInstance(mAppContext).enqueueUniqueWork(CHECK_IN_WORK_NAME,
                 ExistingWorkPolicy.APPEND_OR_REPLACE, builder.build());
