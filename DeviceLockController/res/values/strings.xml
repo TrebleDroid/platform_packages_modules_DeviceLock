@@ -47,21 +47,23 @@
     <!-- Button for an error message. The message lets the user know that the creditor app won't open, and they can tap this button to reset their phone and start over. [CHAR_LIMIT=34] -->
     <string name="reset_phone">Reset phone</string>
     <!-- Title text for section describing what control creditor has. [CHAR_LIMIT=80] -->
-    <string name="control_section_title">What can <xliff:g id="creditor_app">%1$s</xliff:g> control\u003F</string>
+    <string name="control_section_title">What can <xliff:g id="creditor_app">%1$s</xliff:g> do\u003F</string>
     <!-- Text explaining policy of locking device. [CHAR_LIMIT=80] -->
-    <string name="control_lock_device_text">Lock this device if you don\'t make a payment</string>
+    <string name="control_lock_device_text">Restrict this device if you don\'t make a payment</string>
     <!-- Text explaining policy of downloading creditor app. [CHAR_LIMIT=80] -->
-    <string name="control_download_text">Download and install the <xliff:g id="creditor_app">%1$s</xliff:g> app</string>
+    <string name="control_download_text">Download, install, and update the <xliff:g id="creditor_app">%1$s</xliff:g> app</string>
     <!-- Text explaining policy of disabling debug features. [CHAR_LIMIT=80] -->
-    <string name="control_disable_debug_text">Turn off debugging and user management features</string>
+    <string name="control_disable_debug_text">Turn off debugging features</string>
     <!-- Title text for section describing abilities in locked mode. [CHAR_LIMIT=80] -->
-    <string name="locked_section_title">What works if this device is restricted\u003F</string>
+    <string name="locked_section_title">What works if this device is locked\u003F</string>
     <!-- Text explaining availability of emergency calling in locked mode. [CHAR_LIMIT=80] -->
     <string name="locked_emergency_text">Emergency calling services</string>
     <!-- Text explaining availability of incoming calls in locked mode. [CHAR_LIMIT=80] -->
     <string name="locked_phone_usage_text">Incoming and some outgoing calls</string>
     <!-- List item on a screen. This item lets a user know that they won't be able to access Settings if the device is restricted by the credit provider. [CHAR_LIMIT=80] -->
     <string name="locked_settings_usage_text">Settings</string>
+    <!-- List item on a screen. This item lets a user know that they will be able to back up and restore data if the device is locked. [CHAR_LIMIT=80] -->
+    <string name="locked_backup_and_restore_text">Backing up and restoring your data</string>
     <!-- Title text for section describing data available to creditor. [CHAR_LIMIT=80] -->
     <string name="exposure_section_title">What\'s visible to <xliff:g id="creditor_app">%1$s</xliff:g>\u003F</string>
     <!-- Text explaining install and uninstall of creditor app. [CHAR_LIMIT=80] -->
@@ -72,8 +74,8 @@
     <string name="exposure_disable_dlc_text">If the <xliff:g id="creditor_app">%1$s</xliff:g> app isn\'t available</string>
     <!-- Overflow menu describing open source licenses. [CHAR_LIMIT=80] -->
     <string name="open_source_licenses">Open-source licenses</string>
-    <!-- Informational text at the bottom of a screen. This text lets a user know that the info listed in the "Financed device info" section in Settings doesn't apply to their device. [CHAR_LIMIT=200] -->
-    <string name="footer_notice">The other management capabilities in <b>Settings > Security > Financed device info</b> don\'t apply to this device</string>
+    <!-- Informational text at the bottom of a screen. This text lets a user know that the info listed in the "Managed device info" section in Settings doesn't apply to their device. [CHAR_LIMIT=200] -->
+    <string name="footer_notice">The other management capabilities in <b>Settings > Security > Managed device info</b> don\'t apply to this device</string>
     <!-- Accessibility text for the footer notice. [CHAR_LIMIT=NONE] -->
     <string name="footer_notice_content_description">The management capabilities in the financed device section of Security settings don\'t apply to this device.</string>
     <!-- Text explaining that this device is provided by the creditor. [CHAT_LIMIT=80] -->
@@ -82,10 +84,20 @@
     <string name="download_kiosk_app">The Kiosk app will be downloaded and installed automatically</string>
     <!-- Text explaining that the device can be restricted if payment is missing. [CHAR_LIMIT=NONE] -->
     <string name="restrict_device_if_missing_payment"><xliff:g id="provider name">%1$s</xliff:g> can restrict this device if you miss a payment</string>
+    <!-- Text explaining that the device can be restricted if the user does not make payments. [CHAR_LIMIT=NONE] -->
+    <string name="restrict_device_if_dont_make_payment"><xliff:g id="provider name">%1$s</xliff:g> can restrict this device if you don\'t make the necessary payments. For details, view the Terms &amp; Conditions.</string>
     <!-- Button text. This button lets a user go back to previous screen. [CHAR_LIMIT=20] -->
     <string name="previous">Previous</string>
     <!-- Button text. This button lets a user go to the next screen. [CHAR_LIMIT=20] -->
     <string name="next">Next</string>
+    <!-- Button text. This button lets a user start the device enrollment. [CHAR_LIMIT=20] -->
+    <string name="start">Start</string>
+    <!-- Button text. This button lets a user agree to the contents and exit the current screen. [CHAR_LIMIT=20] -->
+    <string name="ok">OK</string>
+    <!-- Button text. This button lets a user exit the current screen. [CHAR_LIMIT=20] -->
+    <string name="done">Done</string>
+    <!-- Button text. This button lets a user delay an action by 1 hour. [CHAR_LIMIT=20] -->
+    <string name="do_it_in_one_hour">Do it in 1 hour</string>
     <!-- Content description for the icon in the header. [CHAR_LIMIT=20] -->
     <string name="header_icon_content_description">Info</string>
     <!-- Content description for the icons  of items in the provision info list. [CHAR_LIMIT=20] -->
@@ -94,4 +106,22 @@
     <string name="enroll_your_device_header">Enroll your device</string>
     <!-- Screen subheader text explaining that the user can now enroll this device into device provider's device financing program. [CHAR_LIMIT=80] -->
     <string name="enroll_your_device_subheader">You can now enroll your device in <xliff:g id="provider name">%1$s</xliff:g>\'s financing program</string>
+    <!-- Screen header text explaining that the user is on a device subsidy program. [CHAR_LIMIT=40] -->
+    <string name="subsidy_program_header">You\'re on <xliff:g id="provider name">%1$s</xliff:g>\'s subsidy program</string>
+    <!-- Screen header text explaining that the device will be enrolled into a device financing / subsidy program. [CHAR_LIMIT=40] -->
+    <string name="device_enrollment_header_text">Device enrollment</string>
+    <!-- Body text explaining that the device will be enrolled into a device financing program in 30 days. [CHAR_LIMIT=NONE] -->
+    <string name="device_financing_enrollment_body_text">Your device will be enrolled in <xliff:g id="provider name">%1$s</xliff:g>\'s finance program within 30 days</string>
+    <!-- Body text explaining that the device will be enrolled into a device subsidy program in 30 days. [CHAR_LIMIT=NONE] -->
+    <string name="device_subsidy_enrollment_body_text">Your device will be enrolled in <xliff:g id="provider name">%1$s</xliff:g>\'s subsidy program within 30 days</string>
+    <!-- Body text explaining that the user can continue using the device while waiting for the device enrollment to happen. [CHAR_LIMIT=40] -->
+    <string name="continue_using_device">You can continue using your device</string>
+    <!-- Screen header text explaining that the user has already paid for this device. [CHAR_LIMIT=40] -->
+    <string name="device_paid">You paid for your device</string>
+    <!-- Body text explaining that the device has been removed from the device financing program. [CHAR_LIMIT=NONE] -->
+    <string name="device_removed_from_finance_program">Your device has been removed from <xliff:g id="provider name">%1$s</xliff:g>\'s finance program</string>
+    <!-- Body text explaining that all restriction applied before have been removed on this device. [CHAR_LIMIT=80] -->
+    <string name="restrictions_lifted">All restrictions on your device have been lifted</string>
+    <!-- Body text explaining that the user now can uninstall the kiosk app that was installed before. [CHAR_LIMIT=80] -->
+    <string name="uninstall_kiosk_app">You can uninstall the Kiosk app from your device</string>
 </resources>

@@ -17,6 +17,7 @@
 package com.android.devicelockcontroller.activities;
 
 import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_FINANCING_DEFERRED_PROVISIONING;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_SUBSIDY_PROVISIONING;
 
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -64,13 +65,18 @@ public final class ProvisionInfoFragment extends Fragment {
         }
 
         ProvisionInfoViewModel viewModel;
-        if (ACTION_START_DEVICE_FINANCING_DEFERRED_PROVISIONING.equals(
-                Objects.requireNonNull(getActivity()).getIntent().getAction())) {
-            viewModel = new ViewModelProvider(this).get(
-                    DeviceFinancingDeferredProvisionInfoViewModel.class);
-        } else {
-            viewModel = new ViewModelProvider(this).get(
-                    DeviceFinancingProvisionInfoViewModel.class);
+        switch (Objects.requireNonNull(getActivity()).getIntent().getAction()) {
+            case ACTION_START_DEVICE_FINANCING_DEFERRED_PROVISIONING:
+                viewModel = new ViewModelProvider(this).get(
+                        DeviceFinancingDeferredProvisionInfoViewModel.class);
+                break;
+            case ACTION_START_DEVICE_SUBSIDY_PROVISIONING:
+                viewModel = new ViewModelProvider(this).get(
+                        DeviceSubsidyProvisionInfoViewModel.class);
+                break;
+            default:
+                viewModel = new ViewModelProvider(this).get(
+                        DeviceFinancingProvisionInfoViewModel.class);
         }
 
         RecyclerView recyclerView = view.findViewById(R.id.recyclerview_provision_info);
