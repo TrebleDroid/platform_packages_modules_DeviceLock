@@ -51,15 +51,15 @@ public final class DeviceLockConstants {
     @Retention(RetentionPolicy.SOURCE)
     @IntDef(value = {
             STATUS_UNSPECIFIED,
-            READY_FOR_PROVISION,
             RETRY_CHECK_IN,
+            READY_FOR_PROVISION,
             STOP_CHECK_IN,
     })
     public @interface DeviceCheckInStatus {}
 
     public static final int STATUS_UNSPECIFIED = 0;
-    public static final int READY_FOR_PROVISION = 1;
-    public static final int RETRY_CHECK_IN = 2;
+    public static final int RETRY_CHECK_IN = 1;
+    public static final int READY_FOR_PROVISION = 2;
     public static final int STOP_CHECK_IN = 3;
 
     @Retention(RetentionPolicy.SOURCE)
