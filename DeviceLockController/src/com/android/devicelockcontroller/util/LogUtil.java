@@ -16,6 +16,7 @@
 
 package com.android.devicelockcontroller.util;
 
+import android.os.Build;
 import android.util.Log;
 import android.util.Slog;
 
@@ -26,7 +27,7 @@ import android.util.Slog;
 public final class LogUtil {
     @SuppressWarnings("IsLoggableTagLength") // only an issue for android <= 7.0 (error prone).
     private static boolean isLoggable(String tag, int level) {
-        return Log.isLoggable(tag, level);
+        return Build.isDebuggable() || Log.isLoggable(tag, level);
     }
 
     private LogUtil() {}
