@@ -14,43 +14,28 @@
  * limitations under the License.
  */
 
-package com.android.devicelockcontroller.provision.checkin;
+package com.android.devicelockcontroller.provision.worker;
 
 import android.content.Context;
 import android.util.ArraySet;
 
 import androidx.annotation.NonNull;
-import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
-import com.android.devicelockcontroller.R;
 import com.android.devicelockcontroller.common.DeviceId;
-import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrpcResponse;
-import com.android.devicelockcontroller.setup.UserPreferences;
 import com.android.devicelockcontroller.util.LogUtil;
 
 /**
  * A worker class dedicated to execute the check-in operation for device lock program.
  */
-public final class DeviceCheckInWorker extends Worker {
-
-    private static final String TAG = "DeviceCheckInWorker";
+public final class DeviceCheckInWorker extends AbstractCheckInWorker {
 
     private final DeviceCheckInHelper mCheckInHelper;
-    private final DeviceCheckInClient mClient;
 
     public DeviceCheckInWorker(@NonNull Context context,
             @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
-        final String hostName = context.getResources().getString(
-                R.string.check_in_server_host_name);
-        final int portNumber = context.getResources().getInteger(
-                R.integer.check_in_server_port_number);
-        final String className = context.getResources().getString(
-                R.string.device_check_in_client_class_name);
-        mClient = DeviceCheckInClient.newInstance(className, hostName, portNumber,
-                UserPreferences.getRegisteredDeviceId(context));
         mCheckInHelper = new DeviceCheckInHelper(context);
     }
 
