@@ -114,6 +114,8 @@
     <string name="device_financing_enrollment_body_text">Your device will be enrolled in <xliff:g id="provider name">%1$s</xliff:g>\'s finance program within 30 days</string>
     <!-- Body text explaining that the device will be enrolled into a device subsidy program in 30 days. [CHAR_LIMIT=NONE] -->
     <string name="device_subsidy_enrollment_body_text">Your device will be enrolled in <xliff:g id="provider name">%1$s</xliff:g>\'s subsidy program within 30 days</string>
+    <!-- Notification body text explaining that the device enrollment wil resume soon. [CHAR_LIMIT=NONE] -->
+    <string name="device_enrollment_notification_body_text">Enrollment will resume at <xliff:g id="time">%1$s</xliff:g>. You can continue using your device. </string>
     <!-- Body text explaining that the user can continue using the device while waiting for the device enrollment to happen. [CHAR_LIMIT=40] -->
     <string name="continue_using_device">You can continue using your device</string>
     <!-- Screen header text explaining that the user has already paid for this device. [CHAR_LIMIT=40] -->
@@ -124,4 +126,12 @@
     <string name="restrictions_lifted">All restrictions on your device have been lifted</string>
     <!-- Body text explaining that the user now can uninstall the kiosk app that was installed before. [CHAR_LIMIT=80] -->
     <string name="uninstall_kiosk_app">You can uninstall the Kiosk app from your device</string>
+    <!-- Screen header text explaining the device is being set up and ready for use soon. [CHAR_LIMIT=40] -->
+    <string name="getting_device_ready">Getting your device ready&#8230;</string>
+    <!-- Body text explaining that it may take a while to get the device ready. [CHAR_LIMIT=40] -->
+    <string name="this_may_take_a_few_minutes">This may take a few minutes</string>
+    <!-- Screen header text explaining the kiosk app is being installed. [CHAR_LIMIT=NONE] -->
+    <string name="installing_kiosk_app">Installing <xliff:g id="creditor_app">%1$s</xliff:g> app&#8230;</string>
+    <!-- Screen header text explaining the kiosk app is being opened. [CHAR_LIMIT=NONE] -->
+    <string name="opening_kiosk_app">Opening <xliff:g id="creditor_app">%1$s</xliff:g> app&#8230;</string>
 </resources>
