@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.devicelockcontroller.provision.checkin;
+package com.android.devicelockcontroller.provision.worker;
 
 import static com.android.devicelockcontroller.common.DeviceLockConstants.DEVICE_ID_TYPE_IMEI;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.DEVICE_ID_TYPE_MEID;

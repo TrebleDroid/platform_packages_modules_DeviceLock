@@ -31,7 +31,7 @@ import androidx.work.testing.SynchronousExecutor;
 import androidx.work.testing.WorkManagerTestInitHelper;
 
 import com.android.devicelockcontroller.policy.DeviceStateController;
-import com.android.devicelockcontroller.provision.checkin.DeviceCheckInHelper;
+import com.android.devicelockcontroller.provision.worker.DeviceCheckInHelper;
 
 import org.junit.Before;
 import org.junit.Test;
