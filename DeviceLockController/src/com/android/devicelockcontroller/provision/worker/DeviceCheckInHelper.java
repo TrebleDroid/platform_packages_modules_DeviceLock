@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.devicelockcontroller.provision.checkin;
+package com.android.devicelockcontroller.provision.worker;
 
 import static com.android.devicelockcontroller.common.DeviceLockConstants.DEVICE_ID_TYPE_IMEI;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.DEVICE_ID_TYPE_MEID;
@@ -53,7 +53,7 @@ import java.time.Duration;
 import java.time.Instant;
 
 /**
- * Helper class to perform the device check in process with device lock backend server
+ * Helper class to perform the device check-in process with device lock backend server
  */
 public final class DeviceCheckInHelper {
     @VisibleForTesting
@@ -95,7 +95,7 @@ public final class DeviceCheckInHelper {
                                 Duration.ofHours(CHECK_IN_INTERVAL_HOURS));
         if (isExpedited) builder.setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST);
         WorkManager.getInstance(mAppContext).enqueueUniqueWork(CHECK_IN_WORK_NAME,
-                ExistingWorkPolicy.APPEND_OR_REPLACE, builder.build());
+                ExistingWorkPolicy.REPLACE, builder.build());
     }
 
 
@@ -146,8 +146,7 @@ public final class DeviceCheckInHelper {
     }
 
     boolean handleGetDeviceCheckInStatusResponse(
-            GetDeviceCheckInStatusGrpcResponse response) {
-        if (response == null) return false;
+            @NonNull GetDeviceCheckInStatusGrpcResponse response) {
         UserPreferences.setRegisteredDeviceId(mAppContext,
                 response.getRegisteredDeviceIdentifier());
         LogUtil.d(TAG, "check in succeed: " + response.getDeviceCheckInStatus());
