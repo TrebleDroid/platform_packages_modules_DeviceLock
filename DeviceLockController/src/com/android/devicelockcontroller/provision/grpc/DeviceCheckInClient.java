@@ -31,24 +31,28 @@ import com.android.devicelockcontroller.common.DeviceLockConstants.PauseDevicePr
 public abstract class DeviceCheckInClient {
     @Nullable
     protected final String mRegisteredId;
+    private static DeviceCheckInClient sClient;
 
     protected DeviceCheckInClient(@Nullable String registeredId) {
         mRegisteredId = registeredId;
     }
 
     /**
-     * Get a new instance of DeviceCheckInClient object.
+     * Get a instance of DeviceCheckInClient object.
      */
-    public static DeviceCheckInClient newInstance(String className, String hostName, int portNumber,
+    public static DeviceCheckInClient getInstance(String className, String hostName, int portNumber,
             @Nullable String registeredId) {
-        try {
-            Class<?> clazz = Class.forName(className);
-            return (DeviceCheckInClient) clazz.getDeclaredConstructor(
-                            String.class, Integer.TYPE, String.class)
-                    .newInstance(hostName, portNumber, registeredId);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to get DeviceCheckInClient instance", e);
+        if (sClient == null) {
+            try {
+                Class<?> clazz = Class.forName(className);
+                sClient = (DeviceCheckInClient) clazz.getDeclaredConstructor(
+                                String.class, Integer.TYPE, String.class)
+                        .newInstance(hostName, portNumber, registeredId);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to get DeviceCheckInClient instance", e);
+            }
         }
+        return sClient;
     }
 
     /**

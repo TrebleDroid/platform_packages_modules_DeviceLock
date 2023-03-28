@@ -24,7 +24,7 @@ import androidx.annotation.VisibleForTesting;
 
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
-import com.android.devicelockcontroller.provision.checkin.DeviceCheckInHelper;
+import com.android.devicelockcontroller.provision.worker.DeviceCheckInHelper;
 import com.android.devicelockcontroller.util.LogUtil;
 
 /**

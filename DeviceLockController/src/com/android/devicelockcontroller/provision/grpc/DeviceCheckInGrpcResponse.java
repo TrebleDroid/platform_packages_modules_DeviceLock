@@ -28,7 +28,7 @@ import io.grpc.Status.Code;
  */
 abstract class DeviceCheckInGrpcResponse {
     @Nullable
-    Status mStatus = null;
+    Status mStatus;
 
     DeviceCheckInGrpcResponse() {
         mStatus = null;
