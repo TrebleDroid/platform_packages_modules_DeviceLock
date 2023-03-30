@@ -79,6 +79,9 @@ public final class ProvisioningConfiguration {
         mDisallowInstallingFromUnknownSources = disallowInstallingFromUnknownSources;
     }
 
+    /**
+     * Create a bundle containing the provisioning information.
+     */
     public Bundle toBundle() {
         final Bundle bundle = new Bundle();
         bundle.putString(EXTRA_KIOSK_PACKAGE, mKioskAppPackageName);
