@@ -20,9 +20,11 @@ import android.content.Context;
 import android.util.ArraySet;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 import androidx.work.WorkerParameters;
 
 import com.android.devicelockcontroller.common.DeviceId;
+import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrpcResponse;
 import com.android.devicelockcontroller.util.LogUtil;
 
@@ -31,12 +33,19 @@ import com.android.devicelockcontroller.util.LogUtil;
  */
 public final class DeviceCheckInWorker extends AbstractCheckInWorker {
 
-    private final DeviceCheckInHelper mCheckInHelper;
+    private final AbstractDeviceCheckInHelper mCheckInHelper;
 
     public DeviceCheckInWorker(@NonNull Context context,
             @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
         mCheckInHelper = new DeviceCheckInHelper(context);
+    }
+
+    @VisibleForTesting
+    DeviceCheckInWorker(@NonNull Context context, @NonNull WorkerParameters workerParameters,
+            AbstractDeviceCheckInHelper helper, DeviceCheckInClient client) {
+        super(context, workerParameters, client);
+        mCheckInHelper = helper;
     }
 
     @NonNull
@@ -45,8 +54,8 @@ public final class DeviceCheckInWorker extends AbstractCheckInWorker {
         LogUtil.i(TAG, "perform check-in request");
         final ArraySet<DeviceId> deviceIds = mCheckInHelper.getDeviceUniqueIds();
         final String carrierInfo = mCheckInHelper.getCarrierInfo();
-        if (deviceIds.isEmpty() || carrierInfo.isEmpty()) {
-            LogUtil.w(TAG, "CheckIn failed. Required device information not available");
+        if (deviceIds.isEmpty()) {
+            LogUtil.w(TAG, "CheckIn failed. No device identifier available!");
             return Result.failure();
         }
         final GetDeviceCheckInStatusGrpcResponse response =
