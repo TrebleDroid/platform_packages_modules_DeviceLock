@@ -49,14 +49,14 @@ import java.util.Locale;
  * signature checksum against the provided
  * {@link SetupParameters#getKioskSignatureChecksum(Context)}.
  */
-public final class VerifyPackageTask extends AbstractTask {
+public final class VerifyDownloadedPackageTask extends AbstractTask {
     private static final String TAG = "VerifyPackageTask";
 
     private final Context mContext;
     private final ListeningExecutorService mExecutorService;
     private final PackageManager mPackageManager;
 
-    public VerifyPackageTask(
+    public VerifyDownloadedPackageTask(
             Context context,
             WorkerParameters workerParameters,
             ListeningExecutorService executorService) {
