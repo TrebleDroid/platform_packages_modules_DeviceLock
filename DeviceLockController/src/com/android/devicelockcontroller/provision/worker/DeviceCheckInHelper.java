@@ -55,7 +55,7 @@ import java.time.Instant;
 /**
  * Helper class to perform the device check-in process with device lock backend server
  */
-public final class DeviceCheckInHelper {
+public final class DeviceCheckInHelper extends AbstractDeviceCheckInHelper {
     @VisibleForTesting
     public static final String CHECK_IN_WORK_NAME = "checkIn";
     private static final String TAG = "DeviceCheckInHelper";
@@ -73,6 +73,7 @@ public final class DeviceCheckInHelper {
      *
      * @param isExpedited If true, the work request should be expedited;
      */
+    @Override
     public void enqueueDeviceCheckInWork(boolean isExpedited) {
         enqueueDeviceCheckInWork(isExpedited, Duration.ZERO);
     }
@@ -83,7 +84,7 @@ public final class DeviceCheckInHelper {
      * @param isExpedited If true, the work request should be expedited;
      * @param delay       The duration that need to be delayed before performing check-in.
      */
-    public void enqueueDeviceCheckInWork(boolean isExpedited, Duration delay) {
+    private void enqueueDeviceCheckInWork(boolean isExpedited, Duration delay) {
         LogUtil.i(TAG, "enqueueDeviceCheckInWork with delay: " + delay);
         final OneTimeWorkRequest.Builder builder =
                 new OneTimeWorkRequest.Builder(DeviceCheckInWorker.class)
@@ -99,12 +100,14 @@ public final class DeviceCheckInHelper {
     }
 
 
+    @Override
     @NonNull
     ArraySet<DeviceId> getDeviceUniqueIds() {
         final int deviceIdTypeBitmap = mAppContext.getResources().getInteger(
                 R.integer.device_id_type_bitmap);
         if (deviceIdTypeBitmap < 0) {
             LogUtil.e(TAG, "getDeviceId: Cannot get device_id_type_bitmap");
+            return new ArraySet<>();
         }
 
         return getDeviceAvailableUniqueIds(deviceIdTypeBitmap);
@@ -139,12 +142,14 @@ public final class DeviceCheckInHelper {
         return deviceIds;
     }
 
+    @Override
     @NonNull
     String getCarrierInfo() {
         // TODO(b/267507927): Figure out if we need carrier info of all sims.
         return mTelephonyManager.getSimOperator();
     }
 
+    @Override
     boolean handleGetDeviceCheckInStatusResponse(
             @NonNull GetDeviceCheckInStatusGrpcResponse response) {
         UserPreferences.setRegisteredDeviceId(mAppContext,
