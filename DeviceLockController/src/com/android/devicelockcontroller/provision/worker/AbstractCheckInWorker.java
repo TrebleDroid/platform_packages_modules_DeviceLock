@@ -19,6 +19,7 @@ package com.android.devicelockcontroller.provision.worker;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
@@ -35,7 +36,7 @@ public abstract class AbstractCheckInWorker extends Worker {
     final DeviceCheckInClient mClient;
     final Context mContext;
 
-    public AbstractCheckInWorker(@NonNull Context context,
+    AbstractCheckInWorker(@NonNull Context context,
             @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
         final String hostName = context.getResources().getString(
@@ -46,6 +47,14 @@ public abstract class AbstractCheckInWorker extends Worker {
                 R.string.device_check_in_client_class_name);
         mClient = DeviceCheckInClient.getInstance(className, hostName, portNumber,
                 UserPreferences.getRegisteredDeviceId(context));
+        mContext = context;
+    }
+
+    @VisibleForTesting
+    AbstractCheckInWorker(@NonNull Context context,
+            @NonNull WorkerParameters workerParameters, DeviceCheckInClient client) {
+        super(context, workerParameters);
+        mClient = client;
         mContext = context;
     }
 }
