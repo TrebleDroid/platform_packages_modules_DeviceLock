@@ -27,16 +27,21 @@ public interface SetupController {
 
     /** Definitions for status of the setup. */
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({SETUP_NOT_STARTED, SETUP_IN_PROGRESS, SETUP_FAILED, SETUP_FINISHED})
-    @interface SetupStatus {}
-    /** Setup has not started and will be triggered from the activity. */
-    int SETUP_NOT_STARTED = 0;
-    /** Setup is in progress */
-    int SETUP_IN_PROGRESS = 1;
-    /** Setup has failed. */
-    int SETUP_FAILED = 2;
-    /** Setup has finished successfully. */
-    int SETUP_FINISHED = 3;
+    @IntDef({
+            SetupStatus.SETUP_NOT_STARTED,
+            SetupStatus.SETUP_IN_PROGRESS,
+            SetupStatus.SETUP_FAILED,
+            SetupStatus.SETUP_FINISHED})
+    @interface SetupStatus {
+        /** Setup has not started and will be triggered from the activity. */
+        int SETUP_NOT_STARTED = 0;
+        /** Setup is in progress */
+        int SETUP_IN_PROGRESS = 1;
+        /** Setup has failed. */
+        int SETUP_FAILED = 2;
+        /** Setup has finished successfully. */
+        int SETUP_FINISHED = 3;
+    }
 
     /** Registers a callback listener. */
     void addListener(SetupUpdatesCallbacks cb);
@@ -64,24 +69,24 @@ public interface SetupController {
         @Retention(RetentionPolicy.SOURCE)
         @IntDef(
                 value = {
-                        SETUP_FAILED,
-                        DOWNLOAD_FAILED,
-                        VERIFICATION_FAILED,
-                        INSTALL_FAILED,
-                        PACKAGE_DOES_NOT_EXIST
+                        FailureType.SETUP_FAILED,
+                        FailureType.DOWNLOAD_FAILED,
+                        FailureType.VERIFICATION_FAILED,
+                        FailureType.INSTALL_FAILED,
+                        FailureType.PACKAGE_DOES_NOT_EXIST
                 })
-        @interface FailureType {}
-
-        /** Setup failed to complete */
-        int SETUP_FAILED = 0;
-        /** Failed to download the creditor apk. */
-        int DOWNLOAD_FAILED = 1;
-        /** Verification of the creditor apk failed. */
-        int VERIFICATION_FAILED = 2;
-        /** Failed to install the creditor apk. */
-        int INSTALL_FAILED = 3;
-        /** Pre-installed package not found */
-        int PACKAGE_DOES_NOT_EXIST = 4;
+        @interface FailureType {
+            /** Setup failed to complete */
+            int SETUP_FAILED = 0;
+            /** Failed to download the creditor apk. */
+            int DOWNLOAD_FAILED = 1;
+            /** Verification of the creditor apk failed. */
+            int VERIFICATION_FAILED = 2;
+            /** Failed to install the creditor apk. */
+            int INSTALL_FAILED = 3;
+            /** Pre-installed package not found */
+            int PACKAGE_DOES_NOT_EXIST = 4;
+        }
 
         /** Method called when setup has failed. */
         void setupFailed(@FailureType int reason);
