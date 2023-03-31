@@ -23,25 +23,25 @@ import java.util.List;
 
 /**
  * This class provides resources and data used for the deferred provisioning flow of the device
- * financing use case.
+ * subsidy use case.
  */
-public final class DeviceFinancingDeferredProvisionInfoViewModel extends ProvisionInfoViewModel {
+public final class DeviceSubsidyDeferredProvisionInfoViewModel extends ProvisionInfoViewModel {
 
     private static final int HEADER_DRAWABLE_ID = R.drawable.ic_info_24px;
 
     private static final int HEADER_TEXT_ID = R.string.enroll_your_device_header;
 
-    private static final int SUBHEADER_TEXT_ID = R.string.enroll_your_device_financing_subheader;
+    private static final int SUBHEADER_TEXT_ID = R.string.enroll_your_device_subsidy_subheader;
 
     private static final Integer[] DRAWABLE_IDS = new Integer[]{
             R.drawable.ic_file_download_24px, R.drawable.ic_lock_outline_24px,
     };
 
     private static final Integer[] TEXT_IDS = new Integer[]{
-            R.string.download_kiosk_app, R.string.restrict_device_if_missing_payment,
+            R.string.download_kiosk_app, R.string.restrict_device_if_dont_make_payment,
     };
 
-    public DeviceFinancingDeferredProvisionInfoViewModel() {
+    public DeviceSubsidyDeferredProvisionInfoViewModel() {
         super();
 
         mHeaderDrawableIdLiveData.setValue(HEADER_DRAWABLE_ID);
