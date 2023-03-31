@@ -28,6 +28,7 @@ public final class DeviceLockConstants {
     public static final String SETUP_FAILED_ACTIVITY =
             "com.android.devicelockcontroller/"
                     + "com.android.devicelockcontroller.SetupFailedActivity";
+    public static final String KEY_KIOSK_APP_INSTALLED = "devicelock_kiosk_app_installed";
 
     // Constants related to unique device identifiers.
     @Retention(RetentionPolicy.SOURCE)
