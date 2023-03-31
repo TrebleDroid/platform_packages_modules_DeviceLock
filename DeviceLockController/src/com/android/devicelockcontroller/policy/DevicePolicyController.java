@@ -23,7 +23,7 @@ package com.android.devicelockcontroller.policy;
 public interface DevicePolicyController {
     /**
      * Launches an activity in locked mode. The specific activity is resolved based on the current
-     * device state.Returns false if package containing the activity is not allowlisted.
+     * device state.Returns false if package containing the activity is not in the allowlist.
      */
     boolean launchActivityInLockedMode();
 

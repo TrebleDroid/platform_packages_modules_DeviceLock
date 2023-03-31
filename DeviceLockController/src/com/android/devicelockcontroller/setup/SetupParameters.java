@@ -233,7 +233,7 @@ public final class SetupParameters {
      * @param context Context used to get the shared preferences.
      * @return True if installing from unknown sources is disallowed.
      */
-    public static Boolean isInstallingFromUnknownSourcesDisallowed(Context context) {
+    public static boolean isInstallingFromUnknownSourcesDisallowed(Context context) {
         return getSharedPreferences(context).getBoolean(
                 KEY_DISALLOW_INSTALLING_FROM_UNKNOWN_SOURCES, /* defValue= */ false);
     }
