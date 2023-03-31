@@ -16,6 +16,8 @@
 
 package com.android.devicelockcontroller.policy;
 
+import static com.android.devicelockcontroller.common.DeviceLockConstants.KEY_KIOSK_APP_INSTALLED;
+
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -49,14 +51,14 @@ import java.util.Locale;
  * signature checksum against the provided
  * {@link SetupParameters#getKioskSignatureChecksum(Context)}.
  */
-public final class VerifyDownloadedPackageTask extends AbstractTask {
+public final class VerifyPackageTask extends AbstractTask {
     private static final String TAG = "VerifyPackageTask";
 
     private final Context mContext;
     private final ListeningExecutorService mExecutorService;
     private final PackageManager mPackageManager;
 
-    public VerifyDownloadedPackageTask(
+    public VerifyPackageTask(
             Context context,
             WorkerParameters workerParameters,
             ListeningExecutorService executorService) {
@@ -72,13 +74,6 @@ public final class VerifyDownloadedPackageTask extends AbstractTask {
         return mExecutorService.submit(
                 () -> {
                     LogUtil.i(TAG, "Starts to run");
-                    final String fileLocation =
-                            getInputData().getString(TASK_RESULT_DOWNLOADED_FILE_LOCATION_KEY);
-                    if (TextUtils.isEmpty(fileLocation)) {
-                        LogUtil.e(TAG, String.format(Locale.US,
-                                "The downloaded file location is %s", fileLocation));
-                        return failure(ERROR_CODE_NO_VALID_DOWNLOADED_FILE);
-                    }
 
                     final String packageName = SetupParameters.getKioskPackage(mContext);
                     if (TextUtils.isEmpty(packageName)) {
@@ -96,10 +91,26 @@ public final class VerifyDownloadedPackageTask extends AbstractTask {
                         return failure(ERROR_CODE_SIGNATURE_CHECKSUM_MISMATCH);
                     }
 
-                    final PackageInfo packageInfo =
-                            mPackageManager.getPackageArchiveInfo(fileLocation,
-                                    PackageManager.GET_SIGNATURES
-                                            | PackageManager.GET_SIGNING_CERTIFICATES);
+                    PackageInfo packageInfo;
+                    final String fileLocation =
+                            getInputData().getString(TASK_RESULT_DOWNLOADED_FILE_LOCATION_KEY);
+
+                    if (getInputData().getBoolean(KEY_KIOSK_APP_INSTALLED, false)) {
+                        packageInfo = mPackageManager.getPackageInfo(
+                                packageName,
+                                PackageManager.GET_SIGNATURES
+                                        | PackageManager.GET_SIGNING_CERTIFICATES);
+                    } else {
+                        if (TextUtils.isEmpty(fileLocation)) {
+                            LogUtil.e(TAG, String.format(Locale.US,
+                                    "The downloaded file location is %s", fileLocation));
+                            return failure(ERROR_CODE_NO_VALID_DOWNLOADED_FILE);
+                        }
+                        packageInfo = mPackageManager.getPackageArchiveInfo(
+                                fileLocation,
+                                PackageManager.GET_SIGNATURES
+                                        | PackageManager.GET_SIGNING_CERTIFICATES);
+                    }
 
                     if (packageInfo == null) {
                         LogUtil.e(TAG, "Cannot find package info");
