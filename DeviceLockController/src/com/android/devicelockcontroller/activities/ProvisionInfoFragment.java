@@ -17,6 +17,7 @@
 package com.android.devicelockcontroller.activities;
 
 import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_FINANCING_DEFERRED_PROVISIONING;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_SUBSIDY_DEFERRED_PROVISIONING;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_SUBSIDY_PROVISIONING;
 
 import android.os.Bundle;
@@ -73,6 +74,10 @@ public final class ProvisionInfoFragment extends Fragment {
             case ACTION_START_DEVICE_SUBSIDY_PROVISIONING:
                 viewModel = new ViewModelProvider(this).get(
                         DeviceSubsidyProvisionInfoViewModel.class);
+                break;
+            case ACTION_START_DEVICE_SUBSIDY_DEFERRED_PROVISIONING:
+                viewModel = new ViewModelProvider(this).get(
+                        DeviceSubsidyDeferredProvisionInfoViewModel.class);
                 break;
             default:
                 viewModel = new ViewModelProvider(this).get(
