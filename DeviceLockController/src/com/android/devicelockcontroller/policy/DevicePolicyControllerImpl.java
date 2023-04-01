@@ -181,7 +181,7 @@ public final class DevicePolicyControllerImpl
             case DeviceState.SETUP_SUCCEEDED:
             case DeviceState.SETUP_FAILED:
                 return new Intent().setComponent(ComponentName.unflattenFromString(
-                        DeviceLockConstants.SETUP_FAILED_ACTIVITY));
+                        DeviceLockConstants.PROVISIONING_ACTIVITY));
             case DeviceState.KIOSK_SETUP:
                 return getKioskSetupActivityIntent();
             case DeviceState.LOCKED:

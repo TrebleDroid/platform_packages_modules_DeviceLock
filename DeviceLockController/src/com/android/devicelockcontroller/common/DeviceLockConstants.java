@@ -25,9 +25,9 @@ import java.lang.annotation.RetentionPolicy;
 public final class DeviceLockConstants {
     // TODO: properly set to an activity. Additionally, package could be com.android... or
     // com.google.android... and should be determined dynamically.
-    public static final String SETUP_FAILED_ACTIVITY =
+    public static final String PROVISIONING_ACTIVITY =
             "com.android.devicelockcontroller/"
-                    + "com.android.devicelockcontroller.SetupFailedActivity";
+                    + "com.android.devicelockcontroller.activities.ProvisioningActivity";
     public static final String KEY_KIOSK_APP_INSTALLED = "devicelock_kiosk_app_installed";
 
     // Constants related to unique device identifiers.

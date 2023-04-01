@@ -83,6 +83,10 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity-alias>
+        <activity
+            android:name="com.android.devicelockcontroller.activities.ProvisioningActivity"
+            android:theme="@style/Theme.Materialu"
+            android:exported="false"/>
         <service android:name="com.android.devicelockcontroller.DeviceLockControllerService"
                  android:directBootAware="true"
                  android:exported="false"
