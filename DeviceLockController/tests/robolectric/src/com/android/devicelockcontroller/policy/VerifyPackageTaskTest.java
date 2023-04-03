@@ -114,6 +114,8 @@ public final class VerifyPackageTaskTest {
 
     @Test
     public void testVerify_DownloadedFilePathIsNull() {
+        // GIVEN
+        createParameters(TEST_PACKAGE_NAME, TEST_SIGNATURE_CHECKSUM);
         // WHEN
         final WorkInfo workInfo = buildTaskAndRun(mWorkManager, /* fileLocation */ null);
 
@@ -125,6 +127,9 @@ public final class VerifyPackageTaskTest {
 
     @Test
     public void testVerify_DownloadedFilePathIsEmpty() {
+        // GIVEN
+        createParameters(TEST_PACKAGE_NAME, TEST_SIGNATURE_CHECKSUM);
+
         // WHEN
         final WorkInfo workInfo = buildTaskAndRun(mWorkManager, /* fileLocation */ "");
 
