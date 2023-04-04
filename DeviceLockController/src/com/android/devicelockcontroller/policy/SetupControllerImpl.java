@@ -75,6 +75,10 @@ public final class SetupControllerImpl implements SetupController {
     public static final String SETUP_VERIFY_PRE_INSTALLED_PACKAGE_TASK =
             "devicelock_setup_verify_pre_installed_package_task";
     public static final String TAG = "SetupController";
+    public static final String INSTALL_KIOSK_APP_FOR_SECONDARY_USER_TASK =
+            "setup_install_kiosk_app_for_secondary_user_task";
+    public static final String SETUP_INSTALL_EXISTING_PACKAGE_TASK =
+            "devicelock_setup_install_existing_package_task";
 
 
     private final List<SetupUpdatesCallbacks> mCallbacks = new ArrayList<>();
@@ -127,21 +131,21 @@ public final class SetupControllerImpl implements SetupController {
     @Override
     public void startSetupFlow(LifecycleOwner owner) {
         LogUtil.v(TAG, "Trigger setup flow");
+        WorkManager workManager = WorkManager.getInstance(mContext);
         if (isKioskAppPreInstalled() && Build.isDebuggable()) {
-            verifyPreInstalledPackage(WorkManager.getInstance(mContext),
-                    owner);
-        } else {
+            verifyPreInstalledPackage(workManager, owner);
+        } else if (mContext.getUser().isSystem()) {
             final Class<? extends ListenableWorker> playInstallTaskClass =
                     ((DeviceLockControllerApplication) mContext.getApplicationContext())
                             .getPlayInstallPackageTaskClass();
             if (playInstallTaskClass != null) {
-                installKioskAppFromPlay(WorkManager.getInstance(mContext),
-                        owner,
-                        playInstallTaskClass);
+                installKioskAppFromPlay(workManager, owner, playInstallTaskClass);
             } else {
-                installKioskAppFromURL(WorkManager.getInstance(mContext),
-                        owner);
+                installKioskAppFromURL(workManager, owner);
             }
+        } else {
+            // Setup flow for secondary users
+            installKioskAppForSecondaryUser(workManager, owner);
         }
     }
 
@@ -247,6 +251,38 @@ public final class SetupControllerImpl implements SetupController {
                                 setupFlowTaskFailureCallbackHandler(getTaskFailureType(workInfo));
                             }
                         });
+    }
+
+    void installKioskAppForSecondaryUser(WorkManager workManager, LifecycleOwner owner) {
+        LogUtil.v(TAG, "Installing existing package");
+        final SetupParametersClient setupParametersClient = SetupParametersClient.getInstance();
+        final String kioskPackage = Futures.getUnchecked(setupParametersClient.getKioskPackage());
+        final OneTimeWorkRequest installExistingPackage = new OneTimeWorkRequest.Builder(
+                InstallExistingPackageTask.class).setInputData(
+                new Data.Builder().putString(EXTRA_KIOSK_PACKAGE,
+                        kioskPackage).build()).build();
+        final OneTimeWorkRequest verifyInstalledPackageTask =
+                new OneTimeWorkRequest.Builder(VerifyPackageTask.class).setInputData(
+                        new Data.Builder()
+                                .putBoolean(KEY_KIOSK_APP_INSTALLED, /* value= */ true)
+                                .putString(EXTRA_KIOSK_PACKAGE, kioskPackage)
+                                .putString(EXTRA_KIOSK_SIGNATURE_CHECKSUM, Futures.getUnchecked(
+                                        setupParametersClient.getKioskSignatureChecksum()))
+                                .build()).build();
+        workManager.beginUniqueWork(
+                        SETUP_INSTALL_EXISTING_PACKAGE_TASK,
+                        ExistingWorkPolicy.KEEP,
+                        installExistingPackage)
+                .then(verifyInstalledPackageTask)
+                .enqueue();
+        workManager.getWorkInfosForUniqueWorkLiveData(SETUP_INSTALL_EXISTING_PACKAGE_TASK)
+                .observe(owner, workInfo -> {
+                    if (areAllTasksSucceeded(workInfo)) {
+                        setupFlowTaskSuccessCallbackHandler();
+                    } else if (isAtLeastOneTaskFailedOrCancelled(workInfo)) {
+                        setupFlowTaskFailureCallbackHandler(getTaskFailureType(workInfo));
+                    }
+                });
     }
 
     @VisibleForTesting

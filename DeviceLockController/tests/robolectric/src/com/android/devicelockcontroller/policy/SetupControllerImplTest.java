@@ -21,6 +21,7 @@ import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_SETUP_ACTIVITY;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_SIGNATURE_CHECKSUM;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_MANDATORY_PROVISION;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.KEY_KIOSK_APP_INSTALLED;
 import static com.android.devicelockcontroller.policy.AbstractTask.ERROR_CODE_CREATE_SESSION_FAILED;
 import static com.android.devicelockcontroller.policy.AbstractTask.ERROR_CODE_EMPTY_DOWNLOAD_URL;
 import static com.android.devicelockcontroller.policy.AbstractTask.ERROR_CODE_NO_PACKAGE_INFO;
@@ -32,10 +33,7 @@ import static com.android.devicelockcontroller.policy.SetupControllerImpl.transf
 
 import static com.google.common.truth.Truth.assertThat;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
@@ -48,11 +46,11 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageInstaller.Session;
-import android.content.pm.PackageInstaller.SessionParams;
 import android.content.pm.Signature;
 import android.content.pm.SigningInfo;
 import android.os.Bundle;
 import android.os.Looper;
+import android.util.ArrayMap;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -61,6 +59,7 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleRegistry;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.work.Configuration;
+import androidx.work.Data;
 import androidx.work.ListenableWorker;
 import androidx.work.WorkManager;
 import androidx.work.WorkerFactory;
@@ -71,12 +70,12 @@ import com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
 import com.android.devicelockcontroller.policy.InstallPackageTask.InstallPackageCompleteBroadcastReceiver;
 import com.android.devicelockcontroller.policy.InstallPackageTask.PackageInstallPendingIntentProvider;
-import com.android.devicelockcontroller.policy.InstallPackageTask.PackageInstallPendingIntentProviderImpl;
 import com.android.devicelockcontroller.policy.InstallPackageTask.PackageInstallerWrapper;
 import com.android.devicelockcontroller.setup.SetupParametersClient;
 import com.android.devicelockcontroller.setup.SetupParametersService;
 
 import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.testing.TestingExecutors;
 
@@ -92,9 +91,7 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.Shadows;
 import org.robolectric.annotation.LooperMode;
-import org.robolectric.shadows.ShadowPackageManager;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
@@ -112,6 +109,10 @@ public final class SetupControllerImplTest {
     private static final String TEST_SIGNATURE_CHECKSUM =
             "n2SnR-G5fxMfq7a0Rylsm28CAeefs8U1bmx36JtqgGo=";
     private static final int TEST_INSTALL_SESSION_ID = 1;
+    public static final String KEY_RESULT = "result";
+    public static final String KEY_ERROR_CODE = "error_code";
+    public static final String DOWNLOAD_SUFFIX = "Download";
+    public static final String INSTALL_SUFFIX = "Install";
 
     @Rule
     public final MockitoRule mMocks = MockitoJUnit.rule();
@@ -137,6 +138,7 @@ public final class SetupControllerImplTest {
     private String mFileLocation;
     private InstallPackageCompleteBroadcastReceiver mFakeBroadcastReceiver;
     private SetupParametersClient mSetupParametersClient;
+    private TestWorkFactory mTestWorkFactory;
 
     @Before
     public void setUp() {
@@ -149,8 +151,9 @@ public final class SetupControllerImplTest {
         mFileLocation = mContext.getFilesDir() + "/TEST_FILE_NAME";
         createTestFile(mFileLocation);
 
+        mTestWorkFactory = new TestWorkFactory();
         Configuration config =
-                new Configuration.Builder().setWorkerFactory(new TestWorkFactory()).build();
+                new Configuration.Builder().setWorkerFactory(mTestWorkFactory).build();
         WorkManagerTestInitHelper.initializeTestWorkManager(mContext, config);
         mFakeBroadcastReceiver = new InstallPackageCompleteBroadcastReceiver();
         Shadows.shadowOf(Looper.getMainLooper()).idleConstantly(true);
@@ -229,13 +232,6 @@ public final class SetupControllerImplTest {
 
         SetupControllerImpl setupController = createSetupControllerImpl(mMockCbs);
 
-        // GIVEN all setup tasks will succeed
-        whenDownloadTaskSucceed();
-        whenVerifyDownloadTaskSucceed();
-        whenInstallTaskSucceed();
-        whenVerifyInstallTaskSucceed();
-
-
         // WHEN finish kiosk app setup
         setupController.installKioskAppFromURL(WorkManager.getInstance(mContext),
                 mMockLifecycleOwner);
@@ -248,21 +244,47 @@ public final class SetupControllerImplTest {
     @Test
     public void installKioskAppFromURL_kioskAppNotInstalled_oneTaskFails()
             throws StateTransitionException {
-        // GIVEN we do not have kiosk signature checksum
-        Bundle bundle = new Bundle();
-        bundle.putString(EXTRA_KIOSK_DOWNLOAD_URL, TEST_DOWNLOAD_URL);
-        bundle.putString(EXTRA_KIOSK_PACKAGE, TEST_PACKAGE_NAME);
-        createParameters(bundle);
-
-        whenDownloadTaskSucceed();
-        whenVerifyDownloadTaskSucceed();
-        whenInstallTaskSucceed();
+        // GIVEN verify install task is failed due to no installed package info
+        whenVerifyInstallTaskFailed(ERROR_CODE_NO_PACKAGE_INFO);
         setupLifecycle();
 
         SetupControllerImpl setupController = createSetupControllerImpl(mMockCbs);
 
         // WHEN finish kiosk app setup
         setupController.installKioskAppFromURL(WorkManager.getInstance(mContext),
+                mMockLifecycleOwner);
+
+        // THEN verify task will fail
+        verify(mMockStateController).setNextStateForEvent(eq(DeviceEvent.SETUP_FAILURE));
+        verify(mMockCbs).setupFailed(eq(VERIFICATION_FAILED));
+    }
+
+    @Test
+    public void installKioskAppForSecondaryUser_kioskAppInstalled_allTaskSucceed()
+            throws StateTransitionException {
+        // GIVEN all tasks succeed
+        setupLifecycle();
+        final SetupControllerImpl setupController = createSetupControllerImpl(mMockCbs);
+
+        // WHEN install kiosk app for secondary user
+        setupController.installKioskAppForSecondaryUser(WorkManager.getInstance(mContext),
+                mMockLifecycleOwner);
+
+        verify(mMockStateController).setNextStateForEvent(eq(DeviceEvent.SETUP_SUCCESS));
+        verify(mMockCbs).setupCompleted();
+    }
+
+    @Test
+    public void installKioskAppForSecondaryUser_kioskAppNotInstalled_oneTaskFaied()
+            throws StateTransitionException {
+        // GIVEN verify install task is failed due to no installed package info
+        whenVerifyInstallTaskFailed(ERROR_CODE_NO_PACKAGE_INFO);
+        setupLifecycle();
+
+        SetupControllerImpl setupController = createSetupControllerImpl(mMockCbs);
+
+        // WHEN install kiosk app for secondary user
+        setupController.installKioskAppForSecondaryUser(WorkManager.getInstance(mContext),
                 mMockLifecycleOwner);
 
         // THEN verify task will fail
@@ -373,42 +395,28 @@ public final class SetupControllerImplTest {
         return packageInfo;
     }
 
-    private void whenDownloadTaskSucceed() {
-        when(mMockDownloader.getFileLocation()).thenReturn(mFileLocation);
-        when(mMockDownloader.startDownload()).thenReturn(Futures.immediateFuture(true));
+    private void whenDownloadTaskFailed(int errorCode) {
+        mTestWorkFactory.mResultMap.put(DownloadPackageTask.class.getName(), errorCode);
     }
 
-    private void whenVerifyDownloadTaskSucceed() {
-        PackageInfo packageInfo =
-                createKioskPackageInfo(new Signature[]{new Signature(TEST_SIGNATURE)});
-        ShadowPackageManager shadowPackageManager = Shadows.shadowOf(mContext.getPackageManager());
-        shadowPackageManager.setPackageArchiveInfo(mFileLocation, packageInfo);
+    private void whenVerifyDownloadTaskFailed(int errorCode) {
+        mTestWorkFactory.mResultMap.put(VerifyPackageTask.class.getName() + DOWNLOAD_SUFFIX,
+                errorCode);
     }
 
-    private void whenInstallTaskSucceed() {
-        try {
-            when(mMockPackageInstaller.createSession(any(SessionParams.class)))
-                    .thenReturn(TEST_INSTALL_SESSION_ID);
-            when(mMockPackageInstaller.openSession(TEST_INSTALL_SESSION_ID)).thenReturn(
-                    mMockSession);
-
-            when(mMockSession.openWrite(anyString(), anyLong(), anyLong()))
-                    .thenReturn(new ByteArrayOutputStream());
-            when(mMockPackageInstallPendingIntentProvider.get(anyInt()))
-                    .thenReturn(
-                            new PackageInstallPendingIntentProviderImpl(mContext).get(
-                                    TEST_INSTALL_SESSION_ID));
-            mFakeBroadcastReceiver.mFuture.set(true);
-        } catch (IOException e) {
-            throw new AssertionError("Exception", e);
-        }
+    private void whenInstallExistingPackageTaskFailed(int errorCode) {
+        mTestWorkFactory.mResultMap.put(InstallExistingPackageTask.class.getName(), errorCode);
     }
 
-    private void whenVerifyInstallTaskSucceed() {
-        PackageInfo packageInfo =
-                createKioskPackageInfo(new Signature[]{new Signature(TEST_SIGNATURE)});
-        ShadowPackageManager shadowPackageManager = Shadows.shadowOf(mContext.getPackageManager());
-        shadowPackageManager.installPackage(packageInfo);
+    private void whenInstallTaskFailed(int errorCode) {
+        mTestWorkFactory.mResultMap.put(InstallPackageTask.class.getName(), errorCode);
+
+    }
+
+    private void whenVerifyInstallTaskFailed(int errorCode) {
+        mTestWorkFactory.mResultMap.put(VerifyPackageTask.class.getName() + INSTALL_SUFFIX,
+                errorCode);
+
     }
 
     private static void createTestFile(String fileLocation) {
@@ -445,6 +453,9 @@ public final class SetupControllerImplTest {
 
         private final ListeningExecutorService mExecutorService;
 
+        private final ArrayMap<String, Integer> mResultMap =
+                new ArrayMap<>();
+
         TestWorkFactory() {
             mExecutorService = TestingExecutors.sameThreadScheduledExecutor();
         }
@@ -455,29 +466,28 @@ public final class SetupControllerImplTest {
                 @NonNull Context context,
                 @NonNull String workerClassName,
                 @NonNull WorkerParameters workerParameters) {
-            try {
-                Class<?> clazz = Class.forName(workerClassName);
-                if (clazz == DownloadPackageTask.class) {
-                    return new DownloadPackageTask(
-                            context, workerParameters, mExecutorService, mMockDownloader);
-                } else if (clazz == VerifyPackageTask.class) {
-                    return new VerifyPackageTask(context, workerParameters,
-                            mExecutorService);
-                } else if (clazz == InstallPackageTask.class) {
-                    return new InstallPackageTask(
-                            context,
-                            workerParameters,
-                            mExecutorService,
-                            mFakeBroadcastReceiver,
-                            mMockPackageInstaller,
-                            mMockPackageInstallPendingIntentProvider);
-                } else if (clazz == CleanupTask.class) {
-                    return new CleanupTask(context, workerParameters, mExecutorService);
+            return new AbstractTask(context, workerParameters) {
+                @NonNull
+                @Override
+                public ListenableFuture<Result> startWork() {
+                    return mExecutorService.submit(() -> {
+                        final Integer resultCode = mResultMap.get(workerClassName + getSuffix());
+                        return resultCode == null || resultCode < 0
+                                ? Result.success(new Data.Builder().putString(
+                                TASK_RESULT_DOWNLOADED_FILE_LOCATION_KEY, mFileLocation).build())
+                                : failure(resultCode);
+                    });
                 }
-            } catch (ClassNotFoundException e) {
-                throw new IllegalArgumentException("Task not found " + workerClassName, e);
-            }
-            return null;
+
+                private String getSuffix() {
+                    if (workerClassName.equals(VerifyPackageTask.class.getName())) {
+                        return getInputData().getBoolean(KEY_KIOSK_APP_INSTALLED, false)
+                                ? INSTALL_SUFFIX : DOWNLOAD_SUFFIX;
+                    }
+                    return "";
+                }
+
+            };
         }
     }
 }
