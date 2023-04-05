@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
 
+import com.android.devicelockcontroller.common.DeviceLockConstants.ProvisioningType;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import java.util.List;
@@ -40,35 +41,63 @@ public final class SetupParametersService extends Service {
                 public void createPrefs(Bundle bundle) {
                     SetupParameters.createPrefs(mContext, bundle);
                 }
+
                 @Override
                 public String getKioskPackage() {
                     return SetupParameters.getKioskPackage(mContext);
                 }
+
                 @Override
                 public String getKioskDownloadUrl() {
                     return SetupParameters.getKioskDownloadUrl(mContext);
                 }
+
                 @Override
                 public String getKioskSignatureChecksum() {
                     return SetupParameters.getKioskSignatureChecksum(mContext);
                 }
+
                 @Override
                 public String getKioskSetupActivity() {
                     return SetupParameters.getKioskSetupActivity(mContext);
                 }
+
                 @Override
                 public boolean getOutgoingCallsDisabled() {
                     return SetupParameters.getOutgoingCallsDisabled(mContext);
                 }
+
                 @Override
                 public List<String> getKioskAllowlist() {
                     return SetupParameters.getKioskAllowlist(mContext);
                 }
+
                 @Override
                 public boolean isNotificationsInLockTaskModeEnabled() {
                     return SetupParameters.isNotificationsInLockTaskModeEnabled(mContext);
                 }
-    };
+
+                @Override
+                @ProvisioningType
+                public int getProvisioningType() {
+                    return SetupParameters.getProvisioningType(mContext);
+                }
+
+                @Override
+                public boolean isProvisionMandatory() {
+                    return SetupParameters.isProvisionMandatory(mContext);
+                }
+
+                @Override
+                public String getKioskAppProviderName() {
+                    return SetupParameters.getKioskAppProviderName(mContext);
+                }
+
+                @Override
+                public boolean isInstallingFromUnknownSourcesDisallowed() {
+                    return SetupParameters.isInstallingFromUnknownSourcesDisallowed(mContext);
+                }
+            };
 
     @Override
     public void onCreate() {
