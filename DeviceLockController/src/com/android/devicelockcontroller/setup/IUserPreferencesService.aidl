@@ -29,4 +29,12 @@ interface IUserPreferencesService {
     void setPackageOverridingHome(in String packageName);
     List<String> getLockTaskAllowlist();
     void setLockTaskAllowlist(in List<String> allowlist);
+    boolean needCheckIn();
+    void setNeedCheckIn(boolean needCheckIn);
+    String getRegisteredDeviceId();
+    void setRegisteredDeviceId(String registeredDeviceId);
+    boolean isProvisionForced();
+    void setProvisionForced(boolean isForced);
+    String getEnrollmentToken();
+    void setEnrollmentToken(String token);
 }
