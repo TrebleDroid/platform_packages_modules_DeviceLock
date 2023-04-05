@@ -38,7 +38,6 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.robolectric.annotation.LooperMode.Mode.LEGACY;
 
 import android.app.Application;
 import android.content.Context;
@@ -46,10 +45,11 @@ import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
-import android.os.Bundle;
+import android.os.Looper;
 
 import androidx.test.core.app.ApplicationProvider;
 import androidx.work.Configuration;
+import androidx.work.Data;
 import androidx.work.ListenableWorker;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
@@ -62,7 +62,6 @@ import com.android.devicelockcontroller.policy.InstallExistingPackageTask.Instal
 import com.android.devicelockcontroller.policy.InstallExistingPackageTask.PackageInstallPendingIntentProvider;
 import com.android.devicelockcontroller.policy.InstallExistingPackageTask.PackageInstallPendingIntentProviderImpl;
 import com.android.devicelockcontroller.policy.InstallExistingPackageTask.PackageInstallerWrapper;
-import com.android.devicelockcontroller.setup.SetupParameters;
 
 import com.google.common.util.concurrent.MoreExecutors;
 
@@ -75,18 +74,19 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.Shadows;
-import org.robolectric.annotation.LooperMode;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowContextWrapper;
 
 import java.util.concurrent.ExecutionException;
 
-@LooperMode(LEGACY)
 @RunWith(RobolectricTestRunner.class)
 public final class InstallExistingPackageTaskTest {
-    @Rule public final MockitoRule mMocks = MockitoJUnit.rule();
-    @Mock private PackageInstallerWrapper mMockPackageInstaller;
-    @Mock private PackageInstallPendingIntentProvider mMockPackageInstallPendingIntentProvider;
+    @Rule
+    public final MockitoRule mMocks = MockitoJUnit.rule();
+    @Mock
+    private PackageInstallerWrapper mMockPackageInstaller;
+    @Mock
+    private PackageInstallPendingIntentProvider mMockPackageInstallPendingIntentProvider;
 
     private Context mContext;
     private WorkManager mWorkManager;
@@ -234,14 +234,13 @@ public final class InstallExistingPackageTaskTest {
 
     private WorkInfo buildTaskAndRun(WorkManager workManager, String packageName) {
         // GIVEN
-        final Bundle bundle = new Bundle();
-        bundle.putString(EXTRA_KIOSK_PACKAGE, packageName);
+        final Data data = new Data.Builder().putString(EXTRA_KIOSK_PACKAGE, packageName).build();
 
-        SetupParameters.createPrefs(mContext, bundle);
 
         // WHEN
         final OneTimeWorkRequest request =
-                new OneTimeWorkRequest.Builder(InstallExistingPackageTask.class).build();
+                new OneTimeWorkRequest.Builder(InstallExistingPackageTask.class).setInputData(data)
+                        .build();
         workManager.enqueue(request);
 
         try {
@@ -277,6 +276,7 @@ public final class InstallExistingPackageTaskTest {
         intent.putExtra(EXTRA_STATUS, status);
         mContext.sendBroadcast(intent);
 
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
         // THEN make sure broadcast intent has correct contents
         assertThat(shadowContextWrapper.getBroadcastIntents()).hasSize(1);
         final Intent receivedIntent = shadowContextWrapper.getBroadcastIntents().get(0);

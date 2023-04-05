@@ -43,6 +43,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.robolectric.annotation.LooperMode.Mode.LEGACY;
 
+import android.app.Application;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageInstaller.Session;
@@ -50,6 +52,7 @@ import android.content.pm.PackageInstaller.SessionParams;
 import android.content.pm.Signature;
 import android.content.pm.SigningInfo;
 import android.os.Bundle;
+import android.os.Looper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -64,19 +67,20 @@ import androidx.work.WorkerFactory;
 import androidx.work.WorkerParameters;
 import androidx.work.testing.WorkManagerTestInitHelper;
 
-import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
 import com.android.devicelockcontroller.policy.InstallPackageTask.InstallPackageCompleteBroadcastReceiver;
 import com.android.devicelockcontroller.policy.InstallPackageTask.PackageInstallPendingIntentProvider;
 import com.android.devicelockcontroller.policy.InstallPackageTask.PackageInstallPendingIntentProviderImpl;
 import com.android.devicelockcontroller.policy.InstallPackageTask.PackageInstallerWrapper;
-import com.android.devicelockcontroller.setup.SetupParameters;
+import com.android.devicelockcontroller.setup.SetupParametersClient;
+import com.android.devicelockcontroller.setup.SetupParametersService;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.testing.TestingExecutors;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -84,21 +88,21 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.Shadows;
-import org.robolectric.annotation.Config;
 import org.robolectric.annotation.LooperMode;
 import org.robolectric.shadows.ShadowPackageManager;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @LooperMode(LEGACY)
 @RunWith(RobolectricTestRunner.class)
-@Config(application = TestDeviceLockControllerApplication.class)
 public final class SetupControllerImplTest {
 
     private static final String TEST_SETUP_ACTIVITY = "packagename/.activity";
@@ -132,11 +136,16 @@ public final class SetupControllerImplTest {
     private Context mContext;
     private String mFileLocation;
     private InstallPackageCompleteBroadcastReceiver mFakeBroadcastReceiver;
+    private SetupParametersClient mSetupParametersClient;
 
     @Before
     public void setUp() {
         mContext = ApplicationProvider.getApplicationContext();
-
+        Shadows.shadowOf((Application) mContext).setComponentNameAndServiceForBindService(
+                new ComponentName(mContext, SetupParametersService.class),
+                Robolectric.setupService(SetupParametersService.class).onBind(null));
+        mSetupParametersClient = SetupParametersClient.getInstance(
+                mContext, TestingExecutors.sameThreadScheduledExecutor());
         mFileLocation = mContext.getFilesDir() + "/TEST_FILE_NAME";
         createTestFile(mFileLocation);
 
@@ -144,13 +153,19 @@ public final class SetupControllerImplTest {
                 new Configuration.Builder().setWorkerFactory(new TestWorkFactory()).build();
         WorkManagerTestInitHelper.initializeTestWorkManager(mContext, config);
         mFakeBroadcastReceiver = new InstallPackageCompleteBroadcastReceiver();
+        Shadows.shadowOf(Looper.getMainLooper()).idleConstantly(true);
+    }
+
+    @After
+    public void tearDown() {
+        SetupParametersClient.reset();
     }
 
     @Test
     public void testInitialState_SetupFinished() throws Exception {
         Bundle b = new Bundle();
         b.putString(EXTRA_KIOSK_SETUP_ACTIVITY, TEST_SETUP_ACTIVITY);
-        SetupParameters.createPrefs(mContext, b);
+        createParameters(b);
         when(mMockStateController.getState()).thenReturn(DeviceState.KIOSK_SETUP);
         SetupControllerImpl setupController =
                 new SetupControllerImpl(
@@ -167,7 +182,7 @@ public final class SetupControllerImplTest {
     public void testInitialState_SetupFinishedException() throws Exception {
         Bundle b = new Bundle();
         b.putString(EXTRA_KIOSK_SETUP_ACTIVITY, TEST_SETUP_ACTIVITY);
-        SetupParameters.createPrefs(mContext, b);
+        createParameters(b);
         when(mMockStateController.getState()).thenReturn(DeviceState.KIOSK_SETUP);
         SetupControllerImpl setupController =
                 new SetupControllerImpl(
@@ -188,7 +203,7 @@ public final class SetupControllerImplTest {
     public void testInitialState_mandatoryProvisioning_SetupFailed() {
         Bundle bundle = new Bundle();
         bundle.putBoolean(EXTRA_MANDATORY_PROVISION, true);
-        SetupParameters.createPrefs(mContext, bundle);
+        createParameters(bundle);
         when(mMockStateController.getState()).thenReturn(DeviceState.SETUP_FAILED);
         SetupControllerImpl setupController =
                 new SetupControllerImpl(
@@ -208,7 +223,7 @@ public final class SetupControllerImplTest {
         bundle.putString(EXTRA_KIOSK_DOWNLOAD_URL, TEST_DOWNLOAD_URL);
         bundle.putString(EXTRA_KIOSK_PACKAGE, TEST_PACKAGE_NAME);
         bundle.putString(EXTRA_KIOSK_SIGNATURE_CHECKSUM, TEST_SIGNATURE_CHECKSUM);
-        SetupParameters.createPrefs(mContext, bundle);
+        createParameters(bundle);
 
         setupLifecycle();
 
@@ -237,10 +252,11 @@ public final class SetupControllerImplTest {
         Bundle bundle = new Bundle();
         bundle.putString(EXTRA_KIOSK_DOWNLOAD_URL, TEST_DOWNLOAD_URL);
         bundle.putString(EXTRA_KIOSK_PACKAGE, TEST_PACKAGE_NAME);
-        SetupParameters.createPrefs(mContext, bundle);
+        createParameters(bundle);
 
         whenDownloadTaskSucceed();
         whenVerifyDownloadTaskSucceed();
+        whenInstallTaskSucceed();
         setupLifecycle();
 
         SetupControllerImpl setupController = createSetupControllerImpl(mMockCbs);
@@ -400,6 +416,14 @@ public final class SetupControllerImplTest {
             outputStream.write(new byte[]{1, 2, 3, 4, 5});
         } catch (IOException e) {
             throw new AssertionError("Exception", e);
+        }
+    }
+
+    private void createParameters(Bundle b) {
+        try {
+            Futures.getChecked(mSetupParametersClient.createPrefs(b), ExecutionException.class);
+        } catch (ExecutionException e) {
+            throw new AssertionError("Failed to create setup parameters!", e);
         }
     }
 

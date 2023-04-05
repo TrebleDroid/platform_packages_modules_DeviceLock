@@ -23,6 +23,8 @@ import static android.content.pm.ApplicationInfo.FLAG_INSTALLED;
 import static android.content.pm.PackageInstaller.EXTRA_STATUS_MESSAGE;
 import static android.content.pm.PackageManager.INSTALL_REASON_UNKNOWN;
 
+import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_PACKAGE;
+
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -41,7 +43,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.work.WorkerParameters;
 
-import com.android.devicelockcontroller.setup.SetupParameters;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -91,7 +92,7 @@ public final class InstallExistingPackageTask extends AbstractTask {
         mBroadcastReceiver = broadcastReceiver;
         mPackageInstaller = packageInstaller;
         mPackageInstallPendingIntentProvider = packageInstallPendingIntentProvider;
-        mPackageName = SetupParameters.getKioskPackage(context);
+        mPackageName = workerParameters.getInputData().getString(EXTRA_KIOSK_PACKAGE);
     }
 
     private static boolean isPackageInstalled(Context context, String packageName) {
@@ -195,7 +196,8 @@ public final class InstallExistingPackageTask extends AbstractTask {
      * an alternative way of detecting failures using polling and a timeout.
      */
     static final class InstallExistingPackageCompleteBroadcastReceiver extends BroadcastReceiver {
-        @VisibleForTesting final SettableFuture<Boolean> mFuture = SettableFuture.create();
+        @VisibleForTesting
+        final SettableFuture<Boolean> mFuture = SettableFuture.create();
 
         private Context mContext;
         private int mCounter = 0;

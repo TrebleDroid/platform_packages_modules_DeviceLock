@@ -23,8 +23,10 @@ import android.os.Bundle;
 import android.os.UserManager;
 
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
-import com.android.devicelockcontroller.setup.SetupParameters;
+import com.android.devicelockcontroller.setup.SetupParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
+
+import com.google.common.util.concurrent.Futures;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -69,7 +71,7 @@ final class UserRestrictionsPolicyHandler implements PolicyHandler {
             Collections.addAll(mAlwaysOnRestrictions, RESTRICTIONS_RELEASE_BUILDS);
         }
 
-        if (SetupParameters.getOutgoingCallsDisabled(context)) {
+        if (Futures.getUnchecked(SetupParametersClient.getInstance().getOutgoingCallsDisabled())) {
             mLockModeRestrictions.add(UserManager.DISALLOW_OUTGOING_CALLS);
         }
     }
@@ -143,10 +145,10 @@ final class UserRestrictionsPolicyHandler implements PolicyHandler {
 
     @Override
     public void setSetupParametersValid() {
-        if (SetupParameters.getOutgoingCallsDisabled(mContext)
+        if (Futures.getUnchecked(SetupParametersClient.getInstance().getOutgoingCallsDisabled())
                 && !mLockModeRestrictions.contains(UserManager.DISALLOW_OUTGOING_CALLS)) {
             LogUtil.i(TAG, String.format(Locale.US, "add %s into lock task mode restrictions",
-                        UserManager.DISALLOW_OUTGOING_CALLS));
+                    UserManager.DISALLOW_OUTGOING_CALLS));
             mLockModeRestrictions.add(UserManager.DISALLOW_OUTGOING_CALLS);
         }
     }
