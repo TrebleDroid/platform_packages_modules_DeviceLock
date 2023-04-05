@@ -16,11 +16,21 @@
 
 package com.android.devicelockcontroller.activities;
 
+import android.os.Bundle;
+
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.android.devicelockcontroller.R;
 
 /**
  * The activity displayed when provisioning is in progress.
  */
 public final class ProvisioningActivity extends AppCompatActivity {
-    // TODO: add implementation details
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.provisioning_activity);
+    }
 }
