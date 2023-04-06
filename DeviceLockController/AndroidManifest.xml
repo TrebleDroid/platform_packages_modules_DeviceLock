@@ -50,12 +50,21 @@
         <activity
             android:name="com.android.devicelockcontroller.activities.LandingActivity"
             android:theme="@style/Theme.Materialu"
-            android:exported="true">
+            android:exported="false">
             <intent-filter>
-                <action android:name="com.android.devicelockcontroller.action.START_DEVICE_LOCK_PROVISIONING"/>
+                <action android:name="com.android.devicelockcontroller.action.START_DEVICE_FINANCING_PROVISIONING"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
+        <activity-alias
+            android:name="com.android.devicelockcontroller.activities.DeviceFinancingSecondaryUserLandingActivity"
+            android:targetActivity=".activities.LandingActivity"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.android.devicelockcontroller.action.START_DEVICE_FINANCING_SECONDARY_USER_PROVISIONING"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity-alias>
         <activity-alias
             android:name="com.android.devicelockcontroller.activities.DeviceFinancingDeferredProvisioningLandingActivity"
             android:targetActivity=".activities.LandingActivity"

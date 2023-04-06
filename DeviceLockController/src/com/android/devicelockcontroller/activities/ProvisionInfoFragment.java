@@ -17,6 +17,8 @@
 package com.android.devicelockcontroller.activities;
 
 import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_FINANCING_DEFERRED_PROVISIONING;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_FINANCING_PROVISIONING;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_FINANCING_SECONDARY_USER_PROVISIONING;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_SUBSIDY_DEFERRED_PROVISIONING;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_SUBSIDY_PROVISIONING;
 
@@ -67,9 +69,17 @@ public final class ProvisionInfoFragment extends Fragment {
 
         ProvisionInfoViewModel viewModel;
         switch (Objects.requireNonNull(getActivity()).getIntent().getAction()) {
+            case ACTION_START_DEVICE_FINANCING_PROVISIONING:
+                viewModel = new ViewModelProvider(this).get(
+                        DeviceFinancingProvisionInfoViewModel.class);
+                break;
             case ACTION_START_DEVICE_FINANCING_DEFERRED_PROVISIONING:
                 viewModel = new ViewModelProvider(this).get(
                         DeviceFinancingDeferredProvisionInfoViewModel.class);
+                break;
+            case ACTION_START_DEVICE_FINANCING_SECONDARY_USER_PROVISIONING:
+                viewModel = new ViewModelProvider(this).get(
+                        DeviceFinancingSecondaryUserProvisionInfoViewModel.class);
                 break;
             case ACTION_START_DEVICE_SUBSIDY_PROVISIONING:
                 viewModel = new ViewModelProvider(this).get(
@@ -80,8 +90,8 @@ public final class ProvisionInfoFragment extends Fragment {
                         DeviceSubsidyDeferredProvisionInfoViewModel.class);
                 break;
             default:
-                viewModel = new ViewModelProvider(this).get(
-                        DeviceFinancingProvisionInfoViewModel.class);
+                LogUtil.e(TAG, "Unknown action is received, exiting");
+                return;
         }
 
         RecyclerView recyclerView = view.findViewById(R.id.recyclerview_provision_info);
