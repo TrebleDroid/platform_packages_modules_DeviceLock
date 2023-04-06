@@ -37,7 +37,9 @@ public final class DeviceLockConstants {
             DEVICE_ID_TYPE_IMEI,
             DEVICE_ID_TYPE_MEID,
     })
-    public @interface DeviceIdType {}
+    public @interface DeviceIdType {
+    }
+
     // The device id type is unspecified
     public static final int DEVICE_ID_TYPE_UNSPECIFIED = -1;
     // The device id is a IMEI
@@ -56,7 +58,8 @@ public final class DeviceLockConstants {
             READY_FOR_PROVISION,
             STOP_CHECK_IN,
     })
-    public @interface DeviceCheckInStatus {}
+    public @interface DeviceCheckInStatus {
+    }
 
     public static final int STATUS_UNSPECIFIED = 0;
     public static final int RETRY_CHECK_IN = 1;
@@ -68,7 +71,8 @@ public final class DeviceLockConstants {
             REASON_UNSPECIFIED,
             USER_DEFERRED_DEVICE_PROVISIONING,
     })
-    public @interface PauseDeviceProvisioningReason {}
+    public @interface PauseDeviceProvisioningReason {
+    }
 
     public static final int REASON_UNSPECIFIED = 0;
     public static final int USER_DEFERRED_DEVICE_PROVISIONING = 1;
@@ -78,7 +82,8 @@ public final class DeviceLockConstants {
             TYPE_UNDEFINED,
             TYPE_FINANCED,
     })
-    public @interface ProvisioningType {}
+    public @interface ProvisioningType {
+    }
 
     public static final int TYPE_UNDEFINED = 0;
     public static final int TYPE_FINANCED = 1;
@@ -125,8 +130,14 @@ public final class DeviceLockConstants {
     public static final String EXTRA_DISALLOW_INSTALLING_FROM_UNKNOWN_SOURCES =
             "com.android.devicelockcontroller.DISALLOW_INSTALLING_FROM_UNKNOWN_SOURCES";
 
+    public static final String ACTION_START_DEVICE_FINANCING_PROVISIONING =
+            "com.android.devicelockcontroller.action.START_DEVICE_FINANCING_PROVISIONING";
     public static final String ACTION_START_DEVICE_FINANCING_DEFERRED_PROVISIONING =
             "com.android.devicelockcontroller.action.START_DEVICE_FINANCING_DEFERRED_PROVISIONING";
+
+    public static final String ACTION_START_DEVICE_FINANCING_SECONDARY_USER_PROVISIONING =
+            "com.android.devicelockcontroller.action"
+                    + ".START_DEVICE_FINANCING_SECONDARY_USER_PROVISIONING";
 
     public static final String ACTION_START_DEVICE_SUBSIDY_PROVISIONING =
             "com.android.devicelockcontroller.action.START_DEVICE_SUBSIDY_PROVISIONING";
@@ -135,5 +146,6 @@ public final class DeviceLockConstants {
             "com.android.devicelockcontroller.action.START_DEVICE_SUBSIDY_DEFERRED_PROVISIONING";
 
     /** Restrict instantiation. */
-    private DeviceLockConstants() {}
+    private DeviceLockConstants() {
+    }
 }
