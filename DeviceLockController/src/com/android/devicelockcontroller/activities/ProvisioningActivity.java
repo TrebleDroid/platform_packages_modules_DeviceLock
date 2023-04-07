@@ -20,6 +20,7 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.android.devicelockcontroller.R;
 
@@ -32,5 +33,22 @@ public final class ProvisioningActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.provisioning_activity);
+
+        ProvisioningProgressViewModel viewModel = new ViewModelProvider(this).get(
+                ProvisioningProgressViewModel.class);
+        viewModel.mProvisioningProgressMutableLiveData.observe(this, progress -> {
+            ProgressFragment progressFragment =
+                    ProgressFragment.create(
+                            progress.mIconId, progress.mHeaderId, progress.mSubheaderId);
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, progressFragment)
+                    .commit();
+        });
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.fragment_container, new DevicePoliciesFragment())
+                .commit();
     }
 }
