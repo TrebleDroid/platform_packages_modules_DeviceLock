@@ -75,7 +75,7 @@ abstract class DlcClient {
         public void onBindingDied(ComponentName name) {
             unbind();
         }
-    };
+    }
 
     DlcClient(@NonNull Context context, @NonNull ComponentName componentName) {
         mContext = context;

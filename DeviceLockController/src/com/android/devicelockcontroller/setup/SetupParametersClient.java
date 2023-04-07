@@ -23,13 +23,14 @@ import android.os.Bundle;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.android.devicelockcontroller.DeviceLockControllerApplication;
+import com.android.devicelockcontroller.common.DeviceLockConstants.ProvisioningType;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.List;
-import java.util.concurrent.Callable;
 
 /**
  * Class used to access Setup Parameters from secondary users.
@@ -66,14 +67,11 @@ public final class SetupParametersClient extends DlcClient {
      *
      * @param bundle Bundle with provisioning parameters.
      */
+    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<Void> createPrefs(Bundle bundle) {
-        return call(new Callable<Void>() {
-            @Override
-            @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
-            public Void call() throws Exception {
-                ISetupParametersService.Stub.asInterface(mDlcService).createPrefs(bundle);
-                return null;
-            }
+        return call(() -> {
+            ISetupParametersService.Stub.asInterface(mDlcService).createPrefs(bundle);
+            return null;
         });
     }
 
@@ -82,15 +80,10 @@ public final class SetupParametersClient extends DlcClient {
      *
      * @return kiosk app package name.
      */
+    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<String> getKioskPackage() {
-        return call(new Callable<String>() {
-            @Override
-            @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
-            public String call() throws Exception {
-                return ISetupParametersService.Stub.asInterface(mDlcService)
-                        .getKioskPackage();
-            }
-        });
+        return call(() -> ISetupParametersService.Stub.asInterface(mDlcService)
+                .getKioskPackage());
     }
 
     /**
@@ -98,15 +91,10 @@ public final class SetupParametersClient extends DlcClient {
      *
      * @return Kiosk app download URL.
      */
+    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<String> getKioskDownloadUrl() {
-        return call(new Callable<String>() {
-            @Override
-            @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
-            public String call() throws Exception {
-                return ISetupParametersService.Stub.asInterface(mDlcService)
-                        .getKioskDownloadUrl();
-            }
-        });
+        return call(() -> ISetupParametersService.Stub.asInterface(mDlcService)
+                .getKioskDownloadUrl());
     }
 
     /**
@@ -114,15 +102,10 @@ public final class SetupParametersClient extends DlcClient {
      *
      * @return Signature checksum.
      */
+    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<String> getKioskSignatureChecksum() {
-        return call(new Callable<String>() {
-            @Override
-            @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
-            public String call() throws Exception {
-                return ISetupParametersService.Stub.asInterface(mDlcService)
-                        .getKioskSignatureChecksum();
-            }
-        });
+        return call(() -> ISetupParametersService.Stub.asInterface(mDlcService)
+                .getKioskSignatureChecksum());
     }
 
     /**
@@ -130,15 +113,10 @@ public final class SetupParametersClient extends DlcClient {
      *
      * @return Setup activity.
      */
+    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<String> getKioskSetupActivity() {
-        return call(new Callable<String>() {
-            @Override
-            @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
-            public String call() throws Exception {
-                return ISetupParametersService.Stub.asInterface(mDlcService)
-                        .getKioskSetupActivity();
-            }
-        });
+        return call(() -> ISetupParametersService.Stub.asInterface(mDlcService)
+                .getKioskSetupActivity());
     }
 
     /**
@@ -146,15 +124,10 @@ public final class SetupParametersClient extends DlcClient {
      *
      * @return True if outgoign calls are disabled.
      */
+    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<Boolean> getOutgoingCallsDisabled() {
-        return call(new Callable<Boolean>() {
-            @Override
-            @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
-            public Boolean call() throws Exception {
-                return ISetupParametersService.Stub.asInterface(mDlcService)
-                        .getOutgoingCallsDisabled();
-            }
-        });
+        return call(() -> ISetupParametersService.Stub.asInterface(mDlcService)
+                .getOutgoingCallsDisabled());
     }
 
     /**
@@ -162,15 +135,10 @@ public final class SetupParametersClient extends DlcClient {
      *
      * @return List of allowed packages.
      */
+    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<List<String>> getKioskAllowlist() {
-        return call(new Callable<List<String>>() {
-            @Override
-            @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
-            public List<String> call() throws Exception {
-                return ISetupParametersService.Stub.asInterface(mDlcService)
-                        .getKioskAllowlist();
-            }
-        });
+        return call(() -> ISetupParametersService.Stub.asInterface(mDlcService)
+                .getKioskAllowlist());
     }
 
     /**
@@ -178,14 +146,54 @@ public final class SetupParametersClient extends DlcClient {
      *
      * @return True if notification are enabled.
      */
+    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<Boolean> isNotificationsInLockTaskModeEnabled() {
-        return call(new Callable<Boolean>() {
-            @Override
-            @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
-            public Boolean call() throws Exception {
-                return ISetupParametersService.Stub.asInterface(mDlcService)
-                        .isNotificationsInLockTaskModeEnabled();
-            }
-        });
+        return call(() -> ISetupParametersService.Stub.asInterface(mDlcService)
+                .isNotificationsInLockTaskModeEnabled());
+    }
+
+    /**
+     * Get the provisioning type of this configuration.
+     *
+     * @return The type of provisioning which could be one of {@link ProvisioningType}.
+     */
+    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
+    public ListenableFuture<Integer> getProvisioningType() {
+        return call(() -> ISetupParametersService.Stub.asInterface(mDlcService)
+                .getProvisioningType());
+    }
+
+    /**
+     * Check if provision is mandatory.
+     *
+     * @return True if the provision should be mandatory.
+     */
+    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
+    public ListenableFuture<Boolean> isProvisionMandatory() {
+        return call(() -> ISetupParametersService.Stub.asInterface(mDlcService)
+                .isProvisionMandatory());
+    }
+
+    /**
+     * Get the name of the provider of the kiosk app.
+     *
+     * @return the name of the provider.
+     */
+    @Nullable
+    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
+    public ListenableFuture<String> getKioskAppProviderName() {
+        return call(() -> ISetupParametersService.Stub.asInterface(mDlcService)
+                .getKioskAppProviderName());
+    }
+
+    /**
+     * Check if installing from unknown sources should be disallowed on this device after provision
+     *
+     * @return True if installing from unknown sources is disallowed.
+     */
+    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
+    public ListenableFuture<Boolean> isInstallingFromUnknownSourcesDisallowed() {
+        return call(() -> ISetupParametersService.Stub.asInterface(mDlcService)
+                .isInstallingFromUnknownSourcesDisallowed());
     }
 }

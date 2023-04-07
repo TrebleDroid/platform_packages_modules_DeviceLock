@@ -29,4 +29,8 @@ interface ISetupParametersService {
     boolean getOutgoingCallsDisabled();
     List<String> getKioskAllowlist();
     boolean isNotificationsInLockTaskModeEnabled();
+    int getProvisioningType();
+    boolean isProvisionMandatory();
+    String getKioskAppProviderName();
+    boolean isInstallingFromUnknownSourcesDisallowed();
 }
