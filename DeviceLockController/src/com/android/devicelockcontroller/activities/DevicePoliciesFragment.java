@@ -34,8 +34,10 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.devicelockcontroller.R;
-import com.android.devicelockcontroller.setup.SetupParameters;
+import com.android.devicelockcontroller.setup.SetupParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
+
+import com.google.common.util.concurrent.Futures;
 
 /**
  * A screen which lists the polies enforced on the device by the device provider.
@@ -56,7 +58,8 @@ public final class DevicePoliciesFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        String providerName = SetupParameters.getKioskAppProviderName(getActivity());
+        String providerName = Futures.getUnchecked(
+                SetupParametersClient.getInstance().getKioskAppProviderName());
         if (TextUtils.isEmpty(providerName)) {
             LogUtil.e(TAG, "Device provider name is empty, should not reach here.");
             return;

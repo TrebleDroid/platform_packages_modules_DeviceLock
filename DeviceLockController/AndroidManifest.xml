@@ -127,7 +127,7 @@
                 <action android:name="android.app.action.DEVICE_ADMIN_ENABLED"/>
             </intent-filter>
         </receiver>
-        <!-- Single user boot completed broadcast receiver -->
+        <!-- System user only boot completed broadcast receiver -->
         <receiver
             android:name="com.android.devicelockcontroller.receivers.CheckInBootCompletedReceiver"
             android:exported="false"

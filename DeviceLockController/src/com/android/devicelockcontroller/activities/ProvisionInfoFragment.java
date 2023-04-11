@@ -37,7 +37,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.devicelockcontroller.R;
-import com.android.devicelockcontroller.setup.SetupParameters;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import java.util.Objects;
@@ -61,12 +60,6 @@ public final class ProvisionInfoFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        String providerName = SetupParameters.getKioskAppProviderName(getActivity());
-        if (TextUtils.isEmpty(providerName)) {
-            LogUtil.e(TAG, "Device provider name is empty, should not reach here.");
-            return;
-        }
-
         ProvisionInfoViewModel viewModel;
         switch (Objects.requireNonNull(getActivity()).getIntent().getAction()) {
             case ACTION_START_DEVICE_FINANCING_PROVISIONING:
@@ -99,7 +92,7 @@ public final class ProvisionInfoFragment extends Fragment {
             LogUtil.e(TAG, "Could not find provision info RecyclerView, should not reach here.");
             return;
         }
-        ProvisionInfoListAdapter adapter = new ProvisionInfoListAdapter();
+        ProvisionInfoListAdapter adapter = new ProvisionInfoListAdapter(viewModel);
         viewModel.mProvisionInfoListLiveData.observe(getViewLifecycleOwner(),
                 adapter::submitList);
         recyclerView.setAdapter(adapter);
@@ -116,15 +109,23 @@ public final class ProvisionInfoFragment extends Fragment {
             LogUtil.e(TAG, "Could not find header TextView, should not reach here.");
             return;
         }
-        viewModel.mHeaderTextIdLiveData.observe(getViewLifecycleOwner(),
-                id -> headerTextView.setText(getString(id, providerName)));
+        viewModel.mHeaderTextLiveData.observe(getViewLifecycleOwner(),
+                pair -> {
+                    if (pair.first > 0 && !TextUtils.isEmpty(pair.second)) {
+                        headerTextView.setText(getString(pair.first, pair.second));
+                    }
+                });
 
         TextView subheaderTextView = view.findViewById(R.id.subheader_text);
         if (subheaderTextView == null) {
             LogUtil.e(TAG, "Could not find subheader TextView, should not reach here.");
             return;
         }
-        viewModel.mSubheaderTextIdLiveData.observe(getViewLifecycleOwner(),
-                id -> subheaderTextView.setText(getString(id, providerName)));
+        viewModel.mSubHeaderTextLiveData.observe(getViewLifecycleOwner(),
+                pair -> {
+                    if (pair.first > 0 && !TextUtils.isEmpty(pair.second)) {
+                        headerTextView.setText(getString(pair.first, pair.second));
+                    }
+                });
     }
 }

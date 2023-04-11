@@ -16,6 +16,8 @@
 
 package com.android.devicelockcontroller.policy;
 
+import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_DOWNLOAD_URL;
+
 import android.content.Context;
 import android.text.TextUtils;
 
@@ -24,7 +26,6 @@ import androidx.work.Data;
 import androidx.work.WorkerParameters;
 
 import com.android.devicelockcontroller.policy.CronetDownloadHandler.DownloadPackageException;
-import com.android.devicelockcontroller.setup.SetupParameters;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -34,9 +35,10 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 
 import java.util.Locale;
+import java.util.function.Function;
 
 /**
- * Download the apk from the {@link SetupParameters#getKioskDownloadUrl(Context)}. The location
+ * Download the apk from the download url retrieved from input data. The location
  * of the downloaded file will be included in the output {@link Data} with key {@link
  * AbstractTask#TASK_RESULT_DOWNLOADED_FILE_LOCATION_KEY}.
  *
@@ -48,7 +50,6 @@ public final class DownloadPackageTask extends AbstractTask {
 
     private static final String DOWNLOADED_FILE_NAME = "downloaded_kiosk_app.apk";
 
-    private final Context mContext;
     private final ListeningExecutorService mExecutorService;
     private final Downloader mDownloader;
     private final String mFileLocation;
@@ -63,7 +64,7 @@ public final class DownloadPackageTask extends AbstractTask {
                 executorService,
                 new CronetDownloader(
                         context,
-                        SetupParameters.getKioskDownloadUrl(context),
+                        workerParameters.getInputData().getString(EXTRA_KIOSK_DOWNLOAD_URL),
                         context.getFilesDir() + "/" + DOWNLOADED_FILE_NAME));
     }
 
@@ -74,7 +75,6 @@ public final class DownloadPackageTask extends AbstractTask {
             ListeningExecutorService executorService,
             Downloader downloader) {
         super(context, workerParameters);
-        mContext = context;
         mExecutorService = executorService;
         mDownloader = downloader;
         mFileLocation = downloader.getFileLocation();
@@ -86,35 +86,38 @@ public final class DownloadPackageTask extends AbstractTask {
         return mExecutorService.submit(
                 () -> {
                     LogUtil.i(TAG, "Starts to run");
-                    if (TextUtils.isEmpty(SetupParameters.getKioskDownloadUrl(mContext))) {
+                    if (TextUtils.isEmpty(getInputData().getString(EXTRA_KIOSK_DOWNLOAD_URL))) {
                         LogUtil.e(TAG, "Download URL not valid");
                         return failure(ERROR_CODE_EMPTY_DOWNLOAD_URL);
                     }
 
+                    final Function<Boolean, Result> function = result -> {
+                        if (result == null || !result) {
+                            LogUtil.i(TAG, String.format(Locale.US,
+                                    "Downloader returned result: %b", result));
+                            return failure(ERROR_CODE_NETWORK_REQUEST_FAILED);
+                        } else {
+                            LogUtil.i(TAG, "Downloader returned result: true");
+                            Data data = new Data.Builder()
+                                    .putString(
+                                            TASK_RESULT_DOWNLOADED_FILE_LOCATION_KEY,
+                                            getFileLocation())
+                                    .build();
+                            return Result.success(data);
+                        }
+                    };
                     return FluentFuture.from(mDownloader.startDownload())
                             .transform(
-                                    result -> {
-                                        if (result == null || !result) {
-                                            LogUtil.i(TAG, String.format(Locale.US,
-                                                    "Downloader returned result: %b", result));
-                                            return failure(ERROR_CODE_NETWORK_REQUEST_FAILED);
-                                        } else {
-                                            LogUtil.i(TAG, "Downloader returned result: true");
-                                            Data data = new Data.Builder()
-                                                    .putString(
-                                                        TASK_RESULT_DOWNLOADED_FILE_LOCATION_KEY,
-                                                        getFileLocation())
-                                                    .build();
-                                            return Result.success(data);
-                                        }
-                                    },
+                                    function::apply,
                                     MoreExecutors.directExecutor())
                             .catching(
                                     DownloadPackageException.class,
                                     (exception) -> {
                                         LogUtil.e(TAG, String.format(Locale.US,
-                                                "Downloader returned DownloadPackageException, "
-                                                + "error code %d", exception.getErrorCode()),
+                                                        "Downloader returned "
+                                                                + "DownloadPackageException, "
+                                                                + "error code %d",
+                                                        exception.getErrorCode()),
                                                 exception);
                                         return failure(exception.getErrorCode());
                                     },
