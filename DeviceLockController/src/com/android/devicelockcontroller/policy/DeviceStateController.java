@@ -18,8 +18,10 @@ package com.android.devicelockcontroller.policy;
 
 import androidx.annotation.IntDef;
 
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 // TODO: rework the state and events for vNext
 
@@ -54,6 +56,7 @@ public interface DeviceStateController {
     void removeCallback(StateListener listener);
 
     /** Device state definitions */
+    @Target(ElementType.TYPE_USE)
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({
             DeviceState.UNPROVISIONED,

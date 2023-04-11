@@ -31,6 +31,8 @@ import com.android.devicelockcontroller.policy.DevicePolicyControllerImpl;
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.DeviceStateControllerImpl;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
+import com.android.devicelockcontroller.policy.SetupController;
+import com.android.devicelockcontroller.policy.SetupControllerImpl;
 import com.android.devicelockcontroller.policy.TaskWorkerFactory;
 import com.android.devicelockcontroller.util.LogUtil;
 
@@ -48,6 +50,7 @@ public class DeviceLockControllerApplication extends Application implements
     private DevicePolicyController mPolicyController;
 
     private static Context sApplicationContext;
+    private SetupController mSetupController;
 
     @Override
     public void onCreate() {
@@ -78,6 +81,15 @@ public class DeviceLockControllerApplication extends Application implements
         }
 
         return mPolicyController;
+    }
+
+    @Override
+    public SetupController getSetupController() {
+        if (mSetupController == null) {
+            mSetupController = new SetupControllerImpl(this, getStateController(),
+                    getPolicyController());
+        }
+        return mSetupController;
     }
 
     public static Context getAppContext() {

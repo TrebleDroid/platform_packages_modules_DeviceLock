@@ -73,7 +73,9 @@ public interface SetupController {
                         FailureType.DOWNLOAD_FAILED,
                         FailureType.VERIFICATION_FAILED,
                         FailureType.INSTALL_FAILED,
-                        FailureType.PACKAGE_DOES_NOT_EXIST
+                        FailureType.PACKAGE_DOES_NOT_EXIST,
+                        FailureType.DELETE_PACKAGE_FAILED,
+                        FailureType.INSTALL_EXISTING_FAILED,
                 })
         @interface FailureType {
             /** Setup failed to complete */
@@ -86,6 +88,10 @@ public interface SetupController {
             int INSTALL_FAILED = 3;
             /** Pre-installed package not found */
             int PACKAGE_DOES_NOT_EXIST = 4;
+            /** Delete apk failed */
+            int DELETE_PACKAGE_FAILED = 5;
+            /** Install package for secondary users failed */
+            int INSTALL_EXISTING_FAILED = 6;
         }
 
         /** Method called when setup has failed. */
