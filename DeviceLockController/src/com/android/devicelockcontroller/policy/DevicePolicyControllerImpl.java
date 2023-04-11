@@ -43,8 +43,10 @@ import androidx.work.WorkerParameters;
 import com.android.devicelockcontroller.DeviceLockControllerApplication;
 import com.android.devicelockcontroller.common.DeviceLockConstants;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
-import com.android.devicelockcontroller.setup.SetupParameters;
+import com.android.devicelockcontroller.setup.SetupParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
+
+import com.google.common.util.concurrent.Futures;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -153,7 +155,8 @@ public final class DevicePolicyControllerImpl
         for (int i = 0, policyLen = mPolicyList.size(); i < policyLen; i++) {
             PolicyHandler policy = mPolicyList.get(i);
             if (newState == DeviceState.SETUP_IN_PROGRESS) {
-                final String kioskPackage = SetupParameters.getKioskPackage(mContext);
+                final String kioskPackage = Futures.getUnchecked(
+                        SetupParametersClient.getInstance().getKioskPackage());
                 if (kioskPackage == null) {
                     throw new NullPointerException(
                             "SetupParameters must be present before finalization.");
@@ -200,7 +203,8 @@ public final class DevicePolicyControllerImpl
     @Nullable
     private Intent getLockScreenActivityIntent() {
         final PackageManager packageManager = mContext.getPackageManager();
-        final String kioskPackage = SetupParameters.getKioskPackage(mContext);
+        final String kioskPackage = Futures.getUnchecked(
+                SetupParametersClient.getInstance().getKioskPackage());
         if (kioskPackage == null) {
             LogUtil.e(TAG, "Missing kiosk package parameter");
             return null;
@@ -234,7 +238,8 @@ public final class DevicePolicyControllerImpl
 
     @Nullable
     private Intent getKioskSetupActivityIntent() {
-        final String setupActivity = SetupParameters.getKioskSetupActivity(mContext);
+        final String setupActivity = Futures.getUnchecked(
+                SetupParametersClient.getInstance().getKioskSetupActivity());
 
         if (setupActivity == null) {
             LogUtil.e(TAG, "Failed to get setup Activity");

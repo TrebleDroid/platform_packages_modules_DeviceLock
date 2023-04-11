@@ -33,7 +33,9 @@ import com.android.devicelockcontroller.R;
 public final class ProvisionInfoListAdapter extends
         ListAdapter<ProvisionInfo, ProvisionInfoViewHolder> {
 
-    ProvisionInfoListAdapter() {
+    private final ProvisionInfoViewModel mViewModel;
+
+    ProvisionInfoListAdapter(ProvisionInfoViewModel viewModel) {
         super(new DiffUtil.ItemCallback<>() {
             @Override
             public boolean areItemsTheSame(@NonNull ProvisionInfo oldItem,
@@ -47,6 +49,7 @@ public final class ProvisionInfoListAdapter extends
                 return oldItem.equals(newItem);
             }
         });
+        mViewModel = viewModel;
     }
 
     @NonNull
@@ -60,6 +63,7 @@ public final class ProvisionInfoListAdapter extends
     @Override
     public void onBindViewHolder(@NonNull ProvisionInfoViewHolder provisionInfoViewHolder,
             int position) {
-        provisionInfoViewHolder.bind(getItem(position));
+        provisionInfoViewHolder.bind(getItem(position),
+                mViewModel.mProviderNameLiveData.getValue());
     }
 }

@@ -25,4 +25,7 @@ public interface PolicyObjectsInterface {
 
     /** Returns an instance of DevicePolicyController. */
     DevicePolicyController getPolicyController();
+
+    /** Returns an instance of SetupController. */
+    SetupController getSetupController();
 }
