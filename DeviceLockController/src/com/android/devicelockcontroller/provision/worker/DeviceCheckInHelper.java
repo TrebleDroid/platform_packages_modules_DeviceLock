@@ -45,9 +45,11 @@ import com.android.devicelockcontroller.R;
 import com.android.devicelockcontroller.common.DeviceId;
 import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrpcResponse;
 import com.android.devicelockcontroller.provision.grpc.ProvisioningConfiguration;
-import com.android.devicelockcontroller.setup.SetupParameters;
+import com.android.devicelockcontroller.setup.SetupParametersClient;
 import com.android.devicelockcontroller.setup.UserPreferences;
 import com.android.devicelockcontroller.util.LogUtil;
+
+import com.google.common.util.concurrent.Futures;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -167,9 +169,10 @@ public final class DeviceCheckInHelper extends AbstractDeviceCheckInHelper {
                 provisionBundle.putInt(EXTRA_PROVISIONING_TYPE, response.getProvisioningType());
                 provisionBundle.putBoolean(EXTRA_MANDATORY_PROVISION,
                         response.isProvisioningMandatory());
-                SetupParameters.createPrefs(mAppContext, provisionBundle);
-                //We are only handling the non-mandatory provision case here. For mandatory
-                // provision, we will handle when receiving the intent from SUW,
+                Futures.getUnchecked(
+                        SetupParametersClient.getInstance().createPrefs(provisionBundle));
+                // We are only handling the non-mandatory provision case here. For mandatory
+                // provision, we will handle when receiving the intent after SUW completed.
                 if (!response.isProvisioningMandatory()) {
                     // TODO(b/272497885): Schedule to launch the provision activity at some time.
                 }

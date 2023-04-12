@@ -17,7 +17,6 @@
 package com.android.devicelockcontroller.policy;
 
 import static com.android.devicelockcontroller.policy.DevicePolicyControllerImpl.START_LOCK_TASK_MODE_WORK_NAME;
-import static com.android.devicelockcontroller.setup.SetupParameters.isNotificationsInLockTaskModeEnabled;
 
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
@@ -35,9 +34,11 @@ import androidx.work.WorkManager;
 
 import com.android.devicelockcontroller.R;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
-import com.android.devicelockcontroller.setup.SetupParameters;
+import com.android.devicelockcontroller.setup.SetupParametersClient;
 import com.android.devicelockcontroller.setup.UserPreferences;
 import com.android.devicelockcontroller.util.LogUtil;
+
+import com.google.common.util.concurrent.Futures;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -138,7 +139,8 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
 
     private void enableLockTaskMode() {
         int lockTaskFeatures = DEFAULT_LOCK_TASK_FEATURES;
-        if (isNotificationsInLockTaskModeEnabled(mContext)) {
+        if (Futures.getUnchecked(
+                SetupParametersClient.getInstance().isNotificationsInLockTaskModeEnabled())) {
             lockTaskFeatures |= DevicePolicyManager.LOCK_TASK_FEATURE_NOTIFICATIONS;
         }
         mDpm.setLockTaskFeatures(mComponentName, lockTaskFeatures);
@@ -172,15 +174,15 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
         final String[] allowlistArray =
                 mContext.getResources().getStringArray(R.array.lock_task_allowlist);
         final ArrayList<String> allowlistPackages = new ArrayList<>(Arrays.asList(allowlistArray));
-        final String kioskPackage = SetupParameters.getKioskPackage(mContext);
-        if (kioskPackage != null) {
-            allowlistPackages.add(kioskPackage);
-        }
         allowlistSystemAppForAction(Intent.ACTION_DIAL, allowlistPackages);
         allowlistSystemAppForAction(Settings.ACTION_SETTINGS, allowlistPackages);
         allowlistInputMethod(allowlistPackages);
         allowlistCellBroadcastReceiver(allowlistPackages);
-        allowlistPackages.addAll(SetupParameters.getKioskAllowlist(mContext));
+        final String kioskPackage = Futures.getUnchecked(
+                SetupParametersClient.getInstance().getKioskPackage());
+        if (kioskPackage != null) allowlistPackages.add(kioskPackage);
+        allowlistPackages.addAll(
+                Futures.getUnchecked(SetupParametersClient.getInstance().getKioskAllowlist()));
         UserPreferences.setLockTaskAllowlist(mContext, allowlistPackages);
     }
 

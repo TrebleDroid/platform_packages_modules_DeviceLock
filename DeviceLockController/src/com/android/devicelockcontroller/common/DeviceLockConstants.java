@@ -18,8 +18,10 @@ package com.android.devicelockcontroller.common;
 
 import androidx.annotation.IntDef;
 
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /** Constants being used by more than one class in the Device Lock application. */
 public final class DeviceLockConstants {
@@ -77,6 +79,7 @@ public final class DeviceLockConstants {
     public static final int REASON_UNSPECIFIED = 0;
     public static final int USER_DEFERRED_DEVICE_PROVISIONING = 1;
 
+    @Target(ElementType.TYPE_USE)
     @Retention(RetentionPolicy.SOURCE)
     @IntDef(value = {
             TYPE_UNDEFINED,

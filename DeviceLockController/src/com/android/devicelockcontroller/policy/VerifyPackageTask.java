@@ -16,6 +16,8 @@
 
 package com.android.devicelockcontroller.policy;
 
+import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_PACKAGE;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_SIGNATURE_CHECKSUM;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.KEY_KIOSK_APP_INSTALLED;
 
 import android.content.Context;
@@ -32,7 +34,6 @@ import androidx.annotation.VisibleForTesting;
 import androidx.work.Data;
 import androidx.work.WorkerParameters;
 
-import com.android.devicelockcontroller.setup.SetupParameters;
 import com.android.devicelockcontroller.setup.UserPreferences;
 import com.android.devicelockcontroller.util.LogUtil;
 
@@ -48,8 +49,7 @@ import java.util.Locale;
  * Verify the apk specified at {@code
  * getInputData().getString(TASK_RESULT_DOWNLOADED_FILE_LOCATION_KEY)}. It extracts package info
  * from the apk using {@link PackageManager#getPackageArchiveInfo} and compares the package name and
- * signature checksum against the provided
- * {@link SetupParameters#getKioskSignatureChecksum(Context)}.
+ * signature checksum against the provided input data.
  */
 public final class VerifyPackageTask extends AbstractTask {
     private static final String TAG = "VerifyPackageTask";
@@ -75,7 +75,7 @@ public final class VerifyPackageTask extends AbstractTask {
                 () -> {
                     LogUtil.i(TAG, "Starts to run");
 
-                    final String packageName = SetupParameters.getKioskPackage(mContext);
+                    final String packageName = getInputData().getString(EXTRA_KIOSK_PACKAGE);
                     if (TextUtils.isEmpty(packageName)) {
                         LogUtil.e(TAG, String.format(Locale.US,
                                 "The expected package name of the kiosk app is %s", packageName));
@@ -83,7 +83,7 @@ public final class VerifyPackageTask extends AbstractTask {
                     }
 
                     final String signatureChecksum =
-                            SetupParameters.getKioskSignatureChecksum(mContext);
+                            getInputData().getString(EXTRA_KIOSK_SIGNATURE_CHECKSUM);
                     if (TextUtils.isEmpty(signatureChecksum)) {
                         LogUtil.e(TAG, String.format(Locale.US,
                                 "The expected signature checksum of the kiosk app is %s",

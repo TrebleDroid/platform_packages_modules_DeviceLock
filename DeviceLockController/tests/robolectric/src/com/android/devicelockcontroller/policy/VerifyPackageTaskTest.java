@@ -39,7 +39,6 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.Signature;
 import android.content.pm.SigningInfo;
-import android.os.Bundle;
 import android.util.Base64;
 
 import androidx.annotation.Nullable;
@@ -53,8 +52,6 @@ import androidx.work.WorkManager;
 import androidx.work.WorkerFactory;
 import androidx.work.WorkerParameters;
 import androidx.work.testing.WorkManagerTestInitHelper;
-
-import com.android.devicelockcontroller.setup.SetupParameters;
 
 import com.google.common.util.concurrent.MoreExecutors;
 
@@ -114,10 +111,9 @@ public final class VerifyPackageTaskTest {
 
     @Test
     public void testVerify_DownloadedFilePathIsNull() {
-        // GIVEN
-        createParameters(TEST_PACKAGE_NAME, TEST_SIGNATURE_CHECKSUM);
         // WHEN
-        final WorkInfo workInfo = buildTaskAndRun(mWorkManager, /* fileLocation */ null);
+        final WorkInfo workInfo = buildTaskAndRun(mWorkManager, /* fileLocation */ null,
+                TEST_PACKAGE_NAME, TEST_SIGNATURE_CHECKSUM);
 
         // THEN task is failed
         assertThat(workInfo.getState()).isEqualTo(FAILED);
@@ -127,11 +123,9 @@ public final class VerifyPackageTaskTest {
 
     @Test
     public void testVerify_DownloadedFilePathIsEmpty() {
-        // GIVEN
-        createParameters(TEST_PACKAGE_NAME, TEST_SIGNATURE_CHECKSUM);
-
         // WHEN
-        final WorkInfo workInfo = buildTaskAndRun(mWorkManager, /* fileLocation */ "");
+        final WorkInfo workInfo = buildTaskAndRun(mWorkManager, /* fileLocation */ "",
+                TEST_PACKAGE_NAME, TEST_SIGNATURE_CHECKSUM);
 
         // THEN task is failed
         assertThat(workInfo.getState()).isEqualTo(FAILED);
@@ -141,11 +135,9 @@ public final class VerifyPackageTaskTest {
 
     @Test
     public void testVerify_ExpectedPackageNameIsNull() {
-        // GIVEN
-        createParameters(null, TEST_SIGNATURE_CHECKSUM);
-
         // WHEN
-        final WorkInfo workInfo = buildTaskAndRun(mWorkManager, TEST_FILE_LOCATION);
+        final WorkInfo workInfo = buildTaskAndRun(mWorkManager, TEST_FILE_LOCATION, null,
+                TEST_SIGNATURE_CHECKSUM);
 
         // THEN task is failed
         assertThat(workInfo.getState()).isEqualTo(FAILED);
@@ -155,11 +147,9 @@ public final class VerifyPackageTaskTest {
 
     @Test
     public void testVerify_ExpectedPackageNameIsEmpty() {
-        // GIVEN
-        createParameters("", TEST_SIGNATURE_CHECKSUM);
-
         // WHEN
-        final WorkInfo workInfo = buildTaskAndRun(mWorkManager, TEST_FILE_LOCATION);
+        final WorkInfo workInfo = buildTaskAndRun(mWorkManager,
+                TEST_FILE_LOCATION, /* packageName= */ "", TEST_SIGNATURE_CHECKSUM);
 
         // THEN task is failed
         assertThat(workInfo.getState()).isEqualTo(FAILED);
@@ -169,11 +159,9 @@ public final class VerifyPackageTaskTest {
 
     @Test
     public void testVerify_ExpectedSignatureChecksumIsNull() {
-        // GIVEN
-        createParameters(TEST_PACKAGE_NAME, null);
-
         // WHEN
-        final WorkInfo workInfo = buildTaskAndRun(mWorkManager, TEST_FILE_LOCATION);
+        final WorkInfo workInfo = buildTaskAndRun(mWorkManager, TEST_FILE_LOCATION,
+                TEST_PACKAGE_NAME, /* signatureChecksum= */ null);
 
         // THEN task is failed
         assertThat(workInfo.getState()).isEqualTo(FAILED);
@@ -183,11 +171,9 @@ public final class VerifyPackageTaskTest {
 
     @Test
     public void testVerify_ExpectedSignatureChecksumIsEmpty() {
-        // GIVEN
-        createParameters(TEST_PACKAGE_NAME, "");
-
         // WHEN
-        final WorkInfo workInfo = buildTaskAndRun(mWorkManager, TEST_FILE_LOCATION);
+        final WorkInfo workInfo = buildTaskAndRun(mWorkManager, TEST_FILE_LOCATION,
+                TEST_PACKAGE_NAME, /* signatureChecksum= */ "");
 
         // THEN task is failed
         assertThat(workInfo.getState()).isEqualTo(FAILED);
@@ -199,10 +185,10 @@ public final class VerifyPackageTaskTest {
     public void testVerify_NoPackageInfo() {
         // GIVEN cannot find package in the file location
         createPackageInfo(/* packageInfo */ null);
-        createParameters(TEST_PACKAGE_NAME, TEST_SIGNATURE_CHECKSUM);
 
         // WHEN
-        final WorkInfo workInfo = buildTaskAndRun(mWorkManager, TEST_FILE_LOCATION);
+        final WorkInfo workInfo = buildTaskAndRun(mWorkManager, TEST_FILE_LOCATION,
+                TEST_PACKAGE_NAME, TEST_SIGNATURE_CHECKSUM);
 
         // THEN task is failed
         assertThat(workInfo.getState()).isEqualTo(FAILED);
@@ -215,10 +201,10 @@ public final class VerifyPackageTaskTest {
         // GIVEN package returns a different name
         mPackageInfo.packageName = TEST_DIFFERENT_PACKAGE_NAME;
         createPackageInfo(mPackageInfo);
-        createParameters(TEST_PACKAGE_NAME, TEST_SIGNATURE_CHECKSUM);
 
         // WHEN
-        final WorkInfo workInfo = buildTaskAndRun(mWorkManager, TEST_FILE_LOCATION);
+        final WorkInfo workInfo = buildTaskAndRun(mWorkManager, TEST_FILE_LOCATION,
+                TEST_PACKAGE_NAME, TEST_SIGNATURE_CHECKSUM);
 
         // THEN task is failed
         assertThat(workInfo.getState()).isEqualTo(FAILED);
@@ -234,10 +220,10 @@ public final class VerifyPackageTaskTest {
         final Signature signature = new Signature(TEST_ANOTHER_SIGNATURE);
         Shadows.shadowOf(signingInfo).setSignatures(new Signature[]{signature});
         createPackageInfo(mPackageInfo);
-        createParameters(TEST_PACKAGE_NAME, TEST_SIGNATURE_CHECKSUM);
 
         // WHEN
-        final WorkInfo workInfo = buildTaskAndRun(mWorkManager, TEST_FILE_LOCATION);
+        final WorkInfo workInfo = buildTaskAndRun(mWorkManager, TEST_FILE_LOCATION,
+                TEST_PACKAGE_NAME, TEST_SIGNATURE_CHECKSUM);
 
         // THEN task is failed
         assertThat(workInfo.getState()).isEqualTo(FAILED);
@@ -250,10 +236,10 @@ public final class VerifyPackageTaskTest {
         // GIVEN the signing info is null
         mPackageInfo.signingInfo = null;
         createPackageInfo(mPackageInfo);
-        createParameters(TEST_PACKAGE_NAME, TEST_ANOTHER_SIGNATURE_CHECKSUM);
 
         // WHEN
-        final WorkInfo workInfo = buildTaskAndRun(mWorkManager, TEST_FILE_LOCATION);
+        final WorkInfo workInfo = buildTaskAndRun(mWorkManager, TEST_FILE_LOCATION,
+                TEST_PACKAGE_NAME, TEST_ANOTHER_SIGNATURE_CHECKSUM);
 
         // THEN task is failed
         assertThat(workInfo.getState()).isEqualTo(FAILED);
@@ -266,10 +252,10 @@ public final class VerifyPackageTaskTest {
         // GIVEN a signing info without signing certificates
         mPackageInfo.signingInfo = new SigningInfo();
         createPackageInfo(mPackageInfo);
-        createParameters(TEST_PACKAGE_NAME, TEST_ANOTHER_SIGNATURE_CHECKSUM);
 
         // WHEN
-        final WorkInfo workInfo = buildTaskAndRun(mWorkManager, TEST_FILE_LOCATION);
+        final WorkInfo workInfo = buildTaskAndRun(mWorkManager, TEST_FILE_LOCATION,
+                TEST_PACKAGE_NAME, TEST_ANOTHER_SIGNATURE_CHECKSUM);
 
         // THEN task is failed
         assertThat(workInfo.getState()).isEqualTo(FAILED);
@@ -286,10 +272,10 @@ public final class VerifyPackageTaskTest {
         mPackageInfo.signingInfo = signingInfo;
         Shadows.shadowOf(signingInfo).setSignatures(new Signature[]{});
         createPackageInfo(mPackageInfo);
-        createParameters(TEST_PACKAGE_NAME, TEST_ANOTHER_SIGNATURE_CHECKSUM);
 
         // WHEN
-        final WorkInfo workInfo = buildTaskAndRun(mWorkManager, TEST_FILE_LOCATION);
+        final WorkInfo workInfo = buildTaskAndRun(mWorkManager, TEST_FILE_LOCATION,
+                TEST_PACKAGE_NAME, TEST_ANOTHER_SIGNATURE_CHECKSUM);
 
         // THEN task is failed
         assertThat(workInfo.getState()).isEqualTo(FAILED);
@@ -308,10 +294,10 @@ public final class VerifyPackageTaskTest {
         final Signature signature = new Signature(TEST_SIGNATURE);
         Shadows.shadowOf(signingInfo).setSignatures(new Signature[]{signature});
         createPackageInfo(mPackageInfo);
-        createParameters(TEST_PACKAGE_NAME, TEST_SIGNATURE_CHECKSUM);
 
         // WHEN
-        final WorkInfo workInfo = buildTaskAndRun(mWorkManager, TEST_FILE_LOCATION);
+        final WorkInfo workInfo = buildTaskAndRun(mWorkManager, TEST_FILE_LOCATION,
+                TEST_PACKAGE_NAME, TEST_SIGNATURE_CHECKSUM);
 
         // THEN task is succeed
         assertThat(workInfo.getState()).isEqualTo(SUCCEEDED);
@@ -327,10 +313,10 @@ public final class VerifyPackageTaskTest {
         final Signature signature = new Signature(TEST_SIGNATURE);
         Shadows.shadowOf(mPackageInfo.signingInfo).setSignatures(new Signature[]{signature});
         createPackageInfo(mPackageInfo, true);
-        createParameters(TEST_PACKAGE_NAME, TEST_SIGNATURE_CHECKSUM);
 
         // WHEN
-        final WorkInfo workInfo = buildTaskAndRun(mWorkManager);
+        final WorkInfo workInfo = buildTaskAndRun(mWorkManager
+        );
 
         // THEN task is succeed
         assertThat(workInfo.getState()).isEqualTo(SUCCEEDED);
@@ -349,10 +335,10 @@ public final class VerifyPackageTaskTest {
         mPackageInfo.signingInfo = signingInfo;
         assertThat(mPackageInfo.signingInfo.hasMultipleSigners()).isTrue();
         createPackageInfo(mPackageInfo);
-        createParameters(TEST_PACKAGE_NAME, TEST_ANOTHER_SIGNATURE_CHECKSUM);
 
         // WHEN
-        WorkInfo workInfo = buildTaskAndRun(mWorkManager, TEST_FILE_LOCATION);
+        WorkInfo workInfo = buildTaskAndRun(mWorkManager, TEST_FILE_LOCATION, TEST_PACKAGE_NAME,
+                TEST_ANOTHER_SIGNATURE_CHECKSUM);
 
         // THEN task is failed
         assertThat(workInfo.getState()).isEqualTo(FAILED);
@@ -377,19 +363,15 @@ public final class VerifyPackageTaskTest {
         }
     }
 
-    private void createParameters(String packageName, String signatureChecksum) {
-        final Bundle bundle = new Bundle();
-        bundle.putString(EXTRA_KIOSK_PACKAGE, packageName);
-        bundle.putString(EXTRA_KIOSK_SIGNATURE_CHECKSUM, signatureChecksum);
-        SetupParameters.createPrefs(mContext, bundle);
-    }
-
     private static WorkInfo buildTaskAndRun(WorkManager workManager,
-            @Nullable String fileLocation) {
+            @Nullable String fileLocation, @Nullable String packageName,
+            @Nullable String signatureChecksum) {
         // GIVEN
         final Data inputData =
                 new Data.Builder()
                         .putString(TASK_RESULT_DOWNLOADED_FILE_LOCATION_KEY, fileLocation)
+                        .putString(EXTRA_KIOSK_PACKAGE, packageName)
+                        .putString(EXTRA_KIOSK_SIGNATURE_CHECKSUM, signatureChecksum)
                         .build();
 
         return getWorkInfo(inputData, workManager);
@@ -400,6 +382,8 @@ public final class VerifyPackageTaskTest {
         final Data inputData =
                 new Data.Builder()
                         .putBoolean(KEY_KIOSK_APP_INSTALLED, true)
+                        .putString(EXTRA_KIOSK_PACKAGE, TEST_PACKAGE_NAME)
+                        .putString(EXTRA_KIOSK_SIGNATURE_CHECKSUM, TEST_SIGNATURE_CHECKSUM)
                         .build();
 
         // WHEN
