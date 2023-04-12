@@ -46,7 +46,7 @@ import java.util.Set;
 /**
  * Store provisioning parameters
  */
-public final class SetupParameters {
+final class SetupParameters {
     private static final String TAG = "SetupParameters";
 
     private static final String FILENAME = "setup-prefs";
@@ -79,7 +79,7 @@ public final class SetupParameters {
      * @param context Application context
      * @param bundle  Bundle with provisioning parameters.
      */
-    public static synchronized void createPrefs(Context context, Bundle bundle) {
+    static synchronized void createPrefs(Context context, Bundle bundle) {
         SharedPreferences sharedPreferences = getSharedPreferences(context);
         if (sharedPreferences.contains(KEY_KIOSK_PACKAGE)) {
             LogUtil.i(TAG, "Setup parameters are already populated");
@@ -120,7 +120,7 @@ public final class SetupParameters {
      * @return kiosk app package name.
      */
     @Nullable
-    public static String getKioskPackage(Context context) {
+    static String getKioskPackage(Context context) {
         return getSharedPreferences(context).getString(KEY_KIOSK_PACKAGE, null /* defValue */);
     }
 
@@ -131,7 +131,7 @@ public final class SetupParameters {
      * @return Kiosk app download URL.
      */
     @Nullable
-    public static String getKioskDownloadUrl(Context context) {
+    static String getKioskDownloadUrl(Context context) {
         return getSharedPreferences(context).getString(KEY_KIOSK_DOWNLOAD_URL, null /* defValue */);
     }
 
@@ -142,7 +142,7 @@ public final class SetupParameters {
      * @return Signature checksum.
      */
     @Nullable
-    public static String getKioskSignatureChecksum(Context context) {
+    static String getKioskSignatureChecksum(Context context) {
         return getSharedPreferences(context)
                 .getString(KEY_KIOSK_SIGNATURE_CHECKSUM, null /* defValue */);
     }
@@ -154,7 +154,7 @@ public final class SetupParameters {
      * @return Setup activity.
      */
     @Nullable
-    public static String getKioskSetupActivity(Context context) {
+    static String getKioskSetupActivity(Context context) {
         return getSharedPreferences(context)
                 .getString(KEY_KIOSK_SETUP_ACTIVITY, null /* defValue */);
     }
@@ -165,7 +165,7 @@ public final class SetupParameters {
      * @param context Context used to get the shared preferences.
      * @return True if outgoing calls are disabled.
      */
-    public static boolean getOutgoingCallsDisabled(Context context) {
+    static boolean getOutgoingCallsDisabled(Context context) {
         return getSharedPreferences(context)
                 .getBoolean(KEY_KIOSK_DISABLE_OUTGOING_CALLS, false /* defValue */);
     }
@@ -176,7 +176,7 @@ public final class SetupParameters {
      * @param context Context used to get the shared preferences.
      * @return List of allowed packages.
      */
-    public static ImmutableList<String> getKioskAllowlist(Context context) {
+    static ImmutableList<String> getKioskAllowlist(Context context) {
         SharedPreferences sharedPreferences = getSharedPreferences(context);
         Set<String> allowlistSet =
                 sharedPreferences.getStringSet(KEY_KIOSK_ALLOWLIST, null /* defValue */);
@@ -189,7 +189,7 @@ public final class SetupParameters {
      * @param context Context used to get the shared preferences.
      * @return True if notification are enabled.
      */
-    public static boolean isNotificationsInLockTaskModeEnabled(Context context) {
+    static boolean isNotificationsInLockTaskModeEnabled(Context context) {
         return getSharedPreferences(context)
                 .getBoolean(KEY_KIOSK_ENABLE_NOTIFICATIONS_IN_LOCK_TASK_MODE, false /* defValue */);
     }
@@ -201,7 +201,7 @@ public final class SetupParameters {
      * @return The type of provisioning which could be one of {@link ProvisioningType}.
      */
     @ProvisioningType
-    public static int getProvisioningType(Context context) {
+    static int getProvisioningType(Context context) {
         return getSharedPreferences(context).getInt(KEY_PROVISIONING_TYPE, TYPE_UNDEFINED);
     }
 
@@ -211,7 +211,7 @@ public final class SetupParameters {
      * @param context Context used to get the shared preferences.
      * @return True if the provision should be mandatory.
      */
-    public static boolean isProvisionMandatory(Context context) {
+    static boolean isProvisionMandatory(Context context) {
         return getSharedPreferences(context).getBoolean(KEY_MANDATORY_PROVISION, false);
     }
 
@@ -222,7 +222,7 @@ public final class SetupParameters {
      * @return the name of the provider.
      */
     @Nullable
-    public static String getKioskAppProviderName(Context context) {
+    static String getKioskAppProviderName(Context context) {
         return getSharedPreferences(context).getString(KEY_KIOSK_APP_PROVIDER_NAME,
                 null /* defValue */);
     }
@@ -233,7 +233,7 @@ public final class SetupParameters {
      * @param context Context used to get the shared preferences.
      * @return True if installing from unknown sources is disallowed.
      */
-    public static boolean isInstallingFromUnknownSourcesDisallowed(Context context) {
+    static boolean isInstallingFromUnknownSourcesDisallowed(Context context) {
         return getSharedPreferences(context).getBoolean(
                 KEY_DISALLOW_INSTALLING_FROM_UNKNOWN_SOURCES, /* defValue= */ false);
     }

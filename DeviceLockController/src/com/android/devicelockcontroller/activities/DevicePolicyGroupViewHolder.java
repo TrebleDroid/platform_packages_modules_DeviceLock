@@ -22,12 +22,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.devicelockcontroller.R;
-import com.android.devicelockcontroller.setup.SetupParameters;
+import com.android.devicelockcontroller.setup.SetupParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
+
+import com.google.common.util.concurrent.Futures;
 
 /**
  * A {@link androidx.recyclerview.widget.RecyclerView.ViewHolder} class which describes the item
@@ -48,7 +49,8 @@ final class DevicePolicyGroupViewHolder extends RecyclerView.ViewHolder {
 
     void bind(DevicePolicyGroup devicePolicyGroup, int maxDevicePolicy) {
         Context context = itemView.getContext();
-        String providerName = SetupParameters.getKioskAppProviderName(context);
+        String providerName = Futures.getUnchecked(
+                SetupParametersClient.getInstance().getKioskAppProviderName());
         if (TextUtils.isEmpty(providerName)) {
             LogUtil.e(TAG, "Device provider name is empty, should not reach here.");
             return;

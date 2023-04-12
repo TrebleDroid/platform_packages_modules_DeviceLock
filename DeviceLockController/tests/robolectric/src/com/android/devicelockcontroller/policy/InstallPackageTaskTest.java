@@ -44,7 +44,6 @@ import static org.mockito.ArgumentMatchers.notNull;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.robolectric.annotation.LooperMode.Mode.LEGACY;
 
 import android.app.Application;
 import android.content.Context;
@@ -54,6 +53,7 @@ import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.content.pm.PackageInstaller.Session;
 import android.content.pm.PackageInstaller.SessionParams;
+import android.os.Looper;
 
 import androidx.test.core.app.ApplicationProvider;
 import androidx.work.Configuration;
@@ -82,7 +82,6 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.Shadows;
-import org.robolectric.annotation.LooperMode;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowContextWrapper;
 
@@ -93,16 +92,19 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.concurrent.ExecutionException;
 
-@LooperMode(LEGACY)
 @RunWith(RobolectricTestRunner.class)
 public final class InstallPackageTaskTest {
     private static final int TEST_INSTALL_SESSION_ID = 1;
-    private static final byte[] TEST_PACKAGE_CONTENT = new byte[] {1, 2, 3, 4, 5};
+    private static final byte[] TEST_PACKAGE_CONTENT = new byte[]{1, 2, 3, 4, 5};
 
-    @Rule public final MockitoRule mMocks = MockitoJUnit.rule();
-    @Mock private PackageInstallerWrapper mMockPackageInstaller;
-    @Mock private Session mMockSession;
-    @Mock private PackageInstallPendingIntentProvider mMockPackageInstallPendingIntentProvider;
+    @Rule
+    public final MockitoRule mMocks = MockitoJUnit.rule();
+    @Mock
+    private PackageInstallerWrapper mMockPackageInstaller;
+    @Mock
+    private Session mMockSession;
+    @Mock
+    private PackageInstallPendingIntentProvider mMockPackageInstallPendingIntentProvider;
 
     private Context mContext;
     private WorkManager mWorkManager;
@@ -348,6 +350,7 @@ public final class InstallPackageTaskTest {
                 new OneTimeWorkRequest.Builder(InstallPackageTask.class).setInputData(inputData)
                         .build();
         workManager.enqueue(request);
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
 
         try {
             return workManager.getWorkInfoById(request.getId()).get();
@@ -376,6 +379,7 @@ public final class InstallPackageTaskTest {
         final Intent intent = new Intent(ACTION_INSTALL_APP_COMPLETE);
         intent.putExtra(EXTRA_STATUS, status);
         mContext.sendBroadcast(intent);
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
 
         // THEN make sure broadcast intent has correct contents
         assertThat(shadowContextWrapper.getBroadcastIntents()).hasSize(1);

@@ -25,7 +25,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.devicelockcontroller.R;
-import com.android.devicelockcontroller.setup.SetupParameters;
 import com.android.devicelockcontroller.util.LogUtil;
 
 /**
@@ -43,9 +42,8 @@ public final class ProvisionInfoViewHolder extends RecyclerView.ViewHolder {
         mTextView = itemView.findViewById(R.id.text_view_item_provision_info);
     }
 
-    void bind(ProvisionInfo provisionInfo) {
+    void bind(ProvisionInfo provisionInfo, String providerName) {
         Context context = itemView.getContext();
-        String providerName = SetupParameters.getKioskAppProviderName(context);
         if (TextUtils.isEmpty(providerName)) {
             LogUtil.e(TAG, "Device provider name is empty, should not reach here.");
             return;

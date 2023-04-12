@@ -52,8 +52,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(shadows = {ShadowApplicationPackageManager.class},
-        application = TestDeviceLockControllerApplication.class)
+@Config(shadows = {ShadowApplicationPackageManager.class})
 public class DlcLockedBootCompletedReceiverTest {
     // Non-exclusive list of components that will be disabled for secondary users but not for
     // system user.

@@ -21,8 +21,10 @@ import android.content.ComponentName;
 import android.content.Context;
 
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
-import com.android.devicelockcontroller.setup.SetupParameters;
+import com.android.devicelockcontroller.setup.SetupParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
+
+import com.google.common.util.concurrent.Futures;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,7 +86,8 @@ final class KioskAppPolicyHandler implements PolicyHandler {
     }
 
     private boolean isKioskPackageProtected() {
-        final String packageName = SetupParameters.getKioskPackage(mContext);
+        final String packageName = Futures.getUnchecked(
+                SetupParametersClient.getInstance().getKioskPackage());
         if (packageName == null) {
             LogUtil.e(TAG, "Kiosk package is not set");
             return false;
@@ -112,7 +115,8 @@ final class KioskAppPolicyHandler implements PolicyHandler {
 
     @ResultType
     private int enableKioskPackageProtection(boolean enable) {
-        final String packageName = SetupParameters.getKioskPackage(mContext);
+        final String packageName = Futures.getUnchecked(
+                SetupParametersClient.getInstance().getKioskPackage());
         if (packageName == null) {
             LogUtil.e(TAG, "Kiosk package is not set");
             return FAILURE;

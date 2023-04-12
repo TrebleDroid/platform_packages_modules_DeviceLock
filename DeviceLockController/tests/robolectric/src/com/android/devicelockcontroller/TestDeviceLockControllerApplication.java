@@ -23,6 +23,7 @@ import android.app.Application;
 import com.android.devicelockcontroller.policy.DevicePolicyController;
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
+import com.android.devicelockcontroller.policy.SetupController;
 
 /** Application class that provides mock objects for tests. */
 public final class TestDeviceLockControllerApplication extends Application implements
@@ -30,6 +31,7 @@ public final class TestDeviceLockControllerApplication extends Application imple
 
     private DevicePolicyController mPolicyController;
     private DeviceStateController mStateController;
+    private SetupController mSetupController;
 
     @Override
     public void onCreate() {
@@ -60,5 +62,13 @@ public final class TestDeviceLockControllerApplication extends Application imple
     @Override
     public DevicePolicyController getPolicyController() {
         return getMockPolicyController();
+    }
+
+    @Override
+    public SetupController getSetupController() {
+        if (mSetupController == null) {
+            mSetupController = mock(SetupController.class);
+        }
+        return mSetupController;
     }
 }
