@@ -114,19 +114,6 @@
                  android:exported="false"
                  android:singleUser="true">
         </service>
-        <!-- The following component is needed because many Device Policy Manager APIs require
-             this receiver component name as first argument. -->
-        <receiver android:name="com.android.devicelockcontroller.receivers.DlcDeviceAdminReceiver"
-                  android:permission="android.permission.BIND_DEVICE_ADMIN"
-                  android:exported="false"
-                  androidprv:systemUserOnly="true">
-            <meta-data
-                android:name="android.app.device_admin"
-                android:resource="@xml/device_admin"/>
-            <intent-filter>
-                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED"/>
-            </intent-filter>
-        </receiver>
         <!-- System user only boot completed broadcast receiver -->
         <receiver
             android:name="com.android.devicelockcontroller.receivers.CheckInBootCompletedReceiver"
