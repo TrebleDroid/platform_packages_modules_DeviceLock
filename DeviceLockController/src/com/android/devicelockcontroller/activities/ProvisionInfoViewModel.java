@@ -16,6 +16,8 @@
 
 package com.android.devicelockcontroller.activities;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Pair;
 
@@ -28,7 +30,6 @@ import com.android.devicelockcontroller.util.LogUtil;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.MoreExecutors;
 
 import java.util.List;
 
@@ -104,6 +105,6 @@ public abstract class ProvisionInfoViewModel extends ViewModel {
                         LogUtil.e(TAG, "Failed to get Kiosk app provider name", t);
                     }
                 },
-                MoreExecutors.directExecutor());
+                command -> new Handler(Looper.getMainLooper()).post(command));
     }
 }
