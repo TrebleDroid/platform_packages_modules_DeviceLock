@@ -162,6 +162,12 @@
             android:authorities="${applicationId}.androidx-startup"
             tools:node="remove">
         </provider>
+
+        <!-- Receiver used for testing purpose -->
+        <receiver
+            android:name="com.android.devicelockcontroller.setup.AdbCommandReceiver"
+            android:permission="android.permission.MANAGE_DEVICE_POLICY_APPS_CONTROL"/>
+
     </application>
 
 </manifest>
