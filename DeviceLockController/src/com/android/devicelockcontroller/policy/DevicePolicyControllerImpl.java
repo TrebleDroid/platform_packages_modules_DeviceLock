@@ -71,28 +71,26 @@ public final class DevicePolicyControllerImpl
      * Create a new policy controller.
      *
      * @param context         The context used by this policy controller.
-     * @param componentName   Admin component name.
      * @param stateController State controller.
      */
-    public DevicePolicyControllerImpl(
-            Context context, ComponentName componentName, DeviceStateController stateController) {
-        this(context, componentName, stateController,
+    public DevicePolicyControllerImpl(Context context, DeviceStateController stateController) {
+        this(context, stateController,
                 context.getSystemService(DevicePolicyManager.class));
     }
 
     @VisibleForTesting
-    DevicePolicyControllerImpl(Context context, ComponentName componentName,
+    DevicePolicyControllerImpl(Context context,
             DeviceStateController stateController, DevicePolicyManager dpm) {
         mContext = context;
         mDpm = dpm;
         mStateController = stateController;
-        mLockTaskHandler = new LockTaskModePolicyHandler(context, componentName, dpm);
+        mLockTaskHandler = new LockTaskModePolicyHandler(context, dpm);
 
         final boolean isDebug = SystemProperties.getInt("ro.debuggable", 0) == 1;
-        mPolicyList.add(new UserRestrictionsPolicyHandler(context, componentName, dpm,
+        mPolicyList.add(new UserRestrictionsPolicyHandler(dpm,
                 context.getSystemService(UserManager.class), isDebug));
         mPolicyList.add(mLockTaskHandler);
-        mPolicyList.add(new KioskAppPolicyHandler(context, componentName, dpm));
+        mPolicyList.add(new KioskAppPolicyHandler(dpm));
         stateController.addCallback(this);
     }
 

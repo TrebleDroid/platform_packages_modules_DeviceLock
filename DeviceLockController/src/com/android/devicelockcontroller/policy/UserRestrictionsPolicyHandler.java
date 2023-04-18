@@ -17,8 +17,6 @@
 package com.android.devicelockcontroller.policy;
 
 import android.app.admin.DevicePolicyManager;
-import android.content.ComponentName;
-import android.content.Context;
 import android.os.Bundle;
 import android.os.UserManager;
 
@@ -50,18 +48,14 @@ final class UserRestrictionsPolicyHandler implements PolicyHandler {
     private final ArrayList<String> mAlwaysOnRestrictions = new ArrayList<>();
     private final ArrayList<String> mLockModeRestrictions = new ArrayList<>();
 
-    private final ComponentName mComponentName;
     private final DevicePolicyManager mDpm;
     private final UserManager mUserManager;
-    private final Context mContext;
     private final boolean mIsDebug;
 
-    UserRestrictionsPolicyHandler(Context context, ComponentName adminComponent,
-            DevicePolicyManager dpm, UserManager userManager, boolean isDebug) {
-        mComponentName = adminComponent;
+    UserRestrictionsPolicyHandler(DevicePolicyManager dpm, UserManager userManager,
+            boolean isDebug) {
         mDpm = dpm;
         mUserManager = userManager;
-        mContext = context;
         mIsDebug = isDebug;
 
         LogUtil.i(TAG, String.format(Locale.US, "Build type DEBUG = %s", isDebug));
@@ -160,10 +154,10 @@ final class UserRestrictionsPolicyHandler implements PolicyHandler {
             String restriction = restrictions.get(i);
             if (userRestrictionBundle.getBoolean(restriction, false) != enable) {
                 if (enable) {
-                    mDpm.addUserRestriction(mComponentName, restriction);
+                    mDpm.addUserRestriction(null /* admin */, restriction);
                     LogUtil.v(TAG, String.format(Locale.US, "enable %s restriction", restriction));
                 } else {
-                    mDpm.clearUserRestriction(mComponentName, restriction);
+                    mDpm.clearUserRestriction(null /* admin */, restriction);
                     LogUtil.v(TAG, String.format(Locale.US, "clear %s restriction", restriction));
                 }
             }
@@ -172,7 +166,7 @@ final class UserRestrictionsPolicyHandler implements PolicyHandler {
         if (!mIsDebug
                 && enable
                 && restrictions.contains(UserManager.DISALLOW_DEBUGGING_FEATURES)) {
-            mDpm.clearUserRestriction(mComponentName, UserManager.DISALLOW_DEBUGGING_FEATURES);
+            mDpm.clearUserRestriction(null /* admin */, UserManager.DISALLOW_DEBUGGING_FEATURES);
             LogUtil.v(TAG, String.format(Locale.US, "clear %s restriction",
                     UserManager.DISALLOW_DEBUGGING_FEATURES));
         }
