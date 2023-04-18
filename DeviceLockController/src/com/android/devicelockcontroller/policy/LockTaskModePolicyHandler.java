@@ -55,14 +55,10 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
                     | DevicePolicyManager.LOCK_TASK_FEATURE_GLOBAL_ACTIONS);
     private static final String TAG = "LockTaskModePolicyHandler";
     private final Context mContext;
-    private final ComponentName mComponentName;
     private final DevicePolicyManager mDpm;
 
-    LockTaskModePolicyHandler(
-            Context context, ComponentName adminComponentName, DevicePolicyManager dpm) {
-
+    LockTaskModePolicyHandler(Context context, DevicePolicyManager dpm) {
         mContext = context;
-        mComponentName = adminComponentName;
         mDpm = dpm;
     }
 
@@ -108,9 +104,9 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
 
         final String currentPackage = UserPreferences.getPackageOverridingHome(mContext);
         if (currentPackage != null) {
-            mDpm.clearPackagePersistentPreferredActivities(mComponentName, currentPackage);
+            mDpm.clearPackagePersistentPreferredActivities(null /* admin */, currentPackage);
         }
-        mDpm.addPersistentPreferredActivity(mComponentName, getHomeIntentFilter(), activity);
+        mDpm.addPersistentPreferredActivity(null /* admin */, getHomeIntentFilter(), activity);
         UserPreferences.setPackageOverridingHome(mContext, activity.getPackageName());
 
         return true;
@@ -132,7 +128,7 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
             allowlist.add(defaultDialer);
         }
         final String[] allowlistPackages = allowlist.toArray(new String[allowlist.size()]);
-        mDpm.setLockTaskPackages(mComponentName, allowlistPackages);
+        mDpm.setLockTaskPackages(null /* admin */, allowlistPackages);
         LogUtil.i(TAG, String.format(Locale.US, "Update Lock task allowlist %s",
                 Arrays.toString(allowlistPackages)));
     }
@@ -143,7 +139,7 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
                 SetupParametersClient.getInstance().isNotificationsInLockTaskModeEnabled())) {
             lockTaskFeatures |= DevicePolicyManager.LOCK_TASK_FEATURE_NOTIFICATIONS;
         }
-        mDpm.setLockTaskFeatures(mComponentName, lockTaskFeatures);
+        mDpm.setLockTaskFeatures(null /* admin */, lockTaskFeatures);
         updateAllowlist();
     }
 
@@ -152,10 +148,10 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
 
         final String currentPackage = UserPreferences.getPackageOverridingHome(mContext);
         // This will stop the lock task mode
-        mDpm.setLockTaskPackages(mComponentName, new String[0]);
+        mDpm.setLockTaskPackages(null /* admin */, new String[0]);
         LogUtil.i(TAG, "Clear Lock task allowlist");
         if (currentPackage != null) {
-            mDpm.clearPackagePersistentPreferredActivities(mComponentName, currentPackage);
+            mDpm.clearPackagePersistentPreferredActivities(null /* admin */, currentPackage);
             UserPreferences.setPackageOverridingHome(mContext, null /* packageName */);
         }
     }
