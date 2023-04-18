@@ -237,4 +237,14 @@ final class SetupParameters {
         return getSharedPreferences(context).getBoolean(
                 KEY_DISALLOW_INSTALLING_FROM_UNKNOWN_SOURCES, /* defValue= */ false);
     }
+
+    /**
+     * Override the device provider name using the given string.
+     * Note: this API is used for testing purpose only.
+     */
+    static void overrideDeviceProviderName(Context context, String name) {
+        SharedPreferences.Editor editor = getSharedPreferences(context).edit();
+        editor.putString(KEY_KIOSK_APP_PROVIDER_NAME, name);
+        editor.apply();
+    }
 }
