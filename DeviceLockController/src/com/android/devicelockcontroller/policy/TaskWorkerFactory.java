@@ -24,6 +24,8 @@ import androidx.work.ListenableWorker;
 import androidx.work.WorkerFactory;
 import androidx.work.WorkerParameters;
 
+import com.android.devicelockcontroller.util.LogUtil;
+
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 
@@ -32,6 +34,8 @@ import java.util.concurrent.Executors;
 
 /** A factory which produces {@link AbstractTask}s with parameters. */
 public final class TaskWorkerFactory extends WorkerFactory {
+    private static final String TAG = "TaskWorkerFactory";
+
     private final ListeningExecutorService mExecutorService;
 
     public TaskWorkerFactory() {
@@ -49,11 +53,10 @@ public final class TaskWorkerFactory extends WorkerFactory {
             return (ListenableWorker) clazz.getDeclaredConstructor(
                             Context.class, WorkerParameters.class, ListeningExecutorService.class)
                     .newInstance(context, workerParameters, mExecutorService);
-        } catch (ClassNotFoundException e) {
-            throw new IllegalArgumentException("Task not found " + workerClassName, e);
         } catch (NoSuchMethodException | IllegalAccessException | InstantiationException
-                | InvocationTargetException e) {
+                | InvocationTargetException | ClassNotFoundException e) {
             // Unable to create an instance of the ListenableWorker.
+            LogUtil.e(TAG, "Cannot create worker: " + workerClassName, e);
             return null;
         }
         // unreachable
