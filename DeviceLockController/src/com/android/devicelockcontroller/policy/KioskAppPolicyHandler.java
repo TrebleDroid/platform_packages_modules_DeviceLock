@@ -17,8 +17,6 @@
 package com.android.devicelockcontroller.policy;
 
 import android.app.admin.DevicePolicyManager;
-import android.content.ComponentName;
-import android.content.Context;
 
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
 import com.android.devicelockcontroller.setup.SetupParametersClient;
@@ -34,13 +32,9 @@ import java.util.Locale;
 final class KioskAppPolicyHandler implements PolicyHandler {
     private static final String TAG = "KioskAppPolicyHandler";
 
-    private final Context mContext;
-    private final ComponentName mComponent;
     private final DevicePolicyManager mDpm;
 
-    KioskAppPolicyHandler(Context context, ComponentName component, DevicePolicyManager dpm) {
-        mContext = context;
-        mComponent = component;
+    KioskAppPolicyHandler(DevicePolicyManager dpm) {
         mDpm = dpm;
     }
 
@@ -94,7 +88,7 @@ final class KioskAppPolicyHandler implements PolicyHandler {
         }
 
         try {
-            if (!mDpm.isUninstallBlocked(mComponent, packageName)) {
+            if (!mDpm.isUninstallBlocked(null /* admin */, packageName)) {
                 return false;
             }
         } catch (SecurityException e) {
@@ -104,7 +98,7 @@ final class KioskAppPolicyHandler implements PolicyHandler {
 
         final List<String> packages;
         try {
-            packages = mDpm.getUserControlDisabledPackages(mComponent);
+            packages = mDpm.getUserControlDisabledPackages(null /* admin */);
         } catch (SecurityException e) {
             LogUtil.e(TAG, "Could not read device policy");
             return false;
@@ -123,7 +117,7 @@ final class KioskAppPolicyHandler implements PolicyHandler {
         }
 
         try {
-            mDpm.setUninstallBlocked(mComponent, packageName, enable);
+            mDpm.setUninstallBlocked(null /* admin */, packageName, enable);
         } catch (SecurityException e) {
             LogUtil.e(TAG, "Unable to set device policy", e);
             return FAILURE;
@@ -135,7 +129,7 @@ final class KioskAppPolicyHandler implements PolicyHandler {
         }
 
         try {
-            mDpm.setUserControlDisabledPackages(mComponent, pkgList);
+            mDpm.setUserControlDisabledPackages(null /* admin */, pkgList);
         } catch (SecurityException e) {
             LogUtil.e(TAG, "Failed to setUserControlDisabledPackages", e);
             return FAILURE;
