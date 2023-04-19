@@ -71,31 +71,6 @@ public final class UserPreferencesClient extends DlcClient {
     }
 
     /**
-     * Checks if lock task mode is active.
-     *
-     * @return True if lock task mode is active.
-     */
-    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
-    public ListenableFuture<Boolean> isLockTaskModeActive() {
-        return call(() -> IUserPreferencesService.Stub.asInterface(mDlcService)
-                .isLockTaskModeActive());
-    }
-
-    /**
-     * Sets the current lock task mode state.
-     *
-     * @param isActive New state.
-     */
-    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
-    public ListenableFuture<Void> setLockTaskModeActive(boolean isActive) {
-        return call(() -> {
-            IUserPreferencesService.Stub.asInterface(mDlcService)
-                    .setLockTaskModeActive(isActive);
-            return null;
-        });
-    }
-
-    /**
      * Gets the current device state.
      *
      * @return the current device state.
