@@ -21,8 +21,6 @@ package com.android.devicelockcontroller.setup;
  * {@hide}
  */
 interface IUserPreferencesService {
-    boolean isLockTaskModeActive();
-    void setLockTaskModeActive(boolean isActive);
     int getDeviceState();
     void setDeviceState(int state);
     String getPackageOverridingHome();
