@@ -40,16 +40,6 @@ public final class UserPreferencesService extends Service {
     private final IUserPreferencesService.Stub mBinder =
             new IUserPreferencesService.Stub() {
                 @Override
-                public boolean isLockTaskModeActive() {
-                    return UserPreferences.isLockTaskModeActive(mContext);
-                }
-
-                @Override
-                public void setLockTaskModeActive(boolean isActive) {
-                    UserPreferences.setLockTaskModeActive(mContext, isActive);
-                }
-
-                @Override
                 @DeviceState
                 public int getDeviceState() {
                     return UserPreferences.getDeviceState(mContext);

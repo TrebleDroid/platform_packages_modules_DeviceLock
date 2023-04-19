@@ -48,14 +48,6 @@ public class UserPreferencesServiceTest extends AbstractUserPreferencesTestBase 
     }
 
     @Test
-    public void isLockTaskModeActive_shouldReturnWhetherLockTaskModeIsActive()
-            throws RemoteException {
-        assertThat(mIUserPreferencesService.isLockTaskModeActive()).isFalse();
-        mIUserPreferencesService.setLockTaskModeActive(true);
-        assertThat(mIUserPreferencesService.isLockTaskModeActive()).isTrue();
-    }
-
-    @Test
     public void getDeviceState_shouldReturnExpectedCurrentDeviceState() throws RemoteException {
         assertThat(mIUserPreferencesService.getDeviceState()).isEqualTo(
                 DeviceStateController.DeviceState.UNPROVISIONED);
