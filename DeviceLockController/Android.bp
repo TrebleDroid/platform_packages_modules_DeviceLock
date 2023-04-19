@@ -157,6 +157,8 @@ android_library {
     min_sdk_version: "UpsideDownCake",
     srcs: [":devicelockcontroller-sources"],
     libs: [
+        "framework-connectivity",
+        // TODO: Remove framework-tethering after cronet is moved to framework-connectivity
         "framework-tethering",
         "org.apache.http.legacy",
     ],
