@@ -101,7 +101,6 @@ public final class SetupControllerImplTest {
     private static final String TEST_SETUP_ACTIVITY = "packagename/.activity";
     private static final String TEST_DOWNLOAD_URL = "https://www.example.com";
     private static final String TEST_PACKAGE_NAME = "test.package.name";
-    private static final byte[] TEST_SIGNATURE = new byte[]{1, 2, 3, 4};
     private static final String TEST_SIGNATURE_CHECKSUM =
             "n2SnR-G5fxMfq7a0Rylsm28CAeefs8U1bmx36JtqgGo=";
     public static final String DOWNLOAD_SUFFIX = "Download";
