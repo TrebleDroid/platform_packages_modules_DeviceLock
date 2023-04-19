@@ -33,7 +33,6 @@ import java.util.Set;
  */
 public final class UserPreferences {
     private static final String FILENAME = "prefs";
-    private static final String KEY_LOCK_TASK_MODE_ACTIVE = "lock_task_mode_active";
     private static final String KEY_DEVICE_STATE = "device_state";
     private static final String KEY_KIOSK_SIGNING_CERT = "kiosk_signing_cert";
     private static final String KEY_HOME_PACKAGE_OVERRIDE = "home_override_package";
@@ -51,27 +50,6 @@ public final class UserPreferences {
         final Context deviceContext = context.createDeviceProtectedStorageContext();
 
         return deviceContext.getSharedPreferences(FILENAME, Context.MODE_PRIVATE);
-    }
-
-    /**
-     * Checks if lock task mode is active.
-     *
-     * @param context Context used to get the shared preferences.
-     * @return True if lock task mode is active.
-     */
-    public static boolean isLockTaskModeActive(Context context) {
-        return getSharedPreferences(context).getBoolean(KEY_LOCK_TASK_MODE_ACTIVE, false);
-    }
-
-    /**
-     * Sets the current lock task mode state.
-     *
-     * @param context  Context used to get the shared preferences.
-     * @param isActive New state.
-     */
-    public static void setLockTaskModeActive(Context context, boolean isActive) {
-        getSharedPreferences(context).edit().putBoolean(KEY_LOCK_TASK_MODE_ACTIVE, isActive)
-                .apply();
     }
 
     /**
