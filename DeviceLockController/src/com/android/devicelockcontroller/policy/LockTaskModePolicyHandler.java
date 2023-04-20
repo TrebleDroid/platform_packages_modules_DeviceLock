@@ -72,6 +72,10 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
     @Override
     @ResultType
     public int setPolicyForState(@DeviceState int state) {
+        if (state == DeviceState.PSEUDO_UNLOCKED || state == DeviceState.PSEUDO_LOCKED) {
+            return SUCCESS;
+        }
+
         if (state == DeviceState.SETUP_SUCCEEDED) {
             composeAllowlist();
         }

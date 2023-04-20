@@ -52,6 +52,8 @@ final class KioskAppPolicyHandler implements PolicyHandler {
             case DeviceState.SETUP_IN_PROGRESS:
             case DeviceState.SETUP_SUCCEEDED:
             case DeviceState.SETUP_FAILED:
+            case DeviceState.PSEUDO_LOCKED:
+            case DeviceState.PSEUDO_UNLOCKED:
                 return SUCCESS;
             default:
                 LogUtil.e(TAG, String.format(Locale.US, "Invalid State %d", state));
