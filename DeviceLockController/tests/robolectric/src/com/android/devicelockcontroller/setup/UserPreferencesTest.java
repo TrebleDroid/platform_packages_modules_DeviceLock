@@ -42,13 +42,6 @@ public class UserPreferencesTest extends AbstractUserPreferencesTestBase {
     }
 
     @Test
-    public void isLockTaskModeActive_shouldReturnWhetherLockTaskModeIsActive() {
-        assertThat(UserPreferences.isLockTaskModeActive(mContext)).isFalse();
-        UserPreferences.setLockTaskModeActive(mContext, true);
-        assertThat(UserPreferences.isLockTaskModeActive(mContext)).isTrue();
-    }
-
-    @Test
     public void getDeviceState_shouldReturnExpectedCurrentDeviceState() {
         assertThat(UserPreferences.getDeviceState(mContext)).isEqualTo(DeviceState.UNPROVISIONED);
         UserPreferences.setDeviceState(mContext, DeviceState.SETUP_SUCCEEDED);

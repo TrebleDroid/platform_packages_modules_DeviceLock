@@ -139,8 +139,10 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
                 SetupParametersClient.getInstance().isNotificationsInLockTaskModeEnabled())) {
             lockTaskFeatures |= DevicePolicyManager.LOCK_TASK_FEATURE_NOTIFICATIONS;
         }
-        mDpm.setLockTaskFeatures(null /* admin */, lockTaskFeatures);
+        // updateAllowlist() calls setLockTaskPackages(), which must be called before
+        // setLockTaskFeatures().
         updateAllowlist();
+        mDpm.setLockTaskFeatures(null /* admin */, lockTaskFeatures);
     }
 
     private void disableLockTaskMode() {
