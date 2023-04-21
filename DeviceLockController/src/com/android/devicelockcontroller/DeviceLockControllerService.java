@@ -22,10 +22,16 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteCallback;
 
+import androidx.annotation.NonNull;
+
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
 import com.android.devicelockcontroller.policy.StateTransitionException;
 import com.android.devicelockcontroller.util.LogUtil;
+
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.MoreExecutors;
 
 /**
  * Device Lock Controller Service. This is hosted in an APK and is bound
@@ -39,48 +45,61 @@ public final class DeviceLockControllerService extends Service {
             new IDeviceLockControllerService.Stub() {
                 @Override
                 public void lockDevice(RemoteCallback remoteCallback) {
-                    boolean success;
                     try {
-                        mStateController.setNextStateForEvent(
-                                DeviceStateController.DeviceEvent.LOCK_DEVICE);
-                        success = true;
+                        Futures.addCallback(mStateController.setNextStateForEvent(
+                                        DeviceStateController.DeviceEvent.LOCK_DEVICE),
+                                remoteCallbackWrapper(remoteCallback, KEY_LOCK_DEVICE_RESULT),
+                                MoreExecutors.directExecutor());
                     } catch (StateTransitionException e) {
-                        success = false;
-                        LogUtil.e(TAG, "Failed to lock device", e);
+                        sendResult(KEY_LOCK_DEVICE_RESULT, remoteCallback, false);
                     }
 
-                    final Bundle bundle = new Bundle();
-                    bundle.putBoolean(IDeviceLockControllerService.KEY_LOCK_DEVICE_RESULT, success);
-                    remoteCallback.sendResult(bundle);
                 }
 
                 @Override
                 public void unlockDevice(RemoteCallback remoteCallback) {
-                    boolean success;
                     try {
-                        mStateController.setNextStateForEvent(
-                                DeviceStateController.DeviceEvent.UNLOCK_DEVICE);
-                        success = true;
+                        Futures.addCallback(mStateController.setNextStateForEvent(
+                                        DeviceStateController.DeviceEvent.UNLOCK_DEVICE),
+                                remoteCallbackWrapper(remoteCallback, KEY_UNLOCK_DEVICE_RESULT),
+                                MoreExecutors.directExecutor());
+
                     } catch (StateTransitionException e) {
-                        success = false;
-                        LogUtil.e(TAG, "Failed to unlock device", e);
+                        sendResult(KEY_UNLOCK_DEVICE_RESULT, remoteCallback, false);
                     }
 
-                    final Bundle bundle = new Bundle();
-                    bundle.putBoolean(IDeviceLockControllerService.KEY_UNLOCK_DEVICE_RESULT,
-                            success);
-                    remoteCallback.sendResult(bundle);
                 }
 
                 @Override
                 public void isDeviceLocked(RemoteCallback remoteCallback) {
                     final boolean isLocked = mStateController.isLocked();
-                    final Bundle bundle = new Bundle();
-                    bundle.putBoolean(IDeviceLockControllerService.KEY_IS_DEVICE_LOCKED_RESULT,
-                            isLocked);
-                    remoteCallback.sendResult(bundle);
+                    sendResult(IDeviceLockControllerService.KEY_IS_DEVICE_LOCKED_RESULT,
+                            remoteCallback, isLocked);
                 }
             };
+
+    @NonNull
+    private static FutureCallback<Void> remoteCallbackWrapper(RemoteCallback remoteCallback,
+            final String key) {
+        return new FutureCallback<>() {
+            @Override
+            public void onSuccess(Void result) {
+                sendResult(key, remoteCallback, true);
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                LogUtil.e(TAG, "Failed to lock device", t);
+                sendResult(key, remoteCallback, false);
+            }
+        };
+    }
+
+    private static void sendResult(String key, RemoteCallback remoteCallback, boolean result) {
+        final Bundle bundle = new Bundle();
+        bundle.putBoolean(key, result);
+        remoteCallback.sendResult(bundle);
+    }
 
     @Override
     public void onCreate() {
