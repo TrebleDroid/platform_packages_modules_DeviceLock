@@ -75,6 +75,8 @@ final class UserRestrictionsPolicyHandler implements PolicyHandler {
     public int setPolicyForState(@DeviceState int state) {
         switch (state) {
             case DeviceState.UNPROVISIONED:
+            case DeviceState.PSEUDO_LOCKED:
+            case DeviceState.PSEUDO_UNLOCKED:
                 break;
             case DeviceState.SETUP_IN_PROGRESS:
             case DeviceState.SETUP_SUCCEEDED:
