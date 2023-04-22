@@ -14,12 +14,6 @@
 // limitations under the License.
 //
 
-package {
-    default_applicable_licenses: [
-        "packages_modules_DeviceLock_DeviceLockController_license",
-    ],
-}
-
 // Generate gRPC client code
 LITE_PROTO_CMD = "mkdir -p $(genDir)/gen && " +
     "$(location aprotoc) --java_opt=annotate_code=false " +
