@@ -21,6 +21,7 @@ package com.android.devicelockcontroller.setup;
  * {@hide}
  */
 interface ISetupParametersService {
+    void overridePrefs(in Bundle bundle);
     void createPrefs(in Bundle bundle);
     String getKioskPackage();
     String getKioskDownloadUrl();

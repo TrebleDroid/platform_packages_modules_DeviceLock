@@ -69,6 +69,14 @@ systemserverclasspath_fragment {
     apex_available: ["com.android.devicelock"],
 }
 
+override_apex {
+    name: "com.android.devicelock-debug",
+    base: "com.android.devicelock",
+    apps: [
+        "DeviceLockControllerDebug",
+    ],
+}
+
 apex {
     name: "com.android.devicelock",
     min_sdk_version: "UpsideDownCake",
