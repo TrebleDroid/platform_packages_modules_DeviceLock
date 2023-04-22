@@ -96,8 +96,6 @@ android_library {
     resource_dirs: ["res"],
     libs: [
         "framework-connectivity",
-        // TODO: Remove framework-tethering after cronet is moved to framework-connectivity
-        "framework-tethering",
         "org.apache.http.legacy",
     ],
     static_libs: [
