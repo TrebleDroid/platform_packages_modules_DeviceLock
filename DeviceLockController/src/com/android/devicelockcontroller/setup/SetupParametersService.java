@@ -38,6 +38,11 @@ public final class SetupParametersService extends Service {
     private final ISetupParametersService.Stub mBinder =
             new ISetupParametersService.Stub() {
                 @Override
+                public void overridePrefs(Bundle bundle) {
+                    SetupParameters.overridePrefs(mContext, bundle);
+                }
+
+                @Override
                 public void createPrefs(Bundle bundle) {
                     SetupParameters.createPrefs(mContext, bundle);
                 }

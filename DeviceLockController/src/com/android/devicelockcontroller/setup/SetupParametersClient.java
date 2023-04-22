@@ -81,6 +81,19 @@ public final class SetupParametersClient extends DlcClient {
         sSetupParametersClient = null;
     }
 
+
+    /**
+     * Override setup parameters if there exists any; otherwise create new parameters.
+     * Note that this API can only be called in debuggable build for debugging purpose.
+     */
+    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
+    public ListenableFuture<Void> overridePrefs(Bundle bundle) {
+        return call(() -> {
+            ISetupParametersService.Stub.asInterface(mDlcService).overridePrefs(bundle);
+            return null;
+        });
+    }
+
     /**
      * Parse setup parameters from the extras bundle.
      *
