@@ -20,17 +20,23 @@ import androidx.annotation.IntDef;
 
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
 
+import com.google.common.util.concurrent.ListenableFuture;
+
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Interface used for setting policies for a given state.
  */
 public interface PolicyHandler {
     /** Result Type for operation */
+    @Target(ElementType.TYPE_USE)
     @IntDef(value = {SUCCESS, FAILURE})
     @Retention(RetentionPolicy.SOURCE)
-    @interface ResultType {}
+    @interface ResultType {
+    }
 
     int SUCCESS = 0;
     int FAILURE = 1;
@@ -40,15 +46,8 @@ public interface PolicyHandler {
      * privileged.
      */
     @ResultType
-    int setPolicyForState(@DeviceState int state);
+    ListenableFuture<@ResultType Integer> setPolicyForState(@DeviceState int state);
 
     /** Verifies policy compliance for the state. */
-    boolean isCompliant(@DeviceState int state);
-
-    /**
-     * Indicates finalization of Setup parameters. Since PolicyHandlers are instantiated when app
-     * process is created, the setup parameters are not final. This method is called when the app
-     * has entered a state where setup parameters are finalized.
-     */
-    default void setSetupParametersValid() {}
+    ListenableFuture<Boolean> isCompliant(@DeviceState int state);
 }

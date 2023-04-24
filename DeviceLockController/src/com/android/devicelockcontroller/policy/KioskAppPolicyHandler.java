@@ -23,10 +23,11 @@ import com.android.devicelockcontroller.setup.SetupParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.MoreExecutors;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 /** Enforces restrictions on Kiosk app. */
 final class KioskAppPolicyHandler implements PolicyHandler {
@@ -39,8 +40,7 @@ final class KioskAppPolicyHandler implements PolicyHandler {
     }
 
     @Override
-    @ResultType
-    public int setPolicyForState(@DeviceState int state) {
+    public ListenableFuture<@ResultType Integer> setPolicyForState(@DeviceState int state) {
         switch (state) {
             case DeviceState.KIOSK_SETUP:
             case DeviceState.UNLOCKED:
@@ -54,89 +54,92 @@ final class KioskAppPolicyHandler implements PolicyHandler {
             case DeviceState.SETUP_FAILED:
             case DeviceState.PSEUDO_LOCKED:
             case DeviceState.PSEUDO_UNLOCKED:
-                return SUCCESS;
+                return Futures.immediateFuture(SUCCESS);
             default:
-                LogUtil.e(TAG, String.format(Locale.US, "Invalid State %d", state));
-                return FAILURE;
+                return Futures.immediateFailedFuture(
+                        new IllegalStateException(String.valueOf(state)));
         }
     }
 
     @Override
-    public boolean isCompliant(@DeviceState int state) {
+    public ListenableFuture<Boolean> isCompliant(@DeviceState int state) {
         switch (state) {
             case DeviceState.UNLOCKED:
             case DeviceState.LOCKED:
             case DeviceState.KIOSK_SETUP:
                 return isKioskPackageProtected();
             case DeviceState.CLEARED:
-                return !isKioskPackageProtected();
+                return Futures.transform(isKioskPackageProtected(), result -> !result,
+                        MoreExecutors.directExecutor());
             case DeviceState.UNPROVISIONED:
             case DeviceState.SETUP_IN_PROGRESS:
             case DeviceState.SETUP_SUCCEEDED:
             case DeviceState.SETUP_FAILED:
-                return true;
+                return Futures.immediateFuture(true);
             default:
-                LogUtil.e(TAG, String.format(Locale.US, "Invalid State %d", state));
-                return false;
+                return Futures.immediateFailedFuture(
+                        new IllegalStateException(String.valueOf(state)));
         }
     }
 
-    private boolean isKioskPackageProtected() {
-        final String packageName = Futures.getUnchecked(
-                SetupParametersClient.getInstance().getKioskPackage());
-        if (packageName == null) {
-            LogUtil.e(TAG, "Kiosk package is not set");
-            return false;
-        }
+    private ListenableFuture<Boolean> isKioskPackageProtected() {
+        return Futures.transform(SetupParametersClient.getInstance().getKioskPackage(),
+                packageName -> {
+                    if (packageName == null) {
+                        LogUtil.e(TAG, "Kiosk package is not set");
+                        return false;
+                    }
 
-        try {
-            if (!mDpm.isUninstallBlocked(null /* admin */, packageName)) {
-                return false;
-            }
-        } catch (SecurityException e) {
-            LogUtil.e(TAG, "Could not read device policy", e);
-            return false;
-        }
+                    try {
+                        if (!mDpm.isUninstallBlocked(null /* admin */, packageName)) {
+                            return false;
+                        }
+                    } catch (SecurityException e) {
+                        LogUtil.e(TAG, "Could not read device policy", e);
+                        return false;
+                    }
 
-        final List<String> packages;
-        try {
-            packages = mDpm.getUserControlDisabledPackages(null /* admin */);
-        } catch (SecurityException e) {
-            LogUtil.e(TAG, "Could not read device policy");
-            return false;
-        }
+                    final List<String> packages;
+                    try {
+                        packages = mDpm.getUserControlDisabledPackages(null /* admin */);
+                    } catch (SecurityException e) {
+                        LogUtil.e(TAG, "Could not read device policy");
+                        return false;
+                    }
 
-        return packages != null && packages.contains(packageName);
+                    return packages != null && packages.contains(packageName);
+                }, MoreExecutors.directExecutor());
+
     }
 
-    @ResultType
-    private int enableKioskPackageProtection(boolean enable) {
-        final String packageName = Futures.getUnchecked(
-                SetupParametersClient.getInstance().getKioskPackage());
-        if (packageName == null) {
-            LogUtil.e(TAG, "Kiosk package is not set");
-            return FAILURE;
-        }
+    private ListenableFuture<@ResultType Integer> enableKioskPackageProtection(boolean enable) {
+        return Futures.transform(SetupParametersClient.getInstance().getKioskPackage(),
+                packageName -> {
+                    if (packageName == null) {
+                        LogUtil.e(TAG, "Kiosk package is not set");
+                        return FAILURE;
+                    }
 
-        try {
-            mDpm.setUninstallBlocked(null /* admin */, packageName, enable);
-        } catch (SecurityException e) {
-            LogUtil.e(TAG, "Unable to set device policy", e);
-            return FAILURE;
-        }
+                    try {
+                        mDpm.setUninstallBlocked(null /* admin */, packageName, enable);
+                    } catch (SecurityException e) {
+                        LogUtil.e(TAG, "Unable to set device policy", e);
+                        return FAILURE;
+                    }
 
-        final List<String> pkgList = new ArrayList<>();
-        if (enable) {
-            pkgList.add(packageName);
-        }
+                    final List<String> pkgList = new ArrayList<>();
+                    if (enable) {
+                        pkgList.add(packageName);
+                    }
 
-        try {
-            mDpm.setUserControlDisabledPackages(null /* admin */, pkgList);
-        } catch (SecurityException e) {
-            LogUtil.e(TAG, "Failed to setUserControlDisabledPackages", e);
-            return FAILURE;
-        }
+                    try {
+                        mDpm.setUserControlDisabledPackages(null /* admin */, pkgList);
+                    } catch (SecurityException e) {
+                        LogUtil.e(TAG, "Failed to setUserControlDisabledPackages", e);
+                        return FAILURE;
+                    }
 
-        return SUCCESS;
+                    return SUCCESS;
+                }, MoreExecutors.directExecutor());
     }
 }
