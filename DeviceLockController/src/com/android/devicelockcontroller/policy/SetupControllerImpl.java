@@ -60,6 +60,7 @@ import com.android.devicelockcontroller.policy.SetupController.SetupUpdatesCallb
 import com.android.devicelockcontroller.setup.SetupParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
 
+import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 
 import java.util.ArrayList;
@@ -324,9 +325,23 @@ public final class SetupControllerImpl implements SetupController {
         try {
             if (mCurrentSetupState == SetupStatus.SETUP_FINISHED) {
                 mStateController.setNextStateForEvent(DeviceEvent.SETUP_COMPLETE);
-                if (!mPolicyController.launchActivityInLockedMode()) {
-                    LogUtil.w(TAG, "Failed to launch kiosk activity after setup");
-                }
+                Futures.addCallback(mPolicyController.launchActivityInLockedMode(),
+                        new FutureCallback<Boolean>() {
+                            @Override
+                            public void onSuccess(Boolean result) {
+                                if (result) {
+                                    LogUtil.i(TAG,
+                                            "Successfully launched kiosk activity after setup");
+                                } else {
+                                    LogUtil.w(TAG, "Failed to launch kiosk activity after setup");
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Throwable t) {
+                                LogUtil.e(TAG, "Failed to launch kiosk activity after setup", t);
+                            }
+                        }, mContext.getMainExecutor());
                 return;
             }
             mStateController.setNextStateForEvent(DeviceEvent.SETUP_FAILURE);

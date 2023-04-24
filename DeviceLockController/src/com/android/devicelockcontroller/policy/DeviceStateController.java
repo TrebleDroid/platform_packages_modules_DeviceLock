@@ -18,6 +18,8 @@ package com.android.devicelockcontroller.policy;
 
 import androidx.annotation.IntDef;
 
+import com.google.common.util.concurrent.ListenableFuture;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -34,7 +36,8 @@ public interface DeviceStateController {
      *
      * @throws StateTransitionException when the input event does not match the current state.
      */
-    void setNextStateForEvent(@DeviceEvent int event) throws StateTransitionException;
+    ListenableFuture<Void> setNextStateForEvent(@DeviceEvent int event)
+            throws StateTransitionException;
 
     /** Returns the current state of the device */
     @DeviceState
@@ -145,6 +148,6 @@ public interface DeviceStateController {
     /** Listener interface for state changes. */
     interface StateListener {
         /** Notified after the device transitions to a new state */
-        void onStateChanged(@DeviceState int newState);
+        ListenableFuture<Void> onStateChanged(@DeviceState int newState);
     }
 }
