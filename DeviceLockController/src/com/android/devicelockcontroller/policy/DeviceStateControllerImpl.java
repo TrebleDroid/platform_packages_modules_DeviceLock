@@ -21,7 +21,12 @@ import android.content.Context;
 import com.android.devicelockcontroller.setup.UserPreferences;
 import com.android.devicelockcontroller.util.LogUtil;
 
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.MoreExecutors;
+
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -45,14 +50,18 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
     }
 
     @Override
-    public void setNextStateForEvent(@DeviceEvent int event) throws StateTransitionException {
+    public ListenableFuture<Void> setNextStateForEvent(@DeviceEvent int event)
+            throws StateTransitionException {
         updateState(getNextState(event));
         LogUtil.i(TAG, String.format(Locale.US, "handleEvent %d, newState %d", event, mState));
+        final List<ListenableFuture<Void>> onStateChangedTasks = new ArrayList<>();
         synchronized (mListeners) {
             for (StateListener listener : mListeners) {
-                listener.onStateChanged(mState);
+                onStateChangedTasks.add(listener.onStateChanged(mState));
             }
         }
+        return Futures.whenAllSucceed(onStateChangedTasks).call((() -> null),
+                MoreExecutors.directExecutor());
     }
 
     @Override
