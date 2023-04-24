@@ -81,6 +81,24 @@
             </intent-filter>
         </activity-alias>
 
+        <activity
+            android:name="com.android.devicelockcontroller.activities.DeviceEnrollmentActivity"
+            android:theme="@style/Theme.Materialu"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.android.devicelockcontroller.action.START_DEVICE_FINANCING_ENROLLMENT"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+        <activity-alias
+            android:name="com.android.devicelockcontroller.activities.DeviceSubsidyEnrollmentActivity"
+            android:targetActivity=".activities.DeviceEnrollmentActivity"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.android.devicelockcontroller.action.START_DEVICE_SUBSIDY_ENROLLMENT"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity-alias>
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
