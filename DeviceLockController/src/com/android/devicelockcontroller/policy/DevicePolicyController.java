@@ -16,6 +16,8 @@
 
 package com.android.devicelockcontroller.policy;
 
+import com.google.common.util.concurrent.ListenableFuture;
+
 /**
  * Interface for the policy controller that is responsible for applying policies based
  * on state.
@@ -25,7 +27,7 @@ public interface DevicePolicyController {
      * Launches an activity in locked mode. The specific activity is resolved based on the current
      * device state.Returns false if package containing the activity is not in the allowlist.
      */
-    boolean launchActivityInLockedMode();
+    ListenableFuture<Boolean> launchActivityInLockedMode();
 
     /**
      * Enqueue a worker to start lock task mode and launch corresponding activity. The work will be
