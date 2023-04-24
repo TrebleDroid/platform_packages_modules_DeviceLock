@@ -148,6 +148,13 @@ public final class DeviceLockConstants {
     public static final String ACTION_START_DEVICE_SUBSIDY_DEFERRED_PROVISIONING =
             "com.android.devicelockcontroller.action.START_DEVICE_SUBSIDY_DEFERRED_PROVISIONING";
 
+    public static final String ACTION_START_DEVICE_FINANCING_ENROLLMENT =
+            "com.android.devicelockcontroller.action.START_DEVICE_FINANCING_ENROLLMENT";
+
+    public static final String ACTION_START_DEVICE_SUBSIDY_ENROLLMENT =
+            "com.android.devicelockcontroller.action.START_DEVICE_SUBSIDY_ENROLLMENT";
+
+
     /** Restrict instantiation. */
     private DeviceLockConstants() {
     }
