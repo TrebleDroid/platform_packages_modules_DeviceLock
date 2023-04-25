@@ -15,6 +15,10 @@
   ~ limitations under the License.
   -->
 
+<!--This manifest is only an empty shell which will merge elements from the real manifest files.
+    Please add new components/attributes to both AndroidManifestBase.xml and
+    src/com/android/devicelockcontroller/debug/AndroidManifest.xml
+    -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:androidprv="http://schemas.android.com/apk/prv/res/android"
     xmlns:tools="http://schemas.android.com/tools"
