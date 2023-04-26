@@ -33,6 +33,11 @@
             android:exported="true"
             tools:replace="android:exported" />
 
+        <activity
+            android:name="com.android.devicelockcontroller.activities.DeviceEnrollmentActivity"
+            android:exported="true"
+            tools:replace="android:exported" />
+
         <activity-alias
             android:name="com.android.devicelockcontroller.activities.DeviceFinancingSecondaryUserLandingActivity"
             android:exported="true"
@@ -48,6 +53,11 @@
 
         <activity-alias
             android:name="com.android.devicelockcontroller.activities.DeviceSubsidyDeferredProvisioningLandingActivity"
+            android:exported="true"
+            tools:replace="android:exported" />
+
+        <activity-alias
+            android:name="com.android.devicelockcontroller.activities.DeviceSubsidyEnrollmentActivity"
             android:exported="true"
             tools:replace="android:exported" />
 
