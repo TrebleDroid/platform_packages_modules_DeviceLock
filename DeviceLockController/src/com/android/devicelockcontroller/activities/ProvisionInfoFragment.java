@@ -92,7 +92,8 @@ public final class ProvisionInfoFragment extends Fragment {
             LogUtil.e(TAG, "Could not find provision info RecyclerView, should not reach here.");
             return;
         }
-        ProvisionInfoListAdapter adapter = new ProvisionInfoListAdapter(viewModel);
+        ProvisionInfoListAdapter adapter = new ProvisionInfoListAdapter(viewModel,
+                getViewLifecycleOwner());
         viewModel.mProvisionInfoListLiveData.observe(getViewLifecycleOwner(),
                 adapter::submitList);
         recyclerView.setAdapter(adapter);
