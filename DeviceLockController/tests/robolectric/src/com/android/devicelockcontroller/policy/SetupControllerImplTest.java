@@ -45,7 +45,6 @@ import android.app.Application;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.PackageInfo;
-import android.content.pm.PackageInstaller.Session;
 import android.content.pm.Signature;
 import android.content.pm.SigningInfo;
 import android.os.Bundle;
@@ -68,9 +67,6 @@ import androidx.work.testing.WorkManagerTestInitHelper;
 
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
-import com.android.devicelockcontroller.policy.InstallPackageTask.InstallPackageCompleteBroadcastReceiver;
-import com.android.devicelockcontroller.policy.InstallPackageTask.PackageInstallPendingIntentProvider;
-import com.android.devicelockcontroller.policy.InstallPackageTask.PackageInstallerWrapper;
 import com.android.devicelockcontroller.setup.SetupParametersClient;
 import com.android.devicelockcontroller.setup.SetupParametersService;
 
@@ -108,9 +104,6 @@ public final class SetupControllerImplTest {
     private static final byte[] TEST_SIGNATURE = new byte[]{1, 2, 3, 4};
     private static final String TEST_SIGNATURE_CHECKSUM =
             "n2SnR-G5fxMfq7a0Rylsm28CAeefs8U1bmx36JtqgGo=";
-    private static final int TEST_INSTALL_SESSION_ID = 1;
-    public static final String KEY_RESULT = "result";
-    public static final String KEY_ERROR_CODE = "error_code";
     public static final String DOWNLOAD_SUFFIX = "Download";
     public static final String INSTALL_SUFFIX = "Install";
 
@@ -124,19 +117,10 @@ public final class SetupControllerImplTest {
     @Mock
     private SetupController.SetupUpdatesCallbacks mMockCbs;
     @Mock
-    private Downloader mMockDownloader;
-    @Mock
-    private PackageInstallerWrapper mMockPackageInstaller;
-    @Mock
-    private Session mMockSession;
-    @Mock
-    private PackageInstallPendingIntentProvider mMockPackageInstallPendingIntentProvider;
-    @Mock
     private LifecycleOwner mMockLifecycleOwner;
 
     private Context mContext;
     private String mFileLocation;
-    private InstallPackageCompleteBroadcastReceiver mFakeBroadcastReceiver;
     private SetupParametersClient mSetupParametersClient;
     private TestWorkFactory mTestWorkFactory;
 
@@ -155,7 +139,6 @@ public final class SetupControllerImplTest {
         Configuration config =
                 new Configuration.Builder().setWorkerFactory(mTestWorkFactory).build();
         WorkManagerTestInitHelper.initializeTestWorkManager(mContext, config);
-        mFakeBroadcastReceiver = new InstallPackageCompleteBroadcastReceiver();
         Shadows.shadowOf(Looper.getMainLooper()).idleConstantly(true);
     }
 
@@ -170,6 +153,8 @@ public final class SetupControllerImplTest {
         b.putString(EXTRA_KIOSK_SETUP_ACTIVITY, TEST_SETUP_ACTIVITY);
         createParameters(b);
         when(mMockStateController.getState()).thenReturn(DeviceState.KIOSK_SETUP);
+        when(mMockStateController.setNextStateForEvent(DeviceEvent.SETUP_COMPLETE)).thenReturn(
+                Futures.immediateVoidFuture());
         SetupControllerImpl setupController =
                 new SetupControllerImpl(
                         mContext, mMockStateController, mMockPolicyController);
@@ -203,17 +188,21 @@ public final class SetupControllerImplTest {
     }
 
     @Test
-    public void testInitialState_mandatoryProvisioning_SetupFailed() {
+    public void testInitialState_mandatoryProvisioning_SetupFailed()
+            throws StateTransitionException {
         Bundle bundle = new Bundle();
         bundle.putBoolean(EXTRA_MANDATORY_PROVISION, true);
         createParameters(bundle);
         when(mMockStateController.getState()).thenReturn(DeviceState.SETUP_FAILED);
+        when(mMockStateController.setNextStateForEvent(DeviceEvent.SETUP_FAILURE)).thenReturn(
+                Futures.immediateVoidFuture());
         SetupControllerImpl setupController =
                 new SetupControllerImpl(
                         mContext, mMockStateController, mMockPolicyController);
         setupController.finishSetup();
         assertThat(setupController.getSetupState()).isEqualTo(
                 SetupController.SetupStatus.SETUP_FAILED);
+        verify(mMockStateController).setNextStateForEvent(eq(DeviceEvent.SETUP_FAILURE));
         verify(mMockPolicyController, never()).launchActivityInLockedMode();
         verify(mMockPolicyController).wipeData();
     }
