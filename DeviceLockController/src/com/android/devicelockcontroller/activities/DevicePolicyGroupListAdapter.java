@@ -16,6 +16,7 @@
 
 package com.android.devicelockcontroller.activities;
 
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,12 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 
 import com.android.devicelockcontroller.R;
+import com.android.devicelockcontroller.setup.SetupParametersClient;
+import com.android.devicelockcontroller.util.LogUtil;
+
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.MoreExecutors;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -43,6 +50,7 @@ final class DevicePolicyGroupListAdapter extends
      * of {@link DevicePolicy} in each {@link DevicePolicyGroup} may variate.
      */
     private int mMaxDevicePolicy;
+    private String mProviderName;
 
     DevicePolicyGroupListAdapter() {
         super(new DiffUtil.ItemCallback<>() {
@@ -78,7 +86,23 @@ final class DevicePolicyGroupListAdapter extends
     @Override
     public void onBindViewHolder(DevicePolicyGroupViewHolder devicePolicyGroupViewHolder,
             int position) {
-        devicePolicyGroupViewHolder.bind(getItem(position), mMaxDevicePolicy);
+        if (!TextUtils.isEmpty(mProviderName)) {
+            devicePolicyGroupViewHolder.bind(getItem(position), mMaxDevicePolicy, mProviderName);
+        } else {
+            Futures.addCallback(SetupParametersClient.getInstance().getKioskAppProviderName(),
+                    new FutureCallback<>() {
+                        @Override
+                        public void onSuccess(String result) {
+                            mProviderName = result;
+                            notifyItemChanged(position);
+                        }
+
+                        @Override
+                        public void onFailure(Throwable t) {
+                            LogUtil.e(TAG, "Failed to get device provider name!", t);
+                        }
+                    }, MoreExecutors.directExecutor());
+        }
     }
 
     @Override
