@@ -19,7 +19,6 @@ package com.android.devicelockcontroller.activities;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,10 +33,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.devicelockcontroller.R;
-import com.android.devicelockcontroller.setup.SetupParametersClient;
-import com.android.devicelockcontroller.util.LogUtil;
-
-import com.google.common.util.concurrent.Futures;
 
 /**
  * A screen which lists the polies enforced on the device by the device provider.
@@ -58,19 +53,15 @@ public final class DevicePoliciesFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        String providerName = Futures.getUnchecked(
-                SetupParametersClient.getInstance().getKioskAppProviderName());
-        if (TextUtils.isEmpty(providerName)) {
-            LogUtil.e(TAG, "Device provider name is empty, should not reach here.");
-            return;
-        }
 
         DevicePoliciesViewModel viewModel = new ViewModelProvider(this).get(
                 DevicePoliciesViewModel.class);
+
         RecyclerView recyclerView = view.findViewById(R.id.recyclerview_device_policy_group);
         DevicePolicyGroupListAdapter adapter = new DevicePolicyGroupListAdapter();
         viewModel.mDevicePolicyGroupListLiveData.observe(getViewLifecycleOwner(),
                 adapter::submitList);
+        checkNotNull(recyclerView);
         recyclerView.setAdapter(adapter);
 
         ImageView imageView = view.findViewById(R.id.header_icon);
@@ -80,13 +71,16 @@ public final class DevicePoliciesFragment extends Fragment {
 
         TextView headerTextView = view.findViewById(R.id.header_text);
         checkNotNull(headerTextView);
+        viewModel.mProviderNameLiveData.observe(getViewLifecycleOwner(),
+                providerName -> headerTextView.setText(
+                        getString(viewModel.mHeaderTextIdLiveData.getValue(), providerName)));
         viewModel.mHeaderTextIdLiveData.observe(getViewLifecycleOwner(),
-                id -> headerTextView.setText(getString(id, providerName)));
+                textId -> headerTextView.setText(
+                        getString(textId, viewModel.mProviderNameLiveData.getValue())));
 
         TextView footerTextView = view.findViewById(R.id.footer_text);
         checkNotNull(footerTextView);
-        viewModel.mFooterTextIdLiveData.observe(getViewLifecycleOwner(),
-                id -> footerTextView.setText(getText(id)));
+        viewModel.mFooterTextIdLiveData.observe(getViewLifecycleOwner(), footerTextView::setText);
 
         ProvisioningProgressViewModel provisioningProgressViewModel =
                 new ViewModelProvider(requireActivity()).get(ProvisioningProgressViewModel.class);
