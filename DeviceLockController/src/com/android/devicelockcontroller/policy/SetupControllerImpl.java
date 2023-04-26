@@ -43,12 +43,14 @@ import android.content.Context;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.work.Data;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.ListenableWorker;
 import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkContinuation;
 import androidx.work.WorkInfo;
 import androidx.work.WorkInfo.State;
 import androidx.work.WorkManager;
@@ -60,8 +62,9 @@ import com.android.devicelockcontroller.policy.SetupController.SetupUpdatesCallb
 import com.android.devicelockcontroller.setup.SetupParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
 
-import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.MoreExecutors;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,8 +79,6 @@ public final class SetupControllerImpl implements SetupController {
     public static final String SETUP_VERIFY_PRE_INSTALLED_PACKAGE_TASK =
             "devicelock_setup_verify_pre_installed_package_task";
     public static final String TAG = "SetupController";
-    public static final String INSTALL_KIOSK_APP_FOR_SECONDARY_USER_TASK =
-            "setup_install_kiosk_app_for_secondary_user_task";
     public static final String SETUP_INSTALL_EXISTING_PACKAGE_TASK =
             "devicelock_setup_install_existing_package_task";
 
@@ -130,229 +131,250 @@ public final class SetupControllerImpl implements SetupController {
     }
 
     @Override
-    public void startSetupFlow(LifecycleOwner owner) {
+    public ListenableFuture<Void> startSetupFlow(LifecycleOwner owner) {
         LogUtil.v(TAG, "Trigger setup flow");
         WorkManager workManager = WorkManager.getInstance(mContext);
-        if (isKioskAppPreInstalled() && Build.isDebuggable()) {
-            verifyPreInstalledPackage(workManager, owner);
-        } else if (mContext.getUser().isSystem()) {
-            final Class<? extends ListenableWorker> playInstallTaskClass =
-                    ((DeviceLockControllerApplication) mContext.getApplicationContext())
-                            .getPlayInstallPackageTaskClass();
-            if (playInstallTaskClass != null) {
-                installKioskAppFromPlay(workManager, owner, playInstallTaskClass);
-            } else {
-                installKioskAppFromURL(workManager, owner);
-            }
-        } else {
-            // Setup flow for secondary users
-            installKioskAppForSecondaryUser(workManager, owner);
-        }
+        return Futures.transformAsync(isKioskAppPreInstalled(),
+                isPreinstalled -> {
+                    if (isPreinstalled) {
+                        return verifyPreInstalledPackage(workManager, owner);
+                    } else if (mContext.getUser().isSystem()) {
+                        final Class<? extends ListenableWorker> playInstallTaskClass =
+                                ((DeviceLockControllerApplication) mContext.getApplicationContext())
+                                        .getPlayInstallPackageTaskClass();
+                        if (playInstallTaskClass != null) {
+                            return installKioskAppFromPlay(workManager, owner,
+                                    playInstallTaskClass);
+                        } else {
+                            return installKioskAppFromURL(workManager, owner);
+                        }
+                    } else {
+                        return installKioskAppForSecondaryUser(workManager, owner);
+                    }
+                }, MoreExecutors.directExecutor());
     }
 
-    private boolean isKioskAppPreInstalled() {
-        try {
-            mContext.getPackageManager().getPackageInfo(
-                    Futures.getUnchecked(SetupParametersClient.getInstance().getKioskPackage()),
-                    0 /* flags */);
-            return true;
-        } catch (NameNotFoundException e) {
-            LogUtil.i(TAG, "Creditor app is not pre-installed");
-            return false;
-        }
+    private ListenableFuture<Boolean> isKioskAppPreInstalled() {
+        return Build.isDebuggable()
+                ? Futures.immediateFuture(false)
+                : Futures.transform(SetupParametersClient.getInstance().getKioskPackage(),
+                        packageName -> {
+                            try {
+                                mContext.getPackageManager().getPackageInfo(
+                                        packageName, /* flags= */ 0);
+                                LogUtil.i(TAG, "Creditor app is pre-installed");
+                                return true;
+                            } catch (NameNotFoundException e) {
+                                LogUtil.i(TAG, "Creditor app is not pre-installed");
+                                return false;
+                            }
+                        }, MoreExecutors.directExecutor());
     }
 
     @VisibleForTesting
-    void installKioskAppFromPlay(WorkManager workManager, LifecycleOwner owner,
+    ListenableFuture<Void> installKioskAppFromPlay(WorkManager workManager, LifecycleOwner owner,
             Class<? extends ListenableWorker> playInstallTaskClass) {
-        LogUtil.v(TAG, "Installing kiosk app from play");
 
         final SetupParametersClient setupParametersClient = SetupParametersClient.getInstance();
-        final String packageName = Futures.getUnchecked(
-                setupParametersClient.getKioskPackage());
-        final OneTimeWorkRequest playInstallPackageTask =
-                new OneTimeWorkRequest.Builder(playInstallTaskClass).setInputData(
-                        new Data.Builder()
-                                .putString(EXTRA_KIOSK_PACKAGE, packageName)
-                                .build()).build();
-        final OneTimeWorkRequest verifyInstallPackageTask =
-                new OneTimeWorkRequest.Builder(VerifyPackageTask.class).setInputData(
-                        new Data.Builder()
-                                .putBoolean(KEY_KIOSK_APP_INSTALLED, /* value= */ true)
-                                .putString(EXTRA_KIOSK_PACKAGE, packageName)
-                                .putString(EXTRA_KIOSK_SIGNATURE_CHECKSUM, Futures.getUnchecked(
-                                        setupParametersClient.getKioskSignatureChecksum()))
-                                .build()).build();
-        workManager.beginUniqueWork(
-                        SETUP_PLAY_INSTALL_TASKS_NAME,
-                        ExistingWorkPolicy.KEEP,
-                        playInstallPackageTask)
-                .then(verifyInstallPackageTask)
-                .enqueue();
+        final ListenableFuture<String> getPackageNameTask = setupParametersClient.getKioskPackage();
+        final ListenableFuture<String> getKioskSignatureChecksumTask =
+                setupParametersClient.getKioskSignatureChecksum();
 
-        workManager
-                .getWorkInfosForUniqueWorkLiveData(SETUP_PLAY_INSTALL_TASKS_NAME)
-                .observe(
-                        owner,
-                        workInfo -> {
-                            if (areAllTasksSucceeded(workInfo)) {
-                                setupFlowTaskSuccessCallbackHandler();
-                            } else if (isAtLeastOneTaskFailedOrCancelled(workInfo)) {
-                                installKioskAppFromURL(workManager, owner);
-                            }
-                        });
+        return Futures.whenAllSucceed(getPackageNameTask, getKioskSignatureChecksumTask)
+                .call(() -> {
+                    LogUtil.v(TAG, "Installing kiosk app from play");
+
+                    final OneTimeWorkRequest playInstallPackageTask =
+                            getPlayInstallPackageTask(playInstallTaskClass,
+                                    Futures.getDone(getPackageNameTask));
+                    final OneTimeWorkRequest verifyInstallPackageTask =
+                            getVerifyInstalledPackageTask(Futures.getDone(getPackageNameTask),
+                                    Futures.getDone(getKioskSignatureChecksumTask));
+                    createAndRunTasks(workManager, owner, SETUP_PLAY_INSTALL_TASKS_NAME,
+                            playInstallPackageTask, verifyInstallPackageTask);
+                    return null;
+                }, MoreExecutors.directExecutor());
     }
 
     @VisibleForTesting
-    void installKioskAppFromURL(WorkManager workManager, LifecycleOwner owner) {
+    ListenableFuture<Void> installKioskAppFromURL(WorkManager workManager, LifecycleOwner owner) {
         LogUtil.v(TAG, "Installing kiosk app from URL");
-        final String kioskPackage = Futures.getUnchecked(
-                SetupParametersClient.getInstance().getKioskPackage());
-        final String kioskSignatureChecksum = Futures.getUnchecked(
-                SetupParametersClient.getInstance().getKioskSignatureChecksum());
-        final String kioskDownloadUrl = Futures.getUnchecked(
-                SetupParametersClient.getInstance().getKioskDownloadUrl());
-        OneTimeWorkRequest verifyDownloadPackageTask = new OneTimeWorkRequest.Builder(
+        final ListenableFuture<String> kioskPackageTask =
+                SetupParametersClient.getInstance().getKioskPackage();
+        final ListenableFuture<String> kioskSignatureChecksumTask =
+                SetupParametersClient.getInstance().getKioskSignatureChecksum();
+        final ListenableFuture<String> kioskDownloadUrlTask =
+                SetupParametersClient.getInstance().getKioskDownloadUrl();
+        return Futures.whenAllSucceed(
+                        kioskPackageTask,
+                        kioskSignatureChecksumTask,
+                        kioskDownloadUrlTask)
+                .call(() -> {
+                    OneTimeWorkRequest verifyDownloadPackageTask = getVerifyDownloadPackageTask(
+                            Futures.getDone(kioskPackageTask),
+                            Futures.getDone(kioskSignatureChecksumTask));
+                    OneTimeWorkRequest downloadPackageTask = getDownloadPackageTask(
+                            Futures.getDone(kioskDownloadUrlTask));
+                    OneTimeWorkRequest verifyInstallPackageTask =
+                            getVerifyInstalledPackageTask(Futures.getDone(kioskPackageTask),
+                                    Futures.getDone(kioskSignatureChecksumTask));
+                    createAndRunTasks(workManager, owner, SETUP_URL_INSTALL_TASKS_NAME,
+                            verifyDownloadPackageTask,
+                            downloadPackageTask,
+                            verifyInstallPackageTask);
+                    return null;
+                }, MoreExecutors.directExecutor());
+    }
+
+    ListenableFuture<Void> installKioskAppForSecondaryUser(WorkManager workManager,
+            LifecycleOwner owner) {
+        LogUtil.v(TAG, "Installing existing package");
+        final SetupParametersClient setupParametersClient = SetupParametersClient.getInstance();
+        final ListenableFuture<String> kioskPackageTask = setupParametersClient.getKioskPackage();
+        ListenableFuture<String> kioskSignatureChecksumTask =
+                setupParametersClient.getKioskSignatureChecksum();
+        return Futures.whenAllSucceed(kioskPackageTask, kioskSignatureChecksumTask)
+                .call(() -> {
+                    createAndRunTasks(workManager, owner, SETUP_INSTALL_EXISTING_PACKAGE_TASK,
+                            getInstallExistingPackageTask(Futures.getDone(kioskPackageTask)),
+                            getVerifyInstalledPackageTask(
+                                    Futures.getDone(kioskPackageTask), Futures.getDone(
+                                            kioskSignatureChecksumTask)));
+                    return null;
+                }, MoreExecutors.directExecutor());
+    }
+
+    @VisibleForTesting
+    ListenableFuture<Void> verifyPreInstalledPackage(WorkManager workManager,
+            LifecycleOwner owner) {
+
+        final SetupParametersClient setupParametersClient = SetupParametersClient.getInstance();
+        final ListenableFuture<String> getKioskPackageTask =
+                setupParametersClient.getKioskPackage();
+        final ListenableFuture<String> getKioskSignatureChecksumTask =
+                setupParametersClient.getKioskSignatureChecksum();
+        return Futures.whenAllSucceed(getKioskPackageTask, getKioskSignatureChecksumTask)
+                .call(() -> {
+                    LogUtil.v(TAG, "Verifying pre-installed package");
+                    final OneTimeWorkRequest verifyInstallPackageTask =
+                            getVerifyInstalledPackageTask(Futures.getDone(getKioskPackageTask),
+                                    Futures.getDone(getKioskSignatureChecksumTask));
+                    createAndRunTasks(workManager, owner, SETUP_VERIFY_PRE_INSTALLED_PACKAGE_TASK,
+                            verifyInstallPackageTask);
+                    return null;
+                }, MoreExecutors.directExecutor());
+    }
+
+    @NonNull
+    private static OneTimeWorkRequest getDownloadPackageTask(String kioskDownloadUrl) {
+        return new OneTimeWorkRequest.Builder(
+                DownloadPackageTask.class).setInputData(
+                new Data.Builder()
+                        .putString(EXTRA_KIOSK_DOWNLOAD_URL,
+                                kioskDownloadUrl)
+                        .build()).build();
+    }
+
+    @NonNull
+    private static OneTimeWorkRequest getVerifyDownloadPackageTask(
+            String kioskPackageName, String kioskSignatureChecksum) {
+        return new OneTimeWorkRequest.Builder(
                 VerifyPackageTask.class).setInputData(
                 new Data.Builder()
                         .putBoolean(KEY_KIOSK_APP_INSTALLED, /* value= */ false)
-                        .putString(EXTRA_KIOSK_PACKAGE, kioskPackage)
-                        .putString(EXTRA_KIOSK_SIGNATURE_CHECKSUM, kioskSignatureChecksum)
+                        .putString(EXTRA_KIOSK_PACKAGE,
+                                kioskPackageName)
+                        .putString(EXTRA_KIOSK_SIGNATURE_CHECKSUM,
+                                kioskSignatureChecksum)
                         .build()).build();
-        OneTimeWorkRequest downloadPackageTask = new OneTimeWorkRequest.Builder(
-                DownloadPackageTask.class).setInputData(
-                new Data.Builder()
-                        .putString(EXTRA_KIOSK_DOWNLOAD_URL, kioskDownloadUrl)
-                        .build()).build();
-        final OneTimeWorkRequest verifyInstallPackageTask =
-                new OneTimeWorkRequest.Builder(VerifyPackageTask.class).setInputData(
-                        new Data.Builder()
-                                .putBoolean(KEY_KIOSK_APP_INSTALLED, /* value= */ true)
-                                .putString(EXTRA_KIOSK_PACKAGE, kioskPackage)
-                                .putString(EXTRA_KIOSK_SIGNATURE_CHECKSUM, kioskSignatureChecksum)
-                                .build()).build();
-
-        workManager
-                .beginUniqueWork(SETUP_URL_INSTALL_TASKS_NAME, ExistingWorkPolicy.KEEP,
-                        downloadPackageTask)
-                .then(verifyDownloadPackageTask)
-                .then(new OneTimeWorkRequest.Builder(InstallPackageTask.class).build())
-                .then(verifyInstallPackageTask)
-                .then(new OneTimeWorkRequest.Builder(CleanupTask.class).build())
-                .enqueue();
-
-        workManager
-                .getWorkInfosForUniqueWorkLiveData(SETUP_URL_INSTALL_TASKS_NAME)
-                .observe(
-                        owner,
-                        workInfo -> {
-                            if (areAllTasksSucceeded(workInfo)) {
-                                setupFlowTaskSuccessCallbackHandler();
-                            } else if (isAtLeastOneTaskFailedOrCancelled(workInfo)) {
-                                setupFlowTaskFailureCallbackHandler(getTaskFailureType(workInfo));
-                            }
-                        });
     }
 
-    void installKioskAppForSecondaryUser(WorkManager workManager, LifecycleOwner owner) {
-        LogUtil.v(TAG, "Installing existing package");
-        final SetupParametersClient setupParametersClient = SetupParametersClient.getInstance();
-        final String kioskPackage = Futures.getUnchecked(setupParametersClient.getKioskPackage());
-        final OneTimeWorkRequest installExistingPackage = new OneTimeWorkRequest.Builder(
+    @NonNull
+    private static OneTimeWorkRequest getVerifyInstalledPackageTask(
+            String kioskPackageName, String kioskSignatureChecksum) {
+        return new OneTimeWorkRequest.Builder(VerifyPackageTask.class).setInputData(
+                new Data.Builder()
+                        .putBoolean(KEY_KIOSK_APP_INSTALLED, /* value= */ true)
+                        .putString(EXTRA_KIOSK_PACKAGE,
+                                kioskPackageName)
+                        .putString(EXTRA_KIOSK_SIGNATURE_CHECKSUM,
+                                kioskSignatureChecksum)
+                        .build()).build();
+    }
+
+    @NonNull
+    private static OneTimeWorkRequest getInstallExistingPackageTask(String kioskPackageName) {
+        return new OneTimeWorkRequest.Builder(
                 InstallExistingPackageTask.class).setInputData(
                 new Data.Builder().putString(EXTRA_KIOSK_PACKAGE,
-                        kioskPackage).build()).build();
-        final OneTimeWorkRequest verifyInstalledPackageTask =
-                new OneTimeWorkRequest.Builder(VerifyPackageTask.class).setInputData(
-                        new Data.Builder()
-                                .putBoolean(KEY_KIOSK_APP_INSTALLED, /* value= */ true)
-                                .putString(EXTRA_KIOSK_PACKAGE, kioskPackage)
-                                .putString(EXTRA_KIOSK_SIGNATURE_CHECKSUM, Futures.getUnchecked(
-                                        setupParametersClient.getKioskSignatureChecksum()))
-                                .build()).build();
-        workManager.beginUniqueWork(
-                        SETUP_INSTALL_EXISTING_PACKAGE_TASK,
-                        ExistingWorkPolicy.KEEP,
-                        installExistingPackage)
-                .then(verifyInstalledPackageTask)
-                .enqueue();
-        workManager.getWorkInfosForUniqueWorkLiveData(SETUP_INSTALL_EXISTING_PACKAGE_TASK)
+                        kioskPackageName).build()).build();
+    }
+
+    @NonNull
+    private static OneTimeWorkRequest getPlayInstallPackageTask(
+            Class<? extends ListenableWorker> playInstallTaskClass, String kioskPackageName) {
+        return new OneTimeWorkRequest.Builder(
+                playInstallTaskClass).setInputData(
+                new Data.Builder().putString(
+                        EXTRA_KIOSK_PACKAGE, kioskPackageName).build()).build();
+    }
+
+    private void createAndRunTasks(WorkManager workManager, LifecycleOwner owner,
+            String uniqueWorkName, OneTimeWorkRequest... works) {
+
+        WorkContinuation workChain = workManager.beginUniqueWork(
+                uniqueWorkName,
+                ExistingWorkPolicy.KEEP,
+                works[0]);
+        for (int i = 1, len = works.length; i < len; i++) {
+            workChain = workChain.then(works[i]);
+        }
+        workChain.enqueue();
+        workManager.getWorkInfosForUniqueWorkLiveData(
+                        uniqueWorkName)
                 .observe(owner, workInfo -> {
                     if (areAllTasksSucceeded(workInfo)) {
                         setupFlowTaskSuccessCallbackHandler();
                     } else if (isAtLeastOneTaskFailedOrCancelled(workInfo)) {
-                        setupFlowTaskFailureCallbackHandler(getTaskFailureType(workInfo));
+                        setupFlowTaskFailureCallbackHandler(
+                                getTaskFailureType(workInfo));
                     }
                 });
     }
 
-    @VisibleForTesting
-    void verifyPreInstalledPackage(WorkManager workManager, LifecycleOwner owner) {
-        LogUtil.v(TAG, "Verifying pre-installed package");
-
-        final SetupParametersClient setupParametersClient = SetupParametersClient.getInstance();
-        final OneTimeWorkRequest verifyInstallPackageTask =
-                new OneTimeWorkRequest.Builder(VerifyPackageTask.class).setInputData(
-                        new Data.Builder()
-                                .putBoolean(KEY_KIOSK_APP_INSTALLED, /* value= */ true)
-                                .putString(EXTRA_KIOSK_PACKAGE, Futures.getUnchecked(
-                                        setupParametersClient.getKioskPackage()))
-                                .putString(EXTRA_KIOSK_SIGNATURE_CHECKSUM, Futures.getUnchecked(
-                                        setupParametersClient.getKioskSignatureChecksum()))
-                                .build()).build();
-        workManager.enqueueUniqueWork(
-                SETUP_VERIFY_PRE_INSTALLED_PACKAGE_TASK,
-                ExistingWorkPolicy.KEEP,
-                verifyInstallPackageTask);
-
-        workManager
-                .getWorkInfoByIdLiveData(verifyInstallPackageTask.getId())
-                .observe(
-                        owner,
-                        workInfo -> {
-                            State state = workInfo.getState();
-                            if (state == SUCCEEDED) {
-                                setupFlowTaskSuccessCallbackHandler();
-                            } else if (state == FAILED || state == CANCELLED) {
-                                setupFlowTaskFailureCallbackHandler(
-                                        FailureType.PACKAGE_DOES_NOT_EXIST);
-                            }
-                        });
-    }
 
     @Override
-    public void finishSetup() {
+    public ListenableFuture<Void> finishSetup() {
+        ListenableFuture<Void> setupFailureTask = Futures.immediateVoidFuture();
         try {
             if (mCurrentSetupState == SetupStatus.SETUP_FINISHED) {
-                mStateController.setNextStateForEvent(DeviceEvent.SETUP_COMPLETE);
-                Futures.addCallback(mPolicyController.launchActivityInLockedMode(),
-                        new FutureCallback<Boolean>() {
-                            @Override
-                            public void onSuccess(Boolean result) {
-                                if (result) {
-                                    LogUtil.i(TAG,
-                                            "Successfully launched kiosk activity after setup");
-                                } else {
-                                    LogUtil.w(TAG, "Failed to launch kiosk activity after setup");
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Throwable t) {
-                                LogUtil.e(TAG, "Failed to launch kiosk activity after setup", t);
-                            }
-                        }, mContext.getMainExecutor());
-                return;
+                return Futures.transformAsync(
+                        mStateController.setNextStateForEvent(DeviceEvent.SETUP_COMPLETE),
+                        input -> Futures.transform(
+                                mPolicyController.launchActivityInLockedMode(),
+                                result -> {
+                                    if (!result) {
+                                        throw new IllegalStateException(
+                                                "Failed to launch kiosk Activity in lock mode!");
+                                    }
+                                    return null;
+                                }, MoreExecutors.directExecutor()),
+                        MoreExecutors.directExecutor());
             }
-            mStateController.setNextStateForEvent(DeviceEvent.SETUP_FAILURE);
-            LogUtil.e(TAG, "Setup failed");
+            setupFailureTask = mStateController.setNextStateForEvent(DeviceEvent.SETUP_FAILURE);
         } catch (StateTransitionException e) {
             LogUtil.e(TAG, "State transition failed!", e);
         }
-
-        if (Futures.getUnchecked(SetupParametersClient.getInstance().isProvisionMandatory())) {
-            mPolicyController.wipeData();
-        }
+        LogUtil.e(TAG, "Setup failed!");
+        ListenableFuture<Boolean> provisionMandatoryTask =
+                SetupParametersClient.getInstance().isProvisionMandatory();
+        return Futures.whenAllComplete(setupFailureTask, provisionMandatoryTask).call(
+                () -> {
+                    if (Futures.getDone(provisionMandatoryTask)) {
+                        mPolicyController.wipeData();
+                    }
+                    return null;
+                }, MoreExecutors.directExecutor());
     }
 
     private void setupFlowTaskSuccessCallbackHandler() {
