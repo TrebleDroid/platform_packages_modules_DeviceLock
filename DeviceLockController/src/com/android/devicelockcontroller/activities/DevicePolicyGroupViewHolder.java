@@ -17,7 +17,6 @@
 package com.android.devicelockcontroller.activities;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -25,10 +24,6 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.devicelockcontroller.R;
-import com.android.devicelockcontroller.setup.SetupParametersClient;
-import com.android.devicelockcontroller.util.LogUtil;
-
-import com.google.common.util.concurrent.Futures;
 
 /**
  * A {@link androidx.recyclerview.widget.RecyclerView.ViewHolder} class which describes the item
@@ -47,14 +42,8 @@ final class DevicePolicyGroupViewHolder extends RecyclerView.ViewHolder {
         mDevicePolicyItems = iteView.findViewById(R.id.device_policy_items);
     }
 
-    void bind(DevicePolicyGroup devicePolicyGroup, int maxDevicePolicy) {
+    void bind(DevicePolicyGroup devicePolicyGroup, int maxDevicePolicy, String providerName) {
         Context context = itemView.getContext();
-        String providerName = Futures.getUnchecked(
-                SetupParametersClient.getInstance().getKioskAppProviderName());
-        if (TextUtils.isEmpty(providerName)) {
-            LogUtil.e(TAG, "Device provider name is empty, should not reach here.");
-            return;
-        }
         mGroupTitleTextView.setText(
                 context.getString(devicePolicyGroup.getGroupTitleTextId(), providerName));
         for (int i = 0; i < devicePolicyGroup.getDevicePolicyList().size(); ++i) {
