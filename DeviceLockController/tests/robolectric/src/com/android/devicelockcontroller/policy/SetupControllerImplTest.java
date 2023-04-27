@@ -48,7 +48,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.Signature;
 import android.content.pm.SigningInfo;
 import android.os.Bundle;
-import android.os.Looper;
 import android.util.ArrayMap;
 
 import androidx.annotation.NonNull;
@@ -138,7 +137,6 @@ public final class SetupControllerImplTest {
         Configuration config =
                 new Configuration.Builder().setWorkerFactory(mTestWorkFactory).build();
         WorkManagerTestInitHelper.initializeTestWorkManager(mContext, config);
-        Shadows.shadowOf(Looper.getMainLooper()).idleConstantly(true);
     }
 
     @After
