@@ -31,12 +31,11 @@ import com.google.common.util.concurrent.MoreExecutors;
 
 /**
  * A helper class used to receive commands from ADB.
- *
  * Used for testing purpose only.
  */
 public final class SetupParametersOverrider extends BroadcastReceiver {
 
-    private static final String TAG = "SetupParameterOverrider";
+    private static final String TAG = "SetupParametersOverrider";
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -50,7 +49,7 @@ public final class SetupParametersOverrider extends BroadcastReceiver {
         }
         Futures.addCallback(
                 SetupParametersClient.getInstance().overridePrefs(intent.getExtras()),
-                new FutureCallback<Void>() {
+                new FutureCallback<>() {
                     @Override
                     public void onSuccess(Void result) {
                         LogUtil.i(TAG, "Successfully override setup parameters!");

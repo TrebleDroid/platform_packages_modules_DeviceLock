@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright (C) 2023 The Android Open Source Project
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,11 +15,23 @@
   ~ limitations under the License.
   -->
 
+<!--The purpose of this manifest is to export all components from DeviceLockController in order to
+    interact with them through adb shell.
+    Components in this manifest that are marked as exported=true and
+    tools:replace="android:exported" will be exported regardless of how it is set in
+    AndroidManifestBase.xml.
+    Note that this manifest is only included in debug build.
+-->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.android.devicelockcontroller">
 
     <application android:name=".DeviceLockControllerApplication">
+        <!-- Receiver used for debugging purpose.
+            This component is only included in debug build -->
+        <receiver android:name="com.android.devicelockcontroller.debug.SetupParametersOverrider"
+            android:exported="true" />
+
         <activity
             android:name="com.android.devicelockcontroller.activities.HelpActivity"
             android:exported="true"
@@ -75,9 +88,6 @@
             android:name="com.android.devicelockcontroller.receivers.DlcLockedBootCompletedReceiver"
             android:exported="true"
             tools:replace="android:exported" />
-
-        <!-- Receiver used for debugging purpose -->
-        <receiver android:name="com.android.devicelockcontroller.debug.SetupParametersOverrider" />
 
         <service
             android:name="com.android.devicelockcontroller.DeviceLockControllerService"
