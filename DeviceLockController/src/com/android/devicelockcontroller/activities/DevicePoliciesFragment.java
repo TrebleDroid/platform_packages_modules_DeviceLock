@@ -29,10 +29,17 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.devicelockcontroller.R;
+import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
+import com.android.devicelockcontroller.util.LogUtil;
+
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.MoreExecutors;
 
 /**
  * A screen which lists the polies enforced on the device by the device provider.
@@ -87,8 +94,27 @@ public final class DevicePoliciesFragment extends Fragment {
         Button button = view.findViewById(R.id.button_next);
         checkNotNull(button);
         button.setOnClickListener(
-                v -> provisioningProgressViewModel
-                        .getProvisioningProgressMutableLiveData()
-                        .setValue(ProvisioningProgress.GETTING_DEVICE_READY));
+                v -> {
+                    MutableLiveData<ProvisioningProgress> progressLiveData =
+                            provisioningProgressViewModel.getProvisioningProgressMutableLiveData();
+                    progressLiveData.setValue(ProvisioningProgress.GETTING_DEVICE_READY);
+                    Futures.addCallback(
+                            ((PolicyObjectsInterface) getActivity().getApplicationContext())
+                                    .getSetupController().startSetupFlow(getViewLifecycleOwner()),
+                            new FutureCallback<>() {
+                                @Override
+                                public void onSuccess(Void result) {
+                                    LogUtil.i(TAG, "Setup flow has started installing kiosk app");
+                                    progressLiveData.postValue(
+                                            ProvisioningProgress.INSTALLING_KIOSK_APP);
+                                }
+
+                                @Override
+                                public void onFailure(Throwable t) {
+                                    //TODO(b/279969959): Show the failure UI if we have one.
+                                    LogUtil.e(TAG, "Failed to start setup flow!", t);
+                                }
+                            }, MoreExecutors.directExecutor());
+                });
     }
 }
