@@ -128,12 +128,14 @@ final class UserRestrictionsPolicyHandler implements PolicyHandler {
                             restrictions -> checkRestrictions(restrictions, true),
                             mainHandler::post);
                 }
+                break;
             case DeviceState.CLEARED:
                 if (checkRestrictions(mAlwaysOnRestrictions, false)) {
                     return Futures.transform(retrieveLockModeRestrictions(),
                             restrictions -> checkRestrictions(restrictions, false),
                             mainHandler::post);
                 }
+                break;
             default:
                 LogUtil.i(TAG, String.format(Locale.US, "Unhandled state %d", state));
                 return Futures.immediateFailedFuture(
