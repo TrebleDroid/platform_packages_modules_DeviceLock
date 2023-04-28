@@ -20,6 +20,7 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import com.android.devicelockcontroller.R;
 
@@ -32,5 +33,15 @@ public final class LandingActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.landing_activity);
+
+        if (savedInstanceState == null) {
+            // TODO(b/279849085): show the ProvisionNotRequiredFragment instead if users pay their
+            //  devices before device enrollment
+            Fragment fragment = new ProvisionInfoFragment();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.fragment_container, fragment)
+                    .commit();
+        }
     }
 }

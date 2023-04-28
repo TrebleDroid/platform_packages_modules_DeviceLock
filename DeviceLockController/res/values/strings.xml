@@ -126,6 +126,8 @@
     <string name="continue_using_device">You can continue using your device</string>
     <!-- Screen header text explaining that the user has already paid for this device. [CHAR_LIMIT=40] -->
     <string name="device_paid">You paid for your device</string>
+    <!-- Screen header text explaining that the device has been removed from subsidy program -->
+    <string name="device_removed_from_subsidy_program">Device removed from <xliff:g id="provider name">%1$s</xliff:g> subsidy program</string>
     <!-- Body text explaining that the device has been removed from the device financing program. [CHAR_LIMIT=NONE] -->
     <string name="device_removed_from_finance_program">Your device has been removed from <xliff:g id="provider name">%1$s</xliff:g>\'s finance program</string>
     <!-- Body text explaining that all restriction applied before have been removed on this device. [CHAR_LIMIT=80] -->
