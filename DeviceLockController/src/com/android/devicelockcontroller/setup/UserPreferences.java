@@ -18,7 +18,6 @@ package com.android.devicelockcontroller.setup;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.SystemProperties;
 import android.util.ArraySet;
 
 import androidx.annotation.Nullable;
@@ -156,10 +155,7 @@ public final class UserPreferences {
      * @return true if check-in request needs to be performed.
      */
     public static boolean needCheckIn(Context context) {
-        // TODO(b/257092561): Remove the flag before release
-        return SystemProperties.getBoolean("devicelock.checkin.enabled", false)
-                && getSharedPreferences(context)
-                        .getBoolean(KEY_NEED_CHECK_IN, /* defValue= */ true);
+        return getSharedPreferences(context).getBoolean(KEY_NEED_CHECK_IN, /* defValue= */ true);
     }
 
     /**
@@ -238,8 +234,8 @@ public final class UserPreferences {
     /**
      * Set the enrollment token assigned by the Device Lock backend server.
      *
-     * @param context  Context used to get the shared preferences.
-     * @param token The string value of the enrollment token.
+     * @param context Context used to get the shared preferences.
+     * @param token   The string value of the enrollment token.
      */
     public static void setEnrollmentToken(Context context, String token) {
         getSharedPreferences(context)
