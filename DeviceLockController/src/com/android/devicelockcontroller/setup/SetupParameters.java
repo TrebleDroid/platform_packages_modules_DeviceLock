@@ -31,6 +31,7 @@ import static com.android.devicelockcontroller.common.DeviceLockConstants.TYPE_U
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.ArraySet;
 
@@ -71,6 +72,16 @@ final class SetupParameters {
     private static SharedPreferences getSharedPreferences(Context context) {
         Context deviceContext = context.createDeviceProtectedStorageContext();
         return deviceContext.getSharedPreferences(FILENAME, Context.MODE_PRIVATE);
+    }
+
+    // Note that this API is only used for debugging purpose and should only be called in
+    // debuggable build.
+    static synchronized void overridePrefs(Context context, Bundle bundle) {
+        if (!Build.isDebuggable()) {
+            throw new SecurityException(
+                    "Setup parameters is not allowed to be override in non-debuggable build!");
+        }
+        populatePreferencesLocked(getSharedPreferences(context), bundle);
     }
 
     /**

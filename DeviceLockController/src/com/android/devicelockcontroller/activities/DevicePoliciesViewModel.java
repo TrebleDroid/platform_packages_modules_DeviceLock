@@ -20,6 +20,12 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.android.devicelockcontroller.R;
+import com.android.devicelockcontroller.setup.SetupParametersClient;
+import com.android.devicelockcontroller.util.LogUtil;
+
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.MoreExecutors;
 
 import java.util.Arrays;
 import java.util.List;
@@ -73,22 +79,31 @@ public final class DevicePoliciesViewModel extends ViewModel {
 
     private static final List<DevicePolicyGroup> DEVICE_POLICY_GROUPS = Arrays.asList(
             CONTROL_POLICY_GROUP, LOCK_POLICY_GROUP, EXPOSURE_POLICY_GROUP);
+    public static final String TAG = "DevicePoliciesViewModel";
 
+    final MutableLiveData<String> mProviderNameLiveData;
     final MutableLiveData<Integer> mHeaderDrawableIdLiveData;
     final MutableLiveData<Integer> mHeaderTextIdLiveData;
     final MutableLiveData<List<DevicePolicyGroup>> mDevicePolicyGroupListLiveData;
     final MutableLiveData<Integer> mFooterTextIdLiveData;
 
     public DevicePoliciesViewModel() {
-        mHeaderDrawableIdLiveData = new MutableLiveData<>();
-        mHeaderDrawableIdLiveData.setValue(HEADER_DRAWABLE_ID);
-        mHeaderTextIdLiveData = new MutableLiveData<>();
-        mHeaderTextIdLiveData.setValue(HEADER_TEXT_ID);
+        mProviderNameLiveData = new MutableLiveData<>();
+        Futures.addCallback(SetupParametersClient.getInstance().getKioskAppProviderName(),
+                new FutureCallback<>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        mProviderNameLiveData.postValue(result);
+                    }
 
-        mDevicePolicyGroupListLiveData = new MutableLiveData<>();
-        mDevicePolicyGroupListLiveData.setValue(DEVICE_POLICY_GROUPS);
-
-        mFooterTextIdLiveData = new MutableLiveData<>();
-        mFooterTextIdLiveData.setValue(FOOTER_TEXT_ID);
+                    @Override
+                    public void onFailure(Throwable t) {
+                        LogUtil.e(TAG, "Failed to get Device Provider name!", t);
+                    }
+                }, MoreExecutors.directExecutor());
+        mHeaderDrawableIdLiveData = new MutableLiveData<>(HEADER_DRAWABLE_ID);
+        mHeaderTextIdLiveData = new MutableLiveData<>(HEADER_TEXT_ID);
+        mDevicePolicyGroupListLiveData = new MutableLiveData<>(DEVICE_POLICY_GROUPS);
+        mFooterTextIdLiveData = new MutableLiveData<>(FOOTER_TEXT_ID);
     }
 }

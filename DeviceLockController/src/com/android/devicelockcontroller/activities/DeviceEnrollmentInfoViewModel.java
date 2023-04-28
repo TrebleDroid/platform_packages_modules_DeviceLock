@@ -30,31 +30,25 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.MoreExecutors;
 
-import java.util.List;
-
 /**
- * This class provides the resources and {@link ProvisionInfo} to render the
- * {@link ProvisionInfoFragment}.
+ * Generic abstract ViewModel for device enrollment info data.
  */
-public abstract class ProvisionInfoViewModel extends ViewModel {
+abstract class DeviceEnrollmentInfoViewModel extends ViewModel {
 
-    public static final String TAG = "ProvisionInfoViewModel";
-    public static final String PROVIDER_NAME_PLACEHOLDER = "";
-    public static final int TEXT_ID_PLACEHOLDER = -1;
+    private static final String TAG = "DeviceEnrollmentInfoViewModel";
+    private static final String PROVIDER_NAME_PLACEHOLDER = "";
+    private static final int TEXT_ID_PLACEHOLDER = -1;
     final MutableLiveData<Integer> mHeaderDrawableIdLiveData;
     final MutableLiveData<Integer> mHeaderTextIdLiveData;
-    final MutableLiveData<Integer> mSubheaderTextIdLiveData;
-    final MutableLiveData<List<ProvisionInfo>> mProvisionInfoListLiveData;
     final MutableLiveData<String> mProviderNameLiveData;
     final MediatorLiveData<Pair<Integer, String>> mHeaderTextLiveData;
-    final MediatorLiveData<Pair<Integer, String>> mSubHeaderTextLiveData;
+    final MutableLiveData<Integer> mBodyTextIdLiveData;
+    final MediatorLiveData<Pair<Integer, String>> mBodyTextLiveData;
 
-
-    public ProvisionInfoViewModel() {
-        mProvisionInfoListLiveData = new MutableLiveData<>();
+    DeviceEnrollmentInfoViewModel() {
         mHeaderDrawableIdLiveData = new MutableLiveData<>();
         mHeaderTextIdLiveData = new MutableLiveData<>();
-        mSubheaderTextIdLiveData = new MutableLiveData<>();
+
         mProviderNameLiveData = new MutableLiveData<>();
         mHeaderTextLiveData = new MediatorLiveData<>();
         mHeaderTextLiveData.addSource(mHeaderTextIdLiveData,
@@ -70,25 +64,25 @@ public abstract class ProvisionInfoViewModel extends ViewModel {
                     mHeaderTextLiveData.setValue(oldValue == null
                             ? new Pair<>(TEXT_ID_PLACEHOLDER, providerName)
                             : new Pair<>(oldValue.first, providerName));
+
                 });
-        mSubHeaderTextLiveData = new MediatorLiveData<>();
-        mSubHeaderTextLiveData.addSource(mSubheaderTextIdLiveData,
+        mBodyTextIdLiveData = new MutableLiveData<>();
+        mBodyTextLiveData = new MediatorLiveData<>();
+        mBodyTextLiveData.addSource(mBodyTextIdLiveData,
                 id -> {
-                    Pair<Integer, String> oldValue = mHeaderTextLiveData.getValue();
-                    mHeaderTextLiveData.setValue(oldValue == null
+                    Pair<Integer, String> oldValue = mBodyTextLiveData.getValue();
+                    mBodyTextLiveData.setValue(oldValue == null
                             ? new Pair<>(id, PROVIDER_NAME_PLACEHOLDER)
                             : new Pair<>(id, oldValue.second));
                 });
-        mSubHeaderTextLiveData.addSource(mProviderNameLiveData,
+        mBodyTextLiveData.addSource(mProviderNameLiveData,
                 providerName -> {
-                    Pair<Integer, String> oldValue = mHeaderTextLiveData.getValue();
-                    mHeaderTextLiveData.setValue(oldValue == null
+                    Pair<Integer, String> oldValue = mBodyTextLiveData.getValue();
+                    mBodyTextLiveData.setValue(oldValue == null
                             ? new Pair<>(TEXT_ID_PLACEHOLDER, providerName)
                             : new Pair<>(oldValue.first, providerName));
                 });
-
-        Futures.addCallback(
-                SetupParametersClient.getInstance().getKioskAppProviderName(),
+        Futures.addCallback(SetupParametersClient.getInstance().getKioskAppProviderName(),
                 new FutureCallback<>() {
                     @Override
                     public void onSuccess(String providerName) {
