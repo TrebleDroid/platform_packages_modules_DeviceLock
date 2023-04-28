@@ -26,7 +26,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.os.SystemProperties;
+import android.os.Build;
 import android.os.UserManager;
 
 import androidx.annotation.NonNull;
@@ -89,9 +89,8 @@ public final class DevicePolicyControllerImpl
         mStateController = stateController;
         mLockTaskHandler = new LockTaskModePolicyHandler(context, dpm);
 
-        final boolean isDebug = SystemProperties.getInt("ro.debuggable", 0) == 1;
         mPolicyList.add(new UserRestrictionsPolicyHandler(dpm,
-                context.getSystemService(UserManager.class), isDebug));
+                context.getSystemService(UserManager.class), Build.isDebuggable()));
         mPolicyList.add(mLockTaskHandler);
         mPolicyList.add(new KioskAppPolicyHandler(dpm));
         stateController.addCallback(this);
