@@ -74,6 +74,16 @@
             android:exported="true"
             tools:replace="android:exported" />
 
+        <activity-alias
+            android:name="com.android.devicelockcontroller.activities.DeviceFinancingProvisionNotRequiredLandingActivity"
+            android:exported="true"
+            tools:replace="android:exported"/>
+
+        <activity-alias
+            android:name="com.android.devicelockcontroller.activities.DeviceSubsidyProvisionNotRequiredLandingActivity"
+            android:exported="true"
+            tools:replace="android:exported"/>
+
         <receiver
             android:name="com.android.devicelockcontroller.receivers.CheckInBootCompletedReceiver"
             android:exported="true"
