@@ -21,11 +21,15 @@ import com.android.devicelockcontroller.R;
 /**
  * Different stages of the provisioning progress.
  */
-public enum ProvisioningProgress {
-    GETTING_DEVICE_READY(R.drawable.ic_smartphone_24px, R.string.getting_device_ready,
-            R.string.this_may_take_a_few_minutes),
-    INSTALLING_KIOSK_APP(R.drawable.ic_downloading_24px, R.string.installing_kiosk_app),
-    OPENING_KIOSK_APP(R.drawable.ic_open_in_new_24px, R.string.opening_kiosk_app);
+public final class ProvisioningProgress {
+
+    public static final ProvisioningProgress GETTING_DEVICE_READY = new ProvisioningProgress(
+            R.drawable.ic_smartphone_24px, R.string.getting_device_ready,
+            R.string.this_may_take_a_few_minutes);
+    public static final ProvisioningProgress INSTALLING_KIOSK_APP = new ProvisioningProgress(
+            R.drawable.ic_downloading_24px, R.string.installing_kiosk_app);
+    public static final ProvisioningProgress OPENING_KIOSK_APP = new ProvisioningProgress(
+            R.drawable.ic_open_in_new_24px, R.string.opening_kiosk_app);
 
     final int mIconId;
     final int mHeaderId;
