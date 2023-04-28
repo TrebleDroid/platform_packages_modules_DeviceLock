@@ -25,6 +25,7 @@ import static com.android.devicelockcontroller.common.DeviceLockConstants.RETRY_
 import static com.android.devicelockcontroller.common.DeviceLockConstants.STATUS_UNSPECIFIED;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.STOP_CHECK_IN;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.TOTAL_DEVICE_ID_TYPES;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.PROVISIONING_SUCCESS;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -41,18 +42,24 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.OutOfQuotaPolicy;
 import androidx.work.WorkManager;
 
+import com.android.devicelockcontroller.DeviceLockControllerApplication;
 import com.android.devicelockcontroller.R;
 import com.android.devicelockcontroller.common.DeviceId;
+import com.android.devicelockcontroller.policy.DeviceStateController;
+import com.android.devicelockcontroller.policy.StateTransitionException;
 import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrpcResponse;
 import com.android.devicelockcontroller.provision.grpc.ProvisioningConfiguration;
 import com.android.devicelockcontroller.setup.SetupParametersClient;
 import com.android.devicelockcontroller.setup.UserPreferences;
 import com.android.devicelockcontroller.util.LogUtil;
 
+import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.MoreExecutors;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Locale;
 
 /**
  * Helper class to perform the device check-in process with device lock backend server
@@ -159,24 +166,10 @@ public final class DeviceCheckInHelper extends AbstractDeviceCheckInHelper {
         LogUtil.d(TAG, "check in succeed: " + response.getDeviceCheckInStatus());
         switch (response.getDeviceCheckInStatus()) {
             case READY_FOR_PROVISION:
-                UserPreferences.setProvisionForced(mAppContext, response.isProvisionForced());
-                final ProvisioningConfiguration configuration = response.getProvisioningConfig();
-                if (configuration == null) {
-                    LogUtil.e(TAG, "Provisioning Configuration is not provided by server!");
-                    return false;
-                }
-                final Bundle provisionBundle = configuration.toBundle();
-                provisionBundle.putInt(EXTRA_PROVISIONING_TYPE, response.getProvisioningType());
-                provisionBundle.putBoolean(EXTRA_MANDATORY_PROVISION,
-                        response.isProvisioningMandatory());
-                Futures.getUnchecked(
-                        SetupParametersClient.getInstance().createPrefs(provisionBundle));
-                // We are only handling the non-mandatory provision case here. For mandatory
-                // provision, we will handle when receiving the intent after SUW completed.
-                if (!response.isProvisioningMandatory()) {
-                    // TODO(b/272497885): Schedule to launch the provision activity at some time.
-                }
-                return true;
+                return handleProvisionReadyResponse(
+                        response,
+                        ((DeviceLockControllerApplication) mAppContext.getApplicationContext())
+                                .getStateController());
             case RETRY_CHECK_IN:
                 Instant nextCheckinTime = response.getNextCheckInTime();
 
@@ -199,5 +192,64 @@ public final class DeviceCheckInHelper extends AbstractDeviceCheckInHelper {
                 // fall through
         }
         return false;
+    }
+
+    @VisibleForTesting
+    boolean handleProvisionReadyResponse(
+            @NonNull GetDeviceCheckInStatusGrpcResponse response,
+            DeviceStateController stateController) {
+        UserPreferences.setProvisionForced(mAppContext, response.isProvisionForced());
+        final ProvisioningConfiguration configuration = response.getProvisioningConfig();
+        if (configuration == null) {
+            LogUtil.e(TAG, "Provisioning Configuration is not provided by server!");
+            return false;
+        }
+        final Bundle provisionBundle = configuration.toBundle();
+        provisionBundle.putInt(EXTRA_PROVISIONING_TYPE, response.getProvisioningType());
+        provisionBundle.putBoolean(EXTRA_MANDATORY_PROVISION,
+                response.isProvisioningMandatory());
+        Futures.getUnchecked(
+                SetupParametersClient.getInstance().createPrefs(provisionBundle));
+        FutureCallback<Void> futureCallback = new FutureCallback<>() {
+            @Override
+            public void onSuccess(Void result) {
+                LogUtil.i(TAG,
+                        String.format(Locale.US,
+                                "State transition succeeded for event: %s",
+                                DeviceStateController.eventToString(PROVISIONING_SUCCESS)));
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                //TODO: Reset the state to where it can successfully transition.
+                LogUtil.e(TAG,
+                        String.format(Locale.US,
+                                "State transition failed for event: %s",
+                                DeviceStateController.eventToString(PROVISIONING_SUCCESS)), t);
+            }
+        };
+        UserPreferences.setNeedCheckIn(mAppContext, false);
+        mAppContext.getMainExecutor().execute(
+                () -> {
+                    try {
+                        Futures.addCallback(
+                                stateController.setNextStateForEvent(PROVISIONING_SUCCESS),
+                                futureCallback, MoreExecutors.directExecutor());
+                    } catch (StateTransitionException e) {
+                        //TODO: Reset the state to where it can successfully transition.
+                        LogUtil.e(TAG,
+                                String.format(Locale.US,
+                                        "State transition failed for event: %s",
+                                        DeviceStateController.eventToString(PROVISIONING_SUCCESS)),
+                                e);
+                    }
+                });
+
+        // We are only handling the non-mandatory provision case here. For mandatory
+        // provision, we will handle when receiving the intent after SUW completed.
+        if (!response.isProvisioningMandatory()) {
+            // TODO(b/272497885): Schedule to launch the provision activity at some time.
+        }
+        return true;
     }
 }
