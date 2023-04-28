@@ -34,7 +34,7 @@ import java.util.List;
 
 /**
  * This class provides the resources and {@link ProvisionInfo} to render the
- * {@link ProvisionInfoFragment}.
+ * {@link ProvisionInfoFragment} and/or {@link ProvisionNotRequiredFragment}.
  */
 public abstract class ProvisionInfoViewModel extends ViewModel {
 
@@ -74,15 +74,15 @@ public abstract class ProvisionInfoViewModel extends ViewModel {
         mSubHeaderTextLiveData = new MediatorLiveData<>();
         mSubHeaderTextLiveData.addSource(mSubheaderTextIdLiveData,
                 id -> {
-                    Pair<Integer, String> oldValue = mHeaderTextLiveData.getValue();
-                    mHeaderTextLiveData.setValue(oldValue == null
+                    Pair<Integer, String> oldValue = mSubHeaderTextLiveData.getValue();
+                    mSubHeaderTextLiveData.setValue(oldValue == null
                             ? new Pair<>(id, PROVIDER_NAME_PLACEHOLDER)
                             : new Pair<>(id, oldValue.second));
                 });
         mSubHeaderTextLiveData.addSource(mProviderNameLiveData,
                 providerName -> {
-                    Pair<Integer, String> oldValue = mHeaderTextLiveData.getValue();
-                    mHeaderTextLiveData.setValue(oldValue == null
+                    Pair<Integer, String> oldValue = mSubHeaderTextLiveData.getValue();
+                    mSubHeaderTextLiveData.setValue(oldValue == null
                             ? new Pair<>(TEXT_ID_PLACEHOLDER, providerName)
                             : new Pair<>(oldValue.first, providerName));
                 });
