@@ -15,6 +15,17 @@
 //
 
 // Generate gRPC client code
+package {
+    // See: http://go/android-license-faq
+    // A large-scale-change added 'default_applicable_licenses' to import
+    // all of the 'license_kinds' from "packages_modules_DeviceLock_DeviceLockController_license"
+    // to get the below license kinds:
+    //   SPDX-license-identifier-Apache-2.0
+    default_applicable_licenses: [
+        "packages_modules_DeviceLock_DeviceLockController_license",
+    ],
+}
+
 LITE_PROTO_CMD = "mkdir -p $(genDir)/gen && " +
     "$(location aprotoc) --java_opt=annotate_code=false " +
     "-Iexternal/protobuf/src -Ipackages/modules/DeviceLock/DeviceLockController/proto " +
