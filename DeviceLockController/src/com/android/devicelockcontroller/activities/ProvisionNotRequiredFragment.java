@@ -16,11 +16,10 @@
 
 package com.android.devicelockcontroller.activities;
 
-import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_FINANCING_DEFERRED_PROVISIONING;
-import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_FINANCING_PROVISIONING;
-import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_FINANCING_SECONDARY_USER_PROVISIONING;
-import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_SUBSIDY_DEFERRED_PROVISIONING;
-import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_SUBSIDY_PROVISIONING;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_DEVICE_FINANCING_PROVISION_NOT_REQUIRED;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_DEVICE_SUBSIDY_PROVISION_NOT_REQUIRED;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -42,11 +41,11 @@ import com.android.devicelockcontroller.util.LogUtil;
 import java.util.Objects;
 
 /**
- * The screen that provides information about the provision.
+ * The screen which tells users that provision is not required any more.
  */
-public final class ProvisionInfoFragment extends Fragment {
+public final class ProvisionNotRequiredFragment extends Fragment {
 
-    private static final String TAG = "ProvisionInfoFragment";
+    private static final String TAG = "ProvisionNotRequiredFragment";
 
     @Nullable
     @Override
@@ -54,7 +53,7 @@ public final class ProvisionInfoFragment extends Fragment {
             @NonNull LayoutInflater inflater,
             @Nullable ViewGroup container,
             @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_provision_info, container, false);
+        return inflater.inflate(R.layout.fragment_provision_not_required, container, false);
     }
 
     @Override
@@ -62,25 +61,13 @@ public final class ProvisionInfoFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ProvisionInfoViewModel viewModel;
         switch (Objects.requireNonNull(getActivity()).getIntent().getAction()) {
-            case ACTION_START_DEVICE_FINANCING_PROVISIONING:
+            case ACTION_DEVICE_FINANCING_PROVISION_NOT_REQUIRED:
                 viewModel = new ViewModelProvider(this).get(
-                        DeviceFinancingProvisionInfoViewModel.class);
+                        DeviceFinancingProvisionNotRequiredViewModel.class);
                 break;
-            case ACTION_START_DEVICE_FINANCING_DEFERRED_PROVISIONING:
+            case ACTION_DEVICE_SUBSIDY_PROVISION_NOT_REQUIRED:
                 viewModel = new ViewModelProvider(this).get(
-                        DeviceFinancingDeferredProvisionInfoViewModel.class);
-                break;
-            case ACTION_START_DEVICE_FINANCING_SECONDARY_USER_PROVISIONING:
-                viewModel = new ViewModelProvider(this).get(
-                        DeviceFinancingSecondaryUserProvisionInfoViewModel.class);
-                break;
-            case ACTION_START_DEVICE_SUBSIDY_PROVISIONING:
-                viewModel = new ViewModelProvider(this).get(
-                        DeviceSubsidyProvisionInfoViewModel.class);
-                break;
-            case ACTION_START_DEVICE_SUBSIDY_DEFERRED_PROVISIONING:
-                viewModel = new ViewModelProvider(this).get(
-                        DeviceSubsidyDeferredProvisionInfoViewModel.class);
+                        DeviceSubsidyProvisionNotRequiredViewModel.class);
                 break;
             default:
                 LogUtil.e(TAG, "Unknown action is received, exiting");
@@ -88,28 +75,21 @@ public final class ProvisionInfoFragment extends Fragment {
         }
 
         RecyclerView recyclerView = view.findViewById(R.id.recyclerview_provision_info);
-        if (recyclerView == null) {
-            LogUtil.e(TAG, "Could not find provision info RecyclerView, should not reach here.");
-            return;
-        }
+        checkNotNull(recyclerView);
+
         ProvisionInfoListAdapter adapter = new ProvisionInfoListAdapter(viewModel,
                 getViewLifecycleOwner());
         viewModel.mProvisionInfoListLiveData.observe(getViewLifecycleOwner(),
                 adapter::submitList);
         recyclerView.setAdapter(adapter);
+
         ImageView imageView = view.findViewById(R.id.header_icon);
-        if (imageView == null) {
-            LogUtil.e(TAG, "Could not find header ImageView, should not reach here.");
-            return;
-        }
+        checkNotNull(imageView);
         viewModel.mHeaderDrawableIdLiveData.observe(getViewLifecycleOwner(),
                 imageView::setImageResource);
 
         TextView headerTextView = view.findViewById(R.id.header_text);
-        if (headerTextView == null) {
-            LogUtil.e(TAG, "Could not find header TextView, should not reach here.");
-            return;
-        }
+        checkNotNull(headerTextView);
         viewModel.mHeaderTextLiveData.observe(getViewLifecycleOwner(),
                 pair -> {
                     if (pair.first > 0 && !TextUtils.isEmpty(pair.second)) {
@@ -118,14 +98,11 @@ public final class ProvisionInfoFragment extends Fragment {
                 });
 
         TextView subheaderTextView = view.findViewById(R.id.subheader_text);
-        if (subheaderTextView == null) {
-            LogUtil.e(TAG, "Could not find subheader TextView, should not reach here.");
-            return;
-        }
+        checkNotNull(subheaderTextView);
         viewModel.mSubHeaderTextLiveData.observe(getViewLifecycleOwner(),
                 pair -> {
                     if (pair.first > 0 && !TextUtils.isEmpty(pair.second)) {
-                        headerTextView.setText(getString(pair.first, pair.second));
+                        subheaderTextView.setText(getString(pair.first, pair.second));
                     }
                 });
     }
