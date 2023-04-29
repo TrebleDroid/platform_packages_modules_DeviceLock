@@ -37,7 +37,7 @@ public final class LandingActivityTest {
     public void landingActivity_setsProvisionInfoFragment() {
         LandingActivity activity = Robolectric.buildActivity(LandingActivity.class).setup().get();
         FragmentContainerView fragmentContainerView = activity.findViewById(
-                R.id.provision_info_fragment);
+                R.id.fragment_container);
 
         assertThat((Fragment) fragmentContainerView.getFragment()).isInstanceOf(
                 ProvisionInfoFragment.class);
