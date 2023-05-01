@@ -24,85 +24,21 @@ import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ComponentInfo;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.ComponentEnabledSetting;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.pm.PackageManager.PackageInfoFlags;
-import android.os.UserManager;
 
 import androidx.annotation.VisibleForTesting;
 
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
 import com.android.devicelockcontroller.util.LogUtil;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Handle {@link  Intent#ACTION_LOCKED_BOOT_COMPLETED}. This receiver runs for any user
  * (singleUser="false").
  *
- * The receiver does the following tasks:
- * 1. Disable unneeded components for non system users.
- * 2. Start lock task mode if applicable
+ * This receiver starts lock task mode if applicable.
  */
 public final class DlcLockedBootCompletedReceiver extends BroadcastReceiver {
     private static final String TAG = "BootCompletedBroadcastReceiver";
-
-    private static final String DEVICE_LOCK_CONTROLLER_PREFIX = "com.android.devicelockcontroller.";
-
-    private static void addComponentNamesToEnabledList(
-            List<ComponentEnabledSetting> componentEnabledSettings,
-            ComponentInfo[] componentInfoList) {
-        if (componentInfoList == null) {
-            return;
-        }
-
-        for (ComponentInfo componentInfo : componentInfoList) {
-            if (!componentInfo.name.startsWith(DEVICE_LOCK_CONTROLLER_PREFIX)) {
-                final ComponentName componentName =
-                        new ComponentName(componentInfo.packageName, componentInfo.name);
-                final ComponentEnabledSetting componentEnabledSetting =
-                        new ComponentEnabledSetting(componentName, COMPONENT_ENABLED_STATE_DISABLED,
-                                DONT_KILL_APP);
-                componentEnabledSettings.add(componentEnabledSetting);
-            }
-        }
-    }
-
-    @VisibleForTesting
-    static void disableComponentsForNonSystemUser(Context context) {
-        final UserManager userManager = context.getSystemService(UserManager.class);
-        if (userManager.isSystemUser()) {
-            return;
-        }
-
-        final PackageManager pm = context.getPackageManager();
-        final String packageName = context.getPackageName();
-        final long flags = PackageManager.GET_SERVICES | PackageManager.GET_RECEIVERS
-                | PackageManager.GET_PROVIDERS;
-        final PackageInfo packageInfo;
-
-        try {
-            packageInfo = pm.getPackageInfo(packageName, PackageInfoFlags.of(flags));
-        } catch (NameNotFoundException ex) {
-            LogUtil.e(TAG, "Failed to get device lock controller components", ex);
-
-            return;
-        }
-
-        final List<ComponentEnabledSetting> componentEnabledSettings = new ArrayList<>();
-
-        addComponentNamesToEnabledList(componentEnabledSettings, packageInfo.services);
-        addComponentNamesToEnabledList(componentEnabledSettings, packageInfo.receivers);
-        addComponentNamesToEnabledList(componentEnabledSettings, packageInfo.providers);
-
-        if (!componentEnabledSettings.isEmpty()) {
-            pm.setComponentEnabledSettings(componentEnabledSettings);
-        }
-    }
 
     @VisibleForTesting
     static void startLockTaskModeIfApplicable(Context context) {
@@ -134,7 +70,6 @@ public final class DlcLockedBootCompletedReceiver extends BroadcastReceiver {
             return;
         }
 
-        disableComponentsForNonSystemUser(context);
         startLockTaskModeIfApplicable(context);
     }
 }
