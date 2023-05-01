@@ -16,12 +16,14 @@
 
 package com.android.server.devicelock;
 
+import static android.app.role.RoleManager.MANAGE_HOLDERS_FLAG_DONT_KILL_APP;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.devicelock.DeviceId.DEVICE_ID_TYPE_IMEI;
 import static android.devicelock.DeviceId.DEVICE_ID_TYPE_MEID;
 
 import android.Manifest;
 import android.annotation.NonNull;
+import android.app.role.RoleManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.ServiceInfo;
@@ -32,8 +34,11 @@ import android.devicelock.IGetKioskAppsCallback;
 import android.devicelock.IIsDeviceLockedCallback;
 import android.devicelock.ILockUnlockDeviceCallback;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.OutcomeReceiver;
+import android.os.RemoteCallback;
 import android.os.RemoteException;
+import android.os.UserHandle;
 import android.telephony.TelephonyManager;
 import android.util.ArrayMap;
 import android.util.Slog;
@@ -54,6 +59,10 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
 
     // Last supported device id type
     private static final @DeviceIdType int LAST_DEVICE_ID_TYPE = DEVICE_ID_TYPE_MEID;
+
+    private static final String MANAGE_DEVICE_LOCK_SERVICE_FROM_CONTROLLER =
+            "com.android.devicelockcontroller.permission."
+                    + "MANAGE_DEVICE_LOCK_SERVICE_FROM_CONTROLLER";
 
     DeviceLockServiceImpl(@NonNull Context context) {
         mContext = context;
@@ -254,5 +263,39 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
         } catch (RemoteException e) {
             Slog.e(TAG, "getKioskApps() - Unable to send result to the callback", e);
         }
+    }
+
+    // For calls from Controller to System Service.
+
+    private boolean checkDeviceLockControllerPermission() {
+        return mContext.checkCallingOrSelfPermission(MANAGE_DEVICE_LOCK_SERVICE_FROM_CONTROLLER)
+                == PERMISSION_GRANTED;
+    }
+
+    @Override
+    public void addFinancedDeviceKioskRole(@NonNull String packageName,
+            @NonNull RemoteCallback remoteCallback) {
+        if (!checkDeviceLockControllerPermission()) {
+            final Bundle result = new Bundle();
+            result.putBoolean(KEY_REMOTE_CALLBACK_RESULT, false);
+            remoteCallback.sendResult(result);
+            return;
+        }
+
+        final UserHandle userHandle = Binder.getCallingUserHandle();
+        final RoleManager roleManager = mContext.getSystemService(RoleManager.class);
+        final long identity = Binder.clearCallingIdentity();
+
+        roleManager.addRoleHolderAsUser(RoleManager.ROLE_FINANCED_DEVICE_KIOSK, packageName,
+                MANAGE_HOLDERS_FLAG_DONT_KILL_APP, userHandle, mContext.getMainExecutor(),
+                accepted -> {
+                    Binder.restoreCallingIdentity(identity);
+
+                    final Bundle result = new Bundle();
+                    result.putBoolean(KEY_REMOTE_CALLBACK_RESULT, accepted);
+                    remoteCallback.sendResult(result);
+                });
+
+        Binder.restoreCallingIdentity(identity);
     }
 }
