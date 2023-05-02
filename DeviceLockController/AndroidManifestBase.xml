@@ -40,6 +40,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
     <uses-permission android:name="com.android.permission.INSTALL_EXISTING_PACKAGES" />
+    <uses-permission android:name="com.android.devicelockcontroller.permission.MANAGE_DEVICE_LOCK_SERVICE_FROM_CONTROLLER" />
 
     <application
         android:name=".DeviceLockControllerApplication"

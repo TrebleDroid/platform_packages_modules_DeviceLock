@@ -21,6 +21,8 @@ import android.devicelock.IGetDeviceIdCallback;
 import android.devicelock.IIsDeviceLockedCallback;
 import android.devicelock.ILockUnlockDeviceCallback;
 
+import android.os.RemoteCallback;
+
 /**
  * Binder interface to communicate with DeviceLockService.
  * {@hide}
@@ -56,4 +58,11 @@ oneway interface IDeviceLockService {
      * Asynchronously retrieve the Kiosk apps roles and package names.
      */
     void getKioskApps(in IGetKioskAppsCallback callback);
+
+    // The following are for calls initiated by the Controller.
+
+    // Value is a boolean for success (true) or failure (false).
+    const String KEY_REMOTE_CALLBACK_RESULT = "KEY_REMOTE_CALLBACK_RESULT";
+
+    void addFinancedDeviceKioskRole(in String packageName, in RemoteCallback remoteCallback);
 }
