@@ -95,7 +95,9 @@ android_library {
     exclude_srcs: [":devicelockcontroller-grpc-impl-sources"],
     resource_dirs: ["res"],
     libs: [
+        "framework-annotations-lib",
         "framework-connectivity",
+        "framework-devicelock.impl",
         "org.apache.http.legacy",
     ],
     static_libs: [
