@@ -64,12 +64,6 @@ public interface SetupController {
     /** Triggers the setup flow process. */
     ListenableFuture<Void> startSetupFlow(LifecycleOwner owner);
 
-    /**
-     * Finishes the setup flow process. Triggers the appropriate actions based on whether setup was
-     * successful.
-     */
-    ListenableFuture<Void> finishSetup();
-
     /** Callback interface for updates on setup tasks */
     interface SetupUpdatesCallbacks {
 
