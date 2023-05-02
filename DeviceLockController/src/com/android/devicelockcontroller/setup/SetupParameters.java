@@ -27,6 +27,7 @@ import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_SIGNATURE_CHECKSUM;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_MANDATORY_PROVISION;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_PROVISIONING_TYPE;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_TERMS_AND_CONDITIONS_URL;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.TYPE_UNDEFINED;
 
 import android.content.Context;
@@ -65,6 +66,8 @@ final class SetupParameters {
     private static final String KEY_KIOSK_APP_PROVIDER_NAME = "kiosk-app-provider-name";
     private static final String KEY_DISALLOW_INSTALLING_FROM_UNKNOWN_SOURCES =
             "disallow-installing-from-unknown-sources";
+    private static final String KEY_TERMS_AND_CONDITIONS_URL =
+            "terms-and-conditions-url";
 
     private SetupParameters() {
     }
@@ -121,6 +124,8 @@ final class SetupParameters {
                 bundle.getString(EXTRA_KIOSK_APP_PROVIDER_NAME));
         editor.putBoolean(KEY_DISALLOW_INSTALLING_FROM_UNKNOWN_SOURCES,
                 bundle.getBoolean(EXTRA_DISALLOW_INSTALLING_FROM_UNKNOWN_SOURCES));
+        editor.putString(KEY_TERMS_AND_CONDITIONS_URL,
+                bundle.getString(EXTRA_TERMS_AND_CONDITIONS_URL));
         editor.apply();
     }
 
@@ -247,5 +252,18 @@ final class SetupParameters {
     static boolean isInstallingFromUnknownSourcesDisallowed(Context context) {
         return getSharedPreferences(context).getBoolean(
                 KEY_DISALLOW_INSTALLING_FROM_UNKNOWN_SOURCES, /* defValue= */ false);
+    }
+
+    /**
+     * Get the URL to the terms and conditions of the partner for enrolling in a Device Lock
+     * program.
+     *
+     * @param context Context used to get the shared preferences.
+     * @return The URL to the terms and conditions.
+     */
+    @Nullable
+    static String getTermsAndConditionsUrl(Context context) {
+        return getSharedPreferences(context).getString(
+                KEY_TERMS_AND_CONDITIONS_URL, /* defValue= */ null);
     }
 }
