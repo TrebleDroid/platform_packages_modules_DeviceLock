@@ -25,15 +25,17 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface DevicePolicyController {
     /**
      * Launches an activity in locked mode. The specific activity is resolved based on the current
-     * device state.Returns false if package containing the activity is not in the allowlist.
+     * device state. Returns false if package containing the activity is not in the allowlist.
      */
     ListenableFuture<Boolean> launchActivityInLockedMode();
 
     /**
-     * Enqueue a worker to start lock task mode and launch corresponding activity. The work will be
-     * retried until device is in lock task mode.
+     * Enqueue a worker to start lock task mode and launch corresponding activity. The
+     * work will be retried until device is in lock task mode.
+     *
+     * @param isMandatory whether starting lock task mode is mandatory at the time of request.
      */
-    void enqueueStartLockTaskModeWorker();
+    void enqueueStartLockTaskModeWorker(boolean isMandatory);
 
     /**
      * Factory resets the device when the setup has failed and cannot continue.

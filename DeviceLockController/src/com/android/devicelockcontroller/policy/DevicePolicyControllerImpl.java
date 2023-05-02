@@ -120,17 +120,20 @@ public final class DevicePolicyControllerImpl
     }
 
     @Override
-    public void enqueueStartLockTaskModeWorker() {
-        final OneTimeWorkRequest startLockTaskModeRequest =
+    public void enqueueStartLockTaskModeWorker(boolean isMandatory) {
+        final OneTimeWorkRequest.Builder startLockTaskModeRequestBuilder =
                 new OneTimeWorkRequest.Builder(StartLockTaskModeWorker.class)
                         .setBackoffCriteria(BackoffPolicy.LINEAR,
-                                Duration.ofSeconds(START_LOCK_TASK_MODE_WORKER_INTERVAL))
-                        .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-                        .build();
+                                Duration.ofSeconds(START_LOCK_TASK_MODE_WORKER_INTERVAL));
+        if (isMandatory) {
+            startLockTaskModeRequestBuilder
+                    .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST);
+        }
+
         WorkManager.getInstance(mContext)
                 .enqueueUniqueWork(START_LOCK_TASK_MODE_WORK_NAME,
                         ExistingWorkPolicy.APPEND_OR_REPLACE,
-                        startLockTaskModeRequest);
+                        startLockTaskModeRequestBuilder.build());
     }
 
     @Override
@@ -177,7 +180,7 @@ public final class DevicePolicyControllerImpl
             case DeviceState.SETUP_FAILED:
                 return Futures.immediateFuture(
                         new Intent().setComponent(ComponentName.unflattenFromString(
-                                DeviceLockConstants.PROVISIONING_ACTIVITY)));
+                                DeviceLockConstants.LANDING_ACTIVITY)));
             case DeviceState.KIOSK_SETUP:
                 return getKioskSetupActivityIntent();
             case DeviceState.LOCKED:
