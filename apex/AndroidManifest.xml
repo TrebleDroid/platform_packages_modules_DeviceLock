@@ -17,6 +17,10 @@
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.android.devicelock">
+    <!-- Permission for calls from Controller to Device Lock Service -->
+    <permission android:name="com.android.devicelockcontroller.permission.MANAGE_DEVICE_LOCK_SERVICE_FROM_CONTROLLER"
+                android:protectionLevel="signature|privileged" />
+
     <!-- APEX does not have classes.dex -->
     <application android:hasCode="false">
         <apex-system-service
