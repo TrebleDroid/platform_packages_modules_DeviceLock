@@ -133,6 +133,9 @@ public final class DeviceLockConstants {
     public static final String EXTRA_DISALLOW_INSTALLING_FROM_UNKNOWN_SOURCES =
             "com.android.devicelockcontroller.DISALLOW_INSTALLING_FROM_UNKNOWN_SOURCES";
 
+    public static final String EXTRA_TERMS_AND_CONDITIONS_URL =
+            "com.android.devicelockcontroller.TERMS_AND_CONDITIONS_URL";
+
     public static final String ACTION_START_DEVICE_FINANCING_PROVISIONING =
             "com.android.devicelockcontroller.action.START_DEVICE_FINANCING_PROVISIONING";
     public static final String ACTION_START_DEVICE_FINANCING_DEFERRED_PROVISIONING =
@@ -159,7 +162,6 @@ public final class DeviceLockConstants {
 
     public static final String ACTION_START_DEVICE_SUBSIDY_ENROLLMENT =
             "com.android.devicelockcontroller.action.START_DEVICE_SUBSIDY_ENROLLMENT";
-
 
     /** Restrict instantiation. */
     private DeviceLockConstants() {

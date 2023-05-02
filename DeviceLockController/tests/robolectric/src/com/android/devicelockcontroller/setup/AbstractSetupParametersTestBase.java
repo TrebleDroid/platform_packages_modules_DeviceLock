@@ -27,6 +27,7 @@ import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_SIGNATURE_CHECKSUM;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_MANDATORY_PROVISION;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_PROVISIONING_TYPE;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_TERMS_AND_CONDITIONS_URL;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.TYPE_FINANCED;
 
 import android.os.Bundle;
@@ -49,6 +50,7 @@ abstract class AbstractSetupParametersTestBase {
     protected static final int PROVISIONING_TYPE = TYPE_FINANCED;
     protected static final boolean MANDATORY_PROVISION = true;
     protected static final boolean DISALLOW_INSTALLING_FROM_UNKNOWN_SOURCES = true;
+    protected static final String TERMS_AND_CONDITIONS_URL = "https://www.example.com/terms";
     protected static final String KIOSK_APP_PROVIDER_NAME = "test name";
 
     protected static Bundle createParamsBundle() {
@@ -70,6 +72,7 @@ abstract class AbstractSetupParametersTestBase {
         bundle.putString(EXTRA_KIOSK_APP_PROVIDER_NAME, KIOSK_APP_PROVIDER_NAME);
         bundle.putBoolean(EXTRA_DISALLOW_INSTALLING_FROM_UNKNOWN_SOURCES,
                 DISALLOW_INSTALLING_FROM_UNKNOWN_SOURCES);
+        bundle.putString(EXTRA_TERMS_AND_CONDITIONS_URL, TERMS_AND_CONDITIONS_URL);
         return bundle;
     }
 

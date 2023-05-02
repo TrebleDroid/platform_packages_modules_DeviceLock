@@ -70,4 +70,7 @@ message ConfigurationInfo {
   // Whether installing application from unknown sources is disallowed on this device once
   // provisioned.
   optional bool disallow_installing_from_unknown_sources = 9;
+
+  // The URL to the Terms and Conditions of the partner for enrolling in a Device Lock program.
+  optional string terms_and_conditions_url = 10;
 }
