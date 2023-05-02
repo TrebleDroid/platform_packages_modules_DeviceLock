@@ -35,6 +35,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.devicelockcontroller.R;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
+import com.android.devicelockcontroller.policy.SetupController;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import com.google.common.util.concurrent.FutureCallback;
@@ -89,18 +90,21 @@ public final class DevicePoliciesFragment extends Fragment {
         checkNotNull(footerTextView);
         viewModel.mFooterTextIdLiveData.observe(getViewLifecycleOwner(), footerTextView::setText);
 
+        SetupController setupController =
+                ((PolicyObjectsInterface) getActivity().getApplicationContext())
+                        .getSetupController();
+
         ProvisioningProgressViewModel provisioningProgressViewModel =
                 new ViewModelProvider(requireActivity()).get(ProvisioningProgressViewModel.class);
+        MutableLiveData<ProvisioningProgress> progressLiveData =
+                provisioningProgressViewModel.getProvisioningProgressMutableLiveData();
         Button button = view.findViewById(R.id.button_next);
         checkNotNull(button);
         button.setOnClickListener(
                 v -> {
-                    MutableLiveData<ProvisioningProgress> progressLiveData =
-                            provisioningProgressViewModel.getProvisioningProgressMutableLiveData();
                     progressLiveData.setValue(ProvisioningProgress.GETTING_DEVICE_READY);
                     Futures.addCallback(
-                            ((PolicyObjectsInterface) getActivity().getApplicationContext())
-                                    .getSetupController().startSetupFlow(getViewLifecycleOwner()),
+                            setupController.startSetupFlow(getViewLifecycleOwner()),
                             new FutureCallback<>() {
                                 @Override
                                 public void onSuccess(Void result) {
@@ -116,5 +120,19 @@ public final class DevicePoliciesFragment extends Fragment {
                                 }
                             }, MoreExecutors.directExecutor());
                 });
+
+        setupController.addListener(new SetupController.SetupUpdatesCallbacks() {
+            @Override
+            public void setupFailed(int reason) {
+                //TODO(b/279969959): Show the failure UI if we have one.
+                LogUtil.e(TAG, "Failed to finish setup flow!");
+            }
+
+            @Override
+            public void setupCompleted() {
+                LogUtil.i(TAG, "Successfully finished setup flow!");
+                progressLiveData.postValue(ProvisioningProgress.OPENING_KIOSK_APP);
+            }
+        });
     }
 }
