@@ -39,6 +39,8 @@ import static com.android.devicelockcontroller.policy.SetupController.SetupUpdat
 import static com.android.devicelockcontroller.policy.SetupController.SetupUpdatesCallbacks.FailureType.INSTALL_FAILED;
 import static com.android.devicelockcontroller.policy.SetupController.SetupUpdatesCallbacks.FailureType.VERIFICATION_FAILED;
 
+import static com.google.common.util.concurrent.Futures.transform;
+
 import android.content.Context;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
@@ -62,6 +64,7 @@ import com.android.devicelockcontroller.policy.SetupController.SetupUpdatesCallb
 import com.android.devicelockcontroller.setup.SetupParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
 
+import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
@@ -157,7 +160,7 @@ public final class SetupControllerImpl implements SetupController {
     private ListenableFuture<Boolean> isKioskAppPreInstalled() {
         return Build.isDebuggable()
                 ? Futures.immediateFuture(false)
-                : Futures.transform(SetupParametersClient.getInstance().getKioskPackage(),
+                : transform(SetupParametersClient.getInstance().getKioskPackage(),
                         packageName -> {
                             try {
                                 mContext.getPackageManager().getPackageInfo(
@@ -336,45 +339,43 @@ public final class SetupControllerImpl implements SetupController {
                     if (areAllTasksSucceeded(workInfo)) {
                         setupFlowTaskSuccessCallbackHandler();
                     } else if (isAtLeastOneTaskFailedOrCancelled(workInfo)) {
-                        setupFlowTaskFailureCallbackHandler(
-                                getTaskFailureType(workInfo));
+                        setupFlowTaskFailureCallbackHandler(getTaskFailureType(workInfo));
                     }
                 });
     }
 
+    @VisibleForTesting
+    void finishSetup() {
+        if (mCurrentSetupState == SetupStatus.SETUP_FINISHED) {
+            Futures.addCallback(mPolicyController.launchActivityInLockedMode(),
+                    new FutureCallback<>() {
+                        @Override
+                        public void onSuccess(Boolean isLaunched) {
+                            if (!isLaunched) {
+                                onFailure(new IllegalStateException());
+                            }
+                            LogUtil.i(TAG, "Launched kiosk activity in lock task mode");
+                        }
 
-    @Override
-    public ListenableFuture<Void> finishSetup() {
-        ListenableFuture<Void> setupFailureTask = Futures.immediateVoidFuture();
-        try {
-            if (mCurrentSetupState == SetupStatus.SETUP_FINISHED) {
-                return Futures.transformAsync(
-                        mStateController.setNextStateForEvent(DeviceEvent.SETUP_COMPLETE),
-                        input -> Futures.transform(
-                                mPolicyController.launchActivityInLockedMode(),
-                                result -> {
-                                    if (!result) {
-                                        throw new IllegalStateException(
-                                                "Failed to launch kiosk Activity in lock mode!");
-                                    }
-                                    return null;
-                                }, MoreExecutors.directExecutor()),
-                        MoreExecutors.directExecutor());
-            }
-            setupFailureTask = mStateController.setNextStateForEvent(DeviceEvent.SETUP_FAILURE);
-        } catch (StateTransitionException e) {
-            LogUtil.e(TAG, "State transition failed!", e);
+                        @Override
+                        public void onFailure(Throwable t) {
+                            LogUtil.e(TAG, "Failed to launch kiosk activity in lock task mode!", t);
+                        }
+                    }, MoreExecutors.directExecutor());
+        } else {
+            Futures.addCallback(SetupParametersClient.getInstance().isProvisionMandatory(),
+                    new FutureCallback<>() {
+                        @Override
+                        public void onSuccess(Boolean isMandatory) {
+                            if (isMandatory) mPolicyController.wipeData();
+                        }
+
+                        @Override
+                        public void onFailure(Throwable t) {
+                            LogUtil.e(TAG, "Failed to know if Provision is mandatory", t);
+                        }
+                    }, MoreExecutors.directExecutor());
         }
-        LogUtil.e(TAG, "Setup failed!");
-        ListenableFuture<Boolean> provisionMandatoryTask =
-                SetupParametersClient.getInstance().isProvisionMandatory();
-        return Futures.whenAllComplete(setupFailureTask, provisionMandatoryTask).call(
-                () -> {
-                    if (Futures.getDone(provisionMandatoryTask)) {
-                        mPolicyController.wipeData();
-                    }
-                    return null;
-                }, MoreExecutors.directExecutor());
     }
 
     private void setupFlowTaskSuccessCallbackHandler() {
@@ -423,6 +424,7 @@ public final class SetupControllerImpl implements SetupController {
                 }
             }
         }
+        finishSetup();
     }
 
     @VisibleForTesting
