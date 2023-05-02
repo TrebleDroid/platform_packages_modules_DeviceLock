@@ -64,6 +64,7 @@ import androidx.work.WorkerFactory;
 import androidx.work.WorkerParameters;
 import androidx.work.testing.WorkManagerTestInitHelper;
 
+import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
 import com.android.devicelockcontroller.setup.SetupParametersClient;
@@ -108,35 +109,36 @@ public final class SetupControllerImplTest {
     @Rule
     public final MockitoRule mMocks = MockitoJUnit.rule();
 
-    @Mock
     private DeviceStateController mMockStateController;
-    @Mock
     private DevicePolicyController mMockPolicyController;
     @Mock
     private SetupController.SetupUpdatesCallbacks mMockCbs;
     @Mock
     private LifecycleOwner mMockLifecycleOwner;
-
-    private Context mContext;
+    private TestDeviceLockControllerApplication mTestApplication;
     private String mFileLocation;
     private SetupParametersClient mSetupParametersClient;
     private TestWorkFactory mTestWorkFactory;
 
     @Before
     public void setUp() {
-        mContext = ApplicationProvider.getApplicationContext();
-        Shadows.shadowOf((Application) mContext).setComponentNameAndServiceForBindService(
-                new ComponentName(mContext, SetupParametersService.class),
+        mTestApplication = ApplicationProvider.getApplicationContext();
+        mMockStateController = mTestApplication.getMockStateController();
+        mMockPolicyController = mTestApplication.getMockPolicyController();
+        when(mMockPolicyController.launchActivityInLockedMode()).thenReturn(
+                Futures.immediateFuture(true));
+        Shadows.shadowOf((Application) mTestApplication).setComponentNameAndServiceForBindService(
+                new ComponentName(mTestApplication, SetupParametersService.class),
                 Robolectric.setupService(SetupParametersService.class).onBind(null));
         mSetupParametersClient = SetupParametersClient.getInstance(
-                mContext, TestingExecutors.sameThreadScheduledExecutor());
-        mFileLocation = mContext.getFilesDir() + "/TEST_FILE_NAME";
+                mTestApplication, TestingExecutors.sameThreadScheduledExecutor());
+        mFileLocation = mTestApplication.getFilesDir() + "/TEST_FILE_NAME";
         createTestFile(mFileLocation);
 
         mTestWorkFactory = new TestWorkFactory();
         Configuration config =
                 new Configuration.Builder().setWorkerFactory(mTestWorkFactory).build();
-        WorkManagerTestInitHelper.initializeTestWorkManager(mContext, config);
+        WorkManagerTestInitHelper.initializeTestWorkManager(mTestApplication, config);
     }
 
     @After
@@ -150,56 +152,28 @@ public final class SetupControllerImplTest {
         b.putString(EXTRA_KIOSK_SETUP_ACTIVITY, TEST_SETUP_ACTIVITY);
         createParameters(b);
         when(mMockStateController.getState()).thenReturn(DeviceState.KIOSK_SETUP);
-        when(mMockStateController.setNextStateForEvent(DeviceEvent.SETUP_COMPLETE)).thenReturn(
-                Futures.immediateVoidFuture());
         SetupControllerImpl setupController =
                 new SetupControllerImpl(
-                        mContext, mMockStateController, mMockPolicyController);
+                        mTestApplication, mMockStateController, mMockPolicyController);
         assertThat(setupController.getSetupState()).isEqualTo(
                 SetupController.SetupStatus.SETUP_FINISHED);
         setupController.finishSetup();
-        verify(mMockStateController).setNextStateForEvent(eq(DeviceEvent.SETUP_COMPLETE));
         verify(mMockPolicyController).launchActivityInLockedMode();
         verify(mMockPolicyController, never()).wipeData();
     }
 
     @Test
-    public void testInitialState_SetupFinishedException() throws Exception {
-        Bundle b = new Bundle();
-        b.putString(EXTRA_KIOSK_SETUP_ACTIVITY, TEST_SETUP_ACTIVITY);
-        createParameters(b);
-        when(mMockStateController.getState()).thenReturn(DeviceState.KIOSK_SETUP);
-        SetupControllerImpl setupController =
-                new SetupControllerImpl(
-                        mContext, mMockStateController, mMockPolicyController);
-        assertThat(setupController.getSetupState()).isEqualTo(
-                SetupController.SetupStatus.SETUP_FINISHED);
-
-        doThrow(
-                new StateTransitionException(
-                        DeviceEvent.PROVISIONING_SUCCESS, DeviceState.UNPROVISIONED))
-                .when(mMockStateController)
-                .setNextStateForEvent(anyInt());
-        setupController.finishSetup();
-        verify(mMockPolicyController, never()).launchActivityInLockedMode();
-    }
-
-    @Test
-    public void testInitialState_mandatoryProvisioning_SetupFailed()
-            throws StateTransitionException {
+    public void testInitialState_mandatoryProvisioning_SetupFailed() {
         Bundle bundle = new Bundle();
         bundle.putBoolean(EXTRA_MANDATORY_PROVISION, true);
         createParameters(bundle);
         when(mMockStateController.getState()).thenReturn(DeviceState.SETUP_FAILED);
-        when(mMockStateController.setNextStateForEvent(DeviceEvent.SETUP_FAILURE)).thenReturn(
-                Futures.immediateVoidFuture());
         SetupControllerImpl setupController =
                 new SetupControllerImpl(
-                        mContext, mMockStateController, mMockPolicyController);
+                        mTestApplication, mMockStateController, mMockPolicyController);
         setupController.finishSetup();
         assertThat(setupController.getSetupState()).isEqualTo(
                 SetupController.SetupStatus.SETUP_FAILED);
-        verify(mMockStateController).setNextStateForEvent(eq(DeviceEvent.SETUP_FAILURE));
         verify(mMockPolicyController, never()).launchActivityInLockedMode();
         verify(mMockPolicyController).wipeData();
     }
@@ -219,8 +193,9 @@ public final class SetupControllerImplTest {
         SetupControllerImpl setupController = createSetupControllerImpl(mMockCbs);
 
         // WHEN finish kiosk app setup
-        setupController.installKioskAppFromURL(WorkManager.getInstance(mContext),
-                mMockLifecycleOwner);
+        Futures.getUnchecked(
+                setupController.installKioskAppFromURL(WorkManager.getInstance(mTestApplication),
+                        mMockLifecycleOwner));
 
         // THEN setup succeeds
         verify(mMockStateController).setNextStateForEvent(eq(DeviceEvent.SETUP_SUCCESS));
@@ -237,8 +212,9 @@ public final class SetupControllerImplTest {
         SetupControllerImpl setupController = createSetupControllerImpl(mMockCbs);
 
         // WHEN finish kiosk app setup
-        setupController.installKioskAppFromURL(WorkManager.getInstance(mContext),
-                mMockLifecycleOwner);
+        Futures.getUnchecked(
+                setupController.installKioskAppFromURL(WorkManager.getInstance(mTestApplication),
+                        mMockLifecycleOwner));
 
         // THEN verify task will fail
         verify(mMockStateController).setNextStateForEvent(eq(DeviceEvent.SETUP_FAILURE));
@@ -253,15 +229,16 @@ public final class SetupControllerImplTest {
         final SetupControllerImpl setupController = createSetupControllerImpl(mMockCbs);
 
         // WHEN install kiosk app for secondary user
-        setupController.installKioskAppForSecondaryUser(WorkManager.getInstance(mContext),
-                mMockLifecycleOwner);
+        Futures.getUnchecked(setupController.installKioskAppForSecondaryUser(
+                WorkManager.getInstance(mTestApplication),
+                mMockLifecycleOwner));
 
         verify(mMockStateController).setNextStateForEvent(eq(DeviceEvent.SETUP_SUCCESS));
         verify(mMockCbs).setupCompleted();
     }
 
     @Test
-    public void installKioskAppForSecondaryUser_kioskAppNotInstalled_oneTaskFaied()
+    public void installKioskAppForSecondaryUser_kioskAppNotInstalled_oneTaskFails()
             throws StateTransitionException {
         // GIVEN verify install task is failed due to no installed package info
         whenVerifyInstallTaskFailed(ERROR_CODE_NO_PACKAGE_INFO);
@@ -270,8 +247,9 @@ public final class SetupControllerImplTest {
         SetupControllerImpl setupController = createSetupControllerImpl(mMockCbs);
 
         // WHEN install kiosk app for secondary user
-        setupController.installKioskAppForSecondaryUser(WorkManager.getInstance(mContext),
-                mMockLifecycleOwner);
+        Futures.getUnchecked(setupController.installKioskAppForSecondaryUser(
+                WorkManager.getInstance(mTestApplication),
+                mMockLifecycleOwner));
 
         // THEN verify task will fail
         verify(mMockStateController).setNextStateForEvent(eq(DeviceEvent.SETUP_FAILURE));
@@ -283,7 +261,7 @@ public final class SetupControllerImplTest {
         when(mMockStateController.getState()).thenReturn(DeviceState.SETUP_IN_PROGRESS);
         SetupControllerImpl setupController =
                 new SetupControllerImpl(
-                        mContext, mMockStateController, mMockPolicyController);
+                        mTestApplication, mMockStateController, mMockPolicyController);
         assertThat(setupController.getSetupState()).isEqualTo(
                 SetupController.SetupStatus.SETUP_NOT_STARTED);
     }
@@ -326,6 +304,39 @@ public final class SetupControllerImplTest {
         assertThat(result.get()).isFalse();
         assertThat(reason.get()).isEqualTo(
                 SetupController.SetupUpdatesCallbacks.FailureType.DOWNLOAD_FAILED);
+        assertThat(setupController.getSetupState()).isEqualTo(
+                SetupController.SetupStatus.SETUP_FAILED);
+    }
+
+    @Test
+    public void testSetupUpdatesCallbacks_stateTransitionException()
+            throws StateTransitionException {
+        AtomicBoolean result = new AtomicBoolean(true);
+        AtomicInteger reason = new AtomicInteger(-1);
+        SetupController.SetupUpdatesCallbacks callbacks =
+                new SetupController.SetupUpdatesCallbacks() {
+                    @Override
+                    public void setupCompleted() {
+                    }
+
+                    @Override
+                    public void setupFailed(int failReason) {
+                        result.set(false);
+                        reason.set(failReason);
+                    }
+                };
+        doThrow(
+                new StateTransitionException(
+                        DeviceEvent.PROVISIONING_SUCCESS, DeviceState.UNPROVISIONED))
+                .when(mMockStateController)
+                .setNextStateForEvent(anyInt());
+
+        SetupControllerImpl setupController = createSetupControllerImpl(callbacks);
+
+        setupController.setupFlowTaskCallbackHandler(/* result= */ true, /* failReason= */ -1);
+        assertThat(result.get()).isFalse();
+        assertThat(reason.get()).isEqualTo(
+                SetupController.SetupUpdatesCallbacks.FailureType.SETUP_FAILED);
         assertThat(setupController.getSetupState()).isEqualTo(
                 SetupController.SetupStatus.SETUP_FAILED);
     }
@@ -430,7 +441,8 @@ public final class SetupControllerImplTest {
     private SetupControllerImpl createSetupControllerImpl(
             SetupController.SetupUpdatesCallbacks callbacks) {
         SetupControllerImpl setupController =
-                new SetupControllerImpl(mContext, mMockStateController, mMockPolicyController);
+                new SetupControllerImpl(mTestApplication, mMockStateController,
+                        mMockPolicyController);
         setupController.addListener(callbacks);
         return setupController;
     }
