@@ -88,9 +88,11 @@ public final class SystemDeviceLockManager {
         return SystemDeviceLockManagerHolder.sSystemDeviceLockManager;
     }
 
-    private boolean isDeviceLockServiceAvailable(@NonNull OutcomeReceiver<?, Exception> callback) {
+    private boolean isDeviceLockServiceAvailable(@CallbackExecutor Executor executor,
+            @NonNull OutcomeReceiver<?, Exception> callback) {
         if (mIDeviceLockService == null) {
-            callback.onError(new IllegalStateException("IDeviceLockService is null."));
+            executor.execute(() -> callback.onError(
+                    new IllegalStateException("IDeviceLockService is null.")));
 
             return false;
         }
@@ -112,7 +114,7 @@ public final class SystemDeviceLockManager {
         Objects.requireNonNull(executor);
         Objects.requireNonNull(callback);
 
-        if (!isDeviceLockServiceAvailable(callback)) {
+        if (!isDeviceLockServiceAvailable(executor, callback)) {
             return;
         }
 
@@ -129,7 +131,7 @@ public final class SystemDeviceLockManager {
                         }
                     }), new Handler(Looper.getMainLooper())));
         } catch (RemoteException e) {
-            callback.onError(e);
+            executor.execute(() -> callback.onError(new RuntimeException(e)));
         }
     }
 }
