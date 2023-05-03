@@ -53,7 +53,7 @@ public final class UserPreferencesClient extends DlcClient {
     @MainThread
     public static UserPreferencesClient getInstance() {
         return getInstance(DeviceLockControllerApplication.getAppContext(),
-                MoreExecutors.listeningDecorator(Executors.newCachedThreadPool()));
+                /* executorService= */ null);
     }
 
     /**
@@ -62,9 +62,13 @@ public final class UserPreferencesClient extends DlcClient {
     @MainThread
     @VisibleForTesting
     public static UserPreferencesClient getInstance(Context appContext,
-            ListeningExecutorService executorService) {
+            @Nullable ListeningExecutorService executorService) {
         if (sUserPreferencesClient == null) {
-            sUserPreferencesClient = new UserPreferencesClient(appContext, executorService);
+            sUserPreferencesClient = new UserPreferencesClient(
+                    appContext,
+                    executorService == null
+                            ? MoreExecutors.listeningDecorator(Executors.newCachedThreadPool())
+                            : executorService);
         }
 
         return sUserPreferencesClient;
