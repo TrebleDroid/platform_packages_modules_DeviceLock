@@ -55,7 +55,7 @@ public final class SetupParametersClient extends DlcClient {
     @MainThread
     public static SetupParametersClient getInstance() {
         return getInstance(DeviceLockControllerApplication.getAppContext(),
-                MoreExecutors.listeningDecorator(Executors.newCachedThreadPool()));
+                /* executorService= */ null);
     }
 
     /**
@@ -64,9 +64,13 @@ public final class SetupParametersClient extends DlcClient {
     @MainThread
     @VisibleForTesting
     public static SetupParametersClient getInstance(Context appContext,
-            ListeningExecutorService executorService) {
+            @Nullable ListeningExecutorService executorService) {
         if (sSetupParametersClient == null) {
-            sSetupParametersClient = new SetupParametersClient(appContext, executorService);
+            sSetupParametersClient = new SetupParametersClient(
+                    appContext,
+                    executorService == null
+                            ? MoreExecutors.listeningDecorator(Executors.newCachedThreadPool())
+                            : executorService);
         }
         return sSetupParametersClient;
     }
