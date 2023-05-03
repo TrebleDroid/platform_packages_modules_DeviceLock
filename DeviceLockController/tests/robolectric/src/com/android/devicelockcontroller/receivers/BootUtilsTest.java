@@ -16,6 +16,8 @@
 
 package com.android.devicelockcontroller.receivers;
 
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -48,13 +50,13 @@ public final class BootUtilsTest {
     public void startLockTaskModeAtBoot_success() {
         when(mStateController.isLocked()).thenReturn(true);
         BootUtils.startLockTaskModeAtBoot(mTestApplication);
-        verify(mPolicyController).enqueueStartLockTaskModeWorker();
+        verify(mPolicyController).enqueueStartLockTaskModeWorker(eq(true));
     }
 
     @Test
     public void startLockTaskModeAtBoot_deviceIsNotLocked_doesNotLaunchActivityInLockedMode() {
         when(mStateController.isLocked()).thenReturn(false);
         BootUtils.startLockTaskModeAtBoot(mTestApplication);
-        verify(mPolicyController, never()).enqueueStartLockTaskModeWorker();
+        verify(mPolicyController, never()).enqueueStartLockTaskModeWorker(anyBoolean());
     }
 }
