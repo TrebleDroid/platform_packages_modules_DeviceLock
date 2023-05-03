@@ -18,6 +18,7 @@ package com.android.devicelockcontroller.receivers;
 
 import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -57,6 +58,6 @@ public class LockTaskBootCompletedReceiverTest {
     public void onReceive_startLockTaskMode() {
         mLockTaskBootCompletedReceiver.onReceive(mTestApplication, BOOT_COMPLETED_INTENT);
 
-        verify(mPolicyController).enqueueStartLockTaskModeWorker();
+        verify(mPolicyController).enqueueStartLockTaskModeWorker(eq(true));
     }
 }
