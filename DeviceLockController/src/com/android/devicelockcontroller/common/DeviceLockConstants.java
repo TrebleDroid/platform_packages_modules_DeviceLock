@@ -136,6 +136,8 @@ public final class DeviceLockConstants {
     public static final String EXTRA_TERMS_AND_CONDITIONS_URL =
             "com.android.devicelockcontroller.TERMS_AND_CONDITIONS_URL";
 
+    public static final String EXTRA_SUPPORT_URL = "com.android.devicelockcontroller.SUPPORT_URL";
+
     public static final String ACTION_START_DEVICE_FINANCING_PROVISIONING =
             "com.android.devicelockcontroller.action.START_DEVICE_FINANCING_PROVISIONING";
     public static final String ACTION_START_DEVICE_FINANCING_DEFERRED_PROVISIONING =
