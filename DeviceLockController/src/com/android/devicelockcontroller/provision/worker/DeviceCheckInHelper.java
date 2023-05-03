@@ -42,10 +42,11 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.OutOfQuotaPolicy;
 import androidx.work.WorkManager;
 
-import com.android.devicelockcontroller.DeviceLockControllerApplication;
 import com.android.devicelockcontroller.R;
 import com.android.devicelockcontroller.common.DeviceId;
+import com.android.devicelockcontroller.policy.DevicePolicyController;
 import com.android.devicelockcontroller.policy.DeviceStateController;
+import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
 import com.android.devicelockcontroller.policy.StateTransitionException;
 import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrpcResponse;
 import com.android.devicelockcontroller.provision.grpc.ProvisioningConfiguration;
@@ -166,10 +167,12 @@ public final class DeviceCheckInHelper extends AbstractDeviceCheckInHelper {
         LogUtil.d(TAG, "check in succeed: " + response.getDeviceCheckInStatus());
         switch (response.getDeviceCheckInStatus()) {
             case READY_FOR_PROVISION:
+                PolicyObjectsInterface policies =
+                        (PolicyObjectsInterface) mAppContext.getApplicationContext();
                 return handleProvisionReadyResponse(
                         response,
-                        ((DeviceLockControllerApplication) mAppContext.getApplicationContext())
-                                .getStateController());
+                        policies.getStateController(),
+                        policies.getPolicyController());
             case RETRY_CHECK_IN:
                 Instant nextCheckinTime = response.getNextCheckInTime();
 
@@ -197,7 +200,8 @@ public final class DeviceCheckInHelper extends AbstractDeviceCheckInHelper {
     @VisibleForTesting
     boolean handleProvisionReadyResponse(
             @NonNull GetDeviceCheckInStatusGrpcResponse response,
-            DeviceStateController stateController) {
+            DeviceStateController stateController,
+            DevicePolicyController devicePolicyController) {
         UserPreferences.setProvisionForced(mAppContext, response.isProvisionForced());
         final ProvisioningConfiguration configuration = response.getProvisioningConfig();
         if (configuration == null) {
@@ -217,6 +221,8 @@ public final class DeviceCheckInHelper extends AbstractDeviceCheckInHelper {
                         String.format(Locale.US,
                                 "State transition succeeded for event: %s",
                                 DeviceStateController.eventToString(PROVISIONING_SUCCESS)));
+                devicePolicyController.enqueueStartLockTaskModeWorker(
+                        response.isProvisioningMandatory());
             }
 
             @Override
@@ -244,12 +250,6 @@ public final class DeviceCheckInHelper extends AbstractDeviceCheckInHelper {
                                 e);
                     }
                 });
-
-        // We are only handling the non-mandatory provision case here. For mandatory
-        // provision, we will handle when receiving the intent after SUW completed.
-        if (!response.isProvisioningMandatory()) {
-            // TODO(b/272497885): Schedule to launch the provision activity at some time.
-        }
         return true;
     }
 }
