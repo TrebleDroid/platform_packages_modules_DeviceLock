@@ -18,6 +18,8 @@ package com.android.devicelockcontroller.receivers;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -67,7 +69,7 @@ public class DlcLockedBootCompletedReceiverTest {
 
         DlcLockedBootCompletedReceiver.startLockTaskModeIfApplicable(mTestApplication);
 
-        verify(mPolicyController, never()).enqueueStartLockTaskModeWorker();
+        verify(mPolicyController, never()).enqueueStartLockTaskModeWorker(anyBoolean());
 
         final ComponentName componentName =
                 new ComponentName(mTestApplication, LockTaskBootCompletedReceiver.class);
@@ -85,7 +87,7 @@ public class DlcLockedBootCompletedReceiverTest {
 
         DlcLockedBootCompletedReceiver.startLockTaskModeIfApplicable(mTestApplication);
 
-        verify(mPolicyController).enqueueStartLockTaskModeWorker();
+        verify(mPolicyController).enqueueStartLockTaskModeWorker(eq(true));
 
         final ComponentName componentName =
                 new ComponentName(mTestApplication, LockTaskBootCompletedReceiver.class);
