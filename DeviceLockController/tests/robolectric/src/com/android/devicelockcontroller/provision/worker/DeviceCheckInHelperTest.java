@@ -45,6 +45,7 @@ import androidx.work.testing.WorkManagerTestInitHelper;
 import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
 import com.android.devicelockcontroller.common.DeviceId;
 import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceCheckInStatus;
+import com.android.devicelockcontroller.policy.DevicePolicyController;
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent;
 import com.android.devicelockcontroller.policy.StateTransitionException;
@@ -79,6 +80,7 @@ import java.util.concurrent.TimeoutException;
 @RunWith(RobolectricTestRunner.class)
 public final class DeviceCheckInHelperTest {
     static final Duration TEST_CHECK_RETRY_DURATION = Duration.ofDays(30);
+    public static final boolean IS_PROVISIONING_MANDATORY = false;
     private TestDeviceLockControllerApplication mTestApplication;
     static final int TOTAL_SLOT_COUNT = 2;
     static final int TOTAL_ID_COUNT = 4;
@@ -154,16 +156,20 @@ public final class DeviceCheckInHelperTest {
     }
 
     @Test
-    public void testHandleProvisionReadyResponse_validConfiguration_shouldSetState()
+    public void
+            testHandleProvisionReadyResponse_validConfiguration_shouldSetStateAndStartLockTaskMode()
             throws StateTransitionException {
         GetDeviceCheckInStatusGrpcResponse response = createReadyResponse(TEST_CONFIGURATION);
         DeviceStateController stateController = mTestApplication.getStateController();
+        DevicePolicyController policyController = mTestApplication.getPolicyController();
         when(stateController.setNextStateForEvent(DeviceEvent.PROVISIONING_SUCCESS)).thenReturn(
                 Futures.immediateVoidFuture());
 
-        assertThat(mHelper.handleProvisionReadyResponse(response, stateController)).isTrue();
+        assertThat(mHelper.handleProvisionReadyResponse(
+                response, stateController, policyController)).isTrue();
 
         verify(stateController).setNextStateForEvent(eq(DeviceEvent.PROVISIONING_SUCCESS));
+        verify(policyController).enqueueStartLockTaskModeWorker(eq(IS_PROVISIONING_MANDATORY));
         assertThat(UserPreferences.needCheckIn(mTestApplication)).isFalse();
     }
 
@@ -173,8 +179,10 @@ public final class DeviceCheckInHelperTest {
         GetDeviceCheckInStatusGrpcResponse response = createReadyResponse(
                 /* configuration= */ null);
         DeviceStateController stateController = mTestApplication.getStateController();
+        DevicePolicyController policyController = mTestApplication.getPolicyController();
 
-        assertThat(mHelper.handleProvisionReadyResponse(response, stateController)).isFalse();
+        assertThat(mHelper.handleProvisionReadyResponse(
+                response, stateController, policyController)).isFalse();
 
         verify(stateController, never()).setNextStateForEvent(eq(DeviceEvent.PROVISIONING_SUCCESS));
     }
@@ -213,12 +221,13 @@ public final class DeviceCheckInHelperTest {
             @Nullable Instant nextCheckInTime, @Nullable ProvisioningConfiguration config) {
         GetDeviceCheckInStatusGrpcResponse response = Mockito.mock(
                 GetDeviceCheckInStatusGrpcResponse.class);
-        Mockito.when(response.getDeviceCheckInStatus()).thenReturn(checkInStatus);
+        when(response.getDeviceCheckInStatus()).thenReturn(checkInStatus);
+        when(response.isProvisioningMandatory()).thenReturn(IS_PROVISIONING_MANDATORY);
         if (nextCheckInTime != null) {
-            Mockito.when(response.getNextCheckInTime()).thenReturn(nextCheckInTime);
+            when(response.getNextCheckInTime()).thenReturn(nextCheckInTime);
         }
         if (config != null) {
-            Mockito.when(response.getProvisioningConfig()).thenReturn(config);
+            when(response.getProvisioningConfig()).thenReturn(config);
         }
         return response;
     }
