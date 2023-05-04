@@ -105,7 +105,8 @@ public final class DeviceCheckInHelperTest {
             /* kioskAppEnableOutgoingCalls= */ false,
             /* kioskAppEnableEnableNotifications= */ true,
             /* disallowInstallingFromUnknownSources= */ false,
-            /* termsAndConditionsUrl= */ "test_terms_and_configurations_url"
+            /* termsAndConditionsUrl= */ "test_terms_and_configurations_url",
+            /* supportUrl= */ "test_support_url"
     );
     static final int DEVICE_ID_TYPE_BITMAP =
             (1 << DEVICE_ID_TYPE_IMEI) | (1 << DEVICE_ID_TYPE_MEID);
