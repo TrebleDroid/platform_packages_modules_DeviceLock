@@ -73,4 +73,7 @@ message ConfigurationInfo {
 
   // The URL to the Terms and Conditions of the partner for enrolling in a Device Lock program.
   optional string terms_and_conditions_url = 10;
+
+  // The URL to the support page the user can use to get help.
+  optional string support_url = 11;
 }
