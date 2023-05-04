@@ -25,6 +25,7 @@ import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_PACKAGE;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_SETUP_ACTIVITY;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_SIGNATURE_CHECKSUM;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_SUPPORT_URL;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_TERMS_AND_CONDITIONS_URL;
 
 import android.os.Bundle;
@@ -67,12 +68,16 @@ public final class ProvisioningConfiguration {
     // Device Lock program.
     private final String mTermsAndConditionsUrl;
 
+    // The URL to the support page the user can use to get help.
+    private final String mSupportUrl;
+
     public ProvisioningConfiguration(
             String kioskAppDownloadUrl, String kioskAppProviderName,
             String kioskAppPackageName, String kioskAppSignatureChecksum,
             String kioskAppMainActivity, List<String> kioskAppAllowlistPackages,
             boolean kioskAppEnableOutgoingCalls, boolean kioskAppEnableEnableNotifications,
-            boolean disallowInstallingFromUnknownSources, String termsAndConditionsUrl) {
+            boolean disallowInstallingFromUnknownSources, String termsAndConditionsUrl,
+            String supportUrl) {
         mKioskAppDownloadUrl = kioskAppDownloadUrl;
         mKioskAppProviderName = kioskAppProviderName;
         mKioskAppPackageName = kioskAppPackageName;
@@ -83,6 +88,7 @@ public final class ProvisioningConfiguration {
         mKioskAppEnableEnableNotifications = kioskAppEnableEnableNotifications;
         mDisallowInstallingFromUnknownSources = disallowInstallingFromUnknownSources;
         mTermsAndConditionsUrl = termsAndConditionsUrl;
+        mSupportUrl = supportUrl;
     }
 
     /**
@@ -103,6 +109,7 @@ public final class ProvisioningConfiguration {
         bundle.putBoolean(EXTRA_DISALLOW_INSTALLING_FROM_UNKNOWN_SOURCES,
                 mDisallowInstallingFromUnknownSources);
         bundle.putString(EXTRA_TERMS_AND_CONDITIONS_URL, mTermsAndConditionsUrl);
+        bundle.putString(EXTRA_SUPPORT_URL, mSupportUrl);
         return bundle;
     }
 }
