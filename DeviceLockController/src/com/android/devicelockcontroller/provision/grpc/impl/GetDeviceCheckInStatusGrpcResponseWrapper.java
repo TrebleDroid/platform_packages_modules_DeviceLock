@@ -20,8 +20,6 @@ import static com.android.devicelockcontroller.common.DeviceLockConstants.READY_
 import static com.android.devicelockcontroller.common.DeviceLockConstants.RETRY_CHECK_IN;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.STATUS_UNSPECIFIED;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.STOP_CHECK_IN;
-import static com.android.devicelockcontroller.common.DeviceLockConstants.TYPE_FINANCED;
-import static com.android.devicelockcontroller.common.DeviceLockConstants.TYPE_UNDEFINED;
 import static com.android.devicelockcontroller.proto.DeviceProvisionType.DEVICE_PROVISION_TYPE_MANDATORY;
 
 import androidx.annotation.NonNull;
@@ -125,15 +123,15 @@ final class GetDeviceCheckInStatusGrpcResponseWrapper extends GetDeviceCheckInSt
     @ProvisioningType
     public int getProvisioningType() {
         if (mResponse == null || !mNextStep.isDeviceProvisioningInformationAvailable()) {
-            return TYPE_UNDEFINED;
+            return ProvisioningType.TYPE_UNDEFINED;
         }
 
         switch (mNextStep.getDeviceProvisioningInformation().getConfigurationType()) {
             case CONFIGURATION_TYPE_FINANCED:
-                return TYPE_FINANCED;
+                return ProvisioningType.TYPE_FINANCED;
             case CONFIGURATION_TYPE_UNSPECIFIED:
             default:
-                return TYPE_UNDEFINED;
+                return ProvisioningType.TYPE_UNDEFINED;
         }
     }
 
