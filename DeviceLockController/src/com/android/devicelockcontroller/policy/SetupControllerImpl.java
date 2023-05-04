@@ -187,14 +187,18 @@ public final class SetupControllerImpl implements SetupController {
                 .call(() -> {
                     LogUtil.v(TAG, "Installing kiosk app from play");
 
+                    final String kioskPackageName = Futures.getDone(getPackageNameTask);
+
                     final OneTimeWorkRequest playInstallPackageTask =
-                            getPlayInstallPackageTask(playInstallTaskClass,
-                                    Futures.getDone(getPackageNameTask));
+                            getPlayInstallPackageTask(playInstallTaskClass, kioskPackageName);
                     final OneTimeWorkRequest verifyInstallPackageTask =
-                            getVerifyInstalledPackageTask(Futures.getDone(getPackageNameTask),
+                            getVerifyInstalledPackageTask(kioskPackageName,
                                     Futures.getDone(getKioskSignatureChecksumTask));
+                    final OneTimeWorkRequest addFinancedDeviceKioskRoleTask =
+                            getAddFinancedDeviceKioskRoleTask(kioskPackageName);
                     createAndRunTasks(workManager, owner, SETUP_PLAY_INSTALL_TASKS_NAME,
-                            playInstallPackageTask, verifyInstallPackageTask);
+                            playInstallPackageTask, verifyInstallPackageTask,
+                            addFinancedDeviceKioskRoleTask);
                     return null;
                 }, MoreExecutors.directExecutor());
     }
@@ -213,18 +217,22 @@ public final class SetupControllerImpl implements SetupController {
                         kioskSignatureChecksumTask,
                         kioskDownloadUrlTask)
                 .call(() -> {
-                    OneTimeWorkRequest verifyDownloadPackageTask = getVerifyDownloadPackageTask(
-                            Futures.getDone(kioskPackageTask),
+                    final String kioskPackageName = Futures.getDone(kioskPackageTask);
+                    final OneTimeWorkRequest verifyDownloadPackageTask =
+                            getVerifyDownloadPackageTask(kioskPackageName,
                             Futures.getDone(kioskSignatureChecksumTask));
-                    OneTimeWorkRequest downloadPackageTask = getDownloadPackageTask(
-                            Futures.getDone(kioskDownloadUrlTask));
-                    OneTimeWorkRequest verifyInstallPackageTask =
-                            getVerifyInstalledPackageTask(Futures.getDone(kioskPackageTask),
+                    final OneTimeWorkRequest downloadPackageTask =
+                            getDownloadPackageTask(Futures.getDone(kioskDownloadUrlTask));
+                    final OneTimeWorkRequest verifyInstallPackageTask =
+                            getVerifyInstalledPackageTask(kioskPackageName,
                                     Futures.getDone(kioskSignatureChecksumTask));
+                    final OneTimeWorkRequest addFinancedDeviceKioskRoleTask =
+                            getAddFinancedDeviceKioskRoleTask(kioskPackageName);
                     createAndRunTasks(workManager, owner, SETUP_URL_INSTALL_TASKS_NAME,
                             verifyDownloadPackageTask,
                             downloadPackageTask,
-                            verifyInstallPackageTask);
+                            verifyInstallPackageTask,
+                            addFinancedDeviceKioskRoleTask);
                     return null;
                 }, MoreExecutors.directExecutor());
     }
@@ -238,11 +246,14 @@ public final class SetupControllerImpl implements SetupController {
                 setupParametersClient.getKioskSignatureChecksum();
         return Futures.whenAllSucceed(kioskPackageTask, kioskSignatureChecksumTask)
                 .call(() -> {
+                    final String kioskPackageName = Futures.getDone(kioskPackageTask);
+
                     createAndRunTasks(workManager, owner, SETUP_INSTALL_EXISTING_PACKAGE_TASK,
                             getInstallExistingPackageTask(Futures.getDone(kioskPackageTask)),
                             getVerifyInstalledPackageTask(
-                                    Futures.getDone(kioskPackageTask), Futures.getDone(
-                                            kioskSignatureChecksumTask)));
+                                    kioskPackageName,
+                                    Futures.getDone(kioskSignatureChecksumTask)),
+                            getAddFinancedDeviceKioskRoleTask(kioskPackageName));
                     return null;
                 }, MoreExecutors.directExecutor());
     }
@@ -320,6 +331,13 @@ public final class SetupControllerImpl implements SetupController {
                 playInstallTaskClass).setInputData(
                 new Data.Builder().putString(
                         EXTRA_KIOSK_PACKAGE, kioskPackageName).build()).build();
+    }
+
+    @NonNull
+    private static OneTimeWorkRequest getAddFinancedDeviceKioskRoleTask(String kioskPackageName) {
+        return new OneTimeWorkRequest.Builder(AddFinancedDeviceKioskRoleTask.class)
+                .setInputData(new Data.Builder().putString(EXTRA_KIOSK_PACKAGE,
+                        kioskPackageName).build()).build();
     }
 
     private void createAndRunTasks(WorkManager workManager, LifecycleOwner owner,
