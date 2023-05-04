@@ -21,6 +21,7 @@ import android.content.Context;
 import androidx.annotation.VisibleForTesting;
 
 import com.android.devicelockcontroller.storage.GlobalParameters;
+import com.android.devicelockcontroller.storage.UserParameters;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import com.google.common.util.concurrent.Futures;
@@ -46,7 +47,7 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
      * @param context The context used for the state machine.
      */
     public DeviceStateControllerImpl(Context context) {
-        mState = GlobalParameters.getDeviceState(context);
+        mState = UserParameters.getDeviceState(context);
         LogUtil.i(TAG, String.format(Locale.US, "Starting state is %d", mState));
         mContext = context;
     }
@@ -168,7 +169,7 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
     }
 
     private void updateState(@DeviceState int newState) {
-        GlobalParameters.setDeviceState(mContext, newState);
+        UserParameters.setDeviceState(mContext, newState);
         mState = newState;
     }
 }

@@ -22,8 +22,6 @@ import android.content.Context;
 
 import androidx.test.core.app.ApplicationProvider;
 
-import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,28 +31,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RunWith(RobolectricTestRunner.class)
-public class GlobalParametersTest extends AbstractGlobalParametersTestBase {
+public final class GlobalParametersTest extends AbstractGlobalParametersTestBase {
     private Context mContext;
 
     @Before
     public void setup() {
         mContext = ApplicationProvider.getApplicationContext();
-    }
-
-    @Test
-    public void getDeviceState_shouldReturnExpectedCurrentDeviceState() {
-        assertThat(GlobalParameters.getDeviceState(mContext)).isEqualTo(DeviceState.UNPROVISIONED);
-        GlobalParameters.setDeviceState(mContext, DeviceState.SETUP_SUCCEEDED);
-        assertThat(GlobalParameters.getDeviceState(mContext)).isEqualTo(
-                DeviceState.SETUP_SUCCEEDED);
-    }
-
-    @Test
-    public void getPackageOverridingHome_shouldReturnExpectedOverridingHomePackage() {
-        assertThat(GlobalParameters.getPackageOverridingHome(mContext)).isNull();
-        GlobalParameters.setPackageOverridingHome(mContext, PACKAGE_OVERRIDING_HOME);
-        assertThat(GlobalParameters.getPackageOverridingHome(mContext))
-                .isEqualTo(PACKAGE_OVERRIDING_HOME);
     }
 
     @Test
@@ -67,4 +49,52 @@ public class GlobalParametersTest extends AbstractGlobalParametersTestBase {
         final List<String> actualAllowlist = GlobalParameters.getLockTaskAllowlist(mContext);
         assertThat(actualAllowlist).containsExactlyElementsIn(expectedAllowlist);
     }
+
+    @Test
+    public void getKioskSigningCertificate_shouldReturnExpectedResult() {
+        assertThat(GlobalParameters.getKioskSignature(mContext)).isNull();
+
+        GlobalParameters.setKioskSignature(mContext, KIOSK_SIGNING_CERT);
+
+        assertThat(GlobalParameters.getKioskSignature(mContext)).isEqualTo(KIOSK_SIGNING_CERT);
+    }
+
+    @Test
+    public void needCheckIn_shouldReturnExpectedResult() {
+        assertThat(GlobalParameters.needCheckIn(mContext)).isNotEqualTo(NEED_CHECK_IN);
+
+        GlobalParameters.setNeedCheckIn(mContext, NEED_CHECK_IN);
+
+        assertThat(GlobalParameters.needCheckIn(mContext)).isEqualTo(NEED_CHECK_IN);
+    }
+
+    @Test
+    public void getRegisteredId_shouldReturnExpectedResult() {
+        assertThat(GlobalParameters.getRegisteredDeviceId(mContext)).isNull();
+
+        GlobalParameters.setRegisteredDeviceId(mContext, REGISTERED_DEVICE_ID);
+
+        assertThat(GlobalParameters.getRegisteredDeviceId(mContext)).isEqualTo(
+                REGISTERED_DEVICE_ID);
+    }
+
+    @Test
+    public void isProvisionForced_shouldReturnExpectedResult() {
+        assertThat(GlobalParameters.isProvisionForced(mContext)).isNotEqualTo(FORCED_PROVISION);
+
+        GlobalParameters.setProvisionForced(mContext, FORCED_PROVISION);
+
+        assertThat(GlobalParameters.isProvisionForced(mContext)).isEqualTo(FORCED_PROVISION);
+    }
+
+    @Test
+    public void getEnrollmentToken_shouldReturnExpectedResult() {
+        assertThat(GlobalParameters.getEnrollmentToken(mContext)).isNull();
+
+        GlobalParameters.setEnrollmentToken(mContext, ENROLLMENT_TOKEN);
+
+        assertThat(GlobalParameters.getEnrollmentToken(mContext)).isEqualTo(ENROLLMENT_TOKEN);
+    }
+
+
 }
