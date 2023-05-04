@@ -62,6 +62,8 @@ public abstract class AbstractTask extends ListenableWorker {
     static final int ERROR_CODE_DELETE_APK_FAILED = 30;
     // Error code for install existing package
     static final int ERROR_CODE_NO_PACKAGE_NAME = 40;
+    // Error code for add financed device kiosk role
+    static final int ERROR_CODE_ADD_FINANCED_DEVICE_KIOSK_FAILED = 50;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({
@@ -84,7 +86,8 @@ public abstract class AbstractTask extends ListenableWorker {
             ERROR_CODE_INSTALLATION_FAILED,
             ERROR_CODE_GET_PENDING_INTENT_FAILED,
             ERROR_CODE_DELETE_APK_FAILED,
-            ERROR_CODE_NO_PACKAGE_NAME
+            ERROR_CODE_NO_PACKAGE_NAME,
+            ERROR_CODE_ADD_FINANCED_DEVICE_KIOSK_FAILED
     })
     @interface ErrorCode {}
 
