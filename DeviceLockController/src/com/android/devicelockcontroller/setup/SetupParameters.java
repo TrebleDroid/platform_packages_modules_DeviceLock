@@ -29,7 +29,7 @@ import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_PROVISIONING_TYPE;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_SUPPORT_URL;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_TERMS_AND_CONDITIONS_URL;
-import static com.android.devicelockcontroller.common.DeviceLockConstants.TYPE_UNDEFINED;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.ProvisioningType.TYPE_UNDEFINED;
 
 import android.content.Context;
 import android.content.SharedPreferences;
