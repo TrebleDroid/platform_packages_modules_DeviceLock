@@ -117,7 +117,8 @@ final class GetDeviceCheckInStatusGrpcResponseWrapper extends GetDeviceCheckInSt
                 info.getKioskAppEnableOutgoingCalls(),
                 info.getKioskAppEnableNotifications(),
                 info.getDisallowInstallingFromUnknownSources(),
-                info.getTermsAndConditionsUrl());
+                info.getTermsAndConditionsUrl(),
+                info.getSupportUrl());
     }
 
     @Override
