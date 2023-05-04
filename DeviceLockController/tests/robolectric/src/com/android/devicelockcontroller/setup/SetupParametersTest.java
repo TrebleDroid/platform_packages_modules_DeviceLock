@@ -65,6 +65,7 @@ public final class SetupParametersTest extends AbstractSetupParametersTestBase {
         assertThat(SetupParameters.isInstallingFromUnknownSourcesDisallowed(mContext)).isTrue();
         assertThat(SetupParameters.getTermsAndConditionsUrl(mContext))
                 .isEqualTo(TERMS_AND_CONDITIONS_URL);
+        assertThat(SetupParameters.getSupportUrl(mContext)).isEqualTo(SUPPORT_URL);
     }
 
     @Test
