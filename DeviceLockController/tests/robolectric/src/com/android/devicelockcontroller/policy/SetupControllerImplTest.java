@@ -67,8 +67,8 @@ import androidx.work.testing.WorkManagerTestInitHelper;
 import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
-import com.android.devicelockcontroller.setup.SetupParametersClient;
-import com.android.devicelockcontroller.setup.SetupParametersService;
+import com.android.devicelockcontroller.storage.SetupParametersClient;
+import com.android.devicelockcontroller.storage.SetupParametersService;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;

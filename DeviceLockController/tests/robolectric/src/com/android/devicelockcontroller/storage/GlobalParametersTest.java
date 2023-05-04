@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.devicelockcontroller.setup;
+package com.android.devicelockcontroller.storage;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RunWith(RobolectricTestRunner.class)
-public class UserPreferencesTest extends AbstractUserPreferencesTestBase {
+public class GlobalParametersTest extends AbstractGlobalParametersTestBase {
     private Context mContext;
 
     @Before
@@ -43,27 +43,28 @@ public class UserPreferencesTest extends AbstractUserPreferencesTestBase {
 
     @Test
     public void getDeviceState_shouldReturnExpectedCurrentDeviceState() {
-        assertThat(UserPreferences.getDeviceState(mContext)).isEqualTo(DeviceState.UNPROVISIONED);
-        UserPreferences.setDeviceState(mContext, DeviceState.SETUP_SUCCEEDED);
-        assertThat(UserPreferences.getDeviceState(mContext)).isEqualTo(DeviceState.SETUP_SUCCEEDED);
+        assertThat(GlobalParameters.getDeviceState(mContext)).isEqualTo(DeviceState.UNPROVISIONED);
+        GlobalParameters.setDeviceState(mContext, DeviceState.SETUP_SUCCEEDED);
+        assertThat(GlobalParameters.getDeviceState(mContext)).isEqualTo(
+                DeviceState.SETUP_SUCCEEDED);
     }
 
     @Test
     public void getPackageOverridingHome_shouldReturnExpectedOverridingHomePackage() {
-        assertThat(UserPreferences.getPackageOverridingHome(mContext)).isNull();
-        UserPreferences.setPackageOverridingHome(mContext, PACKAGE_OVERRIDING_HOME);
-        assertThat(UserPreferences.getPackageOverridingHome(mContext))
+        assertThat(GlobalParameters.getPackageOverridingHome(mContext)).isNull();
+        GlobalParameters.setPackageOverridingHome(mContext, PACKAGE_OVERRIDING_HOME);
+        assertThat(GlobalParameters.getPackageOverridingHome(mContext))
                 .isEqualTo(PACKAGE_OVERRIDING_HOME);
     }
 
     @Test
     public void getLockTaskAllowlist_shouldReturnExpectedAllowlist() {
-        assertThat(UserPreferences.getLockTaskAllowlist(mContext)).isEmpty();
+        assertThat(GlobalParameters.getLockTaskAllowlist(mContext)).isEmpty();
         final ArrayList<String> expectedAllowlist = new ArrayList<>();
         expectedAllowlist.add(ALLOWLIST_PACKAGE_0);
         expectedAllowlist.add(ALLOWLIST_PACKAGE_1);
-        UserPreferences.setLockTaskAllowlist(mContext, expectedAllowlist);
-        final List<String> actualAllowlist = UserPreferences.getLockTaskAllowlist(mContext);
+        GlobalParameters.setLockTaskAllowlist(mContext, expectedAllowlist);
+        final List<String> actualAllowlist = GlobalParameters.getLockTaskAllowlist(mContext);
         assertThat(actualAllowlist).containsExactlyElementsIn(expectedAllowlist);
     }
 }
