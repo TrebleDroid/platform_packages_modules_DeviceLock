@@ -143,8 +143,16 @@
             </intent-filter>
         </activity-alias>
 
-        <!-- b/267355744: Disable the default initializer used by WorkManager, so that we can ensure
-             WorkManager is initialized when needed. -->
+        <activity
+            android:name="com.android.devicelockcontroller.activities.DeviceLockSettingsActivity"
+            android:theme="@style/Theme.Materialu"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.android.devicelockcontroller.action.DEVICE_INFO_SETTINGS"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
