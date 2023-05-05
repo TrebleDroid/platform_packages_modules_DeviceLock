@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.android.devicelockcontroller.setup;
+package com.android.devicelockcontroller.storage;
 
-abstract class AbstractUserPreferencesTestBase {
+abstract class AbstractGlobalParametersTestBase {
     protected static final String ALLOWLIST_PACKAGE_0 = "allowlist.package.0";
     protected static final String ALLOWLIST_PACKAGE_1 = "allowlist.package.1";
     protected static final String PACKAGE_OVERRIDING_HOME = "com.home.package";

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.devicelockcontroller.setup;
+package com.android.devicelockcontroller.storage;
 
 import static com.google.common.truth.Truth.assertThat;
 

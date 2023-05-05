@@ -38,7 +38,7 @@ import static com.android.devicelockcontroller.policy.DeviceStateController.Devi
 import androidx.test.core.app.ApplicationProvider;
 
 import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
-import com.android.devicelockcontroller.setup.UserPreferences;
+import com.android.devicelockcontroller.storage.GlobalParameters;
 
 import com.google.common.truth.Truth;
 
@@ -93,7 +93,7 @@ public class DeviceStateControllerStateTransitionTest {
     public void setup() {
         TestDeviceLockControllerApplication testApplication =
                 ApplicationProvider.getApplicationContext();
-        UserPreferences.setDeviceState(testApplication, mState);
+        GlobalParameters.setDeviceState(testApplication, mState);
         mDeviceStateController = new DeviceStateControllerImpl(testApplication);
     }
 
