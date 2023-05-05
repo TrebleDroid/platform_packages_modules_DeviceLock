@@ -28,7 +28,7 @@ import java.lang.annotation.RetentionPolicy;
  * Controller managing communication between setup tasks and UI layer.
  *
  * Note that some APIs return a listenable future because the underlying calls to
- * {@link com.android.devicelockcontroller.setup.SetupParametersClient} return a listenable future
+ * {@link com.android.devicelockcontroller.storage.SetupParametersClient} return a listenable future
  * for inter process calls.
  */
 public interface SetupController {
