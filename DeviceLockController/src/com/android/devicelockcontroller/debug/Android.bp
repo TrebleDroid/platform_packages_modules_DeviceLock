@@ -14,6 +14,13 @@
 // limitations under the License.
 //
 
+package {
+    default_applicable_licenses: [
+        "Android-Apache-2.0",
+        "packages_modules_DeviceLock_DeviceLockController_license",
+    ],
+}
+
 android_library {
     name: "devicelockcontroller-debug-lib",
     srcs: ["**/*.java"],

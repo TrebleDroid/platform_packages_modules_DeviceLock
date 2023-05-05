@@ -15,6 +15,13 @@
 //
 
 // Generate gRPC client code
+package {
+    default_applicable_licenses: [
+        "Android-Apache-2.0",
+        "packages_modules_DeviceLock_DeviceLockController_license",
+    ],
+}
+
 LITE_PROTO_CMD = "mkdir -p $(genDir)/gen && " +
     "$(location aprotoc) --java_opt=annotate_code=false " +
     "-Iexternal/protobuf/src -Ipackages/modules/DeviceLock/DeviceLockController/proto " +
