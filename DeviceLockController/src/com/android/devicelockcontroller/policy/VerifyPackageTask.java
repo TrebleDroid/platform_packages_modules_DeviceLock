@@ -34,7 +34,7 @@ import androidx.annotation.VisibleForTesting;
 import androidx.work.Data;
 import androidx.work.WorkerParameters;
 
-import com.android.devicelockcontroller.setup.UserPreferences;
+import com.android.devicelockcontroller.storage.GlobalParameters;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -144,7 +144,7 @@ public final class VerifyPackageTask extends AbstractTask {
                     // before the apk is installed, if we need to verify the package later, we need
                     // to retrieve all signatures and compare each of them with the one we saved
                     // here.
-                    UserPreferences.setKioskSignature(mContext, signatures[0].toCharsString());
+                    GlobalParameters.setKioskSignature(mContext, signatures[0].toCharsString());
 
                     // need to pass the file location to next task
                     final Data data = new Data.Builder()

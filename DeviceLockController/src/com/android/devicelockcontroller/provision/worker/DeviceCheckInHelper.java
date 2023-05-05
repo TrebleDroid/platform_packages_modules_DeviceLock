@@ -50,8 +50,8 @@ import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
 import com.android.devicelockcontroller.policy.StateTransitionException;
 import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrpcResponse;
 import com.android.devicelockcontroller.provision.grpc.ProvisioningConfiguration;
-import com.android.devicelockcontroller.setup.SetupParametersClient;
-import com.android.devicelockcontroller.setup.UserPreferences;
+import com.android.devicelockcontroller.storage.GlobalParameters;
+import com.android.devicelockcontroller.storage.SetupParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import com.google.common.util.concurrent.FutureCallback;
@@ -162,7 +162,7 @@ public final class DeviceCheckInHelper extends AbstractDeviceCheckInHelper {
     @Override
     boolean handleGetDeviceCheckInStatusResponse(
             @NonNull GetDeviceCheckInStatusGrpcResponse response) {
-        UserPreferences.setRegisteredDeviceId(mAppContext,
+        GlobalParameters.setRegisteredDeviceId(mAppContext,
                 response.getRegisteredDeviceIdentifier());
         LogUtil.d(TAG, "check in succeed: " + response.getDeviceCheckInStatus());
         switch (response.getDeviceCheckInStatus()) {
@@ -188,7 +188,7 @@ public final class DeviceCheckInHelper extends AbstractDeviceCheckInHelper {
                 enqueueDeviceCheckInWork(false, delay);
                 return true;
             case STOP_CHECK_IN:
-                UserPreferences.setNeedCheckIn(mAppContext, false);
+                GlobalParameters.setNeedCheckIn(mAppContext, false);
                 return true;
             case STATUS_UNSPECIFIED:
             default:
@@ -202,7 +202,7 @@ public final class DeviceCheckInHelper extends AbstractDeviceCheckInHelper {
             @NonNull GetDeviceCheckInStatusGrpcResponse response,
             DeviceStateController stateController,
             DevicePolicyController devicePolicyController) {
-        UserPreferences.setProvisionForced(mAppContext, response.isProvisionForced());
+        GlobalParameters.setProvisionForced(mAppContext, response.isProvisionForced());
         final ProvisioningConfiguration configuration = response.getProvisioningConfig();
         if (configuration == null) {
             LogUtil.e(TAG, "Provisioning Configuration is not provided by server!");
@@ -234,7 +234,7 @@ public final class DeviceCheckInHelper extends AbstractDeviceCheckInHelper {
                                 DeviceStateController.eventToString(PROVISIONING_SUCCESS)), t);
             }
         };
-        UserPreferences.setNeedCheckIn(mAppContext, false);
+        GlobalParameters.setNeedCheckIn(mAppContext, false);
         mAppContext.getMainExecutor().execute(
                 () -> {
                     try {

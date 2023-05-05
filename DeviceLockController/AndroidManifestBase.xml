@@ -192,13 +192,13 @@
         </service>
 
         <service
-            android:name="com.android.devicelockcontroller.setup.SetupParametersService"
+            android:name="com.android.devicelockcontroller.storage.SetupParametersService"
             android:directBootAware="true"
             android:exported="false"
             android:singleUser="true" />
 
         <service
-            android:name="com.android.devicelockcontroller.setup.UserPreferencesService"
+            android:name="com.android.devicelockcontroller.storage.GlobalParametersService"
             android:directBootAware="true"
             android:exported="false"
             android:singleUser="true" />

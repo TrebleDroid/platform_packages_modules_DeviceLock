@@ -22,7 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.work.WorkerParameters;
 
 import com.android.devicelockcontroller.provision.grpc.ReportDeviceProvisionCompleteGrpcResponse;
-import com.android.devicelockcontroller.setup.UserPreferences;
+import com.android.devicelockcontroller.storage.GlobalParameters;
 import com.android.devicelockcontroller.util.LogUtil;
 
 /**
@@ -42,7 +42,7 @@ public final class ReportDeviceProvisioningCompleteWorker extends AbstractCheckI
         final ReportDeviceProvisionCompleteGrpcResponse response =
                 mClient.reportDeviceProvisioningComplete();
         if (response.isSuccessful()) {
-            UserPreferences.setEnrollmentToken(mContext, response.getEnrollmentToken());
+            GlobalParameters.setEnrollmentToken(mContext, response.getEnrollmentToken());
             Result.success();
         }
         LogUtil.w(TAG,
