@@ -24,7 +24,7 @@ import androidx.annotation.NonNull;
 import androidx.work.WorkerParameters;
 
 import com.android.devicelockcontroller.provision.grpc.PauseDeviceProvisioningGrpcResponse;
-import com.android.devicelockcontroller.setup.UserPreferences;
+import com.android.devicelockcontroller.storage.GlobalParameters;
 import com.android.devicelockcontroller.util.LogUtil;
 
 /**
@@ -47,7 +47,7 @@ public final class PauseProvisioningWorker extends AbstractCheckInWorker {
                 REASON_UNSPECIFIED);
         PauseDeviceProvisioningGrpcResponse response = mClient.pauseDeviceProvisioning(reason);
         if (response.isSuccessful()) {
-            UserPreferences.setProvisionForced(mContext, response.shouldForceProvisioning());
+            GlobalParameters.setProvisionForced(mContext, response.shouldForceProvisioning());
             return Result.success();
         }
         LogUtil.w(TAG, "Pause provisioning request failed: " + response);
