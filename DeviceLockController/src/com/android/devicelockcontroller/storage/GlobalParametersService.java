@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.devicelockcontroller.setup;
+package com.android.devicelockcontroller.storage;
 
 import android.app.Service;
 import android.content.Context;
@@ -30,85 +30,85 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A class exposing User Preferences as a service.
+ * A class exposing Global Parameters as a service.
  */
-public final class UserPreferencesService extends Service {
-    private static final String TAG = "UserPreferencesService";
+public final class GlobalParametersService extends Service {
+    private static final String TAG = "GlobalParametersService";
 
     private Context mContext;
 
-    private final IUserPreferencesService.Stub mBinder =
-            new IUserPreferencesService.Stub() {
+    private final IGlobalParametersService.Stub mBinder =
+            new IGlobalParametersService.Stub() {
                 @Override
                 @DeviceState
                 public int getDeviceState() {
-                    return UserPreferences.getDeviceState(mContext);
+                    return GlobalParameters.getDeviceState(mContext);
                 }
 
                 @Override
                 public void setDeviceState(@DeviceState int state) {
-                    UserPreferences.setDeviceState(mContext, state);
+                    GlobalParameters.setDeviceState(mContext, state);
                 }
 
                 @Override
                 @Nullable
                 public String getPackageOverridingHome() {
-                    return UserPreferences.getPackageOverridingHome(mContext);
+                    return GlobalParameters.getPackageOverridingHome(mContext);
                 }
 
                 @Override
                 public void setPackageOverridingHome(@Nullable String packageName) {
-                    UserPreferences.setPackageOverridingHome(mContext, packageName);
+                    GlobalParameters.setPackageOverridingHome(mContext, packageName);
                 }
 
                 @Override
                 public List<String> getLockTaskAllowlist() {
-                    return UserPreferences.getLockTaskAllowlist(mContext);
+                    return GlobalParameters.getLockTaskAllowlist(mContext);
                 }
 
                 @Override
                 public void setLockTaskAllowlist(List<String> allowlist) {
-                    UserPreferences.setLockTaskAllowlist(mContext, new ArrayList<>(allowlist));
+                    GlobalParameters.setLockTaskAllowlist(mContext, new ArrayList<>(allowlist));
                 }
 
                 @Override
                 public boolean needCheckIn() {
-                    return UserPreferences.needCheckIn(mContext);
+                    return GlobalParameters.needCheckIn(mContext);
                 }
 
                 @Override
                 public void setNeedCheckIn(boolean needCheckIn) {
-                    UserPreferences.setNeedCheckIn(mContext, needCheckIn);
+                    GlobalParameters.setNeedCheckIn(mContext, needCheckIn);
                 }
 
                 @Override
                 public String getRegisteredDeviceId() {
-                    return UserPreferences.getRegisteredDeviceId(mContext);
+                    return GlobalParameters.getRegisteredDeviceId(mContext);
                 }
 
                 @Override
                 public void setRegisteredDeviceId(String registeredDeviceId) {
-                    UserPreferences.setRegisteredDeviceId(mContext, registeredDeviceId);
+                    GlobalParameters.setRegisteredDeviceId(mContext, registeredDeviceId);
                 }
 
                 @Override
                 public boolean isProvisionForced() {
-                    return UserPreferences.isProvisionForced(mContext);
+                    return GlobalParameters.isProvisionForced(mContext);
                 }
 
                 @Override
                 public void setProvisionForced(boolean isForced) {
-                    UserPreferences.setProvisionForced(mContext, isForced);
+                    GlobalParameters.setProvisionForced(mContext, isForced);
                 }
 
                 @Override
                 public String getEnrollmentToken() {
-                    return UserPreferences.getEnrollmentToken(mContext);
+                    return GlobalParameters.getEnrollmentToken(mContext);
                 }
 
                 @Override
                 public void setEnrollmentToken(String token) {
-                    UserPreferences.setEnrollmentToken(mContext, token);
+                    GlobalParameters.setEnrollmentToken(mContext, token);
                 }
             };
 
