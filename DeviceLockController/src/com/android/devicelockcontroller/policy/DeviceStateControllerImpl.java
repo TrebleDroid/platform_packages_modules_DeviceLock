@@ -18,6 +18,8 @@ package com.android.devicelockcontroller.policy;
 
 import android.content.Context;
 
+import androidx.annotation.VisibleForTesting;
+
 import com.android.devicelockcontroller.setup.UserPreferences;
 import com.android.devicelockcontroller.util.LogUtil;
 
@@ -105,26 +107,35 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
         }
     }
 
+    @VisibleForTesting
     @DeviceState
-    private int getNextState(@DeviceEvent int event) throws StateTransitionException {
-        // TODO: remove the following once state transitions for the LOCK_DEVICE/UNLOCK_DEVICE
-        // events are finalized.
-        final boolean forceLockUnlock = true;
-        // TODO: return proper next state.
+    int getNextState(@DeviceEvent int event) throws StateTransitionException {
         switch (event) {
             case DeviceEvent.PROVISIONING_SUCCESS:
+                if (mState == DeviceState.UNPROVISIONED) {
+                    return DeviceState.SETUP_IN_PROGRESS;
+                }
                 break;
             case DeviceEvent.SETUP_SUCCESS:
+                if (mState == DeviceState.SETUP_IN_PROGRESS) {
+                    return DeviceState.SETUP_SUCCEEDED;
+                }
                 break;
             case DeviceEvent.SETUP_FAILURE:
+                if (mState == DeviceState.SETUP_IN_PROGRESS) {
+                    return DeviceState.SETUP_FAILED;
+                }
                 break;
             case DeviceEvent.SETUP_COMPLETE:
+                if (mState == DeviceState.SETUP_SUCCEEDED) {
+                    return DeviceState.KIOSK_SETUP;
+                }
                 break;
             case DeviceEvent.LOCK_DEVICE:
                 if (mState == DeviceState.UNPROVISIONED || mState == DeviceState.PSEUDO_UNLOCKED) {
                     return DeviceState.PSEUDO_LOCKED;
                 }
-                if (mState == DeviceState.UNLOCKED || forceLockUnlock) {
+                if (mState == DeviceState.UNLOCKED) {
                     return DeviceState.LOCKED;
                 }
                 break;
@@ -132,8 +143,7 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
                 if (mState == DeviceState.PSEUDO_LOCKED) {
                     return DeviceState.PSEUDO_UNLOCKED;
                 }
-                if (mState == DeviceState.LOCKED || mState == DeviceState.KIOSK_SETUP
-                        || forceLockUnlock) {
+                if (mState == DeviceState.LOCKED || mState == DeviceState.KIOSK_SETUP) {
                     return DeviceState.UNLOCKED;
                 }
                 break;
