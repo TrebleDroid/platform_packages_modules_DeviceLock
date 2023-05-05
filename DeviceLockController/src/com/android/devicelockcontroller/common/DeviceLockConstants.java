@@ -82,14 +82,15 @@ public final class DeviceLockConstants {
     @Target(ElementType.TYPE_USE)
     @Retention(RetentionPolicy.SOURCE)
     @IntDef(value = {
-            TYPE_UNDEFINED,
-            TYPE_FINANCED,
+            ProvisioningType.TYPE_UNDEFINED,
+            ProvisioningType.TYPE_FINANCED,
+            ProvisioningType.TYPE_SUBSIDY,
     })
     public @interface ProvisioningType {
+        int TYPE_UNDEFINED = 0;
+        int TYPE_FINANCED = 1;
+        int TYPE_SUBSIDY = 2;
     }
-
-    public static final int TYPE_UNDEFINED = 0;
-    public static final int TYPE_FINANCED = 1;
 
     public static final String EXTRA_KIOSK_PACKAGE =
             "com.android.devicelockcontroller.KIOSK_PACKAGE";
@@ -135,6 +136,8 @@ public final class DeviceLockConstants {
 
     public static final String EXTRA_TERMS_AND_CONDITIONS_URL =
             "com.android.devicelockcontroller.TERMS_AND_CONDITIONS_URL";
+
+    public static final String EXTRA_SUPPORT_URL = "com.android.devicelockcontroller.SUPPORT_URL";
 
     public static final String ACTION_START_DEVICE_FINANCING_PROVISIONING =
             "com.android.devicelockcontroller.action.START_DEVICE_FINANCING_PROVISIONING";
