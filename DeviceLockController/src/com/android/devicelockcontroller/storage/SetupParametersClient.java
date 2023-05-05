@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.devicelockcontroller.setup;
+package com.android.devicelockcontroller.storage;
 
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.concurrent.Executors;
 
 /**
- * Class used to access Setup Parameters from secondary users.
+ * Class used to access Setup Parameters from any users.
  * Storage is hosted by user 0 and is accessed indirectly using a service.
  */
 public final class SetupParametersClient extends DlcClient {

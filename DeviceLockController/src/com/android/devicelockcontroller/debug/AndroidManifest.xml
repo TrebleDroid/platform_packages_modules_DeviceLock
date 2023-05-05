@@ -105,12 +105,12 @@
             tools:replace="android:exported" />
 
         <service
-            android:name="com.android.devicelockcontroller.setup.SetupParametersService"
+            android:name="com.android.devicelockcontroller.storage.SetupParametersService"
             android:exported="true"
             tools:replace="android:exported" />
 
         <service
-            android:name="com.android.devicelockcontroller.setup.UserPreferencesService"
+            android:name="com.android.devicelockcontroller.storage.GlobalParametersService"
             android:exported="true"
             tools:replace="android:exported" />
 

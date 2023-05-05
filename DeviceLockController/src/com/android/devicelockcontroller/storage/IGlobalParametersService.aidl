@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.android.devicelockcontroller.setup;
+package com.android.devicelockcontroller.storage;
 
 /**
- * Binder interface to access user preferences.
+ * Binder interface to access global parameters.
  * {@hide}
  */
-interface IUserPreferencesService {
+interface IGlobalParametersService {
     int getDeviceState();
     void setDeviceState(int state);
     String getPackageOverridingHome();

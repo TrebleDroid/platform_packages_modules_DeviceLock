@@ -42,8 +42,8 @@ import androidx.work.WorkManager;
 
 import com.android.devicelockcontroller.R;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
-import com.android.devicelockcontroller.setup.SetupParametersClient;
-import com.android.devicelockcontroller.setup.UserPreferences;
+import com.android.devicelockcontroller.storage.GlobalParameters;
+import com.android.devicelockcontroller.storage.SetupParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import com.google.common.util.concurrent.Futures;
@@ -113,18 +113,18 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
             return false;
         }
 
-        final String currentPackage = UserPreferences.getPackageOverridingHome(mContext);
+        final String currentPackage = GlobalParameters.getPackageOverridingHome(mContext);
         if (currentPackage != null) {
             mDpm.clearPackagePersistentPreferredActivities(null /* admin */, currentPackage);
         }
         mDpm.addPersistentPreferredActivity(null /* admin */, getHomeIntentFilter(), activity);
-        UserPreferences.setPackageOverridingHome(mContext, activity.getPackageName());
+        GlobalParameters.setPackageOverridingHome(mContext, activity.getPackageName());
 
         return true;
     }
 
     private void updateAllowlist() {
-        ArrayList<String> allowlist = UserPreferences.getLockTaskAllowlist(mContext);
+        ArrayList<String> allowlist = GlobalParameters.getLockTaskAllowlist(mContext);
         if (allowlist.isEmpty()) {
             allowlist = new ArrayList<>(
                     Arrays.asList(
@@ -163,13 +163,13 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
     private @ResultType ListenableFuture<@ResultType Integer> disableLockTaskMode() {
         WorkManager.getInstance(mContext).cancelUniqueWork(START_LOCK_TASK_MODE_WORK_NAME);
 
-        final String currentPackage = UserPreferences.getPackageOverridingHome(mContext);
+        final String currentPackage = GlobalParameters.getPackageOverridingHome(mContext);
         // This will stop the lock task mode
         mDpm.setLockTaskPackages(null /* admin */, new String[0]);
         LogUtil.i(TAG, "Clear Lock task allowlist");
         if (currentPackage != null) {
             mDpm.clearPackagePersistentPreferredActivities(null /* admin */, currentPackage);
-            UserPreferences.setPackageOverridingHome(mContext, null /* packageName */);
+            GlobalParameters.setPackageOverridingHome(mContext, null /* packageName */);
         }
         return Futures.immediateFuture(SUCCESS);
     }
@@ -200,7 +200,7 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
                 () -> {
                     allowlistPackages.add(Futures.getDone(kioskPackageTask));
                     allowlistPackages.addAll(Futures.getDone(kioskAllowlistTask));
-                    UserPreferences.setLockTaskAllowlist(mContext, allowlistPackages);
+                    GlobalParameters.setLockTaskAllowlist(mContext, allowlistPackages);
                     return SUCCESS;
                 },
                 mContext.getMainExecutor());

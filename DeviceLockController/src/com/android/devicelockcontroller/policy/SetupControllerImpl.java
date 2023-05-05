@@ -61,7 +61,7 @@ import com.android.devicelockcontroller.DeviceLockControllerApplication;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
 import com.android.devicelockcontroller.policy.SetupController.SetupUpdatesCallbacks.FailureType;
-import com.android.devicelockcontroller.setup.SetupParametersClient;
+import com.android.devicelockcontroller.storage.SetupParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import com.google.common.util.concurrent.FutureCallback;
