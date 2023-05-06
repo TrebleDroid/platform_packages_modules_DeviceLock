@@ -21,10 +21,6 @@ package com.android.devicelockcontroller.storage;
  * {@hide}
  */
 interface IGlobalParametersService {
-    int getDeviceState();
-    void setDeviceState(int state);
-    String getPackageOverridingHome();
-    void setPackageOverridingHome(in String packageName);
     List<String> getLockTaskAllowlist();
     void setLockTaskAllowlist(in List<String> allowlist);
     boolean needCheckIn();
