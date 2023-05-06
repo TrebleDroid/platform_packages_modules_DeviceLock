@@ -20,7 +20,7 @@ import android.content.Context;
 
 import androidx.annotation.VisibleForTesting;
 
-import com.android.devicelockcontroller.setup.UserPreferences;
+import com.android.devicelockcontroller.storage.GlobalParameters;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import com.google.common.util.concurrent.Futures;
@@ -46,7 +46,7 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
      * @param context The context used for the state machine.
      */
     public DeviceStateControllerImpl(Context context) {
-        mState = UserPreferences.getDeviceState(context);
+        mState = GlobalParameters.getDeviceState(context);
         LogUtil.i(TAG, String.format(Locale.US, "Starting state is %d", mState));
         mContext = context;
     }
@@ -83,7 +83,7 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
 
     @Override
     public boolean isCheckInNeeded() {
-        return mState == DeviceState.UNPROVISIONED && UserPreferences.needCheckIn(mContext);
+        return mState == DeviceState.UNPROVISIONED && GlobalParameters.needCheckIn(mContext);
     }
 
     @Override
@@ -168,7 +168,7 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
     }
 
     private void updateState(@DeviceState int newState) {
-        UserPreferences.setDeviceState(mContext, newState);
+        GlobalParameters.setDeviceState(mContext, newState);
         mState = newState;
     }
 }

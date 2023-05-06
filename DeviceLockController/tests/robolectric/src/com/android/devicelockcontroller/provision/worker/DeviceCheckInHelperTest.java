@@ -51,9 +51,9 @@ import com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent
 import com.android.devicelockcontroller.policy.StateTransitionException;
 import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrpcResponse;
 import com.android.devicelockcontroller.provision.grpc.ProvisioningConfiguration;
-import com.android.devicelockcontroller.setup.SetupParametersClient;
-import com.android.devicelockcontroller.setup.SetupParametersService;
-import com.android.devicelockcontroller.setup.UserPreferences;
+import com.android.devicelockcontroller.storage.GlobalParameters;
+import com.android.devicelockcontroller.storage.SetupParametersClient;
+import com.android.devicelockcontroller.storage.SetupParametersService;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.testing.TestingExecutors;
@@ -153,7 +153,7 @@ public final class DeviceCheckInHelperTest {
 
         assertThat(mHelper.handleGetDeviceCheckInStatusResponse(response)).isTrue();
 
-        assertThat(UserPreferences.needCheckIn(mTestApplication)).isFalse();
+        assertThat(GlobalParameters.needCheckIn(mTestApplication)).isFalse();
     }
 
     @Test
@@ -171,7 +171,7 @@ public final class DeviceCheckInHelperTest {
 
         verify(stateController).setNextStateForEvent(eq(DeviceEvent.PROVISIONING_SUCCESS));
         verify(policyController).enqueueStartLockTaskModeWorker(eq(IS_PROVISIONING_MANDATORY));
-        assertThat(UserPreferences.needCheckIn(mTestApplication)).isFalse();
+        assertThat(GlobalParameters.needCheckIn(mTestApplication)).isFalse();
     }
 
     @Test

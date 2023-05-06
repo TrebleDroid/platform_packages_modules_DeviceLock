@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.devicelockcontroller.setup;
+package com.android.devicelockcontroller.storage;
 
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_DISALLOW_INSTALLING_FROM_UNKNOWN_SOURCES;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_ALLOWLIST;
@@ -47,7 +47,13 @@ import com.google.common.collect.ImmutableList;
 import java.util.Set;
 
 /**
- * Store provisioning parameters
+ * Stores setup parameters.
+ * <p>
+ * Note that these parameters are created by the system user at the setup time and must not be
+ * written afterwards.
+ * <p>
+ * Also, these parameters are accessed globally by all users and must be accessed all the time via
+ * the {@link SetupParametersClient}.
  */
 final class SetupParameters {
     private static final String TAG = "SetupParameters";
