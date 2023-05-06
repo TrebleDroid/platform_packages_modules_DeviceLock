@@ -142,23 +142,15 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity-alias>
+
+        <!-- b/267355744: Disable the default initializer used by WorkManager, so that we can ensure
+             WorkManager is initialized when needed. -->
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
             tools:node="remove" />
 
-        <receiver
-            android:name="com.android.devicelockcontroller.receivers.DlcDeviceAdminReceiver"
-            android:exported="false"
-            android:permission="android.permission.BIND_DEVICE_ADMIN"
-            androidprv:systemUserOnly="true">
-            <intent-filter>
-                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
-            </intent-filter>
-            <meta-data
-                android:name="android.app.device_admin"
-                android:resource="@xml/device_admin" />
-        </receiver>
+        <!-- System user only boot completed broadcast receiver -->
         <receiver
             android:name="com.android.devicelockcontroller.receivers.CheckInBootCompletedReceiver"
             android:exported="false"
@@ -167,8 +159,8 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        <!-- The following component is needed because many Device Policy Manager APIs require
-             this receiver component name as first argument. -->
+
+        <!-- Multi users boot completed broadcast receiver -->
         <receiver
             android:name="com.android.devicelockcontroller.receivers.LockTaskBootCompletedReceiver"
             android:exported="false"
@@ -177,7 +169,8 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        <!-- System user only boot completed broadcast receiver -->
+
+        <!-- Multi users locked boot completed broadcast receiver -->
         <receiver
             android:name="com.android.devicelockcontroller.receivers.DlcLockedBootCompletedReceiver"
             android:directBootAware="true"
@@ -187,11 +180,7 @@
                 <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        <!-- Multi users boot completed broadcast receiver -->
-        <receiver
-            android:name="com.android.devicelockcontroller.SetupParameterOverrider"
-            android:permission="android.permission.MANAGE_DEVICE_POLICY_APPS_CONTROL" />
-        <!-- Multi users locked boot completed broadcast receiver -->
+
         <service
             android:name="com.android.devicelockcontroller.DeviceLockControllerService"
             android:directBootAware="true"
@@ -201,17 +190,15 @@
                 <action android:name="android.app.action.DEVICE_LOCK_CONTROLLER_SERVICE" />
             </intent-filter>
         </service>
-        <!-- b/267355744: Disable the default initializer used by WorkManager, so that we can ensure
-         WorkManager is initialized when needed. -->
+
         <service
-            android:name="com.android.devicelockcontroller.setup.SetupParametersService"
+            android:name="com.android.devicelockcontroller.storage.SetupParametersService"
             android:directBootAware="true"
             android:exported="false"
             android:singleUser="true" />
 
-        <!-- Receiver used for testing purpose -->
         <service
-            android:name="com.android.devicelockcontroller.setup.UserPreferencesService"
+            android:name="com.android.devicelockcontroller.storage.GlobalParametersService"
             android:directBootAware="true"
             android:exported="false"
             android:singleUser="true" />

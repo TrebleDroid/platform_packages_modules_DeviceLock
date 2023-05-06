@@ -16,6 +16,11 @@
 
 package com.android.devicelockcontroller.policy;
 
+import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_FINANCING_DEFERRED_PROVISIONING;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_FINANCING_PROVISIONING;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_FINANCING_SECONDARY_USER_PROVISIONING;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_SUBSIDY_DEFERRED_PROVISIONING;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_SUBSIDY_PROVISIONING;
 import static com.android.devicelockcontroller.policy.PolicyHandler.SUCCESS;
 
 import android.app.ActivityManager;
@@ -41,12 +46,14 @@ import androidx.work.WorkerParameters;
 
 import com.android.devicelockcontroller.DeviceLockControllerApplication;
 import com.android.devicelockcontroller.common.DeviceLockConstants;
+import com.android.devicelockcontroller.common.DeviceLockConstants.ProvisioningType;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
-import com.android.devicelockcontroller.setup.SetupParametersClient;
+import com.android.devicelockcontroller.storage.SetupParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.MoreExecutors;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -178,9 +185,7 @@ public final class DevicePolicyControllerImpl
             case DeviceState.SETUP_IN_PROGRESS:
             case DeviceState.SETUP_SUCCEEDED:
             case DeviceState.SETUP_FAILED:
-                return Futures.immediateFuture(
-                        new Intent().setComponent(ComponentName.unflattenFromString(
-                                DeviceLockConstants.LANDING_ACTIVITY)));
+                return getLandingActivityIntent();
             case DeviceState.KIOSK_SETUP:
                 return getKioskSetupActivityIntent();
             case DeviceState.LOCKED:
@@ -194,6 +199,37 @@ public final class DevicePolicyControllerImpl
                 LogUtil.w(TAG, String.format(Locale.US, "%d is an invalid state", state));
                 return Futures.immediateFuture(null);
         }
+    }
+
+    private ListenableFuture<Intent> getLandingActivityIntent() {
+        SetupParametersClient client = SetupParametersClient.getInstance();
+        ListenableFuture<Boolean> isMandatoryTask = client.isProvisionMandatory();
+        ListenableFuture<@ProvisioningType Integer> provisioningTypeTask =
+                client.getProvisioningType();
+        return Futures.whenAllSucceed(isMandatoryTask, provisioningTypeTask).call(
+                () -> {
+                    Intent resultIntent = new Intent()
+                            .setComponent(ComponentName.unflattenFromString(
+                                    DeviceLockConstants.LANDING_ACTIVITY));
+                    boolean isMandatory = Futures.getDone(isMandatoryTask);
+                    switch (Futures.getDone(provisioningTypeTask)) {
+                        case ProvisioningType.TYPE_FINANCED:
+                            if (!mContext.getUser().isSystem()) {
+                                return resultIntent.setAction(
+                                        ACTION_START_DEVICE_FINANCING_SECONDARY_USER_PROVISIONING);
+                            }
+                            return resultIntent.setAction(
+                                    isMandatory ? ACTION_START_DEVICE_FINANCING_PROVISIONING
+                                            : ACTION_START_DEVICE_FINANCING_DEFERRED_PROVISIONING);
+                        case ProvisioningType.TYPE_SUBSIDY:
+                            return resultIntent.setAction(
+                                    isMandatory ? ACTION_START_DEVICE_SUBSIDY_PROVISIONING
+                                            : ACTION_START_DEVICE_SUBSIDY_DEFERRED_PROVISIONING);
+                        case ProvisioningType.TYPE_UNDEFINED:
+                        default:
+                            throw new IllegalArgumentException("Provisioning type is unknown!");
+                    }
+                }, MoreExecutors.directExecutor());
     }
 
     private ListenableFuture<Intent> getLockScreenActivityIntent() {

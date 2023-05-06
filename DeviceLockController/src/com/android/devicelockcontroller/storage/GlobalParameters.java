@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.devicelockcontroller.setup;
+package com.android.devicelockcontroller.storage;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -28,9 +28,14 @@ import java.util.ArrayList;
 import java.util.Set;
 
 /**
- * Class for local storage.
+ * Stores global parameters.
+ * <p>
+ * Note that, these parameter values are common across all users which means any users can read or
+ * write them. Due to this reason, they must be accessed all the time via the
+ * {@link GlobalParametersClient}.
  */
-public final class UserPreferences {
+// TODO(b/279804653): Some parameters in this class are not common across users.
+public final class GlobalParameters {
     private static final String FILENAME = "prefs";
     private static final String KEY_DEVICE_STATE = "device_state";
     private static final String KEY_KIOSK_SIGNING_CERT = "kiosk_signing_cert";
@@ -42,7 +47,7 @@ public final class UserPreferences {
     public static final String KEY_ENROLLMENT_TOKEN = "enrollment_token";
 
 
-    private UserPreferences() {
+    private GlobalParameters() {
     }
 
     private static SharedPreferences getSharedPreferences(Context context) {

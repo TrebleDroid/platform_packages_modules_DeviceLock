@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.devicelockcontroller.setup;
+package com.android.devicelockcontroller.storage;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -34,45 +34,45 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RunWith(RobolectricTestRunner.class)
-public class UserPreferencesServiceTest extends AbstractUserPreferencesTestBase {
-    private IUserPreferencesService mIUserPreferencesService;
+public class GlobalParametersServiceTest extends AbstractGlobalParametersTestBase {
+    private IGlobalParametersService mIGlobalParametersService;
 
     @Before
     public void setUp() {
-        final ServiceController<UserPreferencesService> userPreferencesServiceController =
-                Robolectric.buildService(UserPreferencesService.class);
-        final UserPreferencesService userPreferencesService =
-                userPreferencesServiceController.create().get();
-        mIUserPreferencesService =
-                (IUserPreferencesService) userPreferencesService.onBind(new Intent());
+        final ServiceController<GlobalParametersService> globalParametersServiceController =
+                Robolectric.buildService(GlobalParametersService.class);
+        final GlobalParametersService globalParametersService =
+                globalParametersServiceController.create().get();
+        mIGlobalParametersService =
+                (IGlobalParametersService) globalParametersService.onBind(new Intent());
     }
 
     @Test
     public void getDeviceState_shouldReturnExpectedCurrentDeviceState() throws RemoteException {
-        assertThat(mIUserPreferencesService.getDeviceState()).isEqualTo(
+        assertThat(mIGlobalParametersService.getDeviceState()).isEqualTo(
                 DeviceStateController.DeviceState.UNPROVISIONED);
-        mIUserPreferencesService.setDeviceState(DeviceStateController.DeviceState.SETUP_SUCCEEDED);
-        assertThat(mIUserPreferencesService.getDeviceState()).isEqualTo(
+        mIGlobalParametersService.setDeviceState(DeviceStateController.DeviceState.SETUP_SUCCEEDED);
+        assertThat(mIGlobalParametersService.getDeviceState()).isEqualTo(
                 DeviceStateController.DeviceState.SETUP_SUCCEEDED);
     }
 
     @Test
     public void getPackageOverridingHome_shouldReturnExpectedOverridingHomePackage()
             throws RemoteException {
-        assertThat(mIUserPreferencesService.getPackageOverridingHome()).isNull();
-        mIUserPreferencesService.setPackageOverridingHome(PACKAGE_OVERRIDING_HOME);
-        assertThat(mIUserPreferencesService.getPackageOverridingHome())
+        assertThat(mIGlobalParametersService.getPackageOverridingHome()).isNull();
+        mIGlobalParametersService.setPackageOverridingHome(PACKAGE_OVERRIDING_HOME);
+        assertThat(mIGlobalParametersService.getPackageOverridingHome())
                 .isEqualTo(PACKAGE_OVERRIDING_HOME);
     }
 
     @Test
     public void getLockTaskAllowlist_shouldReturnExpectedAllowlist() throws RemoteException {
-        assertThat(mIUserPreferencesService.getLockTaskAllowlist()).isEmpty();
+        assertThat(mIGlobalParametersService.getLockTaskAllowlist()).isEmpty();
         final ArrayList<String> expectedAllowlist = new ArrayList<>();
         expectedAllowlist.add(ALLOWLIST_PACKAGE_0);
         expectedAllowlist.add(ALLOWLIST_PACKAGE_1);
-        mIUserPreferencesService.setLockTaskAllowlist(expectedAllowlist);
-        final List<String> actualAllowlist = mIUserPreferencesService.getLockTaskAllowlist();
+        mIGlobalParametersService.setLockTaskAllowlist(expectedAllowlist);
+        final List<String> actualAllowlist = mIGlobalParametersService.getLockTaskAllowlist();
         assertThat(actualAllowlist).containsExactlyElementsIn(expectedAllowlist);
     }
 }
