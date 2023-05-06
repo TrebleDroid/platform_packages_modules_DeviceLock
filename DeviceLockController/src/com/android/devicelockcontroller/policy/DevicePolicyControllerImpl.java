@@ -210,7 +210,7 @@ public final class DevicePolicyControllerImpl
                 () -> {
                     Intent resultIntent = new Intent()
                             .setComponent(ComponentName.unflattenFromString(
-                                    DeviceLockConstants.LANDING_ACTIVITY));
+                                    DeviceLockConstants.getLandingActivity(mContext)));
                     boolean isMandatory = Futures.getDone(isMandatoryTask);
                     switch (Futures.getDone(provisioningTypeTask)) {
                         case ProvisioningType.TYPE_FINANCED:
