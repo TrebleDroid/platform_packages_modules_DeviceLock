@@ -104,6 +104,7 @@ android_library {
         "androidx.annotation_annotation",
         "androidx.collection_collection",
         "androidx.lifecycle_lifecycle-extensions",
+        "androidx.preference_preference",
         "androidx.work_work-runtime",
         "devicelockcontroller-grpc-interface-lib",
         "devicelockcontroller-interface",
@@ -112,6 +113,8 @@ android_library {
         "guava",
         "jsr330",
         "dagger2",
+        "SettingsLibCollapsingToolbarBaseActivity",
+        "SettingsLibTopIntroPreference",
     ],
     manifest: "AndroidManifestBase.xml",
     apex_available: [
