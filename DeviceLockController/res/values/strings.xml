@@ -150,39 +150,75 @@
     <!-- Button text of the banner in Settings. This tells the user they can tap the button get more information. [CHAT_LIMIT=20]-->
     <string name="settings_banner_button">Learn more</string>
     <!-- Top introduction on the Settings screen, summarizing the changes a device provider can make to this device. [CHAR LIMIT=NONE] -->
-    <string name="settings_intro"><xliff:g id="provider name">%1$s</xliff:g> can change settings and install the <xliff:g id="creditor_app">%2$s</xliff:g> app on this device.\n\nIf you miss a payment, <xliff:g id="provider name">%1$s</xliff:g> can restrict your device and change device settings.\n\nTo learn more, contact <xliff:g id="provider name">%1$s</xliff:g>.</string>
+    <string name="settings_intro"><xliff:g id="provider name">%1$s</xliff:g> can change settings and install the Kiosk app on this device.\n\nIf you miss a payment, <xliff:g id="provider name">%1$s</xliff:g> can restrict your device and change device settings.\n\nTo learn more, contact <xliff:g id="provider name">%1$s</xliff:g>.</string>
+    <!-- Key of the settings_intro Preference. translatable="false" -->
+    <string name="settings_intro_preference_key">settings_intro_preference_key</string>
     <!-- Section header. This section shows what restrictions will be enforced on the device when it is financed / subsidized. [CHAR LIMIT=60] -->
     <string name="settings_restrictions_category">Until you\u2019ve paid for your device, you can\u2019t:</string>
+    <!-- Key of the settings_restrictions_category Preference. translatable="false" -->
+    <string name="settings_restrictions_category_preference_key">settings_restrictions_category_preference_key</string>
     <!-- Label explaining that installing apps from unknown sources beyond Play Store. [CHAR LIMIT=60]-->
     <string name="settings_install_apps">Install apps from outside the Play Store</string>
+    <!-- Key of the settings_install_apps Preference. translatable="false" -->
+    <string name="settings_install_apps_preference_key">settings_install_apps_preference_key</string>
     <!-- Label explaining that rebooting the device into safe mode. [CHAR LIMIT=60]-->
     <string name="settings_safe_mode">Reboot your device into safe mode</string>
+    <!-- Key of the settings_safe_mode Preference. translatable="false" -->
+    <string name="settings_safe_mode_preference_key">settings_safe_mode_preference_key</string>
     <!-- Label explaining that updating the date and time on the device. [CHAR LIMIT=60] -->
     <string name="settings_config_date_time">Change date, time, and time zones</string>
+    <!-- Key of the settings_config_date_time Preference. translatable="false" -->
+    <string name="settings_config_date_time_preference_key">settings_config_date_time_preference_key</string>
     <!-- Label explaining that turning on the developer options on the device. [CHAR LIMIT=40]-->
     <string name="settings_developer_options">Use developer options</string>
+    <!-- Key of the settings_developer_options Preference. translatable="false" -->
+    <string name="settings_developer_options_preference_key">settings_developer_options_preference_key</string>
     <!-- Section header. This section shows how device provider would control the device. [CHAR LIMIT=40]-->
     <string name="settings_credit_provider_capabilities_category">If something goes wrong with your device, <xliff:g id="provider name">%1$s</xliff:g> can:</string>
+    <!-- Key of the settings_credit_provider_capabilities_category Preference. translatable="false" -->
+    <string name="settings_credit_provider_capabilities_category_preference_key">settings_credit_provider_capabilities_category_preference_key</string>
     <!-- Label explaining that IMEI can be access by the credit provider. [CHAR LIMIT=40] -->
     <string name="settings_IMEI">Access your IMEI number</string>
+    <!-- Key of the settings_IMEI Preference. translatable="false" -->
+    <string name="settings_IMEI_preference_key">settings_IMEI_preference_key</string>
     <!-- Label explaining that device can be reset and data can be deleted. [CHAR LIMIT=80]-->
     <string name="settings_factory_reset">Factory reset your device</string>
+    <!-- Key of the settings_factory_reset Preference. translatable="false" -->
+    <string name="settings_factory_reset_preference_key">settings_factory_reset_preference_key</string>
     <!-- Section header. This section shows what the user can do if the device is restricted by the device provider. [CHAR LIMIT=100] -->
     <string name="settings_locked_mode_category">If your device is restricted, you can only use it to:</string>
+    <!-- Key of the settings_locked_mode_category Preference. translatable="false" -->
+    <string name="settings_locked_mode_category_preference_key">settings_locked_mode_category_preference_key</string>
     <!-- Label explaining that calling emergency numbers. [CHAR LIMIT=40]-->
     <string name="settings_emergency_calls">Make calls to emergency numbers</string>
+    <!-- Key of the settings_emergency_calls Preference. translatable="false" -->
+    <string name="settings_emergency_calls_preference_key">settings_emergency_calls_preference_key</string>
     <!-- Label explaining that access basic system level data including date, time, network status, and battery info. [CHAR LIMIT=100]-->
     <string name="settings_system_info">View system info like date, time, network status, and battery</string>
+    <!-- Key of the settings_system_info Preference. translatable="false" -->
+    <string name="settings_system_info_preference_key">settings_system_info_preference_key</string>
     <!-- Label explaining that powering on or off the device. [CHAR LIMIT=60]-->
     <string name="settings_turn_on_off_device">Turn your device on or off</string>
+    <!-- Key of the settings_turn_on_off_device Preference. translatable="false" -->
+    <string name="settings_turn_on_off_device_preference_key">settings_turn_on_off_device_preference_key</string>
     <!-- Label explaining that accessing notifications and text messages. [CHAR LIMIT=60]-->
     <string name="settings_notifications">View notifications and text messages</string>
+    <!-- Key of the settings_notifications Preference. translatable="false" -->
+    <string name="settings_notifications_preference_key">settings_notifications_preference_key</string>
     <!-- Label explaining that using apps that are allowed to be used by the device provider when the device is restricted. [CHAR LIMIT=100]-->
     <string name="settings_allowlisted_apps">Access apps that are allowed by <xliff:g id="provider name">%1$s</xliff:g></string>
+    <!-- Key of the settings_allowlisted_apps Preference. translatable="false" -->
+    <string name="settings_allowlisted_apps_preference_key">settings_allowlisted_apps_preference_key</string>
     <!-- Section header. This sections shows what would happen if the device is fully paid. [CHAR LIMIT=60] -->
     <string name="settings_fully_paid_category">Once you pay the full amount:</string>
+    <!-- Key of the settings_fully_paid_category Preference. translatable="false" -->
+    <string name="settings_fully_paid_category_preference_key">settings_fully_paid_category_preference_key</string>
     <!-- Label explaining that all previously restrictions enforce by the device provider will be revoked. [CHAR LIMIT=100]-->
     <string name="settings_restrictions_removed"><xliff:g id="provider name">%1$s</xliff:g> can\u2019t restrict your device or change device settings</string>
+    <!-- Key of the settings_restrictions_removed Preference. translatable="false" -->
+    <string name="settings_restrictions_removed_preference_key">settings_restrictions_removed_preference_key</string>
     <!-- Label explaining that the app installed by device provider can be uninstalled. [CHAR LIMIT=60]-->
-    <string name="settings_uninstall_creditor_app">You can uninstall the <xliff:g id="creditor_app">%1$s</xliff:g> app</string>
+    <string name="settings_uninstall_kiosk_app">You can uninstall the <xliff:g id="kiosk_app">%1$s</xliff:g> app</string>
+    <!-- Key of the settings_uninstall_kiosk_app Preference. translatable="false" -->
+    <string name="settings_uninstall_kiosk_app_preference_key">settings_uninstall_kiosk_app_preference_key</string>
 </resources>
