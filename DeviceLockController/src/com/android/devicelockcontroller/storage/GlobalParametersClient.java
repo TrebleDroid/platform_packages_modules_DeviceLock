@@ -26,7 +26,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
 import com.android.devicelockcontroller.DeviceLockControllerApplication;
-import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
@@ -72,55 +71,6 @@ public final class GlobalParametersClient extends DlcClient {
         }
 
         return sGlobalParametersClient;
-    }
-
-    /**
-     * Gets the current device state.
-     *
-     * @return the current device state.
-     */
-    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
-    public ListenableFuture<@DeviceState Integer> getDeviceState() {
-        return call(() -> IGlobalParametersService.Stub.asInterface(
-                mDlcService).getDeviceState());
-    }
-
-    /**
-     * Sets the current device state.
-     *
-     * @param state New state.
-     */
-    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
-    public ListenableFuture<Void> setDeviceState(@DeviceState int state) {
-        return call(() -> {
-            IGlobalParametersService.Stub.asInterface(mDlcService).setDeviceState(state);
-            return null;
-        });
-    }
-
-    /**
-     * Gets the name of the package overriding home.
-     *
-     * @return Package overriding home.
-     */
-    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
-    public ListenableFuture<String> getPackageOverridingHome() {
-        return call(() -> IGlobalParametersService.Stub.asInterface(mDlcService)
-                .getPackageOverridingHome());
-    }
-
-    /**
-     * Sets the name of the package overriding home.
-     *
-     * @param packageName Package overriding home.
-     */
-    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
-    public ListenableFuture<Void> setPackageOverridingHome(@Nullable String packageName) {
-        return call(() -> {
-            IGlobalParametersService.Stub.asInterface(mDlcService)
-                    .setPackageOverridingHome(packageName);
-            return null;
-        });
     }
 
     /**
