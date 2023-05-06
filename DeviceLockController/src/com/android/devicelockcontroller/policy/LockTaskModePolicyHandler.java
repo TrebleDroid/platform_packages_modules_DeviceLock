@@ -44,6 +44,7 @@ import com.android.devicelockcontroller.R;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
 import com.android.devicelockcontroller.storage.GlobalParameters;
 import com.android.devicelockcontroller.storage.SetupParametersClient;
+import com.android.devicelockcontroller.storage.UserParameters;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import com.google.common.util.concurrent.Futures;
@@ -113,12 +114,12 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
             return false;
         }
 
-        final String currentPackage = GlobalParameters.getPackageOverridingHome(mContext);
+        final String currentPackage = UserParameters.getPackageOverridingHome(mContext);
         if (currentPackage != null) {
             mDpm.clearPackagePersistentPreferredActivities(null /* admin */, currentPackage);
         }
         mDpm.addPersistentPreferredActivity(null /* admin */, getHomeIntentFilter(), activity);
-        GlobalParameters.setPackageOverridingHome(mContext, activity.getPackageName());
+        UserParameters.setPackageOverridingHome(mContext, activity.getPackageName());
 
         return true;
     }
@@ -163,13 +164,13 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
     private @ResultType ListenableFuture<@ResultType Integer> disableLockTaskMode() {
         WorkManager.getInstance(mContext).cancelUniqueWork(START_LOCK_TASK_MODE_WORK_NAME);
 
-        final String currentPackage = GlobalParameters.getPackageOverridingHome(mContext);
+        final String currentPackage = UserParameters.getPackageOverridingHome(mContext);
         // This will stop the lock task mode
         mDpm.setLockTaskPackages(null /* admin */, new String[0]);
         LogUtil.i(TAG, "Clear Lock task allowlist");
         if (currentPackage != null) {
             mDpm.clearPackagePersistentPreferredActivities(null /* admin */, currentPackage);
-            GlobalParameters.setPackageOverridingHome(mContext, null /* packageName */);
+            UserParameters.setPackageOverridingHome(mContext, null /* packageName */);
         }
         return Futures.immediateFuture(SUCCESS);
     }
