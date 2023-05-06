@@ -21,9 +21,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 
-import androidx.annotation.Nullable;
-
-import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import java.util.ArrayList;
@@ -39,27 +36,6 @@ public final class GlobalParametersService extends Service {
 
     private final IGlobalParametersService.Stub mBinder =
             new IGlobalParametersService.Stub() {
-                @Override
-                @DeviceState
-                public int getDeviceState() {
-                    return GlobalParameters.getDeviceState(mContext);
-                }
-
-                @Override
-                public void setDeviceState(@DeviceState int state) {
-                    GlobalParameters.setDeviceState(mContext, state);
-                }
-
-                @Override
-                @Nullable
-                public String getPackageOverridingHome() {
-                    return GlobalParameters.getPackageOverridingHome(mContext);
-                }
-
-                @Override
-                public void setPackageOverridingHome(@Nullable String packageName) {
-                    GlobalParameters.setPackageOverridingHome(mContext, packageName);
-                }
 
                 @Override
                 public List<String> getLockTaskAllowlist() {

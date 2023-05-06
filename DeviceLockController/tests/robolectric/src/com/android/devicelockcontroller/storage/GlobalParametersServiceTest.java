@@ -21,8 +21,6 @@ import static com.google.common.truth.Truth.assertThat;
 import android.content.Intent;
 import android.os.RemoteException;
 
-import com.android.devicelockcontroller.policy.DeviceStateController;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,24 +46,6 @@ public class GlobalParametersServiceTest extends AbstractGlobalParametersTestBas
     }
 
     @Test
-    public void getDeviceState_shouldReturnExpectedCurrentDeviceState() throws RemoteException {
-        assertThat(mIGlobalParametersService.getDeviceState()).isEqualTo(
-                DeviceStateController.DeviceState.UNPROVISIONED);
-        mIGlobalParametersService.setDeviceState(DeviceStateController.DeviceState.SETUP_SUCCEEDED);
-        assertThat(mIGlobalParametersService.getDeviceState()).isEqualTo(
-                DeviceStateController.DeviceState.SETUP_SUCCEEDED);
-    }
-
-    @Test
-    public void getPackageOverridingHome_shouldReturnExpectedOverridingHomePackage()
-            throws RemoteException {
-        assertThat(mIGlobalParametersService.getPackageOverridingHome()).isNull();
-        mIGlobalParametersService.setPackageOverridingHome(PACKAGE_OVERRIDING_HOME);
-        assertThat(mIGlobalParametersService.getPackageOverridingHome())
-                .isEqualTo(PACKAGE_OVERRIDING_HOME);
-    }
-
-    @Test
     public void getLockTaskAllowlist_shouldReturnExpectedAllowlist() throws RemoteException {
         assertThat(mIGlobalParametersService.getLockTaskAllowlist()).isEmpty();
         final ArrayList<String> expectedAllowlist = new ArrayList<>();
@@ -75,4 +55,42 @@ public class GlobalParametersServiceTest extends AbstractGlobalParametersTestBas
         final List<String> actualAllowlist = mIGlobalParametersService.getLockTaskAllowlist();
         assertThat(actualAllowlist).containsExactlyElementsIn(expectedAllowlist);
     }
+
+    @Test
+    public void needCheckIn_shouldReturnExpectedResult() throws RemoteException {
+        assertThat(mIGlobalParametersService.needCheckIn()).isNotEqualTo(NEED_CHECK_IN);
+
+        mIGlobalParametersService.setNeedCheckIn(NEED_CHECK_IN);
+
+        assertThat(mIGlobalParametersService.needCheckIn()).isEqualTo(NEED_CHECK_IN);
+    }
+
+    @Test
+    public void getRegisteredId_shouldReturnExpectedResult() throws RemoteException {
+        assertThat(mIGlobalParametersService.getRegisteredDeviceId()).isNull();
+
+        mIGlobalParametersService.setRegisteredDeviceId(REGISTERED_DEVICE_ID);
+
+        assertThat(mIGlobalParametersService.getRegisteredDeviceId()).isEqualTo(
+                REGISTERED_DEVICE_ID);
+    }
+
+    @Test
+    public void isProvisionForced_shouldReturnExpectedResult() throws RemoteException {
+        assertThat(mIGlobalParametersService.isProvisionForced()).isNotEqualTo(FORCED_PROVISION);
+
+        mIGlobalParametersService.setProvisionForced(FORCED_PROVISION);
+
+        assertThat(mIGlobalParametersService.isProvisionForced()).isEqualTo(FORCED_PROVISION);
+    }
+
+    @Test
+    public void getEnrollmentToken_shouldReturnExpectedResult() throws RemoteException {
+        assertThat(mIGlobalParametersService.getEnrollmentToken()).isNull();
+
+        mIGlobalParametersService.setEnrollmentToken(ENROLLMENT_TOKEN);
+
+        assertThat(mIGlobalParametersService.getEnrollmentToken()).isEqualTo(ENROLLMENT_TOKEN);
+    }
+
 }
