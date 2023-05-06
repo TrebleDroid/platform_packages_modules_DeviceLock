@@ -17,7 +17,13 @@
 package com.android.devicelockcontroller.storage;
 
 abstract class AbstractGlobalParametersTestBase {
-    protected static final String ALLOWLIST_PACKAGE_0 = "allowlist.package.0";
-    protected static final String ALLOWLIST_PACKAGE_1 = "allowlist.package.1";
-    protected static final String PACKAGE_OVERRIDING_HOME = "com.home.package";
+    static final String ALLOWLIST_PACKAGE_0 = "allowlist.package.0";
+    static final String ALLOWLIST_PACKAGE_1 = "allowlist.package.1";
+
+    static final String KIOSK_SIGNING_CERT = "signing_certificate";
+    static final boolean NEED_CHECK_IN = false;
+    static final String REGISTERED_DEVICE_ID = "test_id";
+    static final boolean FORCED_PROVISION = true;
+    static final String ENROLLMENT_TOKEN = "test_enrollment_token";
+
 }
