@@ -27,6 +27,7 @@ import androidx.annotation.NonNull;
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
 import com.android.devicelockcontroller.policy.StateTransitionException;
+import com.android.devicelockcontroller.storage.GlobalParameters;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import com.google.common.util.concurrent.FutureCallback;
@@ -75,6 +76,20 @@ public final class DeviceLockControllerService extends Service {
                     final boolean isLocked = mStateController.isLocked();
                     sendResult(IDeviceLockControllerService.KEY_IS_DEVICE_LOCKED_RESULT,
                             remoteCallback, isLocked);
+                }
+
+                @Override
+                public void getDeviceIdentifier(RemoteCallback remoteCallback) {
+                    final Bundle bundle = new Bundle();
+                    final String deviceId = GlobalParameters.getRegisteredDeviceId(
+                            DeviceLockControllerService.this);
+                    // The deviceId should NOT be null because this method is only supposed to be
+                    // called AFTER the provision, which will store the deviceId on the device.
+                    // But the unexpected case of a null deviceId should be handled in DeviceLock
+                    // service, in
+                    // packages/modules/DeviceLock/service/java/com/android/server/devicelock.
+                    bundle.putString(IDeviceLockControllerService.KEY_HARDWARE_ID_RESULT, deviceId);
+                    remoteCallback.sendResult(bundle);
                 }
             };
 
