@@ -33,6 +33,7 @@ import android.os.Build;
 import android.os.OutcomeReceiver;
 import android.os.UserHandle;
 import android.telephony.TelephonyManager;
+import android.util.ArrayMap;
 
 import androidx.concurrent.futures.CallbackToFutureAdapter;
 import androidx.test.filters.SdkSuppress;
@@ -320,10 +321,27 @@ public final class DeviceLockManagerTest {
     }
 
     @Test
-    public void getKioskAppShouldReturnMapping()
+    public void getKioskApp_financedRoleHolderExists_returnsMapping()
+            throws ExecutionException, InterruptedException, TimeoutException {
+        final ArrayMap expectedKioskApps = new ArrayMap<Integer, String>();
+        expectedKioskApps.put(
+                DeviceLockManager.DEVICE_LOCK_ROLE_FINANCING, mContext.getPackageName());
+
+        try {
+            addFinancedDeviceKioskRole();
+
+            Map<Integer, String> kioskAppsMap = getKioskAppsFuture().get(TIMEOUT, TimeUnit.SECONDS);
+
+            assertThat(kioskAppsMap).isEqualTo(expectedKioskApps);
+        } finally {
+            removeFinancedDeviceKioskRole();
+        }
+    }
+
+    @Test
+    public void getKioskApp_financedRoleHolderDoesNotExist_returnsEmptyMapping()
             throws ExecutionException, InterruptedException, TimeoutException {
         Map<Integer, String> kioskAppsMap = getKioskAppsFuture().get(TIMEOUT, TimeUnit.SECONDS);
-        // TODO: update test once we have the service returning the correct mappings
         assertThat(kioskAppsMap).isEmpty();
     }
 
