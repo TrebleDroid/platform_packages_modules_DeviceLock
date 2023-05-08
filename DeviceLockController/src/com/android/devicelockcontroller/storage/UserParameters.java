@@ -18,10 +18,12 @@ package com.android.devicelockcontroller.storage;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 
 import androidx.annotation.Nullable;
 
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
+import com.android.devicelockcontroller.util.LogUtil;
 
 /**
  * Stores per-user local parameters.
@@ -31,6 +33,7 @@ public final class UserParameters {
     private static final String FILENAME = "user-params";
     private static final String KEY_DEVICE_STATE = "device_state";
     private static final String KEY_HOME_PACKAGE_OVERRIDE = "home_override_package";
+    private static final String TAG = "UserParameters";
 
     private UserParameters() {
     }
@@ -84,5 +87,13 @@ public final class UserParameters {
     public static void setPackageOverridingHome(Context context, @Nullable String packageName) {
         getSharedPreferences(context).edit()
                 .putString(KEY_HOME_PACKAGE_OVERRIDE, packageName).apply();
+    }
+
+    public static void clear(Context context) {
+        if (!Build.isDebuggable()) {
+            LogUtil.w(TAG, "Clear is not allowed in non-debuggable build!");
+            return;
+        }
+        getSharedPreferences(context).edit().clear().apply();
     }
 }
