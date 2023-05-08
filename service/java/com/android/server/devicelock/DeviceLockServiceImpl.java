@@ -28,6 +28,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.ServiceInfo;
 import android.devicelock.DeviceId.DeviceIdType;
+import android.devicelock.DeviceLockManager;
 import android.devicelock.IDeviceLockService;
 import android.devicelock.IGetDeviceIdCallback;
 import android.devicelock.IGetKioskAppsCallback;
@@ -44,6 +45,8 @@ import android.util.ArrayMap;
 import android.util.Slog;
 
 import com.android.internal.annotations.VisibleForTesting;
+
+import java.util.List;
 
 /**
  * Implementation of {@link android.devicelock.IDeviceLockService} binder service.
@@ -255,13 +258,24 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
     public void getKioskApps(@NonNull IGetKioskAppsCallback callback) {
         // Caller is not necessarily a kiosk app, and no particular permission enforcing is needed.
 
-        // TODO: return proper kiosk app info.
         final ArrayMap kioskApps = new ArrayMap<Integer, String>();
 
+        final UserHandle userHandle = Binder.getCallingUserHandle();
+        final RoleManager roleManager = mContext.getSystemService(RoleManager.class);
+        final long identity = Binder.clearCallingIdentity();
         try {
+            List<String> roleHolders = roleManager.getRoleHoldersAsUser(
+                    RoleManager.ROLE_FINANCED_DEVICE_KIOSK, userHandle);
+
+            if (!roleHolders.isEmpty()) {
+                kioskApps.put(DeviceLockManager.DEVICE_LOCK_ROLE_FINANCING, roleHolders.get(0));
+            }
+
             callback.onKioskAppsReceived(kioskApps);
         } catch (RemoteException e) {
             Slog.e(TAG, "getKioskApps() - Unable to send result to the callback", e);
+        } finally {
+            Binder.restoreCallingIdentity(identity);
         }
     }
 
