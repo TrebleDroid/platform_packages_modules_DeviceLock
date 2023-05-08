@@ -16,12 +16,14 @@
 
 package com.android.devicelockcontroller.storage;
 
+import static com.android.devicelockcontroller.storage.ISetupParametersService.Stub.asInterface;
+
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
 import android.os.Bundle;
 
-import androidx.annotation.MainThread;
+import androidx.annotation.GuardedBy;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -41,8 +43,11 @@ import java.util.concurrent.Executors;
  * Storage is hosted by user 0 and is accessed indirectly using a service.
  */
 public final class SetupParametersClient extends DlcClient {
+    private static final Object sInstanceLock = new Object();
+
     @SuppressLint("StaticFieldLeak") // Only holds application context.
-    private static SetupParametersClient sSetupParametersClient;
+    @GuardedBy("sInstanceLock")
+    private static SetupParametersClient sClient;
 
     private SetupParametersClient(@NonNull Context context,
             ListeningExecutorService executorService) {
@@ -52,7 +57,6 @@ public final class SetupParametersClient extends DlcClient {
     /**
      * Get the SetupParametersClient singleton instance.
      */
-    @MainThread
     public static SetupParametersClient getInstance() {
         return getInstance(DeviceLockControllerApplication.getAppContext(),
                 /* executorService= */ null);
@@ -61,30 +65,33 @@ public final class SetupParametersClient extends DlcClient {
     /**
      * Get the SetupParametersClient singleton instance.
      */
-    @MainThread
     @VisibleForTesting
     public static SetupParametersClient getInstance(Context appContext,
             @Nullable ListeningExecutorService executorService) {
-        if (sSetupParametersClient == null) {
-            sSetupParametersClient = new SetupParametersClient(
-                    appContext,
-                    executorService == null
-                            ? MoreExecutors.listeningDecorator(Executors.newCachedThreadPool())
-                            : executorService);
+        synchronized (sInstanceLock) {
+            if (sClient == null) {
+                sClient = new SetupParametersClient(
+                        appContext,
+                        executorService == null
+                                ? MoreExecutors.listeningDecorator(Executors.newCachedThreadPool())
+                                : executorService);
+            }
+            return sClient;
         }
-        return sSetupParametersClient;
     }
 
     /**
-     * Reset the SetupParametersClient singleton instance
+     * Reset the Client singleton instance
      */
-    @MainThread
     @VisibleForTesting
     public static void reset() {
-        sSetupParametersClient.tearDown();
-        sSetupParametersClient = null;
+        synchronized (sInstanceLock) {
+            if (sClient != null) {
+                sClient.tearDown();
+                sClient = null;
+            }
+        }
     }
-
 
     /**
      * Override setup parameters if there exists any; otherwise create new parameters.
@@ -93,7 +100,7 @@ public final class SetupParametersClient extends DlcClient {
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<Void> overridePrefs(Bundle bundle) {
         return call(() -> {
-            ISetupParametersService.Stub.asInterface(mDlcService).overridePrefs(bundle);
+            asInterface(mDlcService).overridePrefs(bundle);
             return null;
         });
     }
@@ -106,7 +113,7 @@ public final class SetupParametersClient extends DlcClient {
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<Void> createPrefs(Bundle bundle) {
         return call(() -> {
-            ISetupParametersService.Stub.asInterface(mDlcService).createPrefs(bundle);
+            asInterface(mDlcService).createPrefs(bundle);
             return null;
         });
     }
@@ -118,8 +125,7 @@ public final class SetupParametersClient extends DlcClient {
      */
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<String> getKioskPackage() {
-        return call(() -> ISetupParametersService.Stub.asInterface(mDlcService)
-                .getKioskPackage());
+        return call(() -> asInterface(mDlcService).getKioskPackage());
     }
 
     /**
@@ -129,8 +135,7 @@ public final class SetupParametersClient extends DlcClient {
      */
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<String> getKioskDownloadUrl() {
-        return call(() -> ISetupParametersService.Stub.asInterface(mDlcService)
-                .getKioskDownloadUrl());
+        return call(() -> asInterface(mDlcService).getKioskDownloadUrl());
     }
 
     /**
@@ -140,8 +145,7 @@ public final class SetupParametersClient extends DlcClient {
      */
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<String> getKioskSignatureChecksum() {
-        return call(() -> ISetupParametersService.Stub.asInterface(mDlcService)
-                .getKioskSignatureChecksum());
+        return call(() -> asInterface(mDlcService).getKioskSignatureChecksum());
     }
 
     /**
@@ -151,8 +155,7 @@ public final class SetupParametersClient extends DlcClient {
      */
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<String> getKioskSetupActivity() {
-        return call(() -> ISetupParametersService.Stub.asInterface(mDlcService)
-                .getKioskSetupActivity());
+        return call(() -> asInterface(mDlcService).getKioskSetupActivity());
     }
 
     /**
@@ -162,8 +165,7 @@ public final class SetupParametersClient extends DlcClient {
      */
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<Boolean> getOutgoingCallsDisabled() {
-        return call(() -> ISetupParametersService.Stub.asInterface(mDlcService)
-                .getOutgoingCallsDisabled());
+        return call(() -> asInterface(mDlcService).getOutgoingCallsDisabled());
     }
 
     /**
@@ -173,8 +175,7 @@ public final class SetupParametersClient extends DlcClient {
      */
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<List<String>> getKioskAllowlist() {
-        return call(() -> ISetupParametersService.Stub.asInterface(mDlcService)
-                .getKioskAllowlist());
+        return call(() -> asInterface(mDlcService).getKioskAllowlist());
     }
 
     /**
@@ -184,8 +185,7 @@ public final class SetupParametersClient extends DlcClient {
      */
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<Boolean> isNotificationsInLockTaskModeEnabled() {
-        return call(() -> ISetupParametersService.Stub.asInterface(mDlcService)
-                .isNotificationsInLockTaskModeEnabled());
+        return call(() -> asInterface(mDlcService).isNotificationsInLockTaskModeEnabled());
     }
 
     /**
@@ -195,8 +195,7 @@ public final class SetupParametersClient extends DlcClient {
      */
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<@ProvisioningType Integer> getProvisioningType() {
-        return call(() -> ISetupParametersService.Stub.asInterface(mDlcService)
-                .getProvisioningType());
+        return call(() -> asInterface(mDlcService).getProvisioningType());
     }
 
     /**
@@ -206,8 +205,7 @@ public final class SetupParametersClient extends DlcClient {
      */
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<Boolean> isProvisionMandatory() {
-        return call(() -> ISetupParametersService.Stub.asInterface(mDlcService)
-                .isProvisionMandatory());
+        return call(() -> asInterface(mDlcService).isProvisionMandatory());
     }
 
     /**
@@ -218,19 +216,18 @@ public final class SetupParametersClient extends DlcClient {
     @Nullable
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<String> getKioskAppProviderName() {
-        return call(() -> ISetupParametersService.Stub.asInterface(mDlcService)
-                .getKioskAppProviderName());
+        return call(() -> asInterface(mDlcService).getKioskAppProviderName());
     }
 
     /**
-     * Check if installing from unknown sources should be disallowed on this device after provision
+     * Check if installing from unknown sources should be disallowed on this device after
+     * provision
      *
      * @return True if installing from unknown sources is disallowed.
      */
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<Boolean> isInstallingFromUnknownSourcesDisallowed() {
-        return call(() -> ISetupParametersService.Stub.asInterface(mDlcService)
-                .isInstallingFromUnknownSourcesDisallowed());
+        return call(() -> asInterface(mDlcService).isInstallingFromUnknownSourcesDisallowed());
     }
 
     /**
@@ -240,8 +237,7 @@ public final class SetupParametersClient extends DlcClient {
      */
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<String> getTermsAndConditionsUrl() {
-        return call(() -> ISetupParametersService.Stub.asInterface(mDlcService)
-                .getTermsAndConditionsUrl());
+        return call(() -> asInterface(mDlcService).getTermsAndConditionsUrl());
     }
 
     /**
@@ -251,7 +247,6 @@ public final class SetupParametersClient extends DlcClient {
      */
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<String> getSupportUrl() {
-        return call(() -> ISetupParametersService.Stub.asInterface(mDlcService)
-                .getSupportUrl());
+        return call(() -> asInterface(mDlcService).getSupportUrl());
     }
 }
