@@ -45,6 +45,7 @@ import android.content.Context;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 
+import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.lifecycle.LifecycleOwner;
@@ -200,7 +201,7 @@ public final class SetupControllerImpl implements SetupController {
                             playInstallPackageTask, verifyInstallPackageTask,
                             addFinancedDeviceKioskRoleTask);
                     return null;
-                }, MoreExecutors.directExecutor());
+                }, mContext.getMainExecutor());
     }
 
     @VisibleForTesting
@@ -220,7 +221,7 @@ public final class SetupControllerImpl implements SetupController {
                     final String kioskPackageName = Futures.getDone(kioskPackageTask);
                     final OneTimeWorkRequest verifyDownloadPackageTask =
                             getVerifyDownloadPackageTask(kioskPackageName,
-                            Futures.getDone(kioskSignatureChecksumTask));
+                                    Futures.getDone(kioskSignatureChecksumTask));
                     final OneTimeWorkRequest downloadPackageTask =
                             getDownloadPackageTask(Futures.getDone(kioskDownloadUrlTask));
                     final OneTimeWorkRequest verifyInstallPackageTask =
@@ -234,7 +235,7 @@ public final class SetupControllerImpl implements SetupController {
                             verifyInstallPackageTask,
                             addFinancedDeviceKioskRoleTask);
                     return null;
-                }, MoreExecutors.directExecutor());
+                }, mContext.getMainExecutor());
     }
 
     ListenableFuture<Void> installKioskAppForSecondaryUser(WorkManager workManager,
@@ -255,7 +256,7 @@ public final class SetupControllerImpl implements SetupController {
                                     Futures.getDone(kioskSignatureChecksumTask)),
                             getAddFinancedDeviceKioskRoleTask(kioskPackageName));
                     return null;
-                }, MoreExecutors.directExecutor());
+                }, mContext.getMainExecutor());
     }
 
     @VisibleForTesting
@@ -276,7 +277,7 @@ public final class SetupControllerImpl implements SetupController {
                     createAndRunTasks(workManager, owner, SETUP_VERIFY_PRE_INSTALLED_PACKAGE_TASK,
                             verifyInstallPackageTask);
                     return null;
-                }, MoreExecutors.directExecutor());
+                }, mContext.getMainExecutor());
     }
 
     @NonNull
@@ -340,6 +341,7 @@ public final class SetupControllerImpl implements SetupController {
                         kioskPackageName).build()).build();
     }
 
+    @MainThread
     private void createAndRunTasks(WorkManager workManager, LifecycleOwner owner,
             String uniqueWorkName, OneTimeWorkRequest... works) {
 
