@@ -312,9 +312,14 @@ public final class DeviceLockManagerTest {
 
             skipIfNoIdAvailable();
 
-            DeviceId deviceId = getDeviceIdFuture().get(TIMEOUT, TimeUnit.SECONDS);
-            assertThat(deviceId.getType()).isAnyOf(DEVICE_ID_TYPE_IMEI, DEVICE_ID_TYPE_MEID);
-            assertThat(deviceId.getId()).isNotEmpty();
+            // The device ID is supposed to be obtained from the DeviceLock backend service, passed
+            // to the DeviceLockController app, then passed to the DeviceLock system service. Since
+            // there is no way to communicate with the backend service within the scope of this test
+            // we expect the result to be an exception.
+            //
+            // TODO(b/281538947): find solution for properly testing the intended behavior.
+            assertThrows(ExecutionException.class,
+                    () -> getDeviceIdFuture().get(TIMEOUT, TimeUnit.SECONDS));
         } finally {
             removeFinancedDeviceKioskRole();
         }
