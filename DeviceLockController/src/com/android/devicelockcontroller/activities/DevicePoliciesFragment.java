@@ -104,7 +104,7 @@ public final class DevicePoliciesFragment extends Fragment {
                 v -> {
                     progressLiveData.setValue(ProvisioningProgress.GETTING_DEVICE_READY);
                     Futures.addCallback(
-                            setupController.startSetupFlow(getViewLifecycleOwner()),
+                            setupController.startSetupFlow(getActivity()),
                             new FutureCallback<>() {
                                 @Override
                                 public void onSuccess(Void result) {
