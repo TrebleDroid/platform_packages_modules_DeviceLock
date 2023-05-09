@@ -93,4 +93,12 @@ public abstract class GetDeviceCheckInStatusGrpcResponse extends DeviceCheckInGr
      * operation.
      */
     public abstract boolean isProvisionForced();
+
+    /**
+     * Check if the device is in an approved country, i.e. device provisioning should proceed. If
+     * false, then device provisioning should not proceed and would result in provision failure.
+     *
+     * @return true if the device is an approved country; false otherwise.
+     */
+    public abstract boolean isDeviceInApprovedCountry();
 }
