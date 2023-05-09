@@ -154,6 +154,16 @@ final class GetDeviceCheckInStatusGrpcResponseWrapper extends GetDeviceCheckInSt
         return getNextStepInformation().getDeviceProvisioningInformation().getForceProvisioning();
     }
 
+    @Override
+    public boolean isDeviceInApprovedCountry() {
+        if (mResponse == null || !mNextStep.isDeviceProvisioningInformationAvailable()) {
+            return false;
+        }
+
+        return getNextStepInformation().getDeviceProvisioningInformation()
+                .getIsDeviceInApprovedCountry();
+    }
+
     @NonNull
     private NextStepInformation getNextStepInformation() {
         if (mResponse != null) {
