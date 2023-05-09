@@ -31,9 +31,10 @@ import static com.android.devicelockcontroller.policy.AbstractTask.ERROR_CODE_SI
 import static com.android.devicelockcontroller.policy.AbstractTask.TASK_RESULT_DOWNLOADED_FILE_LOCATION_KEY;
 import static com.android.devicelockcontroller.policy.AbstractTask.TASK_RESULT_ERROR_CODE_KEY;
 import static com.android.devicelockcontroller.policy.VerifyPackageTask.computeHashValue;
-import static com.android.devicelockcontroller.storage.GlobalParameters.getKioskSignature;
 
 import static com.google.common.truth.Truth.assertThat;
+
+import static org.robolectric.annotation.LooperMode.Mode.LEGACY;
 
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -53,6 +54,10 @@ import androidx.work.WorkerFactory;
 import androidx.work.WorkerParameters;
 import androidx.work.testing.WorkManagerTestInitHelper;
 
+import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
+import com.android.devicelockcontroller.storage.GlobalParametersClient;
+
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.MoreExecutors;
 
 import org.junit.Before;
@@ -60,11 +65,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.Shadows;
+import org.robolectric.annotation.LooperMode;
 import org.robolectric.shadows.ShadowPackageManager;
 
 import java.util.concurrent.ExecutionException;
 
 /** Unit tests for {@link VerifyPackageTask}. */
+@LooperMode(LEGACY)
 @RunWith(RobolectricTestRunner.class)
 public final class VerifyPackageTaskTest {
     private static final String TEST_PACKAGE_NAME = "test.package.name";
@@ -77,13 +84,14 @@ public final class VerifyPackageTaskTest {
     private static final String TEST_ANOTHER_SIGNATURE_CHECKSUM =
             "VeVQn4BSmYKUJm7ltQy1kpOBkftdZ_c8rC5gsCdrG90=";
 
-    private Context mContext;
+    private TestDeviceLockControllerApplication mTestApplication;
     private PackageInfo mPackageInfo;
     private WorkManager mWorkManager;
+    private GlobalParametersClient mGlobalParametersClient;
 
     @Before
     public void setUp() {
-        mContext = ApplicationProvider.getApplicationContext();
+        mTestApplication = ApplicationProvider.getApplicationContext();
         mPackageInfo = new PackageInfo();
         mPackageInfo.packageName = TEST_PACKAGE_NAME;
         final Configuration config =
@@ -98,8 +106,9 @@ public final class VerifyPackageTaskTest {
                                         : null;
                             }
                         }).build();
-        WorkManagerTestInitHelper.initializeTestWorkManager(mContext, config);
-        mWorkManager = WorkManager.getInstance(mContext);
+        WorkManagerTestInitHelper.initializeTestWorkManager(mTestApplication, config);
+        mWorkManager = WorkManager.getInstance(mTestApplication);
+        mGlobalParametersClient = GlobalParametersClient.getInstance();
     }
 
     @Test
@@ -303,7 +312,8 @@ public final class VerifyPackageTaskTest {
         assertThat(workInfo.getState()).isEqualTo(SUCCEEDED);
 
         // THEN the signingInfo is written into SharedPreferences
-        assertThat(getKioskSignature(mContext)).isEqualTo(signature.toCharsString());
+        assertThat(Futures.getUnchecked(mGlobalParametersClient.getKioskSignature())).isEqualTo(
+                signature.toCharsString());
     }
 
     @Test
@@ -322,7 +332,8 @@ public final class VerifyPackageTaskTest {
         assertThat(workInfo.getState()).isEqualTo(SUCCEEDED);
 
         // THEN the signingInfo is written into SharedPreferences
-        assertThat(getKioskSignature(mContext)).isEqualTo(signature.toCharsString());
+        assertThat(Futures.getUnchecked(mGlobalParametersClient.getKioskSignature())).isEqualTo(
+                signature.toCharsString());
     }
 
     @Test
@@ -346,7 +357,7 @@ public final class VerifyPackageTaskTest {
                 /* defaultValue */ -1)).isEqualTo(ERROR_CODE_PACKAGE_HAS_MULTIPLE_SIGNERS);
 
         // THEN the signingInfo is not written into SharedPreferences
-        assertThat(getKioskSignature(mContext)).isNull();
+        assertThat(Futures.getUnchecked(mGlobalParametersClient.getKioskSignature())).isNull();
     }
 
     private void createPackageInfo(PackageInfo packageInfo) {
@@ -355,7 +366,7 @@ public final class VerifyPackageTaskTest {
 
     private void createPackageInfo(PackageInfo packageInfo, boolean isInstalled) {
         final ShadowPackageManager shadowPackageManager =
-                Shadows.shadowOf(mContext.getPackageManager());
+                Shadows.shadowOf(mTestApplication.getPackageManager());
         if (isInstalled) {
             shadowPackageManager.installPackage(packageInfo);
         } else {
