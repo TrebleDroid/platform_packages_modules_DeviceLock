@@ -44,6 +44,7 @@ import com.android.devicelockcontroller.util.LogUtil;
 
 import com.google.common.collect.ImmutableList;
 
+import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -93,6 +94,56 @@ final class SetupParameters {
                     "Setup parameters is not allowed to be override in non-debuggable build!");
         }
         populatePreferencesLocked(getSharedPreferences(context), bundle);
+        dumpParameters(context);
+    }
+
+    private static void dumpParameters(Context context) {
+        // kiosk-package-name:
+        // kiosk-download-url:
+        // kiosk-signature-checksum:
+        // kiosk-setup-activity:
+        // kiosk-allowlist:
+        // kiosk-disable-outgoing-calls:
+        // kiosk-enable-notifications-in-lock-task-mode:
+        // provisioning-type:
+        // mandatory-provision:
+        // kiosk-app-provider-name:
+        // disallow-installing-from-unknown-sources:
+        // terms-and-conditions-url:
+        // support-url:
+        LogUtil.d(TAG, String.format(Locale.US,
+                """
+                        Dumping SetupParameters ...
+                        %s: %s
+                        %s: %s
+                        %s: %s
+                        %s: %s
+                        %s: %s
+                        %s: %s
+                        %s: %s
+                        %s: %d
+                        %s: %s
+                        %s: %s
+                        %s: %s
+                        %s: %s
+                        %s: %s
+                        """,
+                KEY_KIOSK_PACKAGE, getKioskPackage(context),
+                KEY_KIOSK_DOWNLOAD_URL, getKioskDownloadUrl(context),
+                KEY_KIOSK_SIGNATURE_CHECKSUM, getKioskSignatureChecksum(context),
+                KEY_KIOSK_SETUP_ACTIVITY, getKioskSetupActivity(context),
+                KEY_KIOSK_ALLOWLIST, getKioskAllowlist(context),
+                KEY_KIOSK_DISABLE_OUTGOING_CALLS, getOutgoingCallsDisabled(context),
+                KEY_KIOSK_ENABLE_NOTIFICATIONS_IN_LOCK_TASK_MODE,
+                isNotificationsInLockTaskModeEnabled(context),
+                KEY_PROVISIONING_TYPE, getProvisioningType(context),
+                KEY_MANDATORY_PROVISION, isProvisionMandatory(context),
+                KEY_KIOSK_APP_PROVIDER_NAME, getKioskAppProviderName(context),
+                KEY_DISALLOW_INSTALLING_FROM_UNKNOWN_SOURCES,
+                isInstallingFromUnknownSourcesDisallowed(context),
+                KEY_TERMS_AND_CONDITIONS_URL, getTermsAndConditionsUrl(context),
+                KEY_SUPPORT_URL, getSupportUrl(context)
+        ));
     }
 
     /**
