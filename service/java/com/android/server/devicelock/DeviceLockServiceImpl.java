@@ -17,6 +17,7 @@
 package com.android.server.devicelock;
 
 import static android.app.role.RoleManager.MANAGE_HOLDERS_FLAG_DONT_KILL_APP;
+import static android.content.IntentFilter.SYSTEM_HIGH_PRIORITY;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.devicelock.DeviceId.DEVICE_ID_TYPE_IMEI;
 import static android.devicelock.DeviceId.DEVICE_ID_TYPE_MEID;
@@ -24,8 +25,11 @@ import static android.devicelock.DeviceId.DEVICE_ID_TYPE_MEID;
 import android.Manifest;
 import android.annotation.NonNull;
 import android.app.role.RoleManager;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ServiceInfo;
 import android.devicelock.DeviceId.DeviceIdType;
 import android.devicelock.DeviceLockManager;
@@ -45,11 +49,9 @@ import android.text.TextUtils;
 import android.util.ArrayMap;
 import android.util.Slog;
 
-import java.util.List;
-import java.util.ArrayList;
-
 import com.android.internal.annotations.VisibleForTesting;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -63,6 +65,47 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
     private final DeviceLockControllerConnector mDeviceLockControllerConnector;
 
     private final DeviceLockControllerPackageUtils mPackageUtils;
+
+    // Stopgap: this receiver should be replaced by an API on DeviceLockManager.
+    private final class DeviceLockClearReceiver extends BroadcastReceiver {
+        static final String ACTION_CLEAR = "com.android.devicelock.intent.action.CLEAR";
+        static final int CLEAR_SUCCEEDED = 0;
+        static final int CLEAR_FAILED = 1;
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Slog.i(TAG, "Received request to clear device");
+
+            // This receiver should be the only one.
+            // The result will still be sent to the 'resultReceiver' of 'sendOrderedBroadcast'.
+            abortBroadcast();
+
+            final PendingResult pendingResult = goAsync();
+
+            mDeviceLockControllerConnector.clearDevice(new OutcomeReceiver<>() {
+
+                private void setResult(int resultCode) {
+                    pendingResult.setResultCode(resultCode);
+
+                    pendingResult.finish();
+                }
+
+                @Override
+                public void onResult(Void ignored) {
+                    Slog.i(TAG, "Device cleared ");
+
+                    setResult(DeviceLockClearReceiver.CLEAR_SUCCEEDED);
+                }
+
+                @Override
+                public void onError(Exception ex) {
+                    Slog.e(TAG, "Exception clearing device: ", ex);
+
+                    setResult(DeviceLockClearReceiver.CLEAR_FAILED);
+                }
+            });
+        }
+    }
 
     // Last supported device id type
     private static final @DeviceIdType int LAST_DEVICE_ID_TYPE = DEVICE_ID_TYPE_MEID;
@@ -91,6 +134,14 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
                 serviceInfo.name);
 
         mDeviceLockControllerConnector = new DeviceLockControllerConnector(context, componentName);
+
+        final IntentFilter intentFilter = new IntentFilter(DeviceLockClearReceiver.ACTION_CLEAR);
+        // Run before any eventual app receiver (there should be none).
+        intentFilter.setPriority(SYSTEM_HIGH_PRIORITY);
+        context.registerReceiver(new DeviceLockClearReceiver(),
+                intentFilter,
+                Manifest.permission.MANAGE_DEVICE_LOCK_STATE, null /* scheduler */,
+                Context.RECEIVER_EXPORTED);
     }
 
     private boolean checkCallerPermission() {
@@ -231,8 +282,7 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
             }
         }
 
-        mDeviceLockControllerConnector.getDeviceId(
-            new OutcomeReceiver<>() {
+        mDeviceLockControllerConnector.getDeviceId(new OutcomeReceiver<>() {
                 @Override
                 public void onResult(String deviceId) {
                     Slog.i(TAG, "Get Device ID ");

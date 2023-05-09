@@ -91,6 +91,20 @@ public final class DeviceLockControllerService extends Service {
                     bundle.putString(IDeviceLockControllerService.KEY_HARDWARE_ID_RESULT, deviceId);
                     remoteCallback.sendResult(bundle);
                 }
+
+                @Override
+                public void clearDevice(RemoteCallback remoteCallback) {
+                    try {
+                        Futures.addCallback(mStateController.setNextStateForEvent(
+                                        DeviceStateController.DeviceEvent.CLEAR),
+                                remoteCallbackWrapper(remoteCallback, KEY_CLEAR_DEVICE_RESULT),
+                                MoreExecutors.directExecutor());
+
+                    } catch (StateTransitionException e) {
+                        sendResult(KEY_CLEAR_DEVICE_RESULT, remoteCallback, false);
+                    }
+
+                }
             };
 
     @NonNull

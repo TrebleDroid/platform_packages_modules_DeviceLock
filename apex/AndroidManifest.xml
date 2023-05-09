@@ -20,6 +20,9 @@
     <!-- Permission for calls from Controller to Device Lock Service -->
     <permission android:name="com.android.devicelockcontroller.permission.MANAGE_DEVICE_LOCK_SERVICE_FROM_CONTROLLER"
                 android:protectionLevel="signature|privileged" />
+    <!-- Permission used by a Kiosk app to send the clear device broadcast  -->
+    <permission android:name="com.android.devicelock.permission.RECEIVE_CLEAR_BROADCAST"
+                android:protectionLevel="signature" />
 
     <!-- APEX does not have classes.dex -->
     <application android:hasCode="false">
