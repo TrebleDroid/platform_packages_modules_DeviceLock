@@ -36,7 +36,6 @@ import android.util.Slog;
 import com.android.devicelockcontroller.IDeviceLockControllerService;
 import com.android.internal.annotations.GuardedBy;
 
-import java.lang.IllegalStateException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -359,6 +358,27 @@ final class DeviceLockControllerConnector {
             @SuppressWarnings("GuardedBy") // mLock already held in callControllerApi (error prone).
             public Void call() throws Exception {
                 mDeviceLockControllerService.getDeviceIdentifier(remoteCallback);
+                return null;
+            }
+        }, callback);
+    }
+
+    public void clearDevice(OutcomeReceiver<Void, Exception> callback) {
+        RemoteCallback remoteCallback = new RemoteCallback(checkTimeout(callback, result -> {
+            final boolean success =
+                    result.getBoolean(IDeviceLockControllerService.KEY_CLEAR_DEVICE_RESULT);
+            if (success) {
+                mHandler.post(() -> callback.onResult(null));
+            } else {
+                mHandler.post(() -> callback.onError(new Exception("Failed to clear device")));
+            }
+        }));
+
+        callControllerApi(new Callable<Void>() {
+            @Override
+            @SuppressWarnings("GuardedBy") // mLock already held in callControllerApi (error prone).
+            public Void call() throws Exception {
+                mDeviceLockControllerService.clearDevice(remoteCallback);
                 return null;
             }
         }, callback);
