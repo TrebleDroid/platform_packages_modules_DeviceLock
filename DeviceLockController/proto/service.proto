@@ -128,6 +128,12 @@ message DeviceProvisioningInformation {
   // true, then the user cannot stop device provisioning. Otherwise, if false,
   // then the user can optionally pause device provisioning.
   optional bool force_provisioning = 4;
+  // Whether the device is an approved country. If true, then the Device Lock
+  // Android client can proceed with device provisioning. Otherwise, this would
+  // be considered a provisioning failure and the Device Lock Android client
+  // would use the ReportDeviceProvisionState RPC to report the provision
+  // failure.
+  optional bool is_device_in_approved_country = 5;
 }
 
 // The different reasons device provisioning can be paused.
