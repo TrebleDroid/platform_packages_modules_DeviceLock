@@ -36,6 +36,10 @@ public final class GlobalParametersService extends Service {
 
     private final IGlobalParametersService.Stub mBinder =
             new IGlobalParametersService.Stub() {
+                @Override
+                public void clear() {
+                    GlobalParameters.clear(mContext);
+                }
 
                 @Override
                 public List<String> getLockTaskAllowlist() {

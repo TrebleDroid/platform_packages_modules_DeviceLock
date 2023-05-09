@@ -48,6 +48,11 @@ public final class SetupParametersService extends Service {
                 }
 
                 @Override
+                public void clear() {
+                    SetupParameters.clear(mContext);
+                }
+
+                @Override
                 public String getKioskPackage() {
                     return SetupParameters.getKioskPackage(mContext);
                 }
