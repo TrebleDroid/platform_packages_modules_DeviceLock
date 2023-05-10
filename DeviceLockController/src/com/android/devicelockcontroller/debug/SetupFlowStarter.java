@@ -16,8 +16,6 @@
 
 package com.android.devicelockcontroller.debug;
 
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.PROVISIONING_SUCCESS;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -27,15 +25,8 @@ import android.text.TextUtils;
 import com.android.devicelockcontroller.policy.DevicePolicyController;
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
-import com.android.devicelockcontroller.policy.StateTransitionException;
-import com.android.devicelockcontroller.storage.GlobalParameters;
+import com.android.devicelockcontroller.provision.worker.DeviceCheckInHelper;
 import com.android.devicelockcontroller.util.LogUtil;
-
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.MoreExecutors;
-
-import java.util.Locale;
 
 public final class SetupFlowStarter extends BroadcastReceiver {
 
@@ -60,41 +51,7 @@ public final class SetupFlowStarter extends BroadcastReceiver {
         DevicePolicyController devicePolicyController = policyObjects.getPolicyController();
         DeviceStateController deviceStateController = policyObjects.getStateController();
 
-        FutureCallback<Void> futureCallback = new FutureCallback<>() {
-            @Override
-            public void onSuccess(Void result) {
-                LogUtil.i(TAG,
-                        String.format(Locale.US,
-                                "State transition succeeded for event: %s",
-                                DeviceStateController.eventToString(PROVISIONING_SUCCESS)));
-                devicePolicyController.enqueueStartLockTaskModeWorker(
-                        intent.getBooleanExtra(EXTRA_IS_MANDATORY, /* defaultValue= */ true));
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                //TODO: Reset the state to where it can successfully transition.
-                LogUtil.e(TAG,
-                        String.format(Locale.US,
-                                "State transition failed for event: %s",
-                                DeviceStateController.eventToString(PROVISIONING_SUCCESS)), t);
-            }
-        };
-        GlobalParameters.setNeedCheckIn(context, false);
-        context.getMainExecutor().execute(
-                () -> {
-                    try {
-                        Futures.addCallback(
-                                deviceStateController.setNextStateForEvent(PROVISIONING_SUCCESS),
-                                futureCallback, MoreExecutors.directExecutor());
-                    } catch (StateTransitionException e) {
-                        //TODO: Reset the state to where it can successfully transition.
-                        LogUtil.e(TAG,
-                                String.format(Locale.US,
-                                        "State transition failed for event: %s",
-                                        DeviceStateController.eventToString(PROVISIONING_SUCCESS)),
-                                e);
-                    }
-                });
+        DeviceCheckInHelper.setProvisionSucceeded(deviceStateController, devicePolicyController,
+                context, intent.getBooleanExtra(EXTRA_IS_MANDATORY, /* defaultValue= */ true));
     }
 }

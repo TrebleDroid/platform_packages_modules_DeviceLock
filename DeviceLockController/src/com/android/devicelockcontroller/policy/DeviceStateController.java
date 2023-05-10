@@ -35,11 +35,8 @@ import java.lang.annotation.Target;
 public interface DeviceStateController {
     /**
      * Moves the device to a new state based on the input event
-     *
-     * @throws StateTransitionException when the input event does not match the current state.
      */
-    ListenableFuture<Void> setNextStateForEvent(@DeviceEvent int event)
-            throws StateTransitionException;
+    ListenableFuture<Void> setNextStateForEvent(@DeviceEvent int event);
 
     /** Returns the current state of the device */
     @DeviceState
