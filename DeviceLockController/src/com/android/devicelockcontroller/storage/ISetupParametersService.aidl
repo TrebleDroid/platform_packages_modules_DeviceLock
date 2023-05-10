@@ -34,4 +34,6 @@ interface ISetupParametersService {
     boolean isProvisionMandatory();
     String getKioskAppProviderName();
     boolean isInstallingFromUnknownSourcesDisallowed();
+    String getTermsAndConditionsUrl();
+    String getSupportUrl();
 }
