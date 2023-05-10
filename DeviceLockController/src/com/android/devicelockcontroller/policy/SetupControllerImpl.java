@@ -39,8 +39,6 @@ import static com.android.devicelockcontroller.policy.SetupController.SetupUpdat
 import static com.android.devicelockcontroller.policy.SetupController.SetupUpdatesCallbacks.FailureType.INSTALL_FAILED;
 import static com.android.devicelockcontroller.policy.SetupController.SetupUpdatesCallbacks.FailureType.VERIFICATION_FAILED;
 
-import static com.google.common.util.concurrent.Futures.transform;
-
 import android.content.Context;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
@@ -159,20 +157,18 @@ public final class SetupControllerImpl implements SetupController {
     }
 
     private ListenableFuture<Boolean> isKioskAppPreInstalled() {
-        return Build.isDebuggable()
-                ? Futures.immediateFuture(false)
-                : transform(SetupParametersClient.getInstance().getKioskPackage(),
-                        packageName -> {
-                            try {
-                                mContext.getPackageManager().getPackageInfo(
-                                        packageName, /* flags= */ 0);
-                                LogUtil.i(TAG, "Creditor app is pre-installed");
-                                return true;
-                            } catch (NameNotFoundException e) {
-                                LogUtil.i(TAG, "Creditor app is not pre-installed");
-                                return false;
-                            }
-                        }, MoreExecutors.directExecutor());
+        return Futures.transform(SetupParametersClient.getInstance().getKioskPackage(),
+                packageName -> {
+                    try {
+                        mContext.getPackageManager().getPackageInfo(
+                                packageName, /* flags= */ 0);
+                        LogUtil.i(TAG, "Creditor app is pre-installed");
+                        return true;
+                    } catch (NameNotFoundException e) {
+                        LogUtil.i(TAG, "Creditor app is not pre-installed");
+                        return false;
+                    }
+                }, MoreExecutors.directExecutor());
     }
 
     @VisibleForTesting
@@ -271,11 +267,21 @@ public final class SetupControllerImpl implements SetupController {
         return Futures.whenAllSucceed(getKioskPackageTask, getKioskSignatureChecksumTask)
                 .call(() -> {
                     LogUtil.v(TAG, "Verifying pre-installed package");
-                    final OneTimeWorkRequest verifyInstallPackageTask =
-                            getVerifyInstalledPackageTask(Futures.getDone(getKioskPackageTask),
+                    String kioskPackageName = Futures.getDone(getKioskPackageTask);
+                    OneTimeWorkRequest verifyInstallPackageTask =
+                            getVerifyInstalledPackageTask(kioskPackageName,
                                     Futures.getDone(getKioskSignatureChecksumTask));
-                    createAndRunTasks(workManager, owner, SETUP_VERIFY_PRE_INSTALLED_PACKAGE_TASK,
-                            verifyInstallPackageTask);
+                    OneTimeWorkRequest addFinancedDeviceKioskRoleTask =
+                            getAddFinancedDeviceKioskRoleTask(kioskPackageName);
+                    if (!Build.isDebuggable()) {
+                        createAndRunTasks(workManager, owner,
+                                SETUP_VERIFY_PRE_INSTALLED_PACKAGE_TASK,
+                                verifyInstallPackageTask, addFinancedDeviceKioskRoleTask);
+                    } else {
+                        createAndRunTasks(workManager, owner,
+                                SETUP_VERIFY_PRE_INSTALLED_PACKAGE_TASK,
+                                addFinancedDeviceKioskRoleTask);
+                    }
                     return null;
                 }, mContext.getMainExecutor());
     }
