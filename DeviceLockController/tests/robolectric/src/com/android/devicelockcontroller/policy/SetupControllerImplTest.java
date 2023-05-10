@@ -41,7 +41,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.robolectric.annotation.LooperMode.Mode.LEGACY;
 
-import android.app.Application;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -67,6 +66,7 @@ import androidx.work.testing.WorkManagerTestInitHelper;
 import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
+import com.android.devicelockcontroller.shadows.ShadowBuild;
 import com.android.devicelockcontroller.storage.SetupParametersClient;
 import com.android.devicelockcontroller.storage.SetupParametersService;
 
@@ -86,7 +86,9 @@ import org.mockito.junit.MockitoRule;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.Shadows;
+import org.robolectric.annotation.Config;
 import org.robolectric.annotation.LooperMode;
+import org.robolectric.shadows.ShadowPackageManager;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -96,6 +98,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @LooperMode(LEGACY)
 @RunWith(RobolectricTestRunner.class)
+@Config(shadows = {ShadowBuild.class})
 public final class SetupControllerImplTest {
 
     private static final String TEST_SETUP_ACTIVITY = "packagename/.activity";
@@ -127,7 +130,7 @@ public final class SetupControllerImplTest {
         mMockPolicyController = mTestApplication.getMockPolicyController();
         when(mMockPolicyController.launchActivityInLockedMode()).thenReturn(
                 Futures.immediateFuture(true));
-        Shadows.shadowOf((Application) mTestApplication).setComponentNameAndServiceForBindService(
+        Shadows.shadowOf(mTestApplication).setComponentNameAndServiceForBindService(
                 new ComponentName(mTestApplication, SetupParametersService.class),
                 Robolectric.setupService(SetupParametersService.class).onBind(null));
         mSetupParametersClient = SetupParametersClient.getInstance(
@@ -176,6 +179,60 @@ public final class SetupControllerImplTest {
                 SetupController.SetupStatus.SETUP_FAILED);
         verify(mMockPolicyController, never()).launchActivityInLockedMode();
         verify(mMockPolicyController).wipeData();
+    }
+
+    @Test
+    public void isKioskAppPreinstalled_nonDebuggableBuild_returnFalse() {
+        // GIVEN build is non-debuggable build and kiosk app is installed.
+        ShadowBuild.setIsDebuggable(false);
+        Bundle bundle = new Bundle();
+        bundle.putString(EXTRA_KIOSK_PACKAGE, TEST_PACKAGE_NAME);
+        createParameters(bundle);
+        ShadowPackageManager pm = Shadows.shadowOf(mTestApplication.getPackageManager());
+        PackageInfo kioskPackageInfo = new PackageInfo();
+        kioskPackageInfo.packageName = TEST_PACKAGE_NAME;
+        pm.installPackage(kioskPackageInfo);
+
+        SetupControllerImpl setupController =
+                new SetupControllerImpl(
+                        mTestApplication, mMockStateController, mMockPolicyController);
+
+        assertThat(Futures.getUnchecked(setupController.isKioskAppPreInstalled())).isFalse();
+    }
+
+    @Test
+    public void isKioskAppPreinstalled_debuggableBuild_kioskPreinstalled_returnTrue() {
+        // GIVEN build is debuggable build and kiosk app is installed
+        ShadowBuild.setIsDebuggable(true);
+        Bundle bundle = new Bundle();
+        bundle.putString(EXTRA_KIOSK_PACKAGE, TEST_PACKAGE_NAME);
+        createParameters(bundle);
+        ShadowPackageManager pm = Shadows.shadowOf(mTestApplication.getPackageManager());
+        PackageInfo kioskPackageInfo = new PackageInfo();
+        kioskPackageInfo.packageName = TEST_PACKAGE_NAME;
+        pm.installPackage(kioskPackageInfo);
+
+        SetupControllerImpl setupController =
+                new SetupControllerImpl(
+                        mTestApplication, mMockStateController, mMockPolicyController);
+
+
+        assertThat(Futures.getUnchecked(setupController.isKioskAppPreInstalled())).isTrue();
+    }
+
+    @Test
+    public void isKioskAppPreinstalled_debuggableBuild_kioskNotInstalled_returnFalse() {
+        // GIVEN build is debuggable build but kiosk app is not installed
+        ShadowBuild.setIsDebuggable(true);
+        Bundle bundle = new Bundle();
+        bundle.putString(EXTRA_KIOSK_PACKAGE, TEST_PACKAGE_NAME);
+        createParameters(bundle);
+
+        SetupControllerImpl setupController =
+                new SetupControllerImpl(
+                        mTestApplication, mMockStateController, mMockPolicyController);
+
+        assertThat(Futures.getUnchecked(setupController.isKioskAppPreInstalled())).isFalse();
     }
 
     @Test
