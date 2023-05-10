@@ -64,6 +64,10 @@ public final class SetupParametersServiceTest extends AbstractSetupParametersTes
         expectedKioskAllowlist.add(KIOSK_ALLOWLIST_PACKAGE_1);
         assertThat(mISetupParametersService.getKioskAllowlist())
                 .containsExactlyElementsIn(expectedKioskAllowlist);
+
+        assertThat(mISetupParametersService.getTermsAndConditionsUrl())
+                .isEqualTo(TERMS_AND_CONDITIONS_URL);
+        assertThat(mISetupParametersService.getSupportUrl()).isEqualTo(SUPPORT_URL);
     }
 
     @Test
