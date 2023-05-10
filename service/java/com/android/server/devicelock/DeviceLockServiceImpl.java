@@ -17,6 +17,7 @@
 package com.android.server.devicelock;
 
 import static android.app.role.RoleManager.MANAGE_HOLDERS_FLAG_DONT_KILL_APP;
+import static android.content.IntentFilter.SYSTEM_HIGH_PRIORITY;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.devicelock.DeviceId.DEVICE_ID_TYPE_IMEI;
 import static android.devicelock.DeviceId.DEVICE_ID_TYPE_MEID;
@@ -24,10 +25,14 @@ import static android.devicelock.DeviceId.DEVICE_ID_TYPE_MEID;
 import android.Manifest;
 import android.annotation.NonNull;
 import android.app.role.RoleManager;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ServiceInfo;
 import android.devicelock.DeviceId.DeviceIdType;
+import android.devicelock.DeviceLockManager;
 import android.devicelock.IDeviceLockService;
 import android.devicelock.IGetDeviceIdCallback;
 import android.devicelock.IGetKioskAppsCallback;
@@ -40,10 +45,14 @@ import android.os.RemoteCallback;
 import android.os.RemoteException;
 import android.os.UserHandle;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.util.ArrayMap;
 import android.util.Slog;
 
 import com.android.internal.annotations.VisibleForTesting;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Implementation of {@link android.devicelock.IDeviceLockService} binder service.
@@ -56,6 +65,47 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
     private final DeviceLockControllerConnector mDeviceLockControllerConnector;
 
     private final DeviceLockControllerPackageUtils mPackageUtils;
+
+    // Stopgap: this receiver should be replaced by an API on DeviceLockManager.
+    private final class DeviceLockClearReceiver extends BroadcastReceiver {
+        static final String ACTION_CLEAR = "com.android.devicelock.intent.action.CLEAR";
+        static final int CLEAR_SUCCEEDED = 0;
+        static final int CLEAR_FAILED = 1;
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Slog.i(TAG, "Received request to clear device");
+
+            // This receiver should be the only one.
+            // The result will still be sent to the 'resultReceiver' of 'sendOrderedBroadcast'.
+            abortBroadcast();
+
+            final PendingResult pendingResult = goAsync();
+
+            mDeviceLockControllerConnector.clearDevice(new OutcomeReceiver<>() {
+
+                private void setResult(int resultCode) {
+                    pendingResult.setResultCode(resultCode);
+
+                    pendingResult.finish();
+                }
+
+                @Override
+                public void onResult(Void ignored) {
+                    Slog.i(TAG, "Device cleared ");
+
+                    setResult(DeviceLockClearReceiver.CLEAR_SUCCEEDED);
+                }
+
+                @Override
+                public void onError(Exception ex) {
+                    Slog.e(TAG, "Exception clearing device: ", ex);
+
+                    setResult(DeviceLockClearReceiver.CLEAR_FAILED);
+                }
+            });
+        }
+    }
 
     // Last supported device id type
     private static final @DeviceIdType int LAST_DEVICE_ID_TYPE = DEVICE_ID_TYPE_MEID;
@@ -84,6 +134,14 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
                 serviceInfo.name);
 
         mDeviceLockControllerConnector = new DeviceLockControllerConnector(context, componentName);
+
+        final IntentFilter intentFilter = new IntentFilter(DeviceLockClearReceiver.ACTION_CLEAR);
+        // Run before any eventual app receiver (there should be none).
+        intentFilter.setPriority(SYSTEM_HIGH_PRIORITY);
+        context.registerReceiver(new DeviceLockClearReceiver(),
+                intentFilter,
+                Manifest.permission.MANAGE_DEVICE_LOCK_STATE, null /* scheduler */,
+                Context.RECEIVER_EXPORTED);
     }
 
     private boolean checkCallerPermission() {
@@ -194,37 +252,73 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
         try {
             if (deviceIdTypeBitmap < 0 || deviceIdTypeBitmap >= (1 << (LAST_DEVICE_ID_TYPE + 1))) {
                 callback.onError(IGetDeviceIdCallback.ERROR_INVALID_DEVICE_ID_TYPE_BITMAP);
-
                 return;
             }
-
-            final TelephonyManager telephonyManager =
-                    mContext.getSystemService(TelephonyManager.class);
-            if ((deviceIdTypeBitmap & (1 << DEVICE_ID_TYPE_IMEI)) != 0) {
-                final String imei = telephonyManager.getImei();
-
-                if (imei != null) {
-                    callback.onDeviceIdReceived(DEVICE_ID_TYPE_IMEI, imei);
-
-                    return;
-                }
-            }
-
-            if ((deviceIdTypeBitmap & (1 << DEVICE_ID_TYPE_MEID)) != 0) {
-                final String meid = telephonyManager.getMeid();
-
-                if (meid != null) {
-                    callback.onDeviceIdReceived(DEVICE_ID_TYPE_MEID, meid);
-
-                    return;
-                }
-            }
-
-            callback.onError(IGetDeviceIdCallback.ERROR_CANNOT_GET_DEVICE_ID);
-
         } catch (RemoteException e) {
             Slog.e(TAG, "getDeviceId() - Unable to send result to the callback", e);
         }
+
+        final TelephonyManager telephonyManager =
+                mContext.getSystemService(TelephonyManager.class);
+        int activeModemCount = telephonyManager.getActiveModemCount();
+        List<String> imeiList = new ArrayList<String>();
+        List<String> meidList = new ArrayList<String>();
+
+        if ((deviceIdTypeBitmap & (1 << DEVICE_ID_TYPE_IMEI)) != 0) {
+            for (int i = 0; i < activeModemCount; i++) {
+                String imei = telephonyManager.getImei(i);
+                if (!TextUtils.isEmpty(imei)) {
+                    imeiList.add(imei);
+                }
+            }
+        }
+
+        if ((deviceIdTypeBitmap & (1 << DEVICE_ID_TYPE_MEID)) != 0) {
+            for (int i = 0; i < activeModemCount; i++) {
+                String meid = telephonyManager.getMeid(i);
+                if (!TextUtils.isEmpty(meid)) {
+                    meidList.add(meid);
+                }
+            }
+        }
+
+        mDeviceLockControllerConnector.getDeviceId(new OutcomeReceiver<>() {
+                @Override
+                public void onResult(String deviceId) {
+                    Slog.i(TAG, "Get Device ID ");
+                    try {
+                        if (meidList.contains(deviceId)) {
+                            callback.onDeviceIdReceived(DEVICE_ID_TYPE_MEID, deviceId);
+                            return;
+                        }
+                        if (imeiList.contains(deviceId)) {
+                            callback.onDeviceIdReceived(DEVICE_ID_TYPE_IMEI, deviceId);
+                            return;
+                        }
+                        // When a device ID is returned from DLC App, but none of the IDs
+                        // got from TelephonyManager matches that device ID.
+                        //
+                        // TODO(b/270392813): Send the device ID back to the callback
+                        // with UNSPECIFIED device ID type.
+                        callback.onError(IGetDeviceIdCallback.ERROR_CANNOT_GET_DEVICE_ID);
+                    } catch (RemoteException e) {
+                        Slog.e(TAG, "getDeviceId() - Unable to send result to the "
+                                + "callback", e);
+                    }
+                }
+
+                @Override
+                public void onError(Exception ex) {
+                    Slog.e(TAG, "Exception: ", ex);
+                    try {
+                        callback.onError(IGetDeviceIdCallback.ERROR_CANNOT_GET_DEVICE_ID);
+                    } catch (RemoteException e) {
+                        Slog.e(TAG, "getDeviceId() - Unable to send error to the "
+                                + "callback", e);
+                    }
+                }
+            }
+        );
     }
 
     @Override
@@ -255,13 +349,24 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
     public void getKioskApps(@NonNull IGetKioskAppsCallback callback) {
         // Caller is not necessarily a kiosk app, and no particular permission enforcing is needed.
 
-        // TODO: return proper kiosk app info.
         final ArrayMap kioskApps = new ArrayMap<Integer, String>();
 
+        final UserHandle userHandle = Binder.getCallingUserHandle();
+        final RoleManager roleManager = mContext.getSystemService(RoleManager.class);
+        final long identity = Binder.clearCallingIdentity();
         try {
+            List<String> roleHolders = roleManager.getRoleHoldersAsUser(
+                    RoleManager.ROLE_FINANCED_DEVICE_KIOSK, userHandle);
+
+            if (!roleHolders.isEmpty()) {
+                kioskApps.put(DeviceLockManager.DEVICE_LOCK_ROLE_FINANCING, roleHolders.get(0));
+            }
+
             callback.onKioskAppsReceived(kioskApps);
         } catch (RemoteException e) {
             Slog.e(TAG, "getKioskApps() - Unable to send result to the callback", e);
+        } finally {
+            Binder.restoreCallingIdentity(identity);
         }
     }
 
