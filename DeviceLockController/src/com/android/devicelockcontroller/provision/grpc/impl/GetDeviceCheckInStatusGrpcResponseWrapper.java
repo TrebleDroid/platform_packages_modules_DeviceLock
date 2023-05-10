@@ -126,13 +126,12 @@ final class GetDeviceCheckInStatusGrpcResponseWrapper extends GetDeviceCheckInSt
             return ProvisioningType.TYPE_UNDEFINED;
         }
 
-        switch (mNextStep.getDeviceProvisioningInformation().getConfigurationType()) {
-            case CONFIGURATION_TYPE_FINANCED:
-                return ProvisioningType.TYPE_FINANCED;
-            case CONFIGURATION_TYPE_UNSPECIFIED:
-            default:
-                return ProvisioningType.TYPE_UNDEFINED;
-        }
+        return switch (mNextStep.getDeviceProvisioningInformation().getConfigurationType()) {
+            case CONFIGURATION_TYPE_FINANCED -> ProvisioningType.TYPE_FINANCED;
+            case CONFIGURATION_TYPE_SUBSIDY -> ProvisioningType.TYPE_SUBSIDY;
+            case CONFIGURATION_TYPE_UNSPECIFIED -> ProvisioningType.TYPE_UNDEFINED;
+            default -> ProvisioningType.TYPE_UNDEFINED;
+        };
     }
 
     @Override
