@@ -232,4 +232,26 @@ public final class SetupParametersClient extends DlcClient {
         return call(() -> ISetupParametersService.Stub.asInterface(mDlcService)
                 .isInstallingFromUnknownSourcesDisallowed());
     }
+
+    /**
+     * Get the Terms and Conditions URL of the partner for enrolling in a Device Lock program.
+     *
+     * @return The URL to the terms and conditions.
+     */
+    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
+    public ListenableFuture<String> getTermsAndConditionsUrl() {
+        return call(() -> ISetupParametersService.Stub.asInterface(mDlcService)
+                .getTermsAndConditionsUrl());
+    }
+
+    /**
+     * The URL to the support page the user can use to get help.
+     *
+     * @return The URL to the support page.
+     */
+    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
+    public ListenableFuture<String> getSupportUrl() {
+        return call(() -> ISetupParametersService.Stub.asInterface(mDlcService)
+                .getSupportUrl());
+    }
 }
