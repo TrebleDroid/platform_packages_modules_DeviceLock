@@ -32,6 +32,12 @@
         <receiver android:name="com.android.devicelockcontroller.debug.SetupParametersOverrider"
             android:exported="true" />
 
+        <receiver android:name="com.android.devicelockcontroller.debug.SetupFlowStarter"
+            android:exported="true" />
+
+        <receiver android:name="com.android.devicelockcontroller.debug.DeviceStateOverrider"
+            android:exported="true" />
+
         <activity
             android:name="com.android.devicelockcontroller.activities.HelpActivity"
             android:exported="true"

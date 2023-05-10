@@ -29,6 +29,7 @@ import android.os.IBinder;
 import android.os.OutcomeReceiver;
 import android.os.RemoteCallback;
 import android.os.UserHandle;
+import android.text.TextUtils;
 import android.util.ArraySet;
 import android.util.Slog;
 
@@ -335,6 +336,49 @@ final class DeviceLockControllerConnector {
             @SuppressWarnings("GuardedBy") // mLock already held in callControllerApi (error prone).
             public Void call() throws Exception {
                 mDeviceLockControllerService.isDeviceLocked(remoteCallback);
+                return null;
+            }
+        }, callback);
+    }
+
+    public void getDeviceId(OutcomeReceiver<String, Exception> callback) {
+        RemoteCallback remoteCallback = new RemoteCallback(checkTimeout(callback, result -> {
+            final String deviceId =
+                    result.getString(IDeviceLockControllerService.KEY_HARDWARE_ID_RESULT);
+            if (TextUtils.isEmpty(deviceId)) { // If the deviceId is null or empty
+                mHandler.post(() -> callback.onError(new IllegalStateException(
+                        "No registered Device ID found")));
+            } else {
+                mHandler.post(() -> callback.onResult(deviceId));
+            }
+        }));
+
+        callControllerApi(new Callable<Void>() {
+            @Override
+            @SuppressWarnings("GuardedBy") // mLock already held in callControllerApi (error prone).
+            public Void call() throws Exception {
+                mDeviceLockControllerService.getDeviceIdentifier(remoteCallback);
+                return null;
+            }
+        }, callback);
+    }
+
+    public void clearDevice(OutcomeReceiver<Void, Exception> callback) {
+        RemoteCallback remoteCallback = new RemoteCallback(checkTimeout(callback, result -> {
+            final boolean success =
+                    result.getBoolean(IDeviceLockControllerService.KEY_CLEAR_DEVICE_RESULT);
+            if (success) {
+                mHandler.post(() -> callback.onResult(null));
+            } else {
+                mHandler.post(() -> callback.onError(new Exception("Failed to clear device")));
+            }
+        }));
+
+        callControllerApi(new Callable<Void>() {
+            @Override
+            @SuppressWarnings("GuardedBy") // mLock already held in callControllerApi (error prone).
+            public Void call() throws Exception {
+                mDeviceLockControllerService.clearDevice(remoteCallback);
                 return null;
             }
         }, callback);
