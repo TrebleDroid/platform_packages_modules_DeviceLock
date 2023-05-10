@@ -40,6 +40,7 @@ import static com.android.devicelockcontroller.policy.SetupController.SetupUpdat
 import static com.android.devicelockcontroller.policy.SetupController.SetupUpdatesCallbacks.FailureType.VERIFICATION_FAILED;
 
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 
@@ -78,8 +79,8 @@ public final class SetupControllerImpl implements SetupController {
     private static final String SETUP_URL_INSTALL_TASKS_NAME = "devicelock_setup_url_install_tasks";
     private static final String SETUP_PLAY_INSTALL_TASKS_NAME =
             "devicelock_setup_play_install_tasks";
-    public static final String SETUP_VERIFY_PRE_INSTALLED_PACKAGE_TASK =
-            "devicelock_setup_verify_pre_installed_package_task";
+    public static final String SETUP_PRE_INSTALLED_PACKAGE_TASK =
+            "devicelock_setup_pre_installed_package_task";
     public static final String TAG = "SetupController";
     public static final String SETUP_INSTALL_EXISTING_PACKAGE_TASK =
             "devicelock_setup_install_existing_package_task";
@@ -139,7 +140,7 @@ public final class SetupControllerImpl implements SetupController {
         return Futures.transformAsync(isKioskAppPreInstalled(),
                 isPreinstalled -> {
                     if (isPreinstalled) {
-                        return verifyPreInstalledPackage(workManager, owner);
+                        return assignRoleToPreinstalledPackage(workManager, owner);
                     } else if (mContext.getUser().isSystem()) {
                         final Class<? extends ListenableWorker> playInstallTaskClass =
                                 ((DeviceLockControllerApplication) mContext.getApplicationContext())
@@ -156,19 +157,22 @@ public final class SetupControllerImpl implements SetupController {
                 }, MoreExecutors.directExecutor());
     }
 
-    private ListenableFuture<Boolean> isKioskAppPreInstalled() {
-        return Futures.transform(SetupParametersClient.getInstance().getKioskPackage(),
-                packageName -> {
-                    try {
-                        mContext.getPackageManager().getPackageInfo(
-                                packageName, /* flags= */ 0);
-                        LogUtil.i(TAG, "Creditor app is pre-installed");
-                        return true;
-                    } catch (NameNotFoundException e) {
-                        LogUtil.i(TAG, "Creditor app is not pre-installed");
-                        return false;
-                    }
-                }, MoreExecutors.directExecutor());
+    @VisibleForTesting
+    ListenableFuture<Boolean> isKioskAppPreInstalled() {
+        return !Build.isDebuggable() ? Futures.immediateFuture(false)
+                : Futures.transform(SetupParametersClient.getInstance().getKioskPackage(),
+                        packageName -> {
+                            try {
+                                mContext.getPackageManager().getPackageInfo(
+                                        packageName,
+                                        ApplicationInfo.FLAG_INSTALLED);
+                                LogUtil.i(TAG, "Creditor app is pre-installed");
+                                return true;
+                            } catch (NameNotFoundException e) {
+                                LogUtil.i(TAG, "Creditor app is not pre-installed");
+                                return false;
+                            }
+                        }, MoreExecutors.directExecutor());
     }
 
     @VisibleForTesting
@@ -256,32 +260,20 @@ public final class SetupControllerImpl implements SetupController {
     }
 
     @VisibleForTesting
-    ListenableFuture<Void> verifyPreInstalledPackage(WorkManager workManager,
+    ListenableFuture<Void> assignRoleToPreinstalledPackage(WorkManager workManager,
             LifecycleOwner owner) {
 
         final SetupParametersClient setupParametersClient = SetupParametersClient.getInstance();
         final ListenableFuture<String> getKioskPackageTask =
                 setupParametersClient.getKioskPackage();
-        final ListenableFuture<String> getKioskSignatureChecksumTask =
-                setupParametersClient.getKioskSignatureChecksum();
-        return Futures.whenAllSucceed(getKioskPackageTask, getKioskSignatureChecksumTask)
-                .call(() -> {
-                    LogUtil.v(TAG, "Verifying pre-installed package");
-                    String kioskPackageName = Futures.getDone(getKioskPackageTask);
-                    OneTimeWorkRequest verifyInstallPackageTask =
-                            getVerifyInstalledPackageTask(kioskPackageName,
-                                    Futures.getDone(getKioskSignatureChecksumTask));
+        return Futures.transform(getKioskPackageTask,
+                kioskPackage -> {
+                    LogUtil.v(TAG, "assigning role to pre-installed package");
                     OneTimeWorkRequest addFinancedDeviceKioskRoleTask =
-                            getAddFinancedDeviceKioskRoleTask(kioskPackageName);
-                    if (!Build.isDebuggable()) {
-                        createAndRunTasks(workManager, owner,
-                                SETUP_VERIFY_PRE_INSTALLED_PACKAGE_TASK,
-                                verifyInstallPackageTask, addFinancedDeviceKioskRoleTask);
-                    } else {
-                        createAndRunTasks(workManager, owner,
-                                SETUP_VERIFY_PRE_INSTALLED_PACKAGE_TASK,
-                                addFinancedDeviceKioskRoleTask);
-                    }
+                            getAddFinancedDeviceKioskRoleTask(kioskPackage);
+                    createAndRunTasks(workManager, owner,
+                            SETUP_PRE_INSTALLED_PACKAGE_TASK,
+                            addFinancedDeviceKioskRoleTask);
                     return null;
                 }, mContext.getMainExecutor());
     }
