@@ -23,7 +23,7 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 
 import androidx.annotation.GuardedBy;
-import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.android.devicelockcontroller.util.LogUtil;
 
@@ -74,8 +74,8 @@ abstract class DlcClient {
         }
     }
 
-    DlcClient(@NonNull Context context, @NonNull ComponentName componentName,
-            ListeningExecutorService executorService) {
+    DlcClient(Context context, ComponentName componentName,
+            @Nullable ListeningExecutorService executorService) {
         mContext = context;
         mComponentName = componentName;
         mListeningExecutorService = executorService;
