@@ -53,9 +53,12 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
     }
 
     @Override
-    public ListenableFuture<Void> setNextStateForEvent(@DeviceEvent int event)
-            throws StateTransitionException {
-        updateState(getNextState(event));
+    public ListenableFuture<Void> setNextStateForEvent(@DeviceEvent int event) {
+        try {
+            updateState(getNextState(event));
+        } catch (StateTransitionException e) {
+            return Futures.immediateFailedFuture(e);
+        }
         LogUtil.i(TAG, String.format(Locale.US, "handleEvent %d, newState %d", event, mState));
         final List<ListenableFuture<Void>> onStateChangedTasks = new ArrayList<>();
         synchronized (mListeners) {

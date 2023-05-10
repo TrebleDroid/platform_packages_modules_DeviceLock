@@ -47,7 +47,6 @@ import com.android.devicelockcontroller.common.DeviceId;
 import com.android.devicelockcontroller.policy.DevicePolicyController;
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
-import com.android.devicelockcontroller.policy.StateTransitionException;
 import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrpcResponse;
 import com.android.devicelockcontroller.provision.grpc.ProvisioningConfiguration;
 import com.android.devicelockcontroller.storage.GlobalParameters;
@@ -214,6 +213,17 @@ public final class DeviceCheckInHelper extends AbstractDeviceCheckInHelper {
                 response.isProvisioningMandatory());
         Futures.getUnchecked(
                 SetupParametersClient.getInstance().createPrefs(provisionBundle));
+        setProvisionSucceeded(stateController, devicePolicyController, mAppContext,
+                response.isProvisioningMandatory());
+        return true;
+    }
+
+    /**
+     * Helper method to set the state for PROVISIONING_SUCCESS event.
+     */
+    public static void setProvisionSucceeded(DeviceStateController stateController,
+            DevicePolicyController devicePolicyController,
+            Context mAppContext, final boolean isMandatory) {
         FutureCallback<Void> futureCallback = new FutureCallback<>() {
             @Override
             public void onSuccess(Void result) {
@@ -221,8 +231,7 @@ public final class DeviceCheckInHelper extends AbstractDeviceCheckInHelper {
                         String.format(Locale.US,
                                 "State transition succeeded for event: %s",
                                 DeviceStateController.eventToString(PROVISIONING_SUCCESS)));
-                devicePolicyController.enqueueStartLockTaskModeWorker(
-                        response.isProvisioningMandatory());
+                devicePolicyController.enqueueStartLockTaskModeWorker(isMandatory);
             }
 
             @Override
@@ -236,20 +245,8 @@ public final class DeviceCheckInHelper extends AbstractDeviceCheckInHelper {
         };
         GlobalParameters.setNeedCheckIn(mAppContext, false);
         mAppContext.getMainExecutor().execute(
-                () -> {
-                    try {
-                        Futures.addCallback(
-                                stateController.setNextStateForEvent(PROVISIONING_SUCCESS),
-                                futureCallback, MoreExecutors.directExecutor());
-                    } catch (StateTransitionException e) {
-                        //TODO: Reset the state to where it can successfully transition.
-                        LogUtil.e(TAG,
-                                String.format(Locale.US,
-                                        "State transition failed for event: %s",
-                                        DeviceStateController.eventToString(PROVISIONING_SUCCESS)),
-                                e);
-                    }
-                });
-        return true;
+                () -> Futures.addCallback(
+                        stateController.setNextStateForEvent(PROVISIONING_SUCCESS),
+                        futureCallback, MoreExecutors.directExecutor()));
     }
 }
