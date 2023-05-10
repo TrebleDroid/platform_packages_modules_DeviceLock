@@ -102,6 +102,16 @@ public final class SetupParametersService extends Service {
                 public boolean isInstallingFromUnknownSourcesDisallowed() {
                     return SetupParameters.isInstallingFromUnknownSourcesDisallowed(mContext);
                 }
+
+                @Override
+                public String getTermsAndConditionsUrl() {
+                    return SetupParameters.getTermsAndConditionsUrl(mContext);
+                }
+
+                @Override
+                public String getSupportUrl() {
+                    return SetupParameters.getSupportUrl(mContext);
+                }
             };
 
     @Override
