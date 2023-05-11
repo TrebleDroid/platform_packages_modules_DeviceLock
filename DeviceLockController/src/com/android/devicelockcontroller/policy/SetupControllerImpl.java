@@ -363,45 +363,34 @@ public final class SetupControllerImpl implements SetupController {
     }
 
     @VisibleForTesting
-    void finishSetup() {
+    ListenableFuture<Void> finishSetup() {
         if (mCurrentSetupState == SetupStatus.SETUP_FINISHED) {
-            Futures.addCallback(mPolicyController.launchActivityInLockedMode(),
-                    new FutureCallback<>() {
-                        @Override
-                        public void onSuccess(Boolean isLaunched) {
-                            if (!isLaunched) {
-                                onFailure(new IllegalStateException());
-                            }
-                            LogUtil.i(TAG, "Launched kiosk activity in lock task mode");
+            return Futures.transform(
+                    mPolicyController.launchActivityInLockedMode(),
+                    isLaunched -> {
+                        if (!isLaunched) {
+                            throw new IllegalStateException(
+                                    "Launching kiosk setup activity failed!");
                         }
-
-                        @Override
-                        public void onFailure(Throwable t) {
-                            LogUtil.e(TAG, "Failed to launch kiosk activity in lock task mode!", t);
-                        }
+                        return null;
                     }, MoreExecutors.directExecutor());
         } else {
-            Futures.addCallback(SetupParametersClient.getInstance().isProvisionMandatory(),
-                    new FutureCallback<>() {
-                        @Override
-                        public void onSuccess(Boolean isMandatory) {
-                            if (isMandatory) mPolicyController.wipeData();
-                        }
-
-                        @Override
-                        public void onFailure(Throwable t) {
-                            LogUtil.e(TAG, "Failed to know if Provision is mandatory", t);
-                        }
+            return Futures.transform(
+                    SetupParametersClient.getInstance().isProvisionMandatory(),
+                    isMandatory -> {
+                        if (isMandatory) mPolicyController.wipeData();
+                        return null;
                     }, MoreExecutors.directExecutor());
         }
     }
 
-    private void setupFlowTaskSuccessCallbackHandler() {
+    @VisibleForTesting
+    void setupFlowTaskSuccessCallbackHandler() {
         setupFlowTaskCallbackHandler(true, /* Ignored parameter */ FailureType.SETUP_FAILED);
     }
 
-    private void setupFlowTaskFailureCallbackHandler(
-            @FailureType int failReason) {
+    @VisibleForTesting
+    void setupFlowTaskFailureCallbackHandler(@FailureType int failReason) {
         setupFlowTaskCallbackHandler(false, failReason);
     }
 
@@ -411,38 +400,42 @@ public final class SetupControllerImpl implements SetupController {
      * @param result     true if the setup succeed, otherwise false
      * @param failReason why the setup failed, the value will be ignored if {@code result} is true
      */
-    @VisibleForTesting
-    void setupFlowTaskCallbackHandler(
+    private void setupFlowTaskCallbackHandler(
             boolean result, @FailureType int failReason) {
+        Futures.addCallback(
+                Futures.transformAsync(mStateController.setNextStateForEvent(
+                                result ? DeviceEvent.SETUP_SUCCESS : DeviceEvent.SETUP_FAILURE),
+                        input -> {
+                            if (result) {
+                                LogUtil.i(TAG, "Handling successful setup");
+                                mCurrentSetupState = SetupStatus.SETUP_FINISHED;
+                                synchronized (mCallbacks) {
+                                    for (int i = 0, cbSize = mCallbacks.size(); i < cbSize; i++) {
+                                        mCallbacks.get(i).setupCompleted();
+                                    }
+                                }
+                            } else {
+                                LogUtil.i(TAG, "Handling failed setup");
+                                mCurrentSetupState = SetupStatus.SETUP_FAILED;
+                                synchronized (mCallbacks) {
+                                    for (int i = 0, cbSize = mCallbacks.size(); i < cbSize; i++) {
+                                        mCallbacks.get(i).setupFailed(failReason);
+                                    }
+                                }
+                            }
+                            return finishSetup();
+                        }, MoreExecutors.directExecutor()),
+                new FutureCallback<>() {
+                    @Override
+                    public void onSuccess(Void result) {
+                        LogUtil.v(TAG, "Successfully handled setup callbacks");
+                    }
 
-        try {
-            mStateController.setNextStateForEvent(
-                    result ? DeviceEvent.SETUP_SUCCESS : DeviceEvent.SETUP_FAILURE);
-        } catch (StateTransitionException e) {
-            LogUtil.e(TAG, "Device state inconsistent, aborting setup", e);
-            result = false;
-            failReason = FailureType.SETUP_FAILED;
-        }
-
-
-        if (result) {
-            LogUtil.i(TAG, "Handling successful setup");
-            mCurrentSetupState = SetupStatus.SETUP_FINISHED;
-            synchronized (mCallbacks) {
-                for (int i = 0, cbSize = mCallbacks.size(); i < cbSize; i++) {
-                    mCallbacks.get(i).setupCompleted();
-                }
-            }
-        } else {
-            LogUtil.i(TAG, "Handling failed setup");
-            mCurrentSetupState = SetupStatus.SETUP_FAILED;
-            synchronized (mCallbacks) {
-                for (int i = 0, cbSize = mCallbacks.size(); i < cbSize; i++) {
-                    mCallbacks.get(i).setupFailed(failReason);
-                }
-            }
-        }
-        finishSetup();
+                    @Override
+                    public void onFailure(Throwable t) {
+                        LogUtil.e(TAG, "Failed to handle setup callbacks!", t);
+                    }
+                }, MoreExecutors.directExecutor());
     }
 
     @VisibleForTesting

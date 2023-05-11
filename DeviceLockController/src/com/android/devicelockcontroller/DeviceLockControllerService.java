@@ -26,7 +26,6 @@ import androidx.annotation.NonNull;
 
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
-import com.android.devicelockcontroller.policy.StateTransitionException;
 import com.android.devicelockcontroller.storage.GlobalParameters;
 import com.android.devicelockcontroller.util.LogUtil;
 
@@ -46,28 +45,18 @@ public final class DeviceLockControllerService extends Service {
             new IDeviceLockControllerService.Stub() {
                 @Override
                 public void lockDevice(RemoteCallback remoteCallback) {
-                    try {
-                        Futures.addCallback(mStateController.setNextStateForEvent(
-                                        DeviceStateController.DeviceEvent.LOCK_DEVICE),
-                                remoteCallbackWrapper(remoteCallback, KEY_LOCK_DEVICE_RESULT),
-                                MoreExecutors.directExecutor());
-                    } catch (StateTransitionException e) {
-                        sendResult(KEY_LOCK_DEVICE_RESULT, remoteCallback, false);
-                    }
-
+                    Futures.addCallback(mStateController.setNextStateForEvent(
+                                    DeviceStateController.DeviceEvent.LOCK_DEVICE),
+                            remoteCallbackWrapper(remoteCallback, KEY_LOCK_DEVICE_RESULT),
+                            MoreExecutors.directExecutor());
                 }
 
                 @Override
                 public void unlockDevice(RemoteCallback remoteCallback) {
-                    try {
-                        Futures.addCallback(mStateController.setNextStateForEvent(
-                                        DeviceStateController.DeviceEvent.UNLOCK_DEVICE),
-                                remoteCallbackWrapper(remoteCallback, KEY_UNLOCK_DEVICE_RESULT),
-                                MoreExecutors.directExecutor());
-
-                    } catch (StateTransitionException e) {
-                        sendResult(KEY_UNLOCK_DEVICE_RESULT, remoteCallback, false);
-                    }
+                    Futures.addCallback(mStateController.setNextStateForEvent(
+                                    DeviceStateController.DeviceEvent.UNLOCK_DEVICE),
+                            remoteCallbackWrapper(remoteCallback, KEY_UNLOCK_DEVICE_RESULT),
+                            MoreExecutors.directExecutor());
 
                 }
 
@@ -94,15 +83,10 @@ public final class DeviceLockControllerService extends Service {
 
                 @Override
                 public void clearDevice(RemoteCallback remoteCallback) {
-                    try {
-                        Futures.addCallback(mStateController.setNextStateForEvent(
-                                        DeviceStateController.DeviceEvent.CLEAR),
-                                remoteCallbackWrapper(remoteCallback, KEY_CLEAR_DEVICE_RESULT),
-                                MoreExecutors.directExecutor());
-
-                    } catch (StateTransitionException e) {
-                        sendResult(KEY_CLEAR_DEVICE_RESULT, remoteCallback, false);
-                    }
+                    Futures.addCallback(mStateController.setNextStateForEvent(
+                                    DeviceStateController.DeviceEvent.CLEAR),
+                            remoteCallbackWrapper(remoteCallback, KEY_CLEAR_DEVICE_RESULT),
+                            MoreExecutors.directExecutor());
 
                 }
             };

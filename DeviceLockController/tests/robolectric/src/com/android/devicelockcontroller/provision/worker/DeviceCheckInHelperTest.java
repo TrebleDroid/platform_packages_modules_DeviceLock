@@ -48,7 +48,6 @@ import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceCheckIn
 import com.android.devicelockcontroller.policy.DevicePolicyController;
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent;
-import com.android.devicelockcontroller.policy.StateTransitionException;
 import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrpcResponse;
 import com.android.devicelockcontroller.provision.grpc.ProvisioningConfiguration;
 import com.android.devicelockcontroller.storage.GlobalParameters;
@@ -158,8 +157,7 @@ public final class DeviceCheckInHelperTest {
 
     @Test
     public void
-            testHandleProvisionReadyResponse_validConfiguration_shouldSetStateAndStartLockTaskMode()
-            throws StateTransitionException {
+            handleProvisionReadyResponse_validConfiguration_shouldSetStateAndStartLockTaskMode() {
         GetDeviceCheckInStatusGrpcResponse response = createReadyResponse(TEST_CONFIGURATION);
         DeviceStateController stateController = mTestApplication.getStateController();
         DevicePolicyController policyController = mTestApplication.getPolicyController();
@@ -175,8 +173,7 @@ public final class DeviceCheckInHelperTest {
     }
 
     @Test
-    public void testHandleProvisionReadyResponse_invalidConfiguration_shouldNotSetState()
-            throws StateTransitionException {
+    public void testHandleProvisionReadyResponse_invalidConfiguration_shouldNotSetState() {
         GetDeviceCheckInStatusGrpcResponse response = createReadyResponse(
                 /* configuration= */ null);
         DeviceStateController stateController = mTestApplication.getStateController();
