@@ -22,8 +22,10 @@ import androidx.annotation.NonNull;
 import androidx.work.WorkerParameters;
 
 import com.android.devicelockcontroller.provision.grpc.ReportDeviceProvisionCompleteGrpcResponse;
-import com.android.devicelockcontroller.storage.GlobalParameters;
+import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
+
+import com.google.common.util.concurrent.Futures;
 
 /**
  * A worker class dedicated to report completion of provisioning for the device lock program.
@@ -40,9 +42,10 @@ public final class ReportDeviceProvisioningCompleteWorker extends AbstractCheckI
     @Override
     public Result doWork() {
         final ReportDeviceProvisionCompleteGrpcResponse response =
-                mClient.reportDeviceProvisioningComplete();
+                Futures.getUnchecked(mClient).reportDeviceProvisioningComplete();
         if (response.isSuccessful()) {
-            GlobalParameters.setEnrollmentToken(mContext, response.getEnrollmentToken());
+            Futures.getUnchecked(GlobalParametersClient.getInstance().setEnrollmentToken(
+                    response.getEnrollmentToken()));
             Result.success();
         }
         LogUtil.w(TAG,

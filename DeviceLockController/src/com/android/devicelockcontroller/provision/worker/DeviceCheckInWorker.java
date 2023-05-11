@@ -28,6 +28,8 @@ import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrpcResponse;
 import com.android.devicelockcontroller.util.LogUtil;
 
+import com.google.common.util.concurrent.Futures;
+
 /**
  * A worker class dedicated to execute the check-in operation for device lock program.
  */
@@ -59,8 +61,8 @@ public final class DeviceCheckInWorker extends AbstractCheckInWorker {
             return Result.failure();
         }
         final GetDeviceCheckInStatusGrpcResponse response =
-                mClient.getDeviceCheckInStatus(deviceIds, carrierInfo,
-                        /* fcmRegistrationToken= */ null);
+                Futures.getUnchecked(mClient).getDeviceCheckInStatus(
+                        deviceIds, carrierInfo, /* fcmRegistrationToken= */ null);
         if (response.isSuccessful()) {
             return mCheckInHelper.handleGetDeviceCheckInStatusResponse(response)
                     ? Result.success()
