@@ -24,14 +24,27 @@ import com.android.devicelockcontroller.policy.DevicePolicyController;
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
 import com.android.devicelockcontroller.policy.SetupController;
+import com.android.devicelockcontroller.storage.GlobalParametersClient;
+import com.android.devicelockcontroller.storage.GlobalParametersService;
+import com.android.devicelockcontroller.storage.SetupParametersClient;
+import com.android.devicelockcontroller.storage.SetupParametersService;
+
+import com.google.common.util.concurrent.testing.TestingExecutors;
+
+import org.robolectric.Robolectric;
+import org.robolectric.TestLifecycleApplication;
+
+import java.lang.reflect.Method;
 
 /** Application class that provides mock objects for tests. */
 public final class TestDeviceLockControllerApplication extends Application implements
-        PolicyObjectsInterface {
+        PolicyObjectsInterface, TestLifecycleApplication {
 
     private DevicePolicyController mPolicyController;
     private DeviceStateController mStateController;
     private SetupController mSetupController;
+    private SetupParametersClient mSetupParametersClient;
+    private GlobalParametersClient mGlobalParametersClient;
 
     @Override
     public void onCreate() {
@@ -70,5 +83,29 @@ public final class TestDeviceLockControllerApplication extends Application imple
             mSetupController = mock(SetupController.class);
         }
         return mSetupController;
+    }
+
+    @Override
+    public void beforeTest(Method method) {
+        mSetupParametersClient = SetupParametersClient.getInstance(this,
+                TestingExecutors.sameThreadScheduledExecutor());
+        mSetupParametersClient.setService(
+                Robolectric.setupService(SetupParametersService.class).onBind(/* intent= */ null));
+
+        mGlobalParametersClient = GlobalParametersClient.getInstance(
+                this, TestingExecutors.sameThreadScheduledExecutor());
+        mGlobalParametersClient.setService(
+                Robolectric.setupService(GlobalParametersService.class).onBind(/* intent= */ null));
+    }
+
+    @Override
+    public void prepareTest(Object test) {
+
+    }
+
+    @Override
+    public void afterTest(Method method) {
+        GlobalParametersClient.reset();
+        SetupParametersClient.reset();
     }
 }
