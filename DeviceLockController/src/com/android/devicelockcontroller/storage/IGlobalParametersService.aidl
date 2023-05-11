@@ -31,4 +31,6 @@ interface IGlobalParametersService {
     void setProvisionForced(boolean isForced);
     String getEnrollmentToken();
     void setEnrollmentToken(String token);
+    String getKioskSignature();
+    void setKioskSignature(String signature);
 }

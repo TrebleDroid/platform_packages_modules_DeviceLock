@@ -23,13 +23,15 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 
 import androidx.annotation.GuardedBy;
-import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 
 import com.android.devicelockcontroller.util.LogUtil;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 
+import java.util.Objects;
 import java.util.concurrent.Callable;
 
 /**
@@ -41,9 +43,8 @@ import java.util.concurrent.Callable;
 abstract class DlcClient {
     private static final String TAG = "DlcClient";
     private final Object mLock = new Object();
-
     @GuardedBy("mLock")
-    protected IBinder mDlcService;
+    private IBinder mDlcService;
 
     @GuardedBy("mLock")
     private ServiceConnection mServiceConnection;
@@ -74,16 +75,29 @@ abstract class DlcClient {
         }
     }
 
-    DlcClient(@NonNull Context context, @NonNull ComponentName componentName,
-            ListeningExecutorService executorService) {
+    DlcClient(Context context, ComponentName componentName,
+            @Nullable ListeningExecutorService executorService) {
         mContext = context;
         mComponentName = componentName;
         mListeningExecutorService = executorService;
     }
 
+    IBinder getService() {
+        synchronized (mLock) {
+            return Objects.requireNonNull(mDlcService);
+        }
+    }
+
+    @VisibleForTesting
+    public void setService(IBinder service) {
+        synchronized (mLock) {
+            mDlcService = service;
+        }
+    }
+
     @GuardedBy("mLock")
     private boolean bindLocked() {
-        if (mServiceConnection != null) {
+        if (mDlcService != null || mServiceConnection != null) {
             return true;
         }
 
