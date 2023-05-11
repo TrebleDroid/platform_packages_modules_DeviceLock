@@ -98,7 +98,7 @@ public final class GlobalParametersClient extends DlcClient {
      */
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<List<String>> getLockTaskAllowlist() {
-        return call(() -> asInterface(mDlcService).getLockTaskAllowlist());
+        return call(() -> asInterface(getService()).getLockTaskAllowlist());
     }
 
     /**
@@ -109,7 +109,7 @@ public final class GlobalParametersClient extends DlcClient {
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<Void> setLockTaskAllowlist(List<String> allowlist) {
         return call(() -> {
-            asInterface(mDlcService).setLockTaskAllowlist(allowlist);
+            asInterface(getService()).setLockTaskAllowlist(allowlist);
             return null;
         });
     }
@@ -121,7 +121,7 @@ public final class GlobalParametersClient extends DlcClient {
      */
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<Boolean> needCheckIn() {
-        return call(() -> asInterface(mDlcService).needCheckIn());
+        return call(() -> asInterface(getService()).needCheckIn());
     }
 
     /**
@@ -132,7 +132,7 @@ public final class GlobalParametersClient extends DlcClient {
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<Void> setNeedCheckIn(boolean needCheckIn) {
         return call(() -> {
-            asInterface(mDlcService).setNeedCheckIn(needCheckIn);
+            asInterface(getService()).setNeedCheckIn(needCheckIn);
             return null;
         });
     }
@@ -146,7 +146,7 @@ public final class GlobalParametersClient extends DlcClient {
     @Nullable
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<String> getRegisteredDeviceId() {
-        return call(() -> asInterface(mDlcService).getRegisteredDeviceId());
+        return call(() -> asInterface(getService()).getRegisteredDeviceId());
     }
 
     /**
@@ -157,7 +157,7 @@ public final class GlobalParametersClient extends DlcClient {
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<Void> setRegisteredDeviceId(String registeredDeviceId) {
         return call(() -> {
-            asInterface(mDlcService).setRegisteredDeviceId(registeredDeviceId);
+            asInterface(getService()).setRegisteredDeviceId(registeredDeviceId);
             return null;
         });
     }
@@ -169,7 +169,7 @@ public final class GlobalParametersClient extends DlcClient {
      */
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<Boolean> isProvisionForced() {
-        return call(() -> asInterface(mDlcService).isProvisionForced());
+        return call(() -> asInterface(getService()).isProvisionForced());
     }
 
     /**
@@ -180,7 +180,7 @@ public final class GlobalParametersClient extends DlcClient {
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<Void> setProvisionForced(boolean isForced) {
         return call(() -> {
-            asInterface(mDlcService).setProvisionForced(isForced);
+            asInterface(getService()).setProvisionForced(isForced);
             return null;
         });
     }
@@ -193,7 +193,7 @@ public final class GlobalParametersClient extends DlcClient {
     @Nullable
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<String> getEnrollmentToken() {
-        return call(() -> asInterface(mDlcService).getEnrollmentToken());
+        return call(() -> asInterface(getService()).getEnrollmentToken());
     }
 
     /**
@@ -204,7 +204,31 @@ public final class GlobalParametersClient extends DlcClient {
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<Void> setEnrollmentToken(String token) {
         return call(() -> {
-            asInterface(mDlcService).setEnrollmentToken(token);
+            asInterface(getService()).setEnrollmentToken(token);
+            return null;
+        });
+    }
+
+    /**
+     * Get the kiosk app signature.
+     *
+     * @return the kiosk app signature.
+     */
+    @Nullable
+    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
+    public ListenableFuture<String> getKioskSignature() {
+        return call(() -> asInterface(getService()).getKioskSignature());
+    }
+
+    /**
+     * Sets the kiosk app signature.
+     *
+     * @param signature Kiosk app signature.
+     */
+    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
+    public ListenableFuture<Void> setKioskSignature(String signature) {
+        return call(() -> {
+            asInterface(getService()).setKioskSignature(signature);
             return null;
         });
     }
