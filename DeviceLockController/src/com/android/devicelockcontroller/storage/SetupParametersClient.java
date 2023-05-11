@@ -100,7 +100,7 @@ public final class SetupParametersClient extends DlcClient {
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<Void> overridePrefs(Bundle bundle) {
         return call(() -> {
-            asInterface(mDlcService).overridePrefs(bundle);
+            asInterface(getService()).overridePrefs(bundle);
             return null;
         });
     }
@@ -113,7 +113,7 @@ public final class SetupParametersClient extends DlcClient {
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<Void> createPrefs(Bundle bundle) {
         return call(() -> {
-            asInterface(mDlcService).createPrefs(bundle);
+            asInterface(getService()).createPrefs(bundle);
             return null;
         });
     }
@@ -125,7 +125,7 @@ public final class SetupParametersClient extends DlcClient {
      */
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<String> getKioskPackage() {
-        return call(() -> asInterface(mDlcService).getKioskPackage());
+        return call(() -> asInterface(getService()).getKioskPackage());
     }
 
     /**
@@ -135,7 +135,7 @@ public final class SetupParametersClient extends DlcClient {
      */
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<String> getKioskDownloadUrl() {
-        return call(() -> asInterface(mDlcService).getKioskDownloadUrl());
+        return call(() -> asInterface(getService()).getKioskDownloadUrl());
     }
 
     /**
@@ -145,7 +145,7 @@ public final class SetupParametersClient extends DlcClient {
      */
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<String> getKioskSignatureChecksum() {
-        return call(() -> asInterface(mDlcService).getKioskSignatureChecksum());
+        return call(() -> asInterface(getService()).getKioskSignatureChecksum());
     }
 
     /**
@@ -155,7 +155,7 @@ public final class SetupParametersClient extends DlcClient {
      */
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<String> getKioskSetupActivity() {
-        return call(() -> asInterface(mDlcService).getKioskSetupActivity());
+        return call(() -> asInterface(getService()).getKioskSetupActivity());
     }
 
     /**
@@ -165,7 +165,7 @@ public final class SetupParametersClient extends DlcClient {
      */
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<Boolean> getOutgoingCallsDisabled() {
-        return call(() -> asInterface(mDlcService).getOutgoingCallsDisabled());
+        return call(() -> asInterface(getService()).getOutgoingCallsDisabled());
     }
 
     /**
@@ -175,7 +175,7 @@ public final class SetupParametersClient extends DlcClient {
      */
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<List<String>> getKioskAllowlist() {
-        return call(() -> asInterface(mDlcService).getKioskAllowlist());
+        return call(() -> asInterface(getService()).getKioskAllowlist());
     }
 
     /**
@@ -185,7 +185,7 @@ public final class SetupParametersClient extends DlcClient {
      */
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<Boolean> isNotificationsInLockTaskModeEnabled() {
-        return call(() -> asInterface(mDlcService).isNotificationsInLockTaskModeEnabled());
+        return call(() -> asInterface(getService()).isNotificationsInLockTaskModeEnabled());
     }
 
     /**
@@ -195,7 +195,7 @@ public final class SetupParametersClient extends DlcClient {
      */
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<@ProvisioningType Integer> getProvisioningType() {
-        return call(() -> asInterface(mDlcService).getProvisioningType());
+        return call(() -> asInterface(getService()).getProvisioningType());
     }
 
     /**
@@ -205,7 +205,7 @@ public final class SetupParametersClient extends DlcClient {
      */
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<Boolean> isProvisionMandatory() {
-        return call(() -> asInterface(mDlcService).isProvisionMandatory());
+        return call(() -> asInterface(getService()).isProvisionMandatory());
     }
 
     /**
@@ -216,7 +216,7 @@ public final class SetupParametersClient extends DlcClient {
     @Nullable
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<String> getKioskAppProviderName() {
-        return call(() -> asInterface(mDlcService).getKioskAppProviderName());
+        return call(() -> asInterface(getService()).getKioskAppProviderName());
     }
 
     /**
@@ -227,7 +227,7 @@ public final class SetupParametersClient extends DlcClient {
      */
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<Boolean> isInstallingFromUnknownSourcesDisallowed() {
-        return call(() -> asInterface(mDlcService).isInstallingFromUnknownSourcesDisallowed());
+        return call(() -> asInterface(getService()).isInstallingFromUnknownSourcesDisallowed());
     }
 
     /**
@@ -237,7 +237,7 @@ public final class SetupParametersClient extends DlcClient {
      */
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<String> getTermsAndConditionsUrl() {
-        return call(() -> asInterface(mDlcService).getTermsAndConditionsUrl());
+        return call(() -> asInterface(getService()).getTermsAndConditionsUrl());
     }
 
     /**
@@ -247,6 +247,6 @@ public final class SetupParametersClient extends DlcClient {
      */
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
     public ListenableFuture<String> getSupportUrl() {
-        return call(() -> asInterface(mDlcService).getSupportUrl());
+        return call(() -> asInterface(getService()).getSupportUrl());
     }
 }
