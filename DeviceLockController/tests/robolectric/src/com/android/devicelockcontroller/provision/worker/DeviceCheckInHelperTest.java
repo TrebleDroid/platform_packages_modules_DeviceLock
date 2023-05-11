@@ -30,7 +30,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.robolectric.annotation.LooperMode.Mode.LEGACY;
 
-import android.content.ComponentName;
 import android.telephony.TelephonyManager;
 import android.util.ArraySet;
 
@@ -50,18 +49,14 @@ import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent;
 import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrpcResponse;
 import com.android.devicelockcontroller.provision.grpc.ProvisioningConfiguration;
-import com.android.devicelockcontroller.storage.GlobalParameters;
-import com.android.devicelockcontroller.storage.SetupParametersClient;
-import com.android.devicelockcontroller.storage.SetupParametersService;
+import com.android.devicelockcontroller.storage.GlobalParametersClient;
 
 import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.testing.TestingExecutors;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.Shadows;
 import org.robolectric.annotation.LooperMode;
@@ -112,7 +107,7 @@ public final class DeviceCheckInHelperTest {
     private DeviceCheckInHelper mHelper;
 
     private ShadowTelephonyManager mTelephonyManager;
-    private SetupParametersClient mSetupParametersClient;
+    private GlobalParametersClient mGlobalParametersClient;
 
     @Before
     public void setUp() {
@@ -126,11 +121,7 @@ public final class DeviceCheckInHelperTest {
                         .setMinimumLoggingLevel(android.util.Log.DEBUG)
                         .setExecutor(new SynchronousExecutor())
                         .build());
-        Shadows.shadowOf(mTestApplication).setComponentNameAndServiceForBindService(
-                new ComponentName(mTestApplication, SetupParametersService.class),
-                Robolectric.setupService(SetupParametersService.class).onBind(null));
-        mSetupParametersClient = SetupParametersClient.getInstance(
-                mTestApplication, TestingExecutors.sameThreadScheduledExecutor());
+        mGlobalParametersClient = GlobalParametersClient.getInstance();
     }
 
     @Test
@@ -151,8 +142,7 @@ public final class DeviceCheckInHelperTest {
         final GetDeviceCheckInStatusGrpcResponse response = createStopResponse();
 
         assertThat(mHelper.handleGetDeviceCheckInStatusResponse(response)).isTrue();
-
-        assertThat(GlobalParameters.needCheckIn(mTestApplication)).isFalse();
+        assertThat(Futures.getUnchecked(mGlobalParametersClient.needCheckIn())).isFalse();
     }
 
     @Test
@@ -169,7 +159,7 @@ public final class DeviceCheckInHelperTest {
 
         verify(stateController).setNextStateForEvent(eq(DeviceEvent.PROVISIONING_SUCCESS));
         verify(policyController).enqueueStartLockTaskModeWorker(eq(IS_PROVISIONING_MANDATORY));
-        assertThat(GlobalParameters.needCheckIn(mTestApplication)).isFalse();
+        assertThat(Futures.getUnchecked(mGlobalParametersClient.needCheckIn())).isFalse();
     }
 
     @Test
