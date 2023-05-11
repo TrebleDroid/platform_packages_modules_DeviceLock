@@ -146,11 +146,6 @@ public final class SetupControllerImplTest {
         WorkManagerTestInitHelper.initializeTestWorkManager(mTestApplication, config);
     }
 
-    @After
-    public void tearDown() {
-        SetupParametersClient.reset();
-    }
-
     @Test
     public void testInitialState_SetupFinished() {
         Bundle b = new Bundle();

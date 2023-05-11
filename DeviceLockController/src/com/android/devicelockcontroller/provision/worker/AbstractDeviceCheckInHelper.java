@@ -19,6 +19,7 @@ package com.android.devicelockcontroller.provision.worker;
 import android.util.ArraySet;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.WorkerThread;
 
 import com.android.devicelockcontroller.common.DeviceId;
 import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrpcResponse;
@@ -41,6 +42,7 @@ public abstract class AbstractDeviceCheckInHelper {
     @NonNull
     abstract String getCarrierInfo();
 
+    @WorkerThread
     abstract boolean handleGetDeviceCheckInStatusResponse(
             @NonNull GetDeviceCheckInStatusGrpcResponse response);
 }
