@@ -20,10 +20,15 @@ import static android.app.admin.DevicePolicyManager.LOCK_TASK_FEATURE_NOTIFICATI
 
 import static com.android.devicelockcontroller.policy.DevicePolicyControllerImpl.START_LOCK_TASK_MODE_WORK_NAME;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.CLEARED;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.KIOSK_SETUP;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.LOCKED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PSEUDO_LOCKED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PSEUDO_UNLOCKED;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_FAILED;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_IN_PROGRESS;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_SUCCEEDED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNLOCKED;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNPROVISIONED;
 
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
@@ -86,15 +91,20 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
             case PSEUDO_UNLOCKED:
             case PSEUDO_LOCKED:
                 return Futures.immediateFuture(SUCCESS);
-            case SETUP_SUCCEEDED:
-                return Futures.transform(composeAllowlist(), empty -> SUCCESS,
-                        MoreExecutors.directExecutor());
             case UNLOCKED:
             case CLEARED:
+            case UNPROVISIONED:
                 return disableLockTaskMode();
-            // All other states
+            case SETUP_IN_PROGRESS:
+            case SETUP_SUCCEEDED:
+            case SETUP_FAILED:
+            case KIOSK_SETUP:
+            case LOCKED:
+                return Futures.transformAsync(composeAllowlist(), empty -> enableLockTaskMode(),
+                        MoreExecutors.directExecutor());
             default:
-                return enableLockTaskMode();
+                return Futures.immediateFailedFuture(
+                        new IllegalStateException(String.valueOf(state)));
         }
     }
 
