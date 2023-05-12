@@ -28,6 +28,9 @@ import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
 import com.android.devicelockcontroller.provision.worker.DeviceCheckInHelper;
 import com.android.devicelockcontroller.util.LogUtil;
 
+/**
+ * Broadcast receiver which can start the setup flow.
+ */
 public final class SetupFlowStarter extends BroadcastReceiver {
 
     private static final String TAG = "SetupFlowStarter";
