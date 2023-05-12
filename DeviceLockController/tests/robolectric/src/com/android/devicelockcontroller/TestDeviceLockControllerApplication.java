@@ -47,13 +47,7 @@ public final class TestDeviceLockControllerApplication extends Application imple
     private GlobalParametersClient mGlobalParametersClient;
 
     @Override
-    public void onCreate() {
-        super.onCreate();
-        mPolicyController = mock(DevicePolicyController.class);
-        mStateController = mock(DeviceStateController.class);
-    }
-
-    public DeviceStateController getMockStateController() {
+    public DeviceStateController getStateController() {
         if (mStateController == null) {
             mStateController = mock(DeviceStateController.class);
         }
@@ -61,20 +55,11 @@ public final class TestDeviceLockControllerApplication extends Application imple
     }
 
     @Override
-    public DeviceStateController getStateController() {
-        return getMockStateController();
-    }
-
-    public DevicePolicyController getMockPolicyController() {
+    public DevicePolicyController getPolicyController() {
         if (mPolicyController == null) {
             mPolicyController = mock(DevicePolicyController.class);
         }
         return mPolicyController;
-    }
-
-    @Override
-    public DevicePolicyController getPolicyController() {
-        return getMockPolicyController();
     }
 
     @Override

@@ -16,6 +16,17 @@
 
 package com.android.devicelockcontroller.policy;
 
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.CLEARED;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.KIOSK_SETUP;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.LOCKED;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PSEUDO_LOCKED;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PSEUDO_UNLOCKED;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_FAILED;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_IN_PROGRESS;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_SUCCEEDED;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNLOCKED;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNPROVISIONED;
+
 import android.app.admin.DevicePolicyManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -74,62 +85,61 @@ final class UserRestrictionsPolicyHandler implements PolicyHandler {
     @ResultType
     public ListenableFuture<@ResultType Integer> setPolicyForState(@DeviceState int state) {
         final Handler mainHandler = new Handler(Looper.getMainLooper());
+        LogUtil.v(TAG, String.format(Locale.US, "Setting restrictions for %d", state));
         switch (state) {
-            case DeviceState.UNPROVISIONED:
-            case DeviceState.PSEUDO_LOCKED:
-            case DeviceState.PSEUDO_UNLOCKED:
-                break;
-            case DeviceState.SETUP_IN_PROGRESS:
-            case DeviceState.SETUP_SUCCEEDED:
-            case DeviceState.SETUP_FAILED:
-            case DeviceState.UNLOCKED:
-            case DeviceState.KIOSK_SETUP:
+            case SETUP_IN_PROGRESS:
+            case SETUP_SUCCEEDED:
+            case SETUP_FAILED:
+            case UNLOCKED:
+            case KIOSK_SETUP:
                 setupRestrictions(mAlwaysOnRestrictions, true);
                 return Futures.transform(retrieveLockModeRestrictions(),
                         restrictions -> setupRestrictions(restrictions, false), mainHandler::post);
-            case DeviceState.LOCKED:
+            case LOCKED:
                 setupRestrictions(mAlwaysOnRestrictions, true);
                 return Futures.transform(retrieveLockModeRestrictions(),
                         restrictions -> setupRestrictions(restrictions, true), mainHandler::post);
-            case DeviceState.CLEARED:
+            case UNPROVISIONED:
+            case CLEARED:
                 setupRestrictions(mAlwaysOnRestrictions, false);
                 return Futures.transform(retrieveLockModeRestrictions(),
                         restrictions -> setupRestrictions(restrictions, false), mainHandler::post);
+            case PSEUDO_LOCKED:
+            case PSEUDO_UNLOCKED:
+                return Futures.immediateFuture(SUCCESS);
             default:
                 return Futures.immediateFailedFuture(
                         new IllegalStateException(String.valueOf(state)));
         }
 
-        LogUtil.v(TAG, String.format(Locale.US, "Restrictions set for %d", state));
 
-        return Futures.immediateFuture(SUCCESS);
     }
 
     @Override
     public ListenableFuture<Boolean> isCompliant(@DeviceState int state) {
         Handler mainHandler = new Handler(Looper.getMainLooper());
         switch (state) {
-            case DeviceState.UNPROVISIONED:
+            case UNPROVISIONED:
                 break;
-            case DeviceState.SETUP_IN_PROGRESS:
-            case DeviceState.SETUP_SUCCEEDED:
-            case DeviceState.SETUP_FAILED:
-            case DeviceState.UNLOCKED:
-            case DeviceState.KIOSK_SETUP:
+            case SETUP_IN_PROGRESS:
+            case SETUP_SUCCEEDED:
+            case SETUP_FAILED:
+            case UNLOCKED:
+            case KIOSK_SETUP:
                 if (checkRestrictions(mAlwaysOnRestrictions, true)) {
                     return Futures.transform(retrieveLockModeRestrictions(),
                             restrictions -> checkRestrictions(restrictions, false),
                             mainHandler::post);
                 }
                 break;
-            case DeviceState.LOCKED:
+            case LOCKED:
                 if (checkRestrictions(mAlwaysOnRestrictions, true)) {
                     return Futures.transform(retrieveLockModeRestrictions(),
                             restrictions -> checkRestrictions(restrictions, true),
                             mainHandler::post);
                 }
                 break;
-            case DeviceState.CLEARED:
+            case CLEARED:
                 if (checkRestrictions(mAlwaysOnRestrictions, false)) {
                     return Futures.transform(retrieveLockModeRestrictions(),
                             restrictions -> checkRestrictions(restrictions, false),
@@ -154,8 +164,9 @@ final class UserRestrictionsPolicyHandler implements PolicyHandler {
         final ListenableFuture<Boolean> installingFromUnknownSourcesDisallowedTask =
                 parameters.isInstallingFromUnknownSourcesDisallowed();
         return Futures.whenAllSucceed(kioskPackageTask,
-                outgoingCallsDisabledTask,
-                installingFromUnknownSourcesDisallowedTask).call(() -> {
+                        outgoingCallsDisabledTask,
+                        installingFromUnknownSourcesDisallowedTask)
+                .call(() -> {
                     if (Futures.getDone(kioskPackageTask) == null) {
                         throw new IllegalStateException("Setup parameters does not exist!");
                     }
