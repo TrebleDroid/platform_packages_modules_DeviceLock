@@ -98,36 +98,21 @@ final class SetupParameters {
     }
 
     private static void dumpParameters(Context context) {
-        // kiosk-package-name:
-        // kiosk-download-url:
-        // kiosk-signature-checksum:
-        // kiosk-setup-activity:
-        // kiosk-allowlist:
-        // kiosk-disable-outgoing-calls:
-        // kiosk-enable-notifications-in-lock-task-mode:
-        // provisioning-type:
-        // mandatory-provision:
-        // kiosk-app-provider-name:
-        // disallow-installing-from-unknown-sources:
-        // terms-and-conditions-url:
-        // support-url:
         LogUtil.d(TAG, String.format(Locale.US,
-                """
-                        Dumping SetupParameters ...
-                        %s: %s
-                        %s: %s
-                        %s: %s
-                        %s: %s
-                        %s: %s
-                        %s: %s
-                        %s: %s
-                        %s: %d
-                        %s: %s
-                        %s: %s
-                        %s: %s
-                        %s: %s
-                        %s: %s
-                        """,
+                "Dumping SetupParameters ...\n"
+                + "%s: %s\n"    // kiosk-package-name:
+                + "%s: %s\n"    // kiosk-download-url:
+                + "%s: %s\n"    // kiosk-signature-checksum:
+                + "%s: %s\n"    // kiosk-setup-activity:
+                + "%s: %s\n"    // kiosk-allowlist:
+                + "%s: %s\n"    // kiosk-disable-outgoing-calls:
+                + "%s: %s\n"    // kiosk-enable-notifications-in-lock-task-mode:
+                + "%s: %d\n"    // provisioning-type:
+                + "%s: %s\n"    // mandatory-provision:
+                + "%s: %s\n"    // kiosk-app-provider-name:
+                + "%s: %s\n"    // disallow-installing-from-unknown-sources:
+                + "%s: %s\n"    // terms-and-conditions-url:
+                + "%s: %s\n",   // support-url:
                 KEY_KIOSK_PACKAGE, getKioskPackage(context),
                 KEY_KIOSK_DOWNLOAD_URL, getKioskDownloadUrl(context),
                 KEY_KIOSK_SIGNATURE_CHECKSUM, getKioskSignatureChecksum(context),

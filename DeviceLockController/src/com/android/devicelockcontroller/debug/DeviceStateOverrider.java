@@ -28,6 +28,9 @@ import com.android.devicelockcontroller.util.LogUtil;
 
 import java.util.Locale;
 
+/**
+ * Broadcast receiver which can override {@link DeviceState}.
+ */
 public final class DeviceStateOverrider extends BroadcastReceiver {
 
     private static final int UNKNOWN_STATE = -1;
@@ -48,13 +51,15 @@ public final class DeviceStateOverrider extends BroadcastReceiver {
 
         @DeviceState
         int newState = intent.getIntExtra(EXTRA_NEW_STATE, UNKNOWN_STATE);
+        //TODO: should support overriding other states as well.
         switch (newState) {
-            case DeviceState.UNPROVISIONED -> {
+            case DeviceState.UNPROVISIONED:
                 UserParameters.clear(context);
                 LogUtil.i(TAG, "State has been set to UNPROVISIONED!");
-            }
-            //TODO: should support overriding other states as well.
-            default -> LogUtil.w(TAG, String.format(Locale.US, "Unsupported state: %d!", newState));
+                break;
+            default:
+                LogUtil.w(TAG, String.format(Locale.US, "Unsupported state: %d!", newState));
+                break;
         }
     }
 }
