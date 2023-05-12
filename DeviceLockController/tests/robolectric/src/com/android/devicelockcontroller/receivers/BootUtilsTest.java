@@ -42,8 +42,8 @@ public final class BootUtilsTest {
     @Before
     public void setup() {
         mTestApplication = ApplicationProvider.getApplicationContext();
-        mStateController = mTestApplication.getMockStateController();
-        mPolicyController = mTestApplication.getMockPolicyController();
+        mStateController = mTestApplication.getStateController();
+        mPolicyController = mTestApplication.getPolicyController();
     }
 
     @Test

@@ -127,8 +127,8 @@ public final class SetupControllerImplTest {
     @Before
     public void setUp() {
         mTestApplication = ApplicationProvider.getApplicationContext();
-        mMockStateController = mTestApplication.getMockStateController();
-        mMockPolicyController = mTestApplication.getMockPolicyController();
+        mMockStateController = mTestApplication.getStateController();
+        mMockPolicyController = mTestApplication.getPolicyController();
         when(mMockPolicyController.launchActivityInLockedMode()).thenReturn(
                 Futures.immediateFuture(true));
         Shadows.shadowOf(mTestApplication).setComponentNameAndServiceForBindService(
