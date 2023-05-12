@@ -365,15 +365,16 @@ public final class SetupControllerImpl implements SetupController {
     @VisibleForTesting
     ListenableFuture<Void> finishSetup() {
         if (mCurrentSetupState == SetupStatus.SETUP_FINISHED) {
-            return Futures.transform(
-                    mPolicyController.launchActivityInLockedMode(),
-                    isLaunched -> {
-                        if (!isLaunched) {
-                            throw new IllegalStateException(
-                                    "Launching kiosk setup activity failed!");
-                        }
-                        return null;
-                    }, MoreExecutors.directExecutor());
+            return Futures.transformAsync(mStateController.setNextStateForEvent(
+                            DeviceEvent.SETUP_COMPLETE),
+                    empty -> Futures.transform(mPolicyController.launchActivityInLockedMode(),
+                            isLaunched -> {
+                                if (!isLaunched) {
+                                    throw new IllegalStateException(
+                                            "Launching kiosk setup activity failed!");
+                                }
+                                return null;
+                            }, MoreExecutors.directExecutor()), MoreExecutors.directExecutor());
         } else {
             return Futures.transform(
                     SetupParametersClient.getInstance().isProvisionMandatory(),
