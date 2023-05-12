@@ -89,6 +89,9 @@ public final class UserParameters {
                 .putString(KEY_HOME_PACKAGE_OVERRIDE, packageName).apply();
     }
 
+    /**
+     * Clear all user parameters.
+     */
     public static void clear(Context context) {
         if (!Build.isDebuggable()) {
             LogUtil.w(TAG, "Clear is not allowed in non-debuggable build!");
