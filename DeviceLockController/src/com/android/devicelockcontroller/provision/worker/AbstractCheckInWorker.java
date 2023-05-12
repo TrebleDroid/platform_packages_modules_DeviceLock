@@ -25,7 +25,11 @@ import androidx.work.WorkerParameters;
 
 import com.android.devicelockcontroller.R;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
-import com.android.devicelockcontroller.storage.GlobalParameters;
+import com.android.devicelockcontroller.storage.GlobalParametersClient;
+
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.MoreExecutors;
 
 /**
  * A base class for workers that execute gRPC requests with DeviceLock backend server.
@@ -33,7 +37,7 @@ import com.android.devicelockcontroller.storage.GlobalParameters;
 public abstract class AbstractCheckInWorker extends Worker {
 
     static final String TAG = "CheckInWorker";
-    final DeviceCheckInClient mClient;
+    final ListenableFuture<DeviceCheckInClient> mClient;
     final Context mContext;
 
     AbstractCheckInWorker(@NonNull Context context,
@@ -45,8 +49,10 @@ public abstract class AbstractCheckInWorker extends Worker {
                 R.integer.check_in_server_port_number);
         final String className = context.getResources().getString(
                 R.string.device_check_in_client_class_name);
-        mClient = DeviceCheckInClient.getInstance(className, hostName, portNumber,
-                GlobalParameters.getRegisteredDeviceId(context));
+        mClient = Futures.transform(GlobalParametersClient.getInstance().getRegisteredDeviceId(),
+                registeredId -> DeviceCheckInClient.getInstance(
+                        className, hostName, portNumber, registeredId),
+                MoreExecutors.directExecutor());
         mContext = context;
     }
 
@@ -54,7 +60,7 @@ public abstract class AbstractCheckInWorker extends Worker {
     AbstractCheckInWorker(@NonNull Context context,
             @NonNull WorkerParameters workerParameters, DeviceCheckInClient client) {
         super(context, workerParameters);
-        mClient = client;
+        mClient = Futures.immediateFuture(client);
         mContext = context;
     }
 }
