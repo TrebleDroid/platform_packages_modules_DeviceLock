@@ -100,6 +100,7 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
     public void addCallback(StateListener listener) {
         synchronized (mListeners) {
             mListeners.add(listener);
+            listener.onStateChanged(mState);
         }
     }
 
