@@ -106,6 +106,18 @@ public final class SetupParametersClient extends DlcClient {
     }
 
     /**
+     * Clear any existing setup parameters.
+     * Note that this API can only be called in debuggable build for debugging purpose.
+     */
+    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
+    public ListenableFuture<Void> clear() {
+        return call(() -> {
+            asInterface(getService()).clear();
+            return null;
+        });
+    }
+
+    /**
      * Parse setup parameters from the extras bundle.
      *
      * @param bundle Bundle with provisioning parameters.

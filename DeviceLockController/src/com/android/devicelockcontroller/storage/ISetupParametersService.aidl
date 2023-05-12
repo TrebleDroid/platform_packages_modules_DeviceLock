@@ -23,6 +23,7 @@ package com.android.devicelockcontroller.storage;
 interface ISetupParametersService {
     void overridePrefs(in Bundle bundle);
     void createPrefs(in Bundle bundle);
+    void clear();
     String getKioskPackage();
     String getKioskDownloadUrl();
     String getKioskSignatureChecksum();
