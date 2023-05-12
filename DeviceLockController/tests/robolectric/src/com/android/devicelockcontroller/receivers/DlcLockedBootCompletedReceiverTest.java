@@ -54,8 +54,8 @@ public class DlcLockedBootCompletedReceiverTest {
 
     @Before
     public void setUp() {
-        mStateController = mTestApplication.getMockStateController();
-        mPolicyController = mTestApplication.getMockPolicyController();
+        mStateController = mTestApplication.getStateController();
+        mPolicyController = mTestApplication.getPolicyController();
         mPm = mTestApplication.getPackageManager();
         mShadowPackageManager = Shadows.shadowOf(mTestApplication.getPackageManager());
 
