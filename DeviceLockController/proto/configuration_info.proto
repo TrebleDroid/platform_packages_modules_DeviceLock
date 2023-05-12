@@ -24,6 +24,7 @@ option java_multiple_files = true;
 enum ConfigurationType {
   CONFIGURATION_TYPE_UNSPECIFIED = 0;
   CONFIGURATION_TYPE_FINANCED = 1;
+  CONFIGURATION_TYPE_SUBSIDY = 2;
 }
 
 enum ConfigurationStatus {
