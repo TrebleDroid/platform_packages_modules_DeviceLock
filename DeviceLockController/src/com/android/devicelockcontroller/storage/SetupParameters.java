@@ -323,4 +323,11 @@ final class SetupParameters {
         return getSharedPreferences(context).getString(
                 KEY_SUPPORT_URL, /* defValue= */ null);
     }
+
+    static void clear(Context context) {
+        if (!Build.isDebuggable()) {
+            throw new SecurityException("Clear is not allowed in non-debuggable build!");
+        }
+        getSharedPreferences(context).edit().clear().commit();
+    }
 }
