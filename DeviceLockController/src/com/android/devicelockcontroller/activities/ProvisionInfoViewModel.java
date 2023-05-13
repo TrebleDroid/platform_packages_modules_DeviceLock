@@ -46,9 +46,9 @@ public abstract class ProvisionInfoViewModel extends ViewModel {
     final MutableLiveData<Integer> mSubheaderTextIdLiveData;
     final MutableLiveData<List<ProvisionInfo>> mProvisionInfoListLiveData;
     final MutableLiveData<String> mProviderNameLiveData;
+    final MutableLiveData<String> mTermsAndConditionsUrlLiveData;
     final MediatorLiveData<Pair<Integer, String>> mHeaderTextLiveData;
     final MediatorLiveData<Pair<Integer, String>> mSubHeaderTextLiveData;
-
 
     public ProvisionInfoViewModel() {
         mProvisionInfoListLiveData = new MutableLiveData<>();
@@ -56,6 +56,7 @@ public abstract class ProvisionInfoViewModel extends ViewModel {
         mHeaderTextIdLiveData = new MutableLiveData<>();
         mSubheaderTextIdLiveData = new MutableLiveData<>();
         mProviderNameLiveData = new MutableLiveData<>();
+        mTermsAndConditionsUrlLiveData = new MutableLiveData<>();
         mHeaderTextLiveData = new MediatorLiveData<>();
         mHeaderTextLiveData.addSource(mHeaderTextIdLiveData,
                 id -> {
@@ -102,6 +103,25 @@ public abstract class ProvisionInfoViewModel extends ViewModel {
                     @Override
                     public void onFailure(Throwable t) {
                         LogUtil.e(TAG, "Failed to get Kiosk app provider name", t);
+                    }
+                }, MoreExecutors.directExecutor());
+
+        Futures.addCallback(
+                SetupParametersClient.getInstance().getTermsAndConditionsUrl(),
+                new FutureCallback<>() {
+                    @Override
+                    public void onSuccess(String termsAndConditionsUrl) {
+                        if (TextUtils.isEmpty(termsAndConditionsUrl)) {
+                            LogUtil.e(TAG,
+                                    "Terms and Conditions URL is empty, should not reach here.");
+                            return;
+                        }
+                        mTermsAndConditionsUrlLiveData.postValue(termsAndConditionsUrl);
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+                        LogUtil.e(TAG, "Failed to get Terms and Conditions URL", t);
                     }
                 }, MoreExecutors.directExecutor());
     }
