@@ -73,6 +73,10 @@ public final class ProvisionInfoListAdapter extends
                     newValue -> notifyItemChanged(position));
             return;
         }
-        provisionInfoViewHolder.bind(getItem(position), providerName);
+
+        // TODO(b/282248521): Refactor ProvisionInfoList, ProviderName, and TermsAndConditionsUrl
+        //  Live Data.
+        provisionInfoViewHolder.bind(getItem(position), providerName,
+                mViewModel.mTermsAndConditionsUrlLiveData.getValue());
     }
 }
