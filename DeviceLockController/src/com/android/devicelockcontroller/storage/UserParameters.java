@@ -23,7 +23,6 @@ import android.os.Build;
 import androidx.annotation.Nullable;
 
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
-import com.android.devicelockcontroller.util.LogUtil;
 
 /**
  * Stores per-user local parameters.
@@ -62,9 +61,19 @@ public final class UserParameters {
      * @param context Context used to get the shared preferences.
      * @param state   New state.
      */
-    public static void setDeviceState(Context context,
-            @DeviceState int state) {
+    public static void setDeviceState(Context context, @DeviceState int state) {
         getSharedPreferences(context).edit().putInt(KEY_DEVICE_STATE, state).apply();
+    }
+
+    /**
+     * Sets the current device state and synchronously write to storage. This call will block until
+     * write is complete.
+     *
+     * @param state new {@link DeviceState}
+     * @return true if state is set successfully; otherwise, false.
+     */
+    public static boolean setDeviceStateSync(Context context, @DeviceState int state) {
+        return getSharedPreferences(context).edit().putInt(KEY_DEVICE_STATE, state).commit();
     }
 
     /**
@@ -89,11 +98,13 @@ public final class UserParameters {
                 .putString(KEY_HOME_PACKAGE_OVERRIDE, packageName).apply();
     }
 
+    /**
+     * Clear all user parameters.
+     */
     public static void clear(Context context) {
         if (!Build.isDebuggable()) {
-            LogUtil.w(TAG, "Clear is not allowed in non-debuggable build!");
-            return;
+            throw new SecurityException("Clear is not allowed in non-debuggable build!");
         }
-        getSharedPreferences(context).edit().clear().apply();
+        getSharedPreferences(context).edit().clear().commit();
     }
 }

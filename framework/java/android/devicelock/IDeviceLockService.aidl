@@ -65,4 +65,11 @@ oneway interface IDeviceLockService {
     const String KEY_REMOTE_CALLBACK_RESULT = "KEY_REMOTE_CALLBACK_RESULT";
 
     void addFinancedDeviceKioskRole(in String packageName, in RemoteCallback remoteCallback);
+
+    /**
+     * Set the Device Lock Controller exempt from starting an activity from the background
+     * for the calling user.
+     */
+    void setExemptFromActivityBackgroundStartRestriction(in boolean exempt,
+        in RemoteCallback remoteCallback);
 }

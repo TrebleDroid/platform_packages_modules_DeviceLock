@@ -16,6 +16,17 @@
 
 package com.android.devicelockcontroller.policy;
 
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.CLEARED;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.KIOSK_SETUP;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.LOCKED;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PSEUDO_LOCKED;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PSEUDO_UNLOCKED;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_FAILED;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_IN_PROGRESS;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_SUCCEEDED;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNLOCKED;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNPROVISIONED;
+
 import android.app.admin.DevicePolicyManager;
 
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
@@ -42,18 +53,18 @@ final class KioskAppPolicyHandler implements PolicyHandler {
     @Override
     public ListenableFuture<@ResultType Integer> setPolicyForState(@DeviceState int state) {
         switch (state) {
-            case DeviceState.KIOSK_SETUP:
-            case DeviceState.UNLOCKED:
-            case DeviceState.LOCKED:
+            case KIOSK_SETUP:
+            case UNLOCKED:
+            case LOCKED:
                 return enableKioskPackageProtection(true);
-            case DeviceState.CLEARED:
+            case CLEARED:
+            case UNPROVISIONED:
                 return enableKioskPackageProtection(false);
-            case DeviceState.UNPROVISIONED:
-            case DeviceState.SETUP_IN_PROGRESS:
-            case DeviceState.SETUP_SUCCEEDED:
-            case DeviceState.SETUP_FAILED:
-            case DeviceState.PSEUDO_LOCKED:
-            case DeviceState.PSEUDO_UNLOCKED:
+            case SETUP_IN_PROGRESS:
+            case SETUP_SUCCEEDED:
+            case SETUP_FAILED:
+            case PSEUDO_LOCKED:
+            case PSEUDO_UNLOCKED:
                 return Futures.immediateFuture(SUCCESS);
             default:
                 return Futures.immediateFailedFuture(
@@ -64,17 +75,17 @@ final class KioskAppPolicyHandler implements PolicyHandler {
     @Override
     public ListenableFuture<Boolean> isCompliant(@DeviceState int state) {
         switch (state) {
-            case DeviceState.UNLOCKED:
-            case DeviceState.LOCKED:
-            case DeviceState.KIOSK_SETUP:
+            case UNLOCKED:
+            case LOCKED:
+            case KIOSK_SETUP:
                 return isKioskPackageProtected();
-            case DeviceState.CLEARED:
+            case CLEARED:
                 return Futures.transform(isKioskPackageProtected(), result -> !result,
                         MoreExecutors.directExecutor());
-            case DeviceState.UNPROVISIONED:
-            case DeviceState.SETUP_IN_PROGRESS:
-            case DeviceState.SETUP_SUCCEEDED:
-            case DeviceState.SETUP_FAILED:
+            case UNPROVISIONED:
+            case SETUP_IN_PROGRESS:
+            case SETUP_SUCCEEDED:
+            case SETUP_FAILED:
                 return Futures.immediateFuture(true);
             default:
                 return Futures.immediateFailedFuture(

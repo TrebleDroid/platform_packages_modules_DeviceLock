@@ -76,7 +76,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.testing.TestingExecutors;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -128,8 +127,8 @@ public final class SetupControllerImplTest {
     @Before
     public void setUp() {
         mTestApplication = ApplicationProvider.getApplicationContext();
-        mMockStateController = mTestApplication.getMockStateController();
-        mMockPolicyController = mTestApplication.getMockPolicyController();
+        mMockStateController = mTestApplication.getStateController();
+        mMockPolicyController = mTestApplication.getPolicyController();
         when(mMockPolicyController.launchActivityInLockedMode()).thenReturn(
                 Futures.immediateFuture(true));
         Shadows.shadowOf(mTestApplication).setComponentNameAndServiceForBindService(
@@ -152,12 +151,15 @@ public final class SetupControllerImplTest {
         b.putString(EXTRA_KIOSK_SETUP_ACTIVITY, TEST_SETUP_ACTIVITY);
         createParameters(b);
         when(mMockStateController.getState()).thenReturn(DeviceState.KIOSK_SETUP);
+        when(mMockStateController.setNextStateForEvent(DeviceEvent.SETUP_COMPLETE)).thenReturn(
+                Futures.immediateVoidFuture());
         SetupControllerImpl setupController =
                 new SetupControllerImpl(
                         mTestApplication, mMockStateController, mMockPolicyController);
         assertThat(setupController.getSetupState()).isEqualTo(
                 SetupController.SetupStatus.SETUP_FINISHED);
         Futures.getUnchecked(setupController.finishSetup());
+        verify(mMockStateController).setNextStateForEvent(DeviceEvent.SETUP_COMPLETE);
         verify(mMockPolicyController).launchActivityInLockedMode();
         verify(mMockPolicyController, never()).wipeData();
     }

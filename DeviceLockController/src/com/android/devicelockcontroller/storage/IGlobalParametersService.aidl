@@ -21,6 +21,7 @@ package com.android.devicelockcontroller.storage;
  * {@hide}
  */
 interface IGlobalParametersService {
+    void clear();
     List<String> getLockTaskAllowlist();
     void setLockTaskAllowlist(in List<String> allowlist);
     boolean needCheckIn();

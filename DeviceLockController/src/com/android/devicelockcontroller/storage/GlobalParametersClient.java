@@ -92,6 +92,18 @@ public final class GlobalParametersClient extends DlcClient {
     }
 
     /**
+     * Clear any existing global parameters.
+     * Note that this API can only be called in debuggable build for debugging purpose.
+     */
+    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
+    public ListenableFuture<Void> clear() {
+        return call(() -> {
+            asInterface(getService()).clear();
+            return null;
+        });
+    }
+
+    /**
      * Gets the list of packages allowlisted in lock task mode.
      *
      * @return List of packages that are allowed in lock task mode.
