@@ -19,6 +19,7 @@ package com.android.devicelockcontroller;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.CLEAR;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.LOCK_DEVICE;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.UNLOCK_DEVICE;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PSEUDO_LOCKED;
 
 import android.app.Service;
 import android.content.Intent;
@@ -54,7 +55,9 @@ public final class DeviceLockControllerService extends Service {
                     Futures.addCallback(
                             Futures.transformAsync(
                                     mStateController.setNextStateForEvent(LOCK_DEVICE),
-                                    empty -> mPolicyController.launchActivityInLockedMode(),
+                                    (Void unused) -> mStateController.getState() == PSEUDO_LOCKED
+                                            ? Futures.immediateFuture(true)
+                                            : mPolicyController.launchActivityInLockedMode(),
                                     DeviceLockControllerService.this.getMainExecutor()),
                             remoteCallbackWrapper(remoteCallback, KEY_LOCK_DEVICE_RESULT),
                             MoreExecutors.directExecutor());
@@ -65,7 +68,7 @@ public final class DeviceLockControllerService extends Service {
                     Futures.addCallback(
                             Futures.transform(
                                     mStateController.setNextStateForEvent(UNLOCK_DEVICE),
-                                    empty -> true, MoreExecutors.directExecutor()),
+                                    (Void unused) -> true, MoreExecutors.directExecutor()),
                             remoteCallbackWrapper(remoteCallback, KEY_UNLOCK_DEVICE_RESULT),
                             MoreExecutors.directExecutor());
 
@@ -90,7 +93,7 @@ public final class DeviceLockControllerService extends Service {
                 public void clearDevice(RemoteCallback remoteCallback) {
                     Futures.addCallback(
                             Futures.transform(mStateController.setNextStateForEvent(CLEAR),
-                                    empty -> true, MoreExecutors.directExecutor()),
+                                    (Void unused) -> true, MoreExecutors.directExecutor()),
                             remoteCallbackWrapper(remoteCallback, KEY_CLEAR_DEVICE_RESULT),
                             MoreExecutors.directExecutor());
 
