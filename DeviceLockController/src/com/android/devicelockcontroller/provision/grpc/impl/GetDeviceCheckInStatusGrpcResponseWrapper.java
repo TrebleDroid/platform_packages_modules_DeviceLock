@@ -129,9 +129,12 @@ final class GetDeviceCheckInStatusGrpcResponseWrapper extends GetDeviceCheckInSt
         switch (mNextStep.getDeviceProvisioningInformation().getConfigurationType()) {
             case CONFIGURATION_TYPE_FINANCED:
                 return ProvisioningType.TYPE_FINANCED;
+            case CONFIGURATION_TYPE_SUBSIDY:
+                return ProvisioningType.TYPE_SUBSIDY;
             case CONFIGURATION_TYPE_UNSPECIFIED:
-            default:
                 return ProvisioningType.TYPE_UNDEFINED;
+            default:
+                throw new IllegalArgumentException("Unknown configuration type");
         }
     }
 

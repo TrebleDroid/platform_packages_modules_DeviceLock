@@ -16,15 +16,19 @@
 
 package com.android.devicelockcontroller.policy;
 
-import static android.app.admin.DevicePolicyManager.LOCK_TASK_FEATURE_NONE;
 import static android.app.admin.DevicePolicyManager.LOCK_TASK_FEATURE_NOTIFICATIONS;
 
 import static com.android.devicelockcontroller.policy.DevicePolicyControllerImpl.START_LOCK_TASK_MODE_WORK_NAME;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.CLEARED;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.KIOSK_SETUP;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.LOCKED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PSEUDO_LOCKED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PSEUDO_UNLOCKED;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_FAILED;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_IN_PROGRESS;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_SUCCEEDED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNLOCKED;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNPROVISIONED;
 
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
@@ -61,9 +65,9 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
     @VisibleForTesting
     static final int DEFAULT_LOCK_TASK_FEATURES =
             (DevicePolicyManager.LOCK_TASK_FEATURE_SYSTEM_INFO
-                    | DevicePolicyManager.LOCK_TASK_FEATURE_KEYGUARD
-                    | DevicePolicyManager.LOCK_TASK_FEATURE_HOME
-                    | DevicePolicyManager.LOCK_TASK_FEATURE_GLOBAL_ACTIONS);
+             | DevicePolicyManager.LOCK_TASK_FEATURE_KEYGUARD
+             | DevicePolicyManager.LOCK_TASK_FEATURE_HOME
+             | DevicePolicyManager.LOCK_TASK_FEATURE_GLOBAL_ACTIONS);
     private static final String TAG = "LockTaskModePolicyHandler";
     private final Context mContext;
     private final DevicePolicyManager mDpm;
@@ -83,14 +87,25 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
     @Override
     @ResultType
     public ListenableFuture<@ResultType Integer> setPolicyForState(@DeviceState int state) {
-        return switch (state) {
-            case PSEUDO_UNLOCKED, PSEUDO_LOCKED -> Futures.immediateFuture(SUCCESS);
-            case SETUP_SUCCEEDED -> Futures.transform(composeAllowlist(), empty -> SUCCESS,
-                    MoreExecutors.directExecutor());
-            case UNLOCKED, CLEARED -> disableLockTaskMode();
-            // All other states
-            default -> enableLockTaskMode();
-        };
+        switch (state) {
+            case PSEUDO_UNLOCKED:
+            case PSEUDO_LOCKED:
+                return Futures.immediateFuture(SUCCESS);
+            case UNLOCKED:
+            case CLEARED:
+            case UNPROVISIONED:
+                return disableLockTaskMode();
+            case SETUP_IN_PROGRESS:
+            case SETUP_SUCCEEDED:
+            case SETUP_FAILED:
+            case KIOSK_SETUP:
+            case LOCKED:
+                return Futures.transformAsync(composeAllowlist(), empty -> enableLockTaskMode(),
+                        MoreExecutors.directExecutor());
+            default:
+                return Futures.immediateFailedFuture(
+                        new IllegalStateException(String.valueOf(state)));
+        }
     }
 
     @Override
@@ -152,15 +167,17 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
         ListenableFuture<Boolean> notificationsInLockTaskModeEnabled =
                 SetupParametersClient.getInstance().isNotificationsInLockTaskModeEnabled();
         return Futures.whenAllSucceed(
-                notificationsInLockTaskModeEnabled,
-                updateAllowlist()).call(
-                () -> {
-                    mDpm.setLockTaskFeatures(null /* admin */, DEFAULT_LOCK_TASK_FEATURES
-                            | (Futures.getDone(notificationsInLockTaskModeEnabled)
-                            ? LOCK_TASK_FEATURE_NOTIFICATIONS
-                            : LOCK_TASK_FEATURE_NONE));
-                    return SUCCESS;
-                }, mContext.getMainExecutor());
+                        notificationsInLockTaskModeEnabled,
+                        updateAllowlist())
+                .call(
+                        () -> {
+                            int flags = DEFAULT_LOCK_TASK_FEATURES;
+                            if (Futures.getDone(notificationsInLockTaskModeEnabled)) {
+                                flags |= LOCK_TASK_FEATURE_NOTIFICATIONS;
+                            }
+                            mDpm.setLockTaskFeatures(null, flags);
+                            return SUCCESS;
+                        }, mContext.getMainExecutor());
     }
 
     private @ResultType ListenableFuture<@ResultType Integer> disableLockTaskMode() {
