@@ -25,6 +25,7 @@ import static com.android.devicelockcontroller.policy.PolicyHandler.SUCCESS;
 
 import android.app.ActivityManager;
 import android.app.ActivityOptions;
+import android.app.AppOpsManager;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -45,6 +46,7 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import com.android.devicelockcontroller.DeviceLockControllerApplication;
+import com.android.devicelockcontroller.SystemDeviceLockManagerImpl;
 import com.android.devicelockcontroller.common.DeviceLockConstants;
 import com.android.devicelockcontroller.common.DeviceLockConstants.ProvisioningType;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
@@ -98,6 +100,8 @@ public final class DevicePolicyControllerImpl
 
         mPolicyList.add(new UserRestrictionsPolicyHandler(dpm,
                 context.getSystemService(UserManager.class), Build.isDebuggable()));
+        mPolicyList.add(new AppOpsPolicyHandler(context, SystemDeviceLockManagerImpl.getInstance(),
+                context.getSystemService(AppOpsManager.class)));
         mPolicyList.add(mLockTaskHandler);
         mPolicyList.add(new KioskAppPolicyHandler(dpm));
         stateController.addCallback(this);
