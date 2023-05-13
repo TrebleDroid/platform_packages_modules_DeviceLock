@@ -24,6 +24,7 @@ import static android.devicelock.DeviceId.DEVICE_ID_TYPE_MEID;
 
 import android.Manifest;
 import android.annotation.NonNull;
+import android.app.AppOpsManager;
 import android.app.role.RoleManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -65,6 +66,12 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
     private final DeviceLockControllerConnector mDeviceLockControllerConnector;
 
     private final DeviceLockControllerPackageUtils mPackageUtils;
+
+    private final ServiceInfo mServiceInfo;
+
+    // The following should be a SystemApi on AppOpsManager.
+    private static final String OPSTR_SYSTEM_EXEMPT_FROM_ACTIVITY_BG_START_RESTRICTION =
+            "android:system_exempt_from_activity_bg_start_restriction";
 
     // Stopgap: this receiver should be replaced by an API on DeviceLockManager.
     private final class DeviceLockClearReceiver extends BroadcastReceiver {
@@ -120,9 +127,9 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
         mPackageUtils = new DeviceLockControllerPackageUtils(context);
 
         final StringBuilder errorMessage = new StringBuilder();
-        final ServiceInfo serviceInfo = mPackageUtils.findService(errorMessage);
+        mServiceInfo = mPackageUtils.findService(errorMessage);
 
-        if (serviceInfo == null) {
+        if (mServiceInfo == null) {
             mDeviceLockControllerConnector = null;
 
             Slog.e(TAG, errorMessage.toString());
@@ -130,8 +137,8 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
             return;
         }
 
-        final ComponentName componentName = new ComponentName(serviceInfo.packageName,
-                serviceInfo.name);
+        final ComponentName componentName = new ComponentName(mServiceInfo.packageName,
+                mServiceInfo.name);
 
         mDeviceLockControllerConnector = new DeviceLockControllerConnector(context, componentName);
 
@@ -402,5 +409,31 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
                 });
 
         Binder.restoreCallingIdentity(identity);
+    }
+
+    @Override
+    public void setExemptFromActivityBackgroundStartRestriction(boolean exempt,
+            @NonNull RemoteCallback remoteCallback) {
+        final Bundle result = new Bundle();
+
+        if (!checkDeviceLockControllerPermission()) {
+            result.putBoolean(KEY_REMOTE_CALLBACK_RESULT, false);
+            remoteCallback.sendResult(result);
+            return;
+        }
+
+        final int uid = Binder.getCallingUid();
+        final AppOpsManager appOpsManager = mContext.getSystemService(AppOpsManager.class);
+        final long identity = Binder.clearCallingIdentity();
+
+        final int mode = exempt ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_DEFAULT;
+
+        appOpsManager.setMode(OPSTR_SYSTEM_EXEMPT_FROM_ACTIVITY_BG_START_RESTRICTION,
+                uid, mServiceInfo.packageName, mode);
+
+        Binder.restoreCallingIdentity(identity);
+
+        result.putBoolean(KEY_REMOTE_CALLBACK_RESULT, true);
+        remoteCallback.sendResult(result);
     }
 }
