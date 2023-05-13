@@ -16,6 +16,8 @@
 
 package com.android.server.devicelock;
 
+import static com.android.internal.annotations.VisibleForTesting.Visibility.PACKAGE;
+
 import android.annotation.NonNull;
 import android.annotation.Nullable;
 import android.content.Context;
@@ -56,7 +58,7 @@ public final class DeviceLockControllerPackageUtils {
      * @param errorMessage Reason why the service could not be found.
      * @return Service information or null for an error.
      */
-    @VisibleForTesting
+    @VisibleForTesting(visibility = PACKAGE)
     @Nullable
     public synchronized ServiceInfo findService(@NonNull StringBuilder errorMessage) {
         errorMessage.setLength(0);
