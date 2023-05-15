@@ -19,6 +19,8 @@ package com.android.devicelockcontroller.policy;
 import androidx.annotation.IntDef;
 import androidx.lifecycle.LifecycleOwner;
 
+import com.android.devicelockcontroller.common.DeviceLockConstants.SetupFailureReason;
+
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.lang.annotation.Retention;
@@ -67,37 +69,8 @@ public interface SetupController {
     /** Callback interface for updates on setup tasks */
     interface SetupUpdatesCallbacks {
 
-        /** Definitions for setup failure types. */
-        @Retention(RetentionPolicy.SOURCE)
-        @IntDef(
-                value = {
-                        FailureType.SETUP_FAILED,
-                        FailureType.DOWNLOAD_FAILED,
-                        FailureType.VERIFICATION_FAILED,
-                        FailureType.INSTALL_FAILED,
-                        FailureType.PACKAGE_DOES_NOT_EXIST,
-                        FailureType.DELETE_PACKAGE_FAILED,
-                        FailureType.INSTALL_EXISTING_FAILED,
-                })
-        @interface FailureType {
-            /** Setup failed to complete */
-            int SETUP_FAILED = 0;
-            /** Failed to download the creditor apk. */
-            int DOWNLOAD_FAILED = 1;
-            /** Verification of the creditor apk failed. */
-            int VERIFICATION_FAILED = 2;
-            /** Failed to install the creditor apk. */
-            int INSTALL_FAILED = 3;
-            /** Pre-installed package not found */
-            int PACKAGE_DOES_NOT_EXIST = 4;
-            /** Delete apk failed */
-            int DELETE_PACKAGE_FAILED = 5;
-            /** Install package for secondary users failed */
-            int INSTALL_EXISTING_FAILED = 6;
-        }
-
         /** Method called when setup has failed. */
-        void setupFailed(@FailureType int reason);
+        void setupFailed(@SetupFailureReason int reason);
 
         /** Method called when setup tasks have completed successfully. */
         void setupCompleted();
