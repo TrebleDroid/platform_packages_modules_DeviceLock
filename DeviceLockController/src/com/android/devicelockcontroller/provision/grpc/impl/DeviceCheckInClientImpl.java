@@ -16,6 +16,14 @@
 
 package com.android.devicelockcontroller.provision.grpc.impl;
 
+import static com.android.devicelockcontroller.proto.ClientProvisionFailureReason.CLIENT_PROVISION_FAILURE_REASON_DELETE_PACKAGE_FAILED;
+import static com.android.devicelockcontroller.proto.ClientProvisionFailureReason.CLIENT_PROVISION_FAILURE_REASON_DOWNLOAD_FAILED;
+import static com.android.devicelockcontroller.proto.ClientProvisionFailureReason.CLIENT_PROVISION_FAILURE_REASON_INSTALL_EXISTING_FAILED;
+import static com.android.devicelockcontroller.proto.ClientProvisionFailureReason.CLIENT_PROVISION_FAILURE_REASON_INSTALL_FAILED;
+import static com.android.devicelockcontroller.proto.ClientProvisionFailureReason.CLIENT_PROVISION_FAILURE_REASON_PACKAGE_DOES_NOT_EXIST;
+import static com.android.devicelockcontroller.proto.ClientProvisionFailureReason.CLIENT_PROVISION_FAILURE_REASON_SETUP_FAILED;
+import static com.android.devicelockcontroller.proto.ClientProvisionFailureReason.CLIENT_PROVISION_FAILURE_REASON_VERIFICATION_FAILED;
+
 import android.util.ArraySet;
 
 import androidx.annotation.Keep;
@@ -23,18 +31,26 @@ import androidx.annotation.Keep;
 import com.android.devicelockcontroller.DeviceLockControllerApplication;
 import com.android.devicelockcontroller.common.DeviceId;
 import com.android.devicelockcontroller.common.DeviceLockConstants;
+import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState;
+import com.android.devicelockcontroller.common.DeviceLockConstants.SetupFailureReason;
 import com.android.devicelockcontroller.proto.ClientDeviceIdentifier;
+import com.android.devicelockcontroller.proto.ClientProvisionFailureReason;
+import com.android.devicelockcontroller.proto.ClientProvisionState;
 import com.android.devicelockcontroller.proto.DeviceIdentifierType;
 import com.android.devicelockcontroller.proto.DeviceLockCheckinServiceGrpc;
 import com.android.devicelockcontroller.proto.DeviceLockCheckinServiceGrpc.DeviceLockCheckinServiceBlockingStub;
 import com.android.devicelockcontroller.proto.GetDeviceCheckinStatusRequest;
+import com.android.devicelockcontroller.proto.IsDeviceInApprovedCountryRequest;
 import com.android.devicelockcontroller.proto.PauseDeviceProvisioningReason;
 import com.android.devicelockcontroller.proto.PauseDeviceProvisioningRequest;
 import com.android.devicelockcontroller.proto.ReportDeviceProvisionCompleteRequest;
+import com.android.devicelockcontroller.proto.ReportDeviceProvisionStateRequest;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrpcResponse;
+import com.android.devicelockcontroller.provision.grpc.IsDeviceInApprovedCountryGrpcResponse;
 import com.android.devicelockcontroller.provision.grpc.PauseDeviceProvisioningGrpcResponse;
 import com.android.devicelockcontroller.provision.grpc.ReportDeviceProvisionCompleteGrpcResponse;
+import com.android.devicelockcontroller.provision.grpc.ReportDeviceProvisionStateGrpcResponse;
 
 import javax.annotation.Nullable;
 
@@ -74,6 +90,25 @@ public final class DeviceCheckInClientImpl extends DeviceCheckInClient {
         }
     }
 
+    /**
+     * Check if the device is in an approved country for the device lock program.
+     *
+     * @param carrierInfo The information of the device's sim operator which is used to determine
+     *                    the device's geological location and eventually eligibility of the
+     *                    DeviceLock program.
+     * @return A class that encapsulate the response from the backend server.
+     */
+    @Override
+    public IsDeviceInApprovedCountryGrpcResponse isDeviceInApprovedCountry(String carrierInfo) {
+        try {
+            return new IsDeviceInApprovedCountryGrpcResponseWrapper(
+                    mBlockingStub.isDeviceInApprovedCountry(
+                            createIsDeviceInApprovedCountryRequest(carrierInfo, mRegisteredId)));
+        } catch (StatusRuntimeException e) {
+            return new IsDeviceInApprovedCountryGrpcResponseWrapper(e.getStatus());
+        }
+    }
+
     @Override
     public PauseDeviceProvisioningGrpcResponse pauseDeviceProvisioning(int reason) {
         try {
@@ -91,14 +126,42 @@ public final class DeviceCheckInClientImpl extends DeviceCheckInClient {
         try {
             return new ReportDeviceProvisionCompleteGrpcResponseWrapper(
                     mBlockingStub.reportDeviceProvisionComplete(
-                            createReportDeviceProvisioningCompleteRequest(mRegisteredId)));
+                            createReportDeviceProvisionCompleteRequest(mRegisteredId)));
 
         } catch (StatusRuntimeException e) {
             return new ReportDeviceProvisionCompleteGrpcResponseWrapper(e.getStatus());
         }
     }
 
-    private GetDeviceCheckinStatusRequest createGetDeviceCheckinStatusRequest(
+    /**
+     * Reports the current provision state of the device.
+     *
+     * @param reasonOfFailure            one of {@link SetupFailureReason}
+     * @param lastReceivedProvisionState one of {@link DeviceProvisionState}.
+     *                                   It must be the value from the response when this API
+     *                                   was called last time. If this API is called for the first
+     *                                   time, then
+     *                                   {@link
+     *                                   DeviceProvisionState#PROVISION_STATE_UNSPECIFIED }
+     *                                   must be used.
+     * @param isSuccessful               true if the device has been setup for DeviceLock program
+     *                                   successful; false otherwise.
+     * @return A class that encapsulate the response from the backend server.
+     */
+    @Override
+    public ReportDeviceProvisionStateGrpcResponse reportDeviceProvisionState(int reasonOfFailure,
+            int lastReceivedProvisionState, boolean isSuccessful) {
+        try {
+            return new ReportDeviceProvisionStateGrpcResponseWrapper(
+                    mBlockingStub.reportDeviceProvisionState(
+                            createReportDeviceProvisionStateRequest(reasonOfFailure,
+                                    lastReceivedProvisionState, isSuccessful, mRegisteredId)));
+        } catch (StatusRuntimeException e) {
+            return new ReportDeviceProvisionStateGrpcResponseWrapper(e.getStatus());
+        }
+    }
+
+    private static GetDeviceCheckinStatusRequest createGetDeviceCheckinStatusRequest(
             ArraySet<DeviceId> deviceIds, String carrierInfo) {
         GetDeviceCheckinStatusRequest.Builder builder = GetDeviceCheckinStatusRequest.newBuilder();
         for (DeviceId deviceId : deviceIds) {
@@ -113,7 +176,16 @@ public final class DeviceCheckInClientImpl extends DeviceCheckInClient {
         return builder.build();
     }
 
-    private PauseDeviceProvisioningRequest createPauseDeviceProvisioningRequest(String registeredId,
+    private static IsDeviceInApprovedCountryRequest createIsDeviceInApprovedCountryRequest(
+            String carrierInfo, String registeredId) {
+        return IsDeviceInApprovedCountryRequest.newBuilder()
+                .setCarrierMccmnc(carrierInfo)
+                .setRegisteredDeviceIdentifier(registeredId)
+                .build();
+    }
+
+    private static PauseDeviceProvisioningRequest createPauseDeviceProvisioningRequest(
+            String registeredId,
             @DeviceLockConstants.PauseDeviceProvisioningReason int reason) {
         return PauseDeviceProvisioningRequest.newBuilder()
                 .setRegisteredDeviceIdentifier(registeredId)
@@ -122,10 +194,75 @@ public final class DeviceCheckInClientImpl extends DeviceCheckInClient {
                 .build();
     }
 
-    private ReportDeviceProvisionCompleteRequest createReportDeviceProvisioningCompleteRequest(
+    private static ReportDeviceProvisionCompleteRequest createReportDeviceProvisionCompleteRequest(
             String registeredId) {
         return ReportDeviceProvisionCompleteRequest.newBuilder()
                 .setRegisteredDeviceIdentifier(registeredId)
                 .build();
     }
+
+    private static ReportDeviceProvisionStateRequest createReportDeviceProvisionStateRequest(
+            @SetupFailureReason int reasonOfFailure,
+            @DeviceProvisionState int lastReceivedProvisionState,
+            boolean isSuccessful,
+            String registeredId) {
+        ClientProvisionFailureReason reason;
+        switch (reasonOfFailure) {
+            case SetupFailureReason.SETUP_FAILED:
+                reason = CLIENT_PROVISION_FAILURE_REASON_SETUP_FAILED;
+                break;
+            case SetupFailureReason.DOWNLOAD_FAILED:
+                reason = CLIENT_PROVISION_FAILURE_REASON_DOWNLOAD_FAILED;
+                break;
+            case SetupFailureReason.VERIFICATION_FAILED:
+                reason = CLIENT_PROVISION_FAILURE_REASON_VERIFICATION_FAILED;
+                break;
+            case SetupFailureReason.INSTALL_FAILED:
+                reason = CLIENT_PROVISION_FAILURE_REASON_INSTALL_FAILED;
+                break;
+            case SetupFailureReason.PACKAGE_DOES_NOT_EXIST:
+                reason = CLIENT_PROVISION_FAILURE_REASON_PACKAGE_DOES_NOT_EXIST;
+                break;
+            case SetupFailureReason.DELETE_PACKAGE_FAILED:
+                reason = CLIENT_PROVISION_FAILURE_REASON_DELETE_PACKAGE_FAILED;
+                break;
+            case SetupFailureReason.INSTALL_EXISTING_FAILED:
+                reason = CLIENT_PROVISION_FAILURE_REASON_INSTALL_EXISTING_FAILED;
+                break;
+            default:
+                throw new IllegalStateException(
+                        "Unexpected provision failure reason value: " + reasonOfFailure);
+        }
+        ClientProvisionState state;
+        switch (lastReceivedProvisionState) {
+            case DeviceProvisionState.PROVISION_STATE_UNSPECIFIED:
+                state = ClientProvisionState.CLIENT_PROVISION_STATE_UNSPECIFIED;
+                break;
+            case DeviceProvisionState.PROVISION_STATE_RETRY:
+                state = ClientProvisionState.CLIENT_PROVISION_STATE_RETRY;
+                break;
+            case DeviceProvisionState.PROVISION_STATE_DISMISSIBLE_UI:
+                state = ClientProvisionState.CLIENT_PROVISION_STATE_DISMISSIBLE_UI;
+                break;
+            case DeviceProvisionState.PROVISION_STATE_PERSISTENT_UI:
+                state = ClientProvisionState.CLIENT_PROVISION_STATE_PERSISTENT_UI;
+                break;
+            case DeviceProvisionState.PROVISION_STATE_FACTORY_RESET:
+                state = ClientProvisionState.CLIENT_PROVISION_STATE_FACTORY_RESET;
+                break;
+            case DeviceProvisionState.PROVISION_STATE_SUCCESS:
+                state = ClientProvisionState.CLIENT_PROVISION_STATE_SUCCESS;
+                break;
+            default:
+                throw new IllegalStateException(
+                        "Unexpected value: " + lastReceivedProvisionState);
+        }
+        return ReportDeviceProvisionStateRequest.newBuilder()
+                .setClientProvisionFailureReason(reason)
+                .setPreviousClientProvisionState(state)
+                .setProvisionSuccess(isSuccessful)
+                .setRegisteredDeviceIdentifier(registeredId)
+                .build();
+    }
+
 }

@@ -17,6 +17,7 @@
 package com.android.devicelockcontroller.provision.grpc;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState;
 
@@ -51,5 +52,6 @@ public abstract class ReportDeviceProvisionStateGrpcResponse extends DeviceCheck
      *
      * @return The enrollment token string.
      */
+    @Nullable
     public abstract String getEnrollmentToken();
 }
