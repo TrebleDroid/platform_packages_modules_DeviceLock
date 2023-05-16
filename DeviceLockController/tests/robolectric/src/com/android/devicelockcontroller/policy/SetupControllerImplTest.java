@@ -22,13 +22,13 @@ import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_SIGNATURE_CHECKSUM;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_MANDATORY_PROVISION;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.KEY_KIOSK_APP_INSTALLED;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.SetupFailureReason.DOWNLOAD_FAILED;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.SetupFailureReason.INSTALL_FAILED;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.SetupFailureReason.SETUP_FAILED;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.SetupFailureReason.VERIFICATION_FAILED;
 import static com.android.devicelockcontroller.policy.AbstractTask.ERROR_CODE_CREATE_SESSION_FAILED;
 import static com.android.devicelockcontroller.policy.AbstractTask.ERROR_CODE_EMPTY_DOWNLOAD_URL;
 import static com.android.devicelockcontroller.policy.AbstractTask.ERROR_CODE_NO_PACKAGE_INFO;
-import static com.android.devicelockcontroller.policy.SetupController.SetupUpdatesCallbacks.FailureType.DOWNLOAD_FAILED;
-import static com.android.devicelockcontroller.policy.SetupController.SetupUpdatesCallbacks.FailureType.INSTALL_FAILED;
-import static com.android.devicelockcontroller.policy.SetupController.SetupUpdatesCallbacks.FailureType.SETUP_FAILED;
-import static com.android.devicelockcontroller.policy.SetupController.SetupUpdatesCallbacks.FailureType.VERIFICATION_FAILED;
 import static com.android.devicelockcontroller.policy.SetupControllerImpl.transformErrorCodeToFailureType;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -64,9 +64,9 @@ import androidx.work.WorkerParameters;
 import androidx.work.testing.WorkManagerTestInitHelper;
 
 import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
+import com.android.devicelockcontroller.common.DeviceLockConstants.SetupFailureReason;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
-import com.android.devicelockcontroller.policy.SetupController.SetupUpdatesCallbacks.FailureType;
 import com.android.devicelockcontroller.shadows.ShadowBuild;
 import com.android.devicelockcontroller.storage.SetupParametersClient;
 import com.android.devicelockcontroller.storage.SetupParametersService;
@@ -350,9 +350,9 @@ public final class SetupControllerImplTest {
         when(mMockStateController.setNextStateForEvent(DeviceEvent.SETUP_FAILURE)).thenReturn(
                 Futures.immediateVoidFuture());
         SetupControllerImpl setupController = createSetupControllerImpl(callbacks);
-        setupController.setupFlowTaskFailureCallbackHandler(FailureType.DOWNLOAD_FAILED);
+        setupController.setupFlowTaskFailureCallbackHandler(SetupFailureReason.DOWNLOAD_FAILED);
         assertThat(result.get()).isFalse();
-        assertThat(reason.get()).isEqualTo(FailureType.DOWNLOAD_FAILED);
+        assertThat(reason.get()).isEqualTo(SetupFailureReason.DOWNLOAD_FAILED);
         assertThat(setupController.getSetupState()).isEqualTo(
                 SetupController.SetupStatus.SETUP_FAILED);
     }
