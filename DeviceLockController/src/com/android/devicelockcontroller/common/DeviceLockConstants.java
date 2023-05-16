@@ -144,7 +144,7 @@ public final class DeviceLockConstants {
 
     public static final String ACTION_START_DEVICE_FINANCING_SECONDARY_USER_PROVISIONING =
             "com.android.devicelockcontroller.action"
-                    + ".START_DEVICE_FINANCING_SECONDARY_USER_PROVISIONING";
+            + ".START_DEVICE_FINANCING_SECONDARY_USER_PROVISIONING";
 
     public static final String ACTION_START_DEVICE_SUBSIDY_PROVISIONING =
             "com.android.devicelockcontroller.action.START_DEVICE_SUBSIDY_PROVISIONING";
@@ -167,7 +167,68 @@ public final class DeviceLockConstants {
     /** Uses the package name of {@link Context#getPackageName()} to return the landing activity. */
     public static String getLandingActivity(Context context) {
         return context.getPackageName() + "/"
-                + "com.android.devicelockcontroller.activities.LandingActivity";
+               + "com.android.devicelockcontroller.activities.LandingActivity";
+    }
+
+    /** Definitions for setup failure types. */
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef(
+            value = {
+                    SetupFailureReason.SETUP_FAILED,
+                    SetupFailureReason.DOWNLOAD_FAILED,
+                    SetupFailureReason.VERIFICATION_FAILED,
+                    SetupFailureReason.INSTALL_FAILED,
+                    SetupFailureReason.PACKAGE_DOES_NOT_EXIST,
+                    SetupFailureReason.DELETE_PACKAGE_FAILED,
+                    SetupFailureReason.INSTALL_EXISTING_FAILED,
+            })
+    public @interface SetupFailureReason {
+        /** Setup failed to complete */
+        int SETUP_FAILED = 0;
+        /** Failed to download the creditor apk. */
+        int DOWNLOAD_FAILED = 1;
+        /** Verification of the creditor apk failed. */
+        int VERIFICATION_FAILED = 2;
+        /** Failed to install the creditor apk. */
+        int INSTALL_FAILED = 3;
+        /** Pre-installed package not found */
+        int PACKAGE_DOES_NOT_EXIST = 4;
+        /** Delete apk failed */
+        int DELETE_PACKAGE_FAILED = 5;
+        /** Install package for secondary users failed */
+        int INSTALL_EXISTING_FAILED = 6;
+    }
+
+    /** Definitions for device provision states. */
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef(
+            value = {
+                    DeviceProvisionState.PROVISION_STATE_UNSPECIFIED,
+                    DeviceProvisionState.PROVISION_STATE_RETRY,
+                    DeviceProvisionState.PROVISION_STATE_DISMISSIBLE_UI,
+                    DeviceProvisionState.PROVISION_STATE_PERSISTENT_UI,
+                    DeviceProvisionState.PROVISION_STATE_FACTORY_RESET,
+                    DeviceProvisionState.PROVISION_STATE_SUCCESS,
+            })
+    public @interface DeviceProvisionState {
+        /** The provision state of the device is unspecified */
+        int PROVISION_STATE_UNSPECIFIED = 0;
+        /** The Device need retry to provision the device. */
+        int PROVISION_STATE_RETRY = 1;
+        /**
+         * The Device need inform the user that there has been an issue with device provisioning.
+         * The user can dismiss this.
+         */
+        int PROVISION_STATE_DISMISSIBLE_UI = 2;
+        /**
+         * The Device need inform the user that there has been an issue with device provisioning.
+         * The user cannot dismiss this.
+         */
+        int PROVISION_STATE_PERSISTENT_UI = 3;
+        /** The Device need factory reset because device provisioning could not be done. */
+        int PROVISION_STATE_FACTORY_RESET = 4;
+        /** Device provisioning was a success. */
+        int PROVISION_STATE_SUCCESS = 5;
     }
 
     /** Restrict instantiation. */
