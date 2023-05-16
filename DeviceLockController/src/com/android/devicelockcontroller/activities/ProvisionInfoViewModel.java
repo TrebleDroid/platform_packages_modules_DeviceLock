@@ -23,6 +23,7 @@ import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.storage.SetupParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
 
@@ -47,6 +48,7 @@ public abstract class ProvisionInfoViewModel extends ViewModel {
     final MutableLiveData<List<ProvisionInfo>> mProvisionInfoListLiveData;
     final MutableLiveData<String> mProviderNameLiveData;
     final MutableLiveData<String> mTermsAndConditionsUrlLiveData;
+    final MutableLiveData<Boolean> mIsProvisionForcedLiveData;
     final MediatorLiveData<Pair<Integer, String>> mHeaderTextLiveData;
     final MediatorLiveData<Pair<Integer, String>> mSubHeaderTextLiveData;
 
@@ -57,6 +59,7 @@ public abstract class ProvisionInfoViewModel extends ViewModel {
         mSubheaderTextIdLiveData = new MutableLiveData<>();
         mProviderNameLiveData = new MutableLiveData<>();
         mTermsAndConditionsUrlLiveData = new MutableLiveData<>();
+        mIsProvisionForcedLiveData = new MutableLiveData<>();
         mHeaderTextLiveData = new MediatorLiveData<>();
         mHeaderTextLiveData.addSource(mHeaderTextIdLiveData,
                 id -> {
@@ -122,6 +125,19 @@ public abstract class ProvisionInfoViewModel extends ViewModel {
                     @Override
                     public void onFailure(Throwable t) {
                         LogUtil.e(TAG, "Failed to get Terms and Conditions URL", t);
+                    }
+                }, MoreExecutors.directExecutor());
+
+        Futures.addCallback(GlobalParametersClient.getInstance().isProvisionForced(),
+                new FutureCallback<>() {
+                    @Override
+                    public void onSuccess(Boolean isProvisionForced) {
+                        mIsProvisionForcedLiveData.postValue(isProvisionForced);
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+                        LogUtil.e(TAG, "Failed to get if provision should be forced", t);
                     }
                 }, MoreExecutors.directExecutor());
     }
