@@ -15,12 +15,14 @@
 -->
 
 <resources>
-    <!-- Allowed device identifiers bitmap -->
-    <integer name="device_id_type_bitmap">3</integer>
+    <!-- Packages allow-listed in locked mode -->
+    <array name="lock_task_allowlist">
+        <item>com.android.devicelockcontroller</item>
+    </array>
     <!-- Port number of the check in server -->
     <integer name="check_in_server_port_number">8843</integer>
-    <!-- Host name of the check in server -->
-    <string name="check_in_server_host_name">localhost</string>
+    <!-- Allowed device identifiers bitmap -->
+    <integer name="device_id_type_bitmap">3</integer>
     <!-- The implementation class of the check in client -->
     <string name="device_check_in_client_class_name">
         com.android.devicelockcontroller.provision.grpc.impl.DeviceCheckInClientImpl
@@ -29,10 +31,6 @@
     <string name="api_key_name">name_placeholder</string>
     <!-- Value of the metadata for API key authentication -->
     <string name="api_key_value">name_placeholder</string>
-    <!-- Packages allow-listed in locked mode -->
-    <string-array name="lock_task_allowlist" translatable="false">
-        <item>com.android.devicelockcontroller</item>
-        <item>com.google.android.devicelockcontroller</item>
-        <item>com.google.android.gms</item>
-    </string-array>
+    <!-- Host name of the check in server -->
+    <string name="check_in_server_host_name">localhost</string>
 </resources>
