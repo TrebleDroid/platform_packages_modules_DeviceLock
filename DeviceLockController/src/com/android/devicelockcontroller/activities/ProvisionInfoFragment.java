@@ -136,9 +136,16 @@ public final class ProvisionInfoFragment extends Fragment {
                     }
                 });
         Button next = view.findViewById(R.id.button_next);
+        Button previous = view.findViewById(R.id.button_previous);
         checkNotNull(next);
+        checkNotNull(previous);
         if (isDeferredProvisioning) {
             next.setText(R.string.start);
+        } else {
+            // Mandatory provisioning.
+
+            // Previous button should be hidden.
+            previous.setVisibility(View.GONE);
         }
         next.setOnClickListener(v -> {
             startActivity(new Intent().setClass(getContext(), ProvisioningActivity.class));
