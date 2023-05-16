@@ -23,6 +23,7 @@
             <item name="api_key_name" type="string" />
             <item name="api_key_value" type="string" />
             <item name="device_check_in_client_class_name" type="string" />
+            <item name="lock_task_allowlist" type="array" />
         </policy>
     </overlayable>
 </resources>
