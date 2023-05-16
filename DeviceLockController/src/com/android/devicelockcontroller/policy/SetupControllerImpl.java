@@ -24,6 +24,11 @@ import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_PACKAGE;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_SIGNATURE_CHECKSUM;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.KEY_KIOSK_APP_INSTALLED;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.SetupFailureReason.DELETE_PACKAGE_FAILED;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.SetupFailureReason.DOWNLOAD_FAILED;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.SetupFailureReason.INSTALL_EXISTING_FAILED;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.SetupFailureReason.INSTALL_FAILED;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.SetupFailureReason.VERIFICATION_FAILED;
 import static com.android.devicelockcontroller.policy.AbstractTask.ERROR_CODE_CREATE_LOCAL_FILE_FAILED;
 import static com.android.devicelockcontroller.policy.AbstractTask.ERROR_CODE_DELETE_APK_FAILED;
 import static com.android.devicelockcontroller.policy.AbstractTask.ERROR_CODE_EMPTY_DOWNLOAD_URL;
@@ -33,11 +38,6 @@ import static com.android.devicelockcontroller.policy.AbstractTask.ERROR_CODE_NO
 import static com.android.devicelockcontroller.policy.AbstractTask.ERROR_CODE_PACKAGE_HAS_MULTIPLE_SIGNERS;
 import static com.android.devicelockcontroller.policy.AbstractTask.ERROR_CODE_TOO_MANY_REDIRECTS;
 import static com.android.devicelockcontroller.policy.AbstractTask.TASK_RESULT_ERROR_CODE_KEY;
-import static com.android.devicelockcontroller.policy.SetupController.SetupUpdatesCallbacks.FailureType.DELETE_PACKAGE_FAILED;
-import static com.android.devicelockcontroller.policy.SetupController.SetupUpdatesCallbacks.FailureType.DOWNLOAD_FAILED;
-import static com.android.devicelockcontroller.policy.SetupController.SetupUpdatesCallbacks.FailureType.INSTALL_EXISTING_FAILED;
-import static com.android.devicelockcontroller.policy.SetupController.SetupUpdatesCallbacks.FailureType.INSTALL_FAILED;
-import static com.android.devicelockcontroller.policy.SetupController.SetupUpdatesCallbacks.FailureType.VERIFICATION_FAILED;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
@@ -58,9 +58,9 @@ import androidx.work.WorkInfo.State;
 import androidx.work.WorkManager;
 
 import com.android.devicelockcontroller.DeviceLockControllerApplication;
+import com.android.devicelockcontroller.common.DeviceLockConstants.SetupFailureReason;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
-import com.android.devicelockcontroller.policy.SetupController.SetupUpdatesCallbacks.FailureType;
 import com.android.devicelockcontroller.storage.SetupParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
 
@@ -387,11 +387,11 @@ public final class SetupControllerImpl implements SetupController {
 
     @VisibleForTesting
     void setupFlowTaskSuccessCallbackHandler() {
-        setupFlowTaskCallbackHandler(true, /* Ignored parameter */ FailureType.SETUP_FAILED);
+        setupFlowTaskCallbackHandler(true, /* Ignored parameter */ SetupFailureReason.SETUP_FAILED);
     }
 
     @VisibleForTesting
-    void setupFlowTaskFailureCallbackHandler(@FailureType int failReason) {
+    void setupFlowTaskFailureCallbackHandler(@SetupFailureReason int failReason) {
         setupFlowTaskCallbackHandler(false, failReason);
     }
 
@@ -402,7 +402,7 @@ public final class SetupControllerImpl implements SetupController {
      * @param failReason why the setup failed, the value will be ignored if {@code result} is true
      */
     private void setupFlowTaskCallbackHandler(
-            boolean result, @FailureType int failReason) {
+            boolean result, @SetupFailureReason int failReason) {
         Futures.addCallback(
                 Futures.transformAsync(mStateController.setNextStateForEvent(
                                 result ? DeviceEvent.SETUP_SUCCESS : DeviceEvent.SETUP_FAILURE),
@@ -440,9 +440,9 @@ public final class SetupControllerImpl implements SetupController {
     }
 
     @VisibleForTesting
-    @FailureType
+    @SetupFailureReason
     static int transformErrorCodeToFailureType(@AbstractTask.ErrorCode int errorCode) {
-        int failReason = FailureType.SETUP_FAILED;
+        int failReason = SetupFailureReason.SETUP_FAILED;
         if (errorCode <= ERROR_CODE_TOO_MANY_REDIRECTS
                 && errorCode >= ERROR_CODE_EMPTY_DOWNLOAD_URL) {
             failReason = DOWNLOAD_FAILED;
@@ -479,7 +479,7 @@ public final class SetupControllerImpl implements SetupController {
         return false;
     }
 
-    @FailureType
+    @SetupFailureReason
     private static int getTaskFailureType(List<WorkInfo> workInfoList) {
         for (WorkInfo workInfo : workInfoList) {
             int errorCode = workInfo.getOutputData().getInt(TASK_RESULT_ERROR_CODE_KEY, -1);
@@ -487,6 +487,6 @@ public final class SetupControllerImpl implements SetupController {
                 return transformErrorCodeToFailureType(errorCode);
             }
         }
-        return FailureType.SETUP_FAILED;
+        return SetupFailureReason.SETUP_FAILED;
     }
 }
