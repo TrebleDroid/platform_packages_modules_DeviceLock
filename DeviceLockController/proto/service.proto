@@ -33,6 +33,10 @@ service DeviceLockCheckinService {
   rpc GetDeviceCheckinStatus(GetDeviceCheckinStatusRequest)
       returns (GetDeviceCheckinStatusResponse) { }
 
+  // Determines if a device is in an approved country.
+  rpc IsDeviceInApprovedCountry(IsDeviceInApprovedCountryRequest)
+      returns (IsDeviceInApprovedCountryResponse) { }
+
   // Pauses the provisioning of the device.
   rpc PauseDeviceProvisioning(PauseDeviceProvisioningRequest)
       returns (PauseDeviceProvisioningResponse) { }
@@ -40,6 +44,11 @@ service DeviceLockCheckinService {
   // Reports that device provisioning was completed/a success.
   rpc ReportDeviceProvisionComplete(ReportDeviceProvisionCompleteRequest)
       returns (ReportDeviceProvisionCompleteResponse) { }
+
+  // Reports the device provision state of a device that is undergoing device
+  // provisioning.
+  rpc ReportDeviceProvisionState(ReportDeviceProvisionStateRequest)
+      returns (ReportDeviceProvisionStateResponse) { }
 }
 
 // Request to retrieve the check-in status of the device.
@@ -136,6 +145,22 @@ message DeviceProvisioningInformation {
   optional bool is_device_in_approved_country = 5;
 }
 
+// Request to determine whether a registered device is in an approved country.
+message IsDeviceInApprovedCountryRequest {
+  // The device identifier that is registered with the Device Lock server.
+  optional string registered_device_identifier = 1;
+  // The Mobile Network Code for the carrier, the Device Lock Android client
+  // would fetch it from TelephonyManager#getSimOperator().
+  optional string carrier_mccmnc = 2;
+}
+
+// Response to a request for determining if a registered device is in an
+// approved country.
+message IsDeviceInApprovedCountryResponse {
+  // Whether the device is an approved country.
+  optional bool is_device_in_approved_country = 1;
+}
+
 // The different reasons device provisioning can be paused.
 enum PauseDeviceProvisioningReason {
   PAUSE_DEVICE_PROVISIONING_REASON_UNSPECIFIED = 0;
@@ -176,4 +201,70 @@ message ReportDeviceProvisionCompleteResponse {
   // An enrollment token the Device Lock Android client can use for future
   // communication with the Device Lock server post-provisioning.
   optional string enrollment_token = 1;
+}
+
+// The different reasons device provisioning can fail on a device.
+enum ClientProvisionFailureReason {
+  CLIENT_PROVISION_FAILURE_REASON_UNSPECIFIED = 0;
+  // Setup failed to complete on the device.
+  CLIENT_PROVISION_FAILURE_REASON_SETUP_FAILED = 1;
+  // Failed to download the creditor apk.
+  CLIENT_PROVISION_FAILURE_REASON_DOWNLOAD_FAILED = 2;
+  // Verification of the creditor apk failed.
+  CLIENT_PROVISION_FAILURE_REASON_VERIFICATION_FAILED = 3;
+  // Failed to install the creditor apk.
+  CLIENT_PROVISION_FAILURE_REASON_INSTALL_FAILED = 4;
+  // Pre-installed package not found.
+  CLIENT_PROVISION_FAILURE_REASON_PACKAGE_DOES_NOT_EXIST = 5;
+  // Delete apk failed.
+  CLIENT_PROVISION_FAILURE_REASON_DELETE_PACKAGE_FAILED = 6;
+  // Install package for secondary users failed.
+  CLIENT_PROVISION_FAILURE_REASON_INSTALL_EXISTING_FAILED = 7;
+}
+
+// The different provision states of a device.
+enum ClientProvisionState {
+  CLIENT_PROVISION_STATE_UNSPECIFIED = 0;
+  // The Device Lock Android client would retry to provision the device.
+  CLIENT_PROVISION_STATE_RETRY = 1;
+  // The Device Lock Android client would inform the user that there has been
+  // an issue with device provisioning. The user can dismiss this.
+  CLIENT_PROVISION_STATE_DISMISSIBLE_UI = 2;
+  // The Device Lock Android client would inform the user that there has been
+  // an issue with device provisioning. The user cannot dismiss this.
+  CLIENT_PROVISION_STATE_PERSISTENT_UI = 3;
+  // The Device Lock Android client would factory reset the device because
+  // device provisioning could not be done.
+  CLIENT_PROVISION_STATE_FACTORY_RESET = 4;
+  // Device provisioning was a success.
+  CLIENT_PROVISION_STATE_SUCCESS = 5;
+}
+
+// Request to report the device provision state of a device that is
+// undergoing device provisioning.
+message ReportDeviceProvisionStateRequest {
+  // The reason why device provisioning failed if applicable.
+  optional ClientProvisionFailureReason client_provision_failure_reason = 1;
+  // The previous device provision state that the device was in. If not known,
+  // then CLIENT_PROVISION_STATE_UNSPECIFIED should be used. It is not known
+  // by the client on the first attempt of device provisioning.
+  optional ClientProvisionState previous_client_provision_state = 2;
+  // Whether device provision was a success.
+  optional bool provision_success = 3;
+  // The device identifier that is registered with the Device Lock server.
+  optional string registered_device_identifier = 4;
+}
+
+// Response to a request that is reporting the device provision state of a
+// device undergoing device provisioning.
+message ReportDeviceProvisionStateResponse {
+  // The Device Lock server determined the next provision state of the client.
+  // If the Device Lock Android client needs to send another gRPC request, then
+  // this provision state would be used as the previous provision state in the
+  // request.
+  optional ClientProvisionState next_client_provision_state = 1;
+  // An enrollment token the Device Lock Android client can use for future
+  // communication with the Device Lock server post-provisioning. This is only
+  // provided if device provisioning was a success.
+  optional string enrollment_token = 2;
 }
