@@ -95,14 +95,6 @@ public abstract class DeviceCheckInClient {
             @PauseDeviceProvisioningReason int reason);
 
     /**
-     * Inform the server that device provisioning has been completed.
-     *
-     * @return A class that encapsulate the response from the backend server.
-     */
-    @WorkerThread
-    public abstract ReportDeviceProvisionCompleteGrpcResponse reportDeviceProvisioningComplete();
-
-    /**
      * Reports the current provision state of the device.
      *
      * @param reasonOfFailure            one of {@link SetupFailureReason}
