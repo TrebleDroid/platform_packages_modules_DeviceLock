@@ -65,6 +65,7 @@ public final class ProvisionInfoFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ProvisionInfoViewModel viewModel;
+        boolean isDeferredProvisioning = false;
         switch (Objects.requireNonNull(getActivity()).getIntent().getAction()) {
             case ACTION_START_DEVICE_FINANCING_PROVISIONING:
                 viewModel = new ViewModelProvider(this).get(
@@ -73,6 +74,7 @@ public final class ProvisionInfoFragment extends Fragment {
             case ACTION_START_DEVICE_FINANCING_DEFERRED_PROVISIONING:
                 viewModel = new ViewModelProvider(this).get(
                         DeviceFinancingDeferredProvisionInfoViewModel.class);
+                isDeferredProvisioning = true;
                 break;
             case ACTION_START_DEVICE_FINANCING_SECONDARY_USER_PROVISIONING:
                 viewModel = new ViewModelProvider(this).get(
@@ -85,6 +87,7 @@ public final class ProvisionInfoFragment extends Fragment {
             case ACTION_START_DEVICE_SUBSIDY_DEFERRED_PROVISIONING:
                 viewModel = new ViewModelProvider(this).get(
                         DeviceSubsidyDeferredProvisionInfoViewModel.class);
+                isDeferredProvisioning = true;
                 break;
             default:
                 LogUtil.e(TAG, "Unknown action is received, exiting");
@@ -133,7 +136,17 @@ public final class ProvisionInfoFragment extends Fragment {
                     }
                 });
         Button next = view.findViewById(R.id.button_next);
+        Button previous = view.findViewById(R.id.button_previous);
         checkNotNull(next);
+        checkNotNull(previous);
+        if (isDeferredProvisioning) {
+            next.setText(R.string.start);
+        } else {
+            // Mandatory provisioning.
+
+            // Previous button should be hidden.
+            previous.setVisibility(View.GONE);
+        }
         next.setOnClickListener(v -> {
             startActivity(new Intent().setClass(getContext(), ProvisioningActivity.class));
         });
