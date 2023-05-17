@@ -31,6 +31,7 @@ import androidx.annotation.Keep;
 import com.android.devicelockcontroller.DeviceLockControllerApplication;
 import com.android.devicelockcontroller.common.DeviceId;
 import com.android.devicelockcontroller.common.DeviceLockConstants;
+import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceIdType;
 import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState;
 import com.android.devicelockcontroller.common.DeviceLockConstants.SetupFailureReason;
 import com.android.devicelockcontroller.proto.ClientDeviceIdentifier;
@@ -151,11 +152,24 @@ public final class DeviceCheckInClientImpl extends DeviceCheckInClient {
             ArraySet<DeviceId> deviceIds, String carrierInfo) {
         GetDeviceCheckinStatusRequest.Builder builder = GetDeviceCheckinStatusRequest.newBuilder();
         for (DeviceId deviceId : deviceIds) {
+            DeviceIdentifierType type;
+            switch (deviceId.getType()) {
+                case DeviceIdType.DEVICE_ID_TYPE_UNSPECIFIED:
+                    type = DeviceIdentifierType.DEVICE_IDENTIFIER_TYPE_UNSPECIFIED;
+                    break;
+                case DeviceIdType.DEVICE_ID_TYPE_IMEI:
+                    type = DeviceIdentifierType.DEVICE_IDENTIFIER_TYPE_IMEI;
+                    break;
+                case DeviceIdType.DEVICE_ID_TYPE_MEID:
+                    type = DeviceIdentifierType.DEVICE_IDENTIFIER_TYPE_MEID;
+                    break;
+                default:
+                    throw new IllegalStateException(
+                            "Unexpected DeviceId type: " + deviceId.getType());
+            }
             builder.addClientDeviceIdentifiers(
                     ClientDeviceIdentifier.newBuilder()
-                            .setDeviceIdentifierType(
-                                    // TODO: b/270392813
-                                    DeviceIdentifierType.forNumber(deviceId.getType() + 1))
+                            .setDeviceIdentifierType(type)
                             .setDeviceIdentifier(deviceId.getId()));
         }
         builder.setCarrierMccmnc(carrierInfo);
