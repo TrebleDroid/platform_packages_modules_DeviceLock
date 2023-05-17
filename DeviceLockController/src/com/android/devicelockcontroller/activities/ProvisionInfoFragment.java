@@ -141,6 +141,10 @@ public final class ProvisionInfoFragment extends Fragment {
         checkNotNull(previous);
         if (isDeferredProvisioning) {
             next.setText(R.string.start);
+            previous.setText(R.string.do_it_in_one_hour);
+            previous.setOnClickListener(v -> {
+                // TODO(b/279608060): Dismiss the LandingActivity and send sticky notification.
+            });
         } else {
             // Mandatory provisioning.
 
