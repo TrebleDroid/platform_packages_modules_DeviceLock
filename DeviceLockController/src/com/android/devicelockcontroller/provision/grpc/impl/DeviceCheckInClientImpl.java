@@ -43,13 +43,11 @@ import com.android.devicelockcontroller.proto.GetDeviceCheckinStatusRequest;
 import com.android.devicelockcontroller.proto.IsDeviceInApprovedCountryRequest;
 import com.android.devicelockcontroller.proto.PauseDeviceProvisioningReason;
 import com.android.devicelockcontroller.proto.PauseDeviceProvisioningRequest;
-import com.android.devicelockcontroller.proto.ReportDeviceProvisionCompleteRequest;
 import com.android.devicelockcontroller.proto.ReportDeviceProvisionStateRequest;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrpcResponse;
 import com.android.devicelockcontroller.provision.grpc.IsDeviceInApprovedCountryGrpcResponse;
 import com.android.devicelockcontroller.provision.grpc.PauseDeviceProvisioningGrpcResponse;
-import com.android.devicelockcontroller.provision.grpc.ReportDeviceProvisionCompleteGrpcResponse;
 import com.android.devicelockcontroller.provision.grpc.ReportDeviceProvisionStateGrpcResponse;
 
 import javax.annotation.Nullable;
@@ -121,18 +119,6 @@ public final class DeviceCheckInClientImpl extends DeviceCheckInClient {
         }
     }
 
-    @Override
-    public ReportDeviceProvisionCompleteGrpcResponse reportDeviceProvisioningComplete() {
-        try {
-            return new ReportDeviceProvisionCompleteGrpcResponseWrapper(
-                    mBlockingStub.reportDeviceProvisionComplete(
-                            createReportDeviceProvisionCompleteRequest(mRegisteredId)));
-
-        } catch (StatusRuntimeException e) {
-            return new ReportDeviceProvisionCompleteGrpcResponseWrapper(e.getStatus());
-        }
-    }
-
     /**
      * Reports the current provision state of the device.
      *
@@ -191,13 +177,6 @@ public final class DeviceCheckInClientImpl extends DeviceCheckInClient {
                 .setRegisteredDeviceIdentifier(registeredId)
                 .setPauseDeviceProvisioningReason(
                         PauseDeviceProvisioningReason.forNumber(reason))
-                .build();
-    }
-
-    private static ReportDeviceProvisionCompleteRequest createReportDeviceProvisionCompleteRequest(
-            String registeredId) {
-        return ReportDeviceProvisionCompleteRequest.newBuilder()
-                .setRegisteredDeviceIdentifier(registeredId)
                 .build();
     }
 
