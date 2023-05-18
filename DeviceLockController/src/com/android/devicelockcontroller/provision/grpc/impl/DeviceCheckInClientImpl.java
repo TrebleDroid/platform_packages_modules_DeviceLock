@@ -94,11 +94,12 @@ public final class DeviceCheckInClientImpl extends DeviceCheckInClient {
      *
      * @param carrierInfo The information of the device's sim operator which is used to determine
      *                    the device's geological location and eventually eligibility of the
-     *                    DeviceLock program.
+     *                    DeviceLock program. Could be null if unavailable.
      * @return A class that encapsulate the response from the backend server.
      */
     @Override
-    public IsDeviceInApprovedCountryGrpcResponse isDeviceInApprovedCountry(String carrierInfo) {
+    public IsDeviceInApprovedCountryGrpcResponse isDeviceInApprovedCountry(
+            @Nullable String carrierInfo) {
         try {
             return new IsDeviceInApprovedCountryGrpcResponseWrapper(
                     mBlockingStub.isDeviceInApprovedCountry(
