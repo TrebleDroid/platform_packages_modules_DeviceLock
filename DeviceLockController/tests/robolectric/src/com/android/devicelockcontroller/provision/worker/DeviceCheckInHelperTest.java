@@ -191,7 +191,7 @@ public final class DeviceCheckInHelperTest {
     }
 
     private static GetDeviceCheckInStatusGrpcResponse createStopResponse() {
-        return createMockResponse(STOP_CHECK_IN, /* nextCheckInDate= */ null, /* config= */ null);
+        return createMockResponse(STOP_CHECK_IN, /* nextCheckInTime= */ null, /* config= */ null);
     }
 
 
