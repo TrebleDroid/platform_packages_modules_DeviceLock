@@ -147,8 +147,7 @@ public final class ProvisionInfoFragment extends Fragment {
             // Previous button should be hidden.
             previous.setVisibility(View.GONE);
         }
-        next.setOnClickListener(v -> {
-            startActivity(new Intent().setClass(getContext(), ProvisioningActivity.class));
-        });
+        next.setOnClickListener(
+                v -> startActivity(new Intent(getContext(), ProvisioningActivity.class)));
     }
 }
