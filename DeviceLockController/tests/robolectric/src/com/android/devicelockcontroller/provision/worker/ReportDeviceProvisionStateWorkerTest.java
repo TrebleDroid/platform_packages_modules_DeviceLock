@@ -18,6 +18,7 @@ package com.android.devicelockcontroller.provision.worker;
 
 import static com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState.PROVISION_STATE_UNSPECIFIED;
 import static com.android.devicelockcontroller.provision.worker.ReportDeviceProvisionStateWorker.KEY_LAST_RECEIVED_STATE;
+import static com.android.devicelockcontroller.provision.worker.ReportDeviceProvisionStateWorker.UNEXPECTED_PROVISION_STATE_ERROR_MESSAGE;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -96,14 +97,14 @@ public final class ReportDeviceProvisionStateWorkerTest {
     public void doWork_nextProvisionStateUnExpected_shouldThrowException() {
         when(mResponse.isSuccessful()).thenReturn(true);
         when(mResponse.getNextClientProvisionState()).thenReturn(UNEXPECTED_VALUE);
-        IllegalStateException expectedException = new IllegalStateException();
         try {
             mWorker.doWork();
-        } catch (IllegalStateException e) {
-            expectedException = e;
+        } catch (IllegalStateException actualException) {
+            assertThat(actualException).hasMessageThat().isEqualTo(
+                    UNEXPECTED_PROVISION_STATE_ERROR_MESSAGE);
+            return;
         }
-        assertThat(expectedException).hasMessageThat().contains(
-                ReportDeviceProvisionStateWorker.UNEXPECTED_PROVISION_STATE_ERROR_MESSAGE);
+        throw new AssertionError("Expected exception is not thrown!");
     }
 
     @Test
