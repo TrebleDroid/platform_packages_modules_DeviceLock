@@ -21,8 +21,11 @@ import static com.android.devicelockcontroller.common.DeviceLockConstants.REASON
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
+import androidx.work.Data;
 import androidx.work.WorkerParameters;
 
+import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.PauseDeviceProvisioningGrpcResponse;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
@@ -36,10 +39,18 @@ public final class PauseProvisioningWorker extends AbstractCheckInWorker {
 
     public static final String KEY_PAUSE_DEVICE_PROVISIONING_REASON =
             "PAUSE_DEVICE_PROVISIONING_REASON";
+    @VisibleForTesting
+    static final String KEY_SHOULD_FORCE_PROVISION = "should-force-provision";
 
     public PauseProvisioningWorker(@NonNull Context context,
             @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
+    }
+
+    @VisibleForTesting
+    PauseProvisioningWorker(@NonNull Context context, @NonNull WorkerParameters workerParams,
+            DeviceCheckInClient client) {
+        super(context, workerParams, client);
     }
 
     @NonNull
@@ -50,9 +61,11 @@ public final class PauseProvisioningWorker extends AbstractCheckInWorker {
         PauseDeviceProvisioningGrpcResponse response =
                 Futures.getUnchecked(mClient).pauseDeviceProvisioning(reason);
         if (response.isSuccessful()) {
+            boolean shouldForceProvisioning = response.shouldForceProvisioning();
             Futures.getUnchecked(GlobalParametersClient.getInstance().setProvisionForced(
-                    response.shouldForceProvisioning()));
-            return Result.success();
+                    shouldForceProvisioning));
+            return Result.success(new Data.Builder().putBoolean(KEY_SHOULD_FORCE_PROVISION,
+                    shouldForceProvisioning).build());
         }
         LogUtil.w(TAG, "Pause provisioning request failed: " + response);
         return Result.failure();
