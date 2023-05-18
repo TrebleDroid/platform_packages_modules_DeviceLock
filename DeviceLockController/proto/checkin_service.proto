@@ -41,10 +41,6 @@ service DeviceLockCheckinService {
   rpc PauseDeviceProvisioning(PauseDeviceProvisioningRequest)
       returns (PauseDeviceProvisioningResponse) { }
 
-  // Reports that device provisioning was completed/a success.
-  rpc ReportDeviceProvisionComplete(ReportDeviceProvisionCompleteRequest)
-      returns (ReportDeviceProvisionCompleteResponse) { }
-
   // Reports the device provision state of a device that is undergoing device
   // provisioning.
   rpc ReportDeviceProvisionState(ReportDeviceProvisionStateRequest)
