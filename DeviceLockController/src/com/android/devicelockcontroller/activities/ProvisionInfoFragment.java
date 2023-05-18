@@ -141,11 +141,10 @@ public final class ProvisionInfoFragment extends Fragment {
         checkNotNull(previous);
         if (isDeferredProvisioning) {
             next.setText(R.string.start);
-            previous.setText(R.string.do_it_in_one_hour);
-            previous.setOnClickListener(v -> {
-                // TODO(b/279608060): Add code to send sticky notification.
-                getActivity().finish();
-            });
+
+            viewModel.mIsProvisionForcedLiveData.observe(getViewLifecycleOwner(),
+                    isProvisionForced -> updateDeferProvisioningEligibility(previous,
+                            isProvisionForced));
         } else {
             // Mandatory provisioning.
 
@@ -155,5 +154,18 @@ public final class ProvisionInfoFragment extends Fragment {
         next.setOnClickListener(v -> {
             startActivity(new Intent().setClass(getContext(), ProvisioningActivity.class));
         });
+    }
+
+    private void updateDeferProvisioningEligibility(Button previous, Boolean isProvisionForced) {
+        previous.setEnabled(isProvisionForced);
+
+        // Allow the user to defer provisioning only when provisioning is not forced.
+        if (!isProvisionForced) {
+            previous.setText(R.string.do_it_in_one_hour);
+            previous.setOnClickListener(v -> {
+                // TODO(b/279608060): Add code to send sticky notification.
+                getActivity().finish();
+            });
+        }
     }
 }
