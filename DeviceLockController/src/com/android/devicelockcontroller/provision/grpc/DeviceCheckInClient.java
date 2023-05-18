@@ -78,11 +78,11 @@ public abstract class DeviceCheckInClient {
      *
      * @param carrierInfo The information of the device's sim operator which is used to determine
      *                    the device's geological location and eventually eligibility of the
-     *                    DeviceLock program.
+     *                    DeviceLock program. Could be null if unavailable.
      * @return A class that encapsulate the response from the backend server.
      */
     public abstract IsDeviceInApprovedCountryGrpcResponse isDeviceInApprovedCountry(
-            String carrierInfo);
+            @Nullable String carrierInfo);
 
     /**
      * Inform the server that device provisioning has been paused for a certain amount of time.
