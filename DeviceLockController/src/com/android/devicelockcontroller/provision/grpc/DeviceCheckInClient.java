@@ -22,7 +22,9 @@ import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
 import com.android.devicelockcontroller.common.DeviceId;
+import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState;
 import com.android.devicelockcontroller.common.DeviceLockConstants.PauseDeviceProvisioningReason;
+import com.android.devicelockcontroller.common.DeviceLockConstants.SetupFailureReason;
 
 /**
  * An abstract class that's intended for implementation of class that manages communication with
@@ -72,6 +74,17 @@ public abstract class DeviceCheckInClient {
             @Nullable String fcmRegistrationToken);
 
     /**
+     * Check if the device is in an approved country for the device lock program.
+     *
+     * @param carrierInfo The information of the device's sim operator which is used to determine
+     *                    the device's geological location and eventually eligibility of the
+     *                    DeviceLock program.
+     * @return A class that encapsulate the response from the backend server.
+     */
+    public abstract IsDeviceInApprovedCountryGrpcResponse isDeviceInApprovedCountry(
+            String carrierInfo);
+
+    /**
      * Inform the server that device provisioning has been paused for a certain amount of time.
      *
      * @param reason The reason that provisioning has been paused.
@@ -88,4 +101,25 @@ public abstract class DeviceCheckInClient {
      */
     @WorkerThread
     public abstract ReportDeviceProvisionCompleteGrpcResponse reportDeviceProvisioningComplete();
+
+    /**
+     * Reports the current provision state of the device.
+     *
+     * @param reasonOfFailure            one of {@link SetupFailureReason}
+     * @param lastReceivedProvisionState one of {@link DeviceProvisionState}.
+     *                                   It must be the value from the response when this API
+     *                                   was called last time. If this API is called for the first
+     *                                   time, then
+     *                                   {@link
+     *                                   DeviceProvisionState#PROVISION_STATE_UNSPECIFIED }
+     *                                   must be used.
+     * @param isSuccessful               true if the device has been setup for DeviceLock program
+     *                                   successful; false otherwise.
+     * @return A class that encapsulate the response from the backend server.
+     */
+    @WorkerThread
+    public abstract ReportDeviceProvisionStateGrpcResponse reportDeviceProvisionState(
+            @SetupFailureReason int reasonOfFailure,
+            @DeviceProvisionState int lastReceivedProvisionState,
+            boolean isSuccessful);
 }
