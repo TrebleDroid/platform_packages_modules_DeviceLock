@@ -96,6 +96,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@SuppressWarnings("UnusedMethod") //TODO: Increase test coverage with the existing helper methods.
 @LooperMode(LEGACY)
 @RunWith(RobolectricTestRunner.class)
 @Config(shadows = {ShadowBuild.class})
