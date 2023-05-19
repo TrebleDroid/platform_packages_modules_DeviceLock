@@ -221,4 +221,15 @@
     <string name="settings_uninstall_kiosk_app">You can uninstall the <xliff:g id="kiosk_app">%1$s</xliff:g> app</string>
     <!-- Key of the settings_uninstall_kiosk_app Preference. translatable="false" -->
     <string name="settings_uninstall_kiosk_app_preference_key">settings_uninstall_kiosk_app_preference_key</string>
+    <!-- Name of a notification channel, the channel will be used to send provision related notifications. [CHAR LIMIT=40] -->
+    <string name="provision_notification_channel_name">Provision</string>
+    <!-- Title of the notification that device will be reset in days. [CHAR LIMIT=40] -->
+    <string name="device_reset_in_days_notification_title">
+        {count, plural,
+            =1    {Device will reset in 1 day}
+            other {Device will reset in # days}
+        }
+    </string>
+    <!-- Content text of the notification that device will be reset. [CHAR LIMIT=NONE] -->
+    <string name="device_reset_notification_content">All device data will be deleted. For help enrolling your device, contact <xliff:g id="provider name">%1$s</xliff:g></string>
 </resources>
