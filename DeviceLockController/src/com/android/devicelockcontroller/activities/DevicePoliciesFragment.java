@@ -115,8 +115,10 @@ public final class DevicePoliciesFragment extends Fragment {
 
                                 @Override
                                 public void onFailure(Throwable t) {
-                                    //TODO(b/279969959): Show the failure UI if we have one.
                                     LogUtil.e(TAG, "Failed to start setup flow!", t);
+                                    // TODO: set the days, 3 is a placeholder
+                                    DeviceLockNotificationManager.sendDeviceResetNotification(
+                                            getContext(), 3);
                                 }
                             }, MoreExecutors.directExecutor());
                 });
@@ -124,8 +126,9 @@ public final class DevicePoliciesFragment extends Fragment {
         setupController.addListener(new SetupController.SetupUpdatesCallbacks() {
             @Override
             public void setupFailed(int reason) {
-                //TODO(b/279969959): Show the failure UI if we have one.
                 LogUtil.e(TAG, "Failed to finish setup flow!");
+                // TODO: set the days, 3 is a placeholder
+                DeviceLockNotificationManager.sendDeviceResetNotification(getContext(), 3);
             }
 
             @Override
