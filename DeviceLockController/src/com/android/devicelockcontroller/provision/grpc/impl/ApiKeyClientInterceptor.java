@@ -16,11 +16,9 @@
 
 package com.android.devicelockcontroller.provision.grpc.impl;
 
-import android.content.Context;
-import android.content.res.Resources;
 import android.text.TextUtils;
+import android.util.Pair;
 
-import com.android.devicelockcontroller.R;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import io.grpc.CallOptions;
@@ -36,10 +34,10 @@ import io.grpc.MethodDescriptor;
  */
 final class ApiKeyClientInterceptor implements ClientInterceptor {
     private static final String TAG = "SpatulaClientInterceptor";
-    private final Context mContext;
+    private final Pair<String, String> mApiKey;
 
-    ApiKeyClientInterceptor(Context context) {
-        mContext = context;
+    ApiKeyClientInterceptor(Pair<String, String> apiKey) {
+        mApiKey = apiKey;
     }
 
     @Override
@@ -49,15 +47,13 @@ final class ApiKeyClientInterceptor implements ClientInterceptor {
                 channel.newCall(method, options)) {
             @Override
             public void start(Listener<RespT> listener, Metadata headers) {
-                Resources resources = mContext.getResources();
-                String name = resources.getString(R.string.api_key_name);
-                String value = resources.getString(R.string.api_key_value);
-                if (TextUtils.isEmpty(name) || TextUtils.isEmpty(value)) {
+                if (TextUtils.isEmpty(mApiKey.first) || TextUtils.isEmpty(mApiKey.second)) {
                     LogUtil.i(TAG, "api key is not available, skip api key authentication.");
                     return;
                 }
 
-                headers.put(Metadata.Key.of(name, Metadata.ASCII_STRING_MARSHALLER), value);
+                headers.put(Metadata.Key.of(mApiKey.first, Metadata.ASCII_STRING_MARSHALLER),
+                        mApiKey.second);
                 super.start(listener, headers);
             }
         };
