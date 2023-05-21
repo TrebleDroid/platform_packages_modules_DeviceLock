@@ -49,7 +49,7 @@ final class DevicePolicyGroupViewHolder extends RecyclerView.ViewHolder {
         for (int i = 0; i < devicePolicyGroup.getDevicePolicyList().size(); ++i) {
             TextView devicePolicyItemView = (TextView) mDevicePolicyItems.getChildAt(i);
             DevicePolicy devicePolicy = devicePolicyGroup.getDevicePolicyList().get(i);
-            devicePolicyItemView.setText(devicePolicy.getTextId());
+            devicePolicyItemView.setText(context.getString(devicePolicy.getTextId(), providerName));
             devicePolicyItemView.setCompoundDrawablesRelativeWithIntrinsicBounds(
                     devicePolicy.getDrawableId(),
                     /* top=*/ 0,
