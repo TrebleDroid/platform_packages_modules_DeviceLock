@@ -17,6 +17,8 @@
 package com.android.devicelockcontroller.activities;
 
 import android.os.Bundle;
+import android.view.WindowInsets;
+import android.view.WindowInsetsController;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -34,6 +36,10 @@ public final class ProvisioningActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.provisioning_activity);
 
+        WindowInsetsController controller = getWindow().getInsetsController();
+        if (controller != null) {
+            controller.hide(WindowInsets.Type.systemBars());
+        }
         ProvisioningProgressViewModel viewModel = new ViewModelProvider(this).get(
                 ProvisioningProgressViewModel.class);
         viewModel.mProvisioningProgressMutableLiveData.observe(this, progress -> {
