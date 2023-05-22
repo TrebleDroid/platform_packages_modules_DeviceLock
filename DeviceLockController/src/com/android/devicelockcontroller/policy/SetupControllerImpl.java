@@ -61,6 +61,7 @@ import com.android.devicelockcontroller.DeviceLockControllerApplication;
 import com.android.devicelockcontroller.common.DeviceLockConstants.SetupFailureReason;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
+import com.android.devicelockcontroller.provision.worker.ReportDeviceProvisionStateWorker;
 import com.android.devicelockcontroller.storage.SetupParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
 
@@ -73,7 +74,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-/** Controller managing communication between setup tasks and UI layer. */
+/**
+ * Controller managing communication between setup tasks and UI layer.
+ */
 public final class SetupControllerImpl implements SetupController {
 
     private static final String SETUP_URL_INSTALL_TASKS_NAME = "devicelock_setup_url_install_tasks";
@@ -92,6 +95,7 @@ public final class SetupControllerImpl implements SetupController {
     private final Context mContext;
     private final DevicePolicyController mPolicyController;
     private final DeviceStateController mStateController;
+    private SetupUpdatesCallbacks mReportStateCallbacks;
 
     public SetupControllerImpl(
             Context context,
@@ -137,6 +141,9 @@ public final class SetupControllerImpl implements SetupController {
     public ListenableFuture<Void> startSetupFlow(LifecycleOwner owner) {
         LogUtil.v(TAG, "Trigger setup flow");
         WorkManager workManager = WorkManager.getInstance(mContext);
+        mReportStateCallbacks =
+                ReportDeviceProvisionStateWorker.getSetupUpdatesCallbacks(workManager);
+        mCallbacks.add(mReportStateCallbacks);
         return Futures.transformAsync(isKioskAppPreInstalled(),
                 isPreinstalled -> {
                     if (isPreinstalled) {
@@ -364,6 +371,7 @@ public final class SetupControllerImpl implements SetupController {
 
     @VisibleForTesting
     ListenableFuture<Void> finishSetup() {
+        mCallbacks.remove(mReportStateCallbacks);
         if (mCurrentSetupState == SetupStatus.SETUP_FINISHED) {
             return Futures.transformAsync(mStateController.setNextStateForEvent(
                             DeviceEvent.SETUP_COMPLETE),
