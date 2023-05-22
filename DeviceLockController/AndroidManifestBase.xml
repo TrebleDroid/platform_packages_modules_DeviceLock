@@ -51,11 +51,11 @@
         <activity
             android:name="com.android.devicelockcontroller.activities.HelpActivity"
             android:exported="false"
-            android:theme="@style/Theme.Materialu" />
+            android:theme="@style/Theme.DeviceLock.NoActionBar" />
         <activity
             android:name="com.android.devicelockcontroller.activities.LandingActivity"
             android:exported="false"
-            android:theme="@style/Theme.Materialu">
+            android:theme="@style/Theme.DeviceLock.NoActionBar">
             <intent-filter>
                 <action android:name="com.android.devicelockcontroller.action.START_DEVICE_FINANCING_PROVISIONING" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -65,7 +65,7 @@
         <activity
             android:name="com.android.devicelockcontroller.activities.ProvisioningActivity"
             android:exported="false"
-            android:theme="@style/Theme.Materialu" />
+            android:theme="@style/Theme.DeviceLock.NoActionBar" />
 
         <activity-alias
             android:name="com.android.devicelockcontroller.activities.DeviceFinancingSecondaryUserLandingActivity"
@@ -127,7 +127,7 @@
 
         <activity
             android:name="com.android.devicelockcontroller.activities.DeviceEnrollmentActivity"
-            android:theme="@style/Theme.Materialu"
+            android:theme="@style/Theme.DeviceLock.NoActionBar"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.android.devicelockcontroller.action.START_DEVICE_FINANCING_ENROLLMENT"/>
@@ -146,7 +146,7 @@
 
         <activity
             android:name="com.android.devicelockcontroller.activities.DeviceLockSettingsActivity"
-            android:theme="@style/Theme.Materialu"
+            android:theme="@style/Theme.DeviceLock.NoActionBar"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.android.devicelockcontroller.action.DEVICE_INFO_SETTINGS"/>
