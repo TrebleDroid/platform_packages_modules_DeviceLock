@@ -21,6 +21,8 @@ import android.util.Slog;
 
 import com.android.server.SystemService;
 
+import java.util.Objects;
+
 /**
  * Service implementing DeviceLock functionality. Delegates actual interface
  * implementation to DeviceLockServiceImpl.
@@ -50,7 +52,9 @@ public final class DeviceLockService extends SystemService {
 
     @Override
     public void onUserSwitching(TargetUser from, TargetUser to) {
+        Objects.requireNonNull(to);
         Slog.d(TAG, "onUserSwitching");
+        mImpl.setDeviceLockControllerPackageDefaultEnabledState(to.getUserHandle());
     }
 
     @Override
