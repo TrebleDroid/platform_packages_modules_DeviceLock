@@ -17,6 +17,8 @@
 package com.android.devicelockcontroller.activities;
 
 import android.os.Bundle;
+import android.view.WindowInsets;
+import android.view.WindowInsetsController;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -34,9 +36,11 @@ public final class LandingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.landing_activity);
 
+        WindowInsetsController controller = getWindow().getInsetsController();
+        if (controller != null) {
+            controller.hide(WindowInsets.Type.systemBars());
+        }
         if (savedInstanceState == null) {
-            // TODO(b/279849085): show the ProvisionNotRequiredFragment instead if users pay their
-            //  devices before device enrollment
             Fragment fragment = new ProvisionInfoFragment();
             getSupportFragmentManager()
                     .beginTransaction()
