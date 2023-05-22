@@ -17,5 +17,8 @@
 
 <resources>
     <style name="Base.Theme.Materialu" parent="Theme.Material3.DynamicColors.DayNight"/>
-    <style name="Theme.Materialu" parent="Base.Theme.Materialu" />
+    <style name="Theme.DeviceLock.NoActionBar" parent="Base.Theme.Materialu">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
 </resources>
