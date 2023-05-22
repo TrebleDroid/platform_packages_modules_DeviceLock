@@ -24,11 +24,14 @@ import static com.android.devicelockcontroller.proto.ClientProvisionFailureReaso
 import static com.android.devicelockcontroller.proto.ClientProvisionFailureReason.CLIENT_PROVISION_FAILURE_REASON_SETUP_FAILED;
 import static com.android.devicelockcontroller.proto.ClientProvisionFailureReason.CLIENT_PROVISION_FAILURE_REASON_VERIFICATION_FAILED;
 
+import android.content.res.Resources;
 import android.util.ArraySet;
+import android.util.Pair;
 
 import androidx.annotation.Keep;
 
 import com.android.devicelockcontroller.DeviceLockControllerApplication;
+import com.android.devicelockcontroller.R;
 import com.android.devicelockcontroller.common.DeviceId;
 import com.android.devicelockcontroller.common.DeviceLockConstants;
 import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceIdType;
@@ -66,12 +69,14 @@ public final class DeviceCheckInClientImpl extends DeviceCheckInClient {
 
     public DeviceCheckInClientImpl(String hostName, int portNumber, @Nullable String registeredId) {
         super(registeredId);
+        Resources resources = DeviceLockControllerApplication.getAppContext().getResources();
         mBlockingStub = DeviceLockCheckinServiceGrpc.newBlockingStub(
                         OkHttpChannelBuilder
                                 .forAddress(hostName, portNumber)
                                 .build())
                 .withInterceptors(new ApiKeyClientInterceptor(
-                        DeviceLockControllerApplication.getAppContext()));
+                        new Pair<>(resources.getString(R.string.check_in_service_api_key_name),
+                                resources.getString(R.string.check_in_service_api_key_value))));
     }
 
     @Override
