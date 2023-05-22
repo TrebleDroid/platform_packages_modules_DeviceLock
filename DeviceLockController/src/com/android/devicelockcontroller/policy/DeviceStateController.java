@@ -34,6 +34,11 @@ import java.lang.annotation.Target;
 @MainThread
 public interface DeviceStateController {
     /**
+     * Enforce all policies for the current device state.
+     */
+    ListenableFuture<Void> enforcePoliciesForCurrentState();
+
+    /**
      * Moves the device to a new state based on the input event
      */
     ListenableFuture<Void> setNextStateForEvent(@DeviceEvent int event);
