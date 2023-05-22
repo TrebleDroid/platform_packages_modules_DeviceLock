@@ -25,12 +25,7 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 
 import com.android.devicelockcontroller.R;
-import com.android.devicelockcontroller.storage.SetupParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
-
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.MoreExecutors;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -89,19 +84,9 @@ final class DevicePolicyGroupListAdapter extends
         if (!TextUtils.isEmpty(mProviderName)) {
             devicePolicyGroupViewHolder.bind(getItem(position), mMaxDevicePolicy, mProviderName);
         } else {
-            Futures.addCallback(SetupParametersClient.getInstance().getKioskAppProviderName(),
-                    new FutureCallback<>() {
-                        @Override
-                        public void onSuccess(String result) {
-                            mProviderName = result;
-                            notifyItemChanged(position);
-                        }
-
-                        @Override
-                        public void onFailure(Throwable t) {
-                            LogUtil.e(TAG, "Failed to get device provider name!", t);
-                        }
-                    }, MoreExecutors.directExecutor());
+            LogUtil.e(TAG,
+                    "Provider name is not set, call setProviderName(String) first before "
+                            + "submitList(List)");
         }
     }
 
@@ -116,5 +101,10 @@ final class DevicePolicyGroupListAdapter extends
             mMaxDevicePolicy = Math.max(mMaxDevicePolicy,
                     devicePolicyGroup.getDevicePolicyList().size());
         }
+    }
+
+    public void setProviderName(String providerName) {
+        mProviderName = providerName;
+        notifyDataSetChanged();
     }
 }

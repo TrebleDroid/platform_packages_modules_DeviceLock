@@ -16,6 +16,7 @@
 
 package com.android.devicelockcontroller.activities;
 
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -84,7 +85,7 @@ public final class DevicePoliciesViewModel extends ViewModel {
     final MutableLiveData<String> mProviderNameLiveData;
     final MutableLiveData<Integer> mHeaderDrawableIdLiveData;
     final MutableLiveData<Integer> mHeaderTextIdLiveData;
-    final MutableLiveData<List<DevicePolicyGroup>> mDevicePolicyGroupListLiveData;
+    final MediatorLiveData<List<DevicePolicyGroup>> mDevicePolicyGroupListLiveData;
     final MutableLiveData<Integer> mFooterTextIdLiveData;
 
     public DevicePoliciesViewModel() {
@@ -103,7 +104,9 @@ public final class DevicePoliciesViewModel extends ViewModel {
                 }, MoreExecutors.directExecutor());
         mHeaderDrawableIdLiveData = new MutableLiveData<>(HEADER_DRAWABLE_ID);
         mHeaderTextIdLiveData = new MutableLiveData<>(HEADER_TEXT_ID);
-        mDevicePolicyGroupListLiveData = new MutableLiveData<>(DEVICE_POLICY_GROUPS);
+        mDevicePolicyGroupListLiveData = new MediatorLiveData<>();
+        mDevicePolicyGroupListLiveData.addSource(mProviderNameLiveData,
+                unused -> mDevicePolicyGroupListLiveData.setValue(DEVICE_POLICY_GROUPS));
         mFooterTextIdLiveData = new MutableLiveData<>(FOOTER_TEXT_ID);
     }
 }
