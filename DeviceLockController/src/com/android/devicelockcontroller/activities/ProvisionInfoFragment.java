@@ -24,7 +24,9 @@ import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -33,9 +35,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
@@ -51,6 +57,20 @@ import java.util.Objects;
 public final class ProvisionInfoFragment extends Fragment {
 
     private static final String TAG = "ProvisionInfoFragment";
+
+    private ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(),
+                    isGranted -> {
+                            if (isGranted) {
+                                // TODO(b/279608060): Add code to send sticky notification.
+                                getActivity().finish();
+                            } else {
+                                Toast.makeText(getActivity(),
+                                        R.string.toast_message_grant_notification_permission,
+                                        Toast.LENGTH_LONG).show();
+                            }
+                    }
+            );
 
     @Nullable
     @Override
@@ -143,8 +163,8 @@ public final class ProvisionInfoFragment extends Fragment {
             next.setText(R.string.start);
 
             viewModel.mIsProvisionForcedLiveData.observe(getViewLifecycleOwner(),
-                    isProvisionForced -> updateDeferProvisioningEligibility(previous,
-                            isProvisionForced));
+                    isProvisionForced ->
+                            updateDeferProvisioningEligibility(previous, isProvisionForced));
         } else {
             // Mandatory provisioning.
 
@@ -161,10 +181,18 @@ public final class ProvisionInfoFragment extends Fragment {
         // Allow the user to defer provisioning only when provisioning is not forced.
         if (!isProvisionForced) {
             previous.setText(R.string.do_it_in_one_hour);
-            previous.setOnClickListener(v -> {
-                // TODO(b/279608060): Add code to send sticky notification.
-                getActivity().finish();
-            });
+            previous.setOnClickListener(
+                    v -> {
+                        int notificationPermission = ContextCompat.checkSelfPermission(
+                                requireContext(), Manifest.permission.POST_NOTIFICATIONS);
+                        if (PackageManager.PERMISSION_GRANTED == notificationPermission) {
+                            // TODO(b/279608060): Add code to send sticky notification.
+                            getActivity().finish();
+                        } else {
+                            requestPermissionLauncher.launch(
+                                    Manifest.permission.POST_NOTIFICATIONS);
+                        }
+                    });
         }
     }
 }
