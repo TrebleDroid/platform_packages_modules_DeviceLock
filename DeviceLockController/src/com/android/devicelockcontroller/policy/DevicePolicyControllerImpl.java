@@ -103,7 +103,7 @@ public final class DevicePolicyControllerImpl
         mPolicyList.add(new AppOpsPolicyHandler(context, SystemDeviceLockManagerImpl.getInstance(),
                 context.getSystemService(AppOpsManager.class)));
         mPolicyList.add(mLockTaskHandler);
-        mPolicyList.add(new KioskAppPolicyHandler(dpm));
+        mPolicyList.add(new PackagePolicyHandler(context, dpm));
         stateController.addCallback(this);
     }
 
@@ -180,6 +180,11 @@ public final class DevicePolicyControllerImpl
                     }, mContext.getMainExecutor()));
         }
         return Futures.whenAllSucceed(futures).call(() -> null, mContext.getMainExecutor());
+    }
+
+    @Override
+    public DeviceStateController getStateController() {
+        return mStateController;
     }
 
     private ListenableFuture<Intent> getLockedActivity() {
