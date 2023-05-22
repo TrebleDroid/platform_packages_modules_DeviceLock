@@ -68,7 +68,10 @@ public final class DevicePoliciesFragment extends Fragment {
         RecyclerView recyclerView = view.findViewById(R.id.recyclerview_device_policy_group);
         DevicePolicyGroupListAdapter adapter = new DevicePolicyGroupListAdapter();
         viewModel.mDevicePolicyGroupListLiveData.observe(getViewLifecycleOwner(),
-                adapter::submitList);
+                devicePolicyGroups -> {
+                    adapter.setProviderName(viewModel.mProviderNameLiveData.getValue());
+                    adapter.submitList(devicePolicyGroups);
+                });
         checkNotNull(recyclerView);
         recyclerView.setAdapter(adapter);
 
