@@ -51,14 +51,13 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
         mContext = context;
     }
 
+    /**
+     * Enforce all policies for the current state.
+     * This method is used to initially enforce policies.
+     * Note that policies are also automatically enforced on state transitions.
+     */
     @Override
-    public ListenableFuture<Void> setNextStateForEvent(@DeviceEvent int event) {
-        try {
-            updateState(getNextState(event));
-        } catch (StateTransitionException e) {
-            return Futures.immediateFailedFuture(e);
-        }
-        LogUtil.i(TAG, String.format(Locale.US, "handleEvent %d, newState %d", event, mState));
+    public ListenableFuture<Void> enforcePoliciesForCurrentState() {
         final List<ListenableFuture<Void>> onStateChangedTasks = new ArrayList<>();
         synchronized (mListeners) {
             for (StateListener listener : mListeners) {
@@ -67,6 +66,18 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
         }
         return Futures.whenAllSucceed(onStateChangedTasks).call((() -> null),
                 MoreExecutors.directExecutor());
+    }
+
+    @Override
+    public ListenableFuture<Void> setNextStateForEvent(@DeviceEvent int event) {
+        try {
+            updateState(getNextState(event));
+        } catch (StateTransitionException e) {
+            return Futures.immediateFailedFuture(e);
+        }
+        LogUtil.i(TAG, String.format(Locale.US, "handleEvent %d, newState %d", event, mState));
+
+        return enforcePoliciesForCurrentState();
     }
 
     @Override
@@ -100,7 +111,6 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
     public void addCallback(StateListener listener) {
         synchronized (mListeners) {
             mListeners.add(listener);
-            listener.onStateChanged(mState);
         }
     }
 
