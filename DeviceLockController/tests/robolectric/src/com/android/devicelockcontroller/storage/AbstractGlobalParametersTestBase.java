@@ -16,6 +16,8 @@
 
 package com.android.devicelockcontroller.storage;
 
+import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState;
+
 abstract class AbstractGlobalParametersTestBase {
     static final String ALLOWLIST_PACKAGE_0 = "allowlist.package.0";
     static final String ALLOWLIST_PACKAGE_1 = "allowlist.package.1";
@@ -26,4 +28,6 @@ abstract class AbstractGlobalParametersTestBase {
     static final boolean FORCED_PROVISION = true;
     static final String ENROLLMENT_TOKEN = "test_enrollment_token";
 
+    @DeviceProvisionState
+    static final int LAST_RECEIVED_PROVISION_STATE = DeviceProvisionState.PROVISION_STATE_RETRY;
 }

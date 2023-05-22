@@ -96,5 +96,14 @@ public final class GlobalParametersTest extends AbstractGlobalParametersTestBase
         assertThat(GlobalParameters.getEnrollmentToken(mContext)).isEqualTo(ENROLLMENT_TOKEN);
     }
 
+    @Test
+    public void getLastReceivedProvisionState_shouldReturnExpectedResult() {
+        assertThat(GlobalParameters.getLastReceivedProvisionState(mContext)).isNotEqualTo(
+                LAST_RECEIVED_PROVISION_STATE);
 
+        GlobalParameters.setLastReceivedProvisionState(mContext, LAST_RECEIVED_PROVISION_STATE);
+
+        assertThat(GlobalParameters.getLastReceivedProvisionState(mContext)).isEqualTo(
+                LAST_RECEIVED_PROVISION_STATE);
+    }
 }
