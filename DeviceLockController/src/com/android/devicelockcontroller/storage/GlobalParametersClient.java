@@ -28,6 +28,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
 import com.android.devicelockcontroller.DeviceLockControllerApplication;
+import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
@@ -241,6 +242,28 @@ public final class GlobalParametersClient extends DlcClient {
     public ListenableFuture<Void> setKioskSignature(String signature) {
         return call(() -> {
             asInterface(getService()).setKioskSignature(signature);
+            return null;
+        });
+    }
+
+    /**
+     * Get the last received provision state determined by device lock server.
+     *
+     * @return one of {@link DeviceProvisionState}.
+     */
+    public ListenableFuture<Integer> getLastReceivedProvisionState() {
+        return call(() -> asInterface(getService()).getLastReceivedProvisionState());
+    }
+
+    /**
+     * Set the last received provision state determined by device lock server.
+     *
+     * @param provisionState The provision state determined by device lock server
+     */
+    public ListenableFuture<Void> setLastReceivedProvisionState(
+            @DeviceProvisionState int provisionState) {
+        return call(() -> {
+            asInterface(getService()).setLastReceivedProvisionState(provisionState);
             return null;
         });
     }
