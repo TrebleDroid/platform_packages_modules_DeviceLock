@@ -42,4 +42,9 @@ public interface DevicePolicyController {
      * Returns true if action was successful.
      */
     boolean wipeData();
+
+    /**
+     * Get the State Controller associated with this Policy Controller.
+     */
+    DeviceStateController getStateController();
 }
