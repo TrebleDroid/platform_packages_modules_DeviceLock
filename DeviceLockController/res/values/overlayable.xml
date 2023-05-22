@@ -17,13 +17,18 @@
 <resources>
     <overlayable name="DeviceLockResources">
         <policy type="system|vendor|product">
+            <item name="lock_task_allowlist" type="array" />
             <item name="device_id_type_bitmap" type="integer" />
             <item name="check_in_server_host_name" type="string" />
             <item name="check_in_server_port_number" type="integer" />
-            <item name="api_key_name" type="string" />
-            <item name="api_key_value" type="string" />
+            <item name="check_in_service_api_key_name" type="string" />
+            <item name="check_in_service_api_key_value" type="string" />
             <item name="device_check_in_client_class_name" type="string" />
-            <item name="lock_task_allowlist" type="array" />
+            <item name="finalize_server_port_number" type="integer" />
+            <item name="finalize_server_host_name" type="string" />
+            <item name="finalize_service_api_key_name" type="string" />
+            <item name="finalize_service_api_key_value" type="string" />
+            <item name="device_finalize_client_class_name" type="string" />
         </policy>
     </overlayable>
 </resources>
