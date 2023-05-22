@@ -23,6 +23,8 @@ import android.util.ArraySet;
 
 import androidx.annotation.Nullable;
 
+import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState;
+
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -38,9 +40,10 @@ final class GlobalParameters {
     private static final String KEY_KIOSK_SIGNING_CERT = "kiosk_signing_cert";
     private static final String KEY_LOCK_TASK_ALLOWLIST = "lock_task_allowlist";
     private static final String KEY_NEED_CHECK_IN = "need_check_in";
-    static final String KEY_REGISTERED_DEVICE_ID = "registered_device_id";
+    private static final String KEY_REGISTERED_DEVICE_ID = "registered_device_id";
     private static final String KEY_FORCED_PROVISION = "forced_provision";
-    public static final String KEY_ENROLLMENT_TOKEN = "enrollment_token";
+    private static final String KEY_ENROLLMENT_TOKEN = "enrollment_token";
+    private static final String KEY_LAST_RECEIVED_PROVISION_STATE = "last-received-provision-state";
 
 
     private GlobalParameters() {
@@ -199,6 +202,20 @@ final class GlobalParameters {
         getSharedPreferences(context)
                 .edit()
                 .putString(KEY_ENROLLMENT_TOKEN, token)
+                .apply();
+    }
+
+    @DeviceProvisionState
+    static int getLastReceivedProvisionState(Context context) {
+        return getSharedPreferences(context).getInt(KEY_LAST_RECEIVED_PROVISION_STATE,
+                DeviceProvisionState.PROVISION_STATE_UNSPECIFIED);
+    }
+
+    static void setLastReceivedProvisionState(Context context,
+            @DeviceProvisionState int provisionState) {
+        getSharedPreferences(context)
+                .edit()
+                .putInt(KEY_LAST_RECEIVED_PROVISION_STATE, provisionState)
                 .apply();
     }
 
