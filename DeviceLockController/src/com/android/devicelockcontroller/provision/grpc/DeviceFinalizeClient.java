@@ -16,6 +16,8 @@
 
 package com.android.devicelockcontroller.provision.grpc;
 
+import android.util.Pair;
+
 import androidx.annotation.GuardedBy;
 import androidx.annotation.NonNull;
 
@@ -33,6 +35,7 @@ public abstract class DeviceFinalizeClient {
     protected static String sRegisteredId = "";
     protected static String sHostName = "";
     protected static int sPortNumber = 0;
+    protected static Pair<String, String> sApiKey = new Pair<>("", "");
 
     /**
      * Get a instance of {@link DeviceFinalizeClient} object.
@@ -42,6 +45,7 @@ public abstract class DeviceFinalizeClient {
             String className,
             String hostName,
             int portNumber,
+            Pair<String, String> apiKey,
             String registeredId,
             String enrollmentToken) {
         synchronized (sInstanceLock) {
@@ -50,6 +54,7 @@ public abstract class DeviceFinalizeClient {
                 sPortNumber = portNumber;
                 sRegisteredId = registeredId;
                 sEnrollmentToken = enrollmentToken;
+                sApiKey = apiKey;
                 try {
                     Class<?> clazz = Class.forName(className);
                     sClient = (DeviceFinalizeClient) clazz.getDeclaredConstructor().newInstance();
