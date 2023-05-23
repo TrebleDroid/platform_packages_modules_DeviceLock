@@ -22,16 +22,22 @@ import static com.android.devicelockcontroller.common.DeviceLockConstants.Device
 import static com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState.PROVISION_STATE_RETRY;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState.PROVISION_STATE_SUCCESS;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState.PROVISION_STATE_UNSPECIFIED;
-import static com.android.devicelockcontroller.common.DeviceLockConstants.SetupFailureReason.SETUP_FAILED;
 
 import android.content.Context;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
+import androidx.work.Constraints;
 import androidx.work.Data;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 import androidx.work.WorkerParameters;
 
+import com.android.devicelockcontroller.common.DeviceLockConstants.SetupFailureReason;
+import com.android.devicelockcontroller.policy.SetupController;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.ReportDeviceProvisionStateGrpcResponse;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
@@ -50,6 +56,47 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
     @VisibleForTesting
     static final String UNEXPECTED_PROVISION_STATE_ERROR_MESSAGE = "Unexpected provision state!";
 
+    public static final String REPORT_PROVISION_STATE_WORK_NAME = "report-provision-state";
+
+    /**
+     * Get a {@link SetupController.SetupUpdatesCallbacks} which will enqueue this worker to report
+     * provision success / failure.
+     */
+    @NonNull
+    public static SetupController.SetupUpdatesCallbacks getSetupUpdatesCallbacks(
+            WorkManager workManager) {
+        return new SetupController.SetupUpdatesCallbacks() {
+            @Override
+            public void setupFailed(@SetupFailureReason int reason) {
+                enqueueReportWork(false, reason, workManager);
+            }
+
+            @Override
+            public void setupCompleted() {
+                enqueueReportWork(true, /* ignored */ SetupFailureReason.SETUP_FAILED, workManager);
+            }
+        };
+    }
+
+    private static void enqueueReportWork(boolean isSuccessful, int reason,
+            WorkManager workManager) {
+        Data inputData = new Data.Builder()
+                .putBoolean(KEY_IS_PROVISION_SUCCESSFUL, isSuccessful)
+                .putInt(KEY_DEVICE_PROVISION_FAILURE_REASON, reason)
+                .build();
+        Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+        OneTimeWorkRequest work =
+                new OneTimeWorkRequest.Builder(ReportDeviceProvisionStateWorker.class)
+                        .setConstraints(constraints)
+                        .setInputData(inputData)
+                        .build();
+        workManager.enqueueUniqueWork(
+                REPORT_PROVISION_STATE_WORK_NAME,
+                ExistingWorkPolicy.APPEND_OR_REPLACE, work);
+    }
+
     public ReportDeviceProvisionStateWorker(@NonNull Context context,
             @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
@@ -64,22 +111,26 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
     @NonNull
     @Override
     public Result doWork() {
-        int reason = getInputData().getInt(KEY_DEVICE_PROVISION_FAILURE_REASON, SETUP_FAILED);
-        int lastState = getInputData().getInt(KEY_LAST_RECEIVED_STATE, PROVISION_STATE_UNSPECIFIED);
         boolean isSuccessful = getInputData().getBoolean(
                 KEY_IS_PROVISION_SUCCESSFUL, /* defaultValue= */ false);
+        int reason = getInputData().getInt(KEY_DEVICE_PROVISION_FAILURE_REASON,
+                SetupFailureReason.SETUP_FAILED);
+        GlobalParametersClient globalParametersClient = GlobalParametersClient.getInstance();
+        int lastState = Futures.getUnchecked(
+                globalParametersClient.getLastReceivedProvisionState());
         final ReportDeviceProvisionStateGrpcResponse response =
                 Futures.getUnchecked(mClient).reportDeviceProvisionState(reason, lastState,
                         isSuccessful);
-        if (!response.isSuccessful()) return Result.failure();
+        if (response.hasRecoverableError()) return Result.retry();
+        if (response.hasFatalError()) return Result.failure();
         String enrollmentToken = response.getEnrollmentToken();
         if (!TextUtils.isEmpty(enrollmentToken)) {
-            Futures.getUnchecked(
-                    GlobalParametersClient.getInstance().setEnrollmentToken(enrollmentToken));
+            Futures.getUnchecked(globalParametersClient.setEnrollmentToken(enrollmentToken));
         }
         // TODO(b/276392181): Handle next state properly
-        int provisionState = response.getNextClientProvisionState();
-        switch (provisionState) {
+        int nextState = response.getNextClientProvisionState();
+        Futures.getUnchecked(globalParametersClient.setLastReceivedProvisionState(nextState));
+        switch (nextState) {
             case PROVISION_STATE_RETRY:
             case PROVISION_STATE_DISMISSIBLE_UI:
             case PROVISION_STATE_PERSISTENT_UI:
@@ -87,7 +138,7 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
             case PROVISION_STATE_SUCCESS:
             case PROVISION_STATE_UNSPECIFIED:
                 return Result.success(
-                        new Data.Builder().putInt(KEY_LAST_RECEIVED_STATE, provisionState).build());
+                        new Data.Builder().putInt(KEY_LAST_RECEIVED_STATE, nextState).build());
             default:
                 throw new IllegalStateException(UNEXPECTED_PROVISION_STATE_ERROR_MESSAGE);
         }

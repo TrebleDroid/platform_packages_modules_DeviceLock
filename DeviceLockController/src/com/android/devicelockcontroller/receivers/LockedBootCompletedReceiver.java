@@ -28,6 +28,7 @@ import android.content.pm.PackageManager;
 
 import androidx.annotation.VisibleForTesting;
 
+import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
 import com.android.devicelockcontroller.util.LogUtil;
 
@@ -37,16 +38,20 @@ import com.android.devicelockcontroller.util.LogUtil;
  *
  * This receiver starts lock task mode if applicable.
  */
-public final class DlcLockedBootCompletedReceiver extends BroadcastReceiver {
-    private static final String TAG = "BootCompletedBroadcastReceiver";
+public final class LockedBootCompletedReceiver extends BroadcastReceiver {
+    private static final String TAG = "LockedBootCompletedReceiver";
+
+    private static DeviceStateController getDeviceStateController(Context context) {
+        return ((PolicyObjectsInterface) context.getApplicationContext())
+                .getStateController();
+    }
 
     @VisibleForTesting
     static void startLockTaskModeIfApplicable(Context context) {
         final PackageManager pm = context.getPackageManager();
         final ComponentName lockTaskBootCompletedReceiver = new ComponentName(context,
                 LockTaskBootCompletedReceiver.class);
-        if (((PolicyObjectsInterface) context.getApplicationContext())
-                .getStateController().isInSetupState()) {
+        if (getDeviceStateController(context).isInSetupState()) {
             // b/172281939: WorkManager is not available at this moment, and we may not launch
             // lock task mode successfully. Therefore, defer it to LockTaskBootCompletedReceiver.
             LogUtil.i(TAG,

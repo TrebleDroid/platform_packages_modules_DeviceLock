@@ -18,6 +18,8 @@ package com.android.server.devicelock;
 
 import static android.app.role.RoleManager.MANAGE_HOLDERS_FLAG_DONT_KILL_APP;
 import static android.content.IntentFilter.SYSTEM_HIGH_PRIORITY;
+import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DEFAULT;
+import static android.content.pm.PackageManager.DONT_KILL_APP;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.devicelock.DeviceId.DEVICE_ID_TYPE_IMEI;
 import static android.devicelock.DeviceId.DEVICE_ID_TYPE_MEID;
@@ -31,6 +33,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ServiceInfo;
 import android.devicelock.DeviceId.DeviceIdType;
 import android.devicelock.DeviceLockManager;
@@ -132,9 +136,12 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
         if (mServiceInfo == null) {
             mDeviceLockControllerConnector = null;
 
-            Slog.e(TAG, errorMessage.toString());
+            throw new RuntimeException(errorMessage.toString());
+        }
 
-            return;
+        if (!mServiceInfo.applicationInfo.enabled) {
+            Slog.w(TAG, "Device Lock Controller is disabled");
+            setDeviceLockControllerPackageDefaultEnabledState(UserHandle.SYSTEM);
         }
 
         final ComponentName componentName = new ComponentName(mServiceInfo.packageName,
@@ -149,6 +156,25 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
                 intentFilter,
                 Manifest.permission.MANAGE_DEVICE_LOCK_STATE, null /* scheduler */,
                 Context.RECEIVER_EXPORTED);
+    }
+
+    void setDeviceLockControllerPackageDefaultEnabledState(@NonNull UserHandle userHandle) {
+        final String controllerPackageName = mServiceInfo.packageName;
+
+        Context controllerContext;
+        try {
+            controllerContext = mContext.createPackageContextAsUser(controllerPackageName,
+                    0 /* flags */, userHandle);
+        } catch (NameNotFoundException e) {
+            Slog.e(TAG, "Cannot create package context for: " + userHandle, e);
+
+            return;
+        }
+
+        final PackageManager controllerPackageManager = controllerContext.getPackageManager();
+
+        controllerPackageManager.setApplicationEnabledSetting(controllerPackageName,
+                COMPONENT_ENABLED_STATE_DEFAULT, DONT_KILL_APP);
     }
 
     private boolean checkCallerPermission() {
@@ -232,7 +258,7 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
                 new OutcomeReceiver<>() {
                     @Override
                     public void onResult(Boolean isLocked) {
-                        Slog.i(TAG, "Device Locked ");
+                        Slog.i(TAG, isLocked ? "Device is locked" : "Device is not locked");
                         try {
                             callback.onIsDeviceLocked(isLocked);
                         } catch (RemoteException e) {
