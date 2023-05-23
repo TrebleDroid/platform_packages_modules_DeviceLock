@@ -51,7 +51,9 @@ abstract class DeviceCheckInGrpcResponse {
     }
 
     public boolean hasFatalError() {
-        return mStatus.getCode() != Code.OK && mStatus.getCode() != Code.UNAVAILABLE;
+        return mStatus != null
+                && mStatus.getCode() != Code.OK
+                && mStatus.getCode() != Code.UNAVAILABLE;
     }
 
     @Override
