@@ -87,8 +87,15 @@ public final class ReportDeviceProvisionStateWorkerTest {
     }
 
     @Test
-    public void doWork_responseIsNotSuccessful_returnFailure() {
-        when(mResponse.isSuccessful()).thenReturn(false);
+    public void doWork_responseHasRecoverableError_returnRetry() {
+        when(mResponse.hasRecoverableError()).thenReturn(true);
+
+        assertThat(mWorker.doWork()).isEqualTo(Result.retry());
+    }
+
+    @Test
+    public void doWork_responseHasFatalError_returnFailure() {
+        when(mResponse.hasFatalError()).thenReturn(true);
 
         assertThat(mWorker.doWork()).isEqualTo(Result.failure());
     }
