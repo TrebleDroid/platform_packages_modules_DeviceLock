@@ -42,8 +42,6 @@ public final class DeviceLockControllerPackageUtils {
     private static final String SERVICE_ACTION =
             "android.app.action.DEVICE_LOCK_CONTROLLER_SERVICE";
 
-    private static final UserHandle USER_HANDLE_SYSTEM = UserHandle.of(0);
-
     public DeviceLockControllerPackageUtils(Context context) {
         mContext = context;
     }
@@ -78,8 +76,9 @@ public final class DeviceLockControllerPackageUtils {
         errorMessage.setLength(0);
 
         final List<ResolveInfo> resolveInfoList = pm.queryIntentServicesAsUser(intent,
-                PackageManager.MATCH_DIRECT_BOOT_UNAWARE
-                        | PackageManager.MATCH_DIRECT_BOOT_AWARE, USER_HANDLE_SYSTEM);
+                PackageManager.MATCH_SYSTEM_ONLY | PackageManager.MATCH_DIRECT_BOOT_UNAWARE
+                        | PackageManager.MATCH_DIRECT_BOOT_AWARE
+                        | PackageManager.MATCH_DISABLED_COMPONENTS, UserHandle.SYSTEM);
 
         if (resolveInfoList == null || resolveInfoList.isEmpty()) {
             errorMessage.append("Service with " + SERVICE_ACTION + " not found.");
@@ -103,6 +102,12 @@ public final class DeviceLockControllerPackageUtils {
             }
 
             resultServiceInfo = serviceInfo;
+        }
+
+        if (!resultServiceInfo.applicationInfo.isPrivilegedApp()) {
+            errorMessage.append("Device lock controller must be a privileged app");
+
+            return null;
         }
 
         return resultServiceInfo;
