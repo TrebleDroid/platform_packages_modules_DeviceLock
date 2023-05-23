@@ -17,12 +17,10 @@
 package com.android.devicelockcontroller.provision.grpc.impl;
 
 import android.content.res.Resources;
-import android.util.Pair;
 
 import androidx.annotation.Keep;
 
 import com.android.devicelockcontroller.DeviceLockControllerApplication;
-import com.android.devicelockcontroller.R;
 import com.android.devicelockcontroller.proto.DeviceLockFinalizeServiceGrpc;
 import com.android.devicelockcontroller.proto.ReportDeviceProgramCompleteRequest;
 import com.android.devicelockcontroller.provision.grpc.DeviceFinalizeClient;
@@ -43,9 +41,7 @@ public final class DeviceFinalizeClientImpl extends DeviceFinalizeClient {
                         OkHttpChannelBuilder
                                 .forAddress(sHostName, sPortNumber)
                                 .build())
-                .withInterceptors(new ApiKeyClientInterceptor(
-                        new Pair<>(resources.getString(R.string.check_in_service_api_key_name),
-                                resources.getString(R.string.check_in_service_api_key_value))));
+                .withInterceptors(new ApiKeyClientInterceptor(sApiKey));
     }
 
     /**
