@@ -141,26 +141,6 @@ public final class SetupParametersClient extends DlcClient {
     }
 
     /**
-     * Get the kiosk app download URL.
-     *
-     * @return Kiosk app download URL.
-     */
-    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
-    public ListenableFuture<String> getKioskDownloadUrl() {
-        return call(() -> asInterface(getService()).getKioskDownloadUrl());
-    }
-
-    /**
-     * Get the kiosk app signature checksum.
-     *
-     * @return Signature checksum.
-     */
-    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
-    public ListenableFuture<String> getKioskSignatureChecksum() {
-        return call(() -> asInterface(getService()).getKioskSignatureChecksum());
-    }
-
-    /**
      * Get the setup activity for the kiosk app.
      *
      * @return Setup activity.
