@@ -258,7 +258,7 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
                 new OutcomeReceiver<>() {
                     @Override
                     public void onResult(Boolean isLocked) {
-                        Slog.i(TAG, "Device Locked ");
+                        Slog.i(TAG, isLocked ? "Device is locked" : "Device is not locked");
                         try {
                             callback.onIsDeviceLocked(isLocked);
                         } catch (RemoteException e) {
