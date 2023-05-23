@@ -156,43 +156,45 @@ public final class ProvisionInfoFragment extends Fragment {
                     }
                 });
         Button next = view.findViewById(R.id.button_next);
-        Button previous = view.findViewById(R.id.button_previous);
         checkNotNull(next);
-        checkNotNull(previous);
         if (isDeferredProvisioning) {
             next.setText(R.string.start);
-
-            viewModel.mIsProvisionForcedLiveData.observe(getViewLifecycleOwner(),
-                    isProvisionForced ->
-                            updateDeferProvisioningEligibility(previous, isProvisionForced));
-        } else {
-            // Mandatory provisioning.
-
-            // Previous button should be hidden.
-            previous.setVisibility(View.GONE);
         }
         next.setOnClickListener(
                 v -> startActivity(new Intent(getContext(), ProvisioningActivity.class)));
+        updatePreviousButton(checkNotNull(view.findViewById(R.id.button_previous)), viewModel,
+                isDeferredProvisioning);
     }
 
-    private void updateDeferProvisioningEligibility(Button previous, Boolean isProvisionForced) {
-        previous.setEnabled(isProvisionForced);
-
-        // Allow the user to defer provisioning only when provisioning is not forced.
-        if (!isProvisionForced) {
-            previous.setText(R.string.do_it_in_one_hour);
-            previous.setOnClickListener(
-                    v -> {
-                        int notificationPermission = ContextCompat.checkSelfPermission(
-                                requireContext(), Manifest.permission.POST_NOTIFICATIONS);
-                        if (PackageManager.PERMISSION_GRANTED == notificationPermission) {
-                            // TODO(b/279608060): Add code to send sticky notification.
-                            getActivity().finish();
-                        } else {
-                            requestPermissionLauncher.launch(
-                                    Manifest.permission.POST_NOTIFICATIONS);
-                        }
-                    });
+    private void updatePreviousButton(Button previous, ProvisionInfoViewModel viewModel,
+            boolean isDeferredProvisioning) {
+        if (!isDeferredProvisioning) {
+            previous.setVisibility(View.GONE);
+            return;
         }
+        previous.setText(R.string.do_it_in_one_hour);
+        previous.setVisibility(View.VISIBLE);
+
+        viewModel.mIsProvisionForcedLiveData.observe(getViewLifecycleOwner(),
+                isProvisionForced -> {
+                    previous.setEnabled(!isProvisionForced);
+                    // Allow the user to defer provisioning only when provisioning is not forced.
+                    if (!isProvisionForced) {
+                        previous.setOnClickListener(
+                                v -> {
+                                    int notificationPermission = ContextCompat.checkSelfPermission(
+                                            requireContext(),
+                                            Manifest.permission.POST_NOTIFICATIONS);
+                                    if (PackageManager.PERMISSION_GRANTED
+                                            == notificationPermission) {
+                                        // TODO(b/279608060): Add code to send sticky notification.
+                                        getActivity().finish();
+                                    } else {
+                                        requestPermissionLauncher.launch(
+                                                Manifest.permission.POST_NOTIFICATIONS);
+                                    }
+                                });
+                    }
+                });
     }
 }
