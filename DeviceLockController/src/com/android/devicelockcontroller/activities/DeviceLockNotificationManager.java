@@ -90,7 +90,7 @@ public final class DeviceLockNotificationManager {
                 context.getMainExecutor());
     }
 
-    private static void createNotificationChannel(Context context) {
+    public static void createNotificationChannel(Context context) {
         NotificationManager notificationManager = context.getSystemService(
                 NotificationManager.class);
         checkNotNull(notificationManager);

@@ -62,8 +62,7 @@ public final class ProvisionInfoFragment extends Fragment {
             registerForActivityResult(new ActivityResultContracts.RequestPermission(),
                     isGranted -> {
                             if (isGranted) {
-                                // TODO(b/279608060): Add code to send sticky notification.
-                                getActivity().finish();
+                                createNotificationAndCloseActivity();
                             } else {
                                 Toast.makeText(getActivity(),
                                         R.string.toast_message_grant_notification_permission,
@@ -187,8 +186,7 @@ public final class ProvisionInfoFragment extends Fragment {
                                             Manifest.permission.POST_NOTIFICATIONS);
                                     if (PackageManager.PERMISSION_GRANTED
                                             == notificationPermission) {
-                                        // TODO(b/279608060): Add code to send sticky notification.
-                                        getActivity().finish();
+                                        createNotificationAndCloseActivity();
                                     } else {
                                         requestPermissionLauncher.launch(
                                                 Manifest.permission.POST_NOTIFICATIONS);
@@ -196,5 +194,11 @@ public final class ProvisionInfoFragment extends Fragment {
                                 });
                     }
                 });
+    }
+
+    private void createNotificationAndCloseActivity() {
+        // TODO(b/279608060): Add code to send sticky notification.
+        DeviceLockNotificationManager.createNotificationChannel(requireContext());
+        getActivity().finish();
     }
 }
