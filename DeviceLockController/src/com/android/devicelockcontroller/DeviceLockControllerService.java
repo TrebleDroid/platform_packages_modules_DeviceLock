@@ -16,6 +16,7 @@
 
 package com.android.devicelockcontroller;
 
+import static com.android.devicelockcontroller.IDeviceLockControllerService.KEY_HARDWARE_ID_RESULT;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.CLEAR;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.LOCK_DEVICE;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.UNLOCK_DEVICE;
@@ -28,10 +29,12 @@ import android.os.IBinder;
 import android.os.RemoteCallback;
 
 import androidx.annotation.NonNull;
+import androidx.work.WorkManager;
 
 import com.android.devicelockcontroller.policy.DevicePolicyController;
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
+import com.android.devicelockcontroller.provision.worker.ReportDeviceLockProgramCompleteWorker;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
 
@@ -93,7 +96,13 @@ public final class DeviceLockControllerService extends Service {
                 public void clearDevice(RemoteCallback remoteCallback) {
                     Futures.addCallback(
                             Futures.transform(mStateController.setNextStateForEvent(CLEAR),
-                                    (Void unused) -> true, MoreExecutors.directExecutor()),
+                                    (Void unused) -> {
+                                        WorkManager workManager =
+                                                WorkManager.getInstance(getApplicationContext());
+                                        ReportDeviceLockProgramCompleteWorker
+                                                .reportDeviceLockProgramComplete(workManager);
+                                        return true;
+                                    }, MoreExecutors.directExecutor()),
                             remoteCallbackWrapper(remoteCallback, KEY_CLEAR_DEVICE_RESULT),
                             MoreExecutors.directExecutor());
 
