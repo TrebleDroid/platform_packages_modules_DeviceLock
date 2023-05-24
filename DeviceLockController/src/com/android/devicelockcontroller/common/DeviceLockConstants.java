@@ -92,24 +92,6 @@ public final class DeviceLockConstants {
 
     public static final String EXTRA_KIOSK_PACKAGE =
             "com.android.devicelockcontroller.KIOSK_PACKAGE";
-
-    /**
-     * URL to download the kiosk app.
-     *
-     * <p>DLC will look for a pre-installed package with the name defined by {@link
-     * #EXTRA_KIOSK_PACKAGE}. If the package is not present, DLC will try to download the package
-     * from the URL provided.
-     */
-    public static final String EXTRA_KIOSK_DOWNLOAD_URL =
-            "com.android.devicelockcontroller.KIOSK_DOWNLOAD_URL";
-
-    /**
-     * Intent's extras key for Base64 encoded SHA-256 hash checksum of the kiosk app's signing
-     * certificate.
-     */
-    public static final String EXTRA_KIOSK_SIGNATURE_CHECKSUM =
-            "com.android.devicelockcontroller.KIOSK_SIGNATURE_CHECKSUM";
-
     public static final String EXTRA_KIOSK_SETUP_ACTIVITY =
             "com.android.devicelockcontroller.KIOSK_SETUP_ACTIVITY";
     public static final String EXTRA_KIOSK_DISABLE_OUTGOING_CALLS =
