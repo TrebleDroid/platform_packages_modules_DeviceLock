@@ -89,7 +89,6 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
     public boolean isLocked() {
         return mState == DeviceState.SETUP_IN_PROGRESS
                 || mState == DeviceState.SETUP_SUCCEEDED
-                || mState == DeviceState.SETUP_FAILED
                 || mState == DeviceState.KIOSK_SETUP
                 || mState == DeviceState.LOCKED
                 || mState == DeviceState.PSEUDO_LOCKED;
@@ -126,7 +125,7 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
     int getNextState(@DeviceEvent int event) throws StateTransitionException {
         switch (event) {
             case DeviceEvent.PROVISIONING_SUCCESS:
-                if (mState == DeviceState.UNPROVISIONED) {
+                if (mState == DeviceState.UNPROVISIONED || mState == DeviceState.SETUP_FAILED) {
                     return DeviceState.SETUP_IN_PROGRESS;
                 }
                 break;
