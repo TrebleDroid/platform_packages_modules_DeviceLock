@@ -20,11 +20,9 @@ import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_ALLOWLIST;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_APP_PROVIDER_NAME;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_DISABLE_OUTGOING_CALLS;
-import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_DOWNLOAD_URL;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_ENABLE_NOTIFICATIONS_IN_LOCK_TASK_MODE;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_PACKAGE;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_SETUP_ACTIVITY;
-import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_SIGNATURE_CHECKSUM;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_SUPPORT_URL;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_TERMS_AND_CONDITIONS_URL;
 
@@ -39,15 +37,11 @@ import java.util.List;
  */
 public final class ProvisioningConfiguration {
 
-    // The URL to download the kiosk app for non-GMS devices.
-    private final String mKioskAppDownloadUrl;
     // The package name of the kiosk app, e.g. "com.foo.bar".
     private final String mKioskAppProviderName;
     // The name of the provider of the kiosk app, e.g. "Foo Bar Inc".
 
     private final String mKioskAppPackageName;
-    // The checksum used to sign the kiosk app for verifying the validity of the kiosk app.
-    private final String mKioskAppSignatureChecksum;
     // The package component of the activity of the kiosk app that the user
     // would interact when the device is locked (i.e. this activity allows the
     // user to make a payment), e.g. "com.foo.bar/com.foo.bar.MainActivity".
@@ -72,16 +66,14 @@ public final class ProvisioningConfiguration {
     private final String mSupportUrl;
 
     public ProvisioningConfiguration(
-            String kioskAppDownloadUrl, String kioskAppProviderName,
-            String kioskAppPackageName, String kioskAppSignatureChecksum,
+            String kioskAppProviderName,
+            String kioskAppPackageName,
             String kioskAppMainActivity, List<String> kioskAppAllowlistPackages,
             boolean kioskAppEnableOutgoingCalls, boolean kioskAppEnableEnableNotifications,
             boolean disallowInstallingFromUnknownSources, String termsAndConditionsUrl,
             String supportUrl) {
-        mKioskAppDownloadUrl = kioskAppDownloadUrl;
         mKioskAppProviderName = kioskAppProviderName;
         mKioskAppPackageName = kioskAppPackageName;
-        mKioskAppSignatureChecksum = kioskAppSignatureChecksum;
         mKioskAppMainActivity = kioskAppMainActivity;
         mKioskAppAllowlistPackages = kioskAppAllowlistPackages;
         mKioskAppEnableOutgoingCalls = kioskAppEnableOutgoingCalls;
@@ -97,8 +89,6 @@ public final class ProvisioningConfiguration {
     public Bundle toBundle() {
         final Bundle bundle = new Bundle();
         bundle.putString(EXTRA_KIOSK_PACKAGE, mKioskAppPackageName);
-        bundle.putString(EXTRA_KIOSK_DOWNLOAD_URL, mKioskAppDownloadUrl);
-        bundle.putString(EXTRA_KIOSK_SIGNATURE_CHECKSUM, mKioskAppSignatureChecksum);
         bundle.putString(EXTRA_KIOSK_SETUP_ACTIVITY, mKioskAppMainActivity);
         bundle.putBoolean(EXTRA_KIOSK_DISABLE_OUTGOING_CALLS, mKioskAppEnableOutgoingCalls);
         bundle.putBoolean(EXTRA_KIOSK_ENABLE_NOTIFICATIONS_IN_LOCK_TASK_MODE,
