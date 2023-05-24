@@ -119,9 +119,7 @@ public final class DevicePoliciesFragment extends Fragment {
                                 @Override
                                 public void onFailure(Throwable t) {
                                     LogUtil.e(TAG, "Failed to start setup flow!", t);
-                                    // TODO: set the days, 3 is a placeholder
-                                    DeviceLockNotificationManager.sendDeviceResetNotification(
-                                            getContext(), 3);
+                                    // TODO(b/279969959): show setup failure UI
                                 }
                             }, MoreExecutors.directExecutor());
                 });
@@ -130,8 +128,7 @@ public final class DevicePoliciesFragment extends Fragment {
             @Override
             public void setupFailed(int reason) {
                 LogUtil.e(TAG, "Failed to finish setup flow!");
-                // TODO: set the days, 3 is a placeholder
-                DeviceLockNotificationManager.sendDeviceResetNotification(getContext(), 3);
+                // TODO(b/279969959): show setup failure UI
             }
 
             @Override
