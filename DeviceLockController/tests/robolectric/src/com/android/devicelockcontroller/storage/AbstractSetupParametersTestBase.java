@@ -20,11 +20,9 @@ import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_ALLOWLIST;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_APP_PROVIDER_NAME;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_DISABLE_OUTGOING_CALLS;
-import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_DOWNLOAD_URL;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_ENABLE_NOTIFICATIONS_IN_LOCK_TASK_MODE;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_PACKAGE;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_SETUP_ACTIVITY;
-import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_SIGNATURE_CHECKSUM;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_MANDATORY_PROVISION;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_PROVISIONING_TYPE;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_SUPPORT_URL;
@@ -40,8 +38,6 @@ import java.util.ArrayList;
 abstract class AbstractSetupParametersTestBase {
     protected static final String KIOSK_PACKAGE = "package";
     protected static final String KIOSK_OVERRIDE_PACKAGE = "override.package";
-    protected static final String DOWNLOAD_URL = "https://www.example.com/apk";
-    protected static final String SIGNATURE_CHECKSUM = "12345678";
     protected static final String SETUP_ACTIVITY = "setup-activity";
     protected static final boolean DISABLE_OUTGOING_CALLS = true;
     protected static final boolean ENABLE_NOTIFICATIONS_IN_LOCK_TASK_MODE = true;
@@ -58,8 +54,6 @@ abstract class AbstractSetupParametersTestBase {
     protected static Bundle createParamsBundle() {
         final Bundle bundle = new Bundle();
         bundle.putString(EXTRA_KIOSK_PACKAGE, KIOSK_PACKAGE);
-        bundle.putString(EXTRA_KIOSK_DOWNLOAD_URL, DOWNLOAD_URL);
-        bundle.putString(EXTRA_KIOSK_SIGNATURE_CHECKSUM, SIGNATURE_CHECKSUM);
         bundle.putString(EXTRA_KIOSK_SETUP_ACTIVITY, SETUP_ACTIVITY);
         bundle.putBoolean(EXTRA_KIOSK_DISABLE_OUTGOING_CALLS, DISABLE_OUTGOING_CALLS);
         bundle.putBoolean(

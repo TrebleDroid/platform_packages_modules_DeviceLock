@@ -106,10 +106,8 @@ final class GetDeviceCheckInStatusGrpcResponseWrapper extends GetDeviceCheckInSt
         ConfigurationInfo info =
                 mNextStep.getDeviceProvisioningInformation().getConfigurationInformation();
         return new ProvisioningConfiguration(
-                info.getKioskAppDownloadUrl(),
                 info.getKioskAppProviderName(),
                 info.getKioskAppPackage(),
-                info.getKioskAppSignatureChecksum(),
                 info.getKioskAppMainActivity(),
                 info.getKioskAppAllowlistPackagesList(),
                 info.getKioskAppEnableOutgoingCalls(),

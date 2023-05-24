@@ -90,10 +90,8 @@ public final class DeviceCheckInHelperTest {
                     new DeviceId(DEVICE_ID_TYPE_MEID, MEID_2),
             });
     static final ProvisioningConfiguration TEST_CONFIGURATION = new ProvisioningConfiguration(
-            /* kioskAppDownloadUrl= */ "test_url",
             /* kioskAppProviderName= */ "test_provider",
             /* kioskAppPackageName= */ "test_package",
-            /* kioskAppSignatureChecksum= */ "test_checksum",
             /* kioskAppMainActivity= */ "test_activity",
             /* kioskAppAllowlistPackages= */ List.of("test_allowed_app1", "test_allowed_app2"),
             /* kioskAppEnableOutgoingCalls= */ false,
