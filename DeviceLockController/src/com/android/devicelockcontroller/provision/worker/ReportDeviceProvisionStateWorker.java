@@ -36,7 +36,11 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.WorkerParameters;
 
+import com.android.devicelockcontroller.activities.DeviceLockNotificationManager;
 import com.android.devicelockcontroller.common.DeviceLockConstants.SetupFailureReason;
+import com.android.devicelockcontroller.policy.DevicePolicyController;
+import com.android.devicelockcontroller.policy.DeviceStateController;
+import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
 import com.android.devicelockcontroller.policy.SetupController;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.ReportDeviceProvisionStateGrpcResponse;
@@ -152,19 +156,36 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
         // TODO(b/276392181): Handle next state properly
         int nextState = response.getNextClientProvisionState();
         Futures.getUnchecked(globalParametersClient.setLastReceivedProvisionState(nextState));
+
+        PolicyObjectsInterface policyObjects =
+                (PolicyObjectsInterface) mContext.getApplicationContext();
+        DevicePolicyController devicePolicyController = policyObjects.getPolicyController();
+        DeviceStateController deviceStateController = policyObjects.getStateController();
         switch (nextState) {
-            case PROVISION_STATE_DISMISSIBLE_UI:
-            case PROVISION_STATE_PERSISTENT_UI:
-                reportStateInOneDay(WorkManager.getInstance(mContext));
-                // Fall through
             case PROVISION_STATE_RETRY:
+                DeviceCheckInHelper.setProvisionSucceeded(deviceStateController,
+                        devicePolicyController, mContext, /* isMandatory= */ false);
+                break;
+            case PROVISION_STATE_DISMISSIBLE_UI:
+                // TODO(b/284003841): Update the remaining day.
+                DeviceLockNotificationManager.sendDeviceResetNotification(mContext, /* days= */ 4);
+                reportStateInOneDay(WorkManager.getInstance(mContext));
+                break;
+            case PROVISION_STATE_PERSISTENT_UI:
+                // TODO(b/284003841): Update the remaining day.
+                DeviceLockNotificationManager.sendDeviceResetNotification(mContext, /* days= */ 1);
+                reportStateInOneDay(WorkManager.getInstance(mContext));
+                break;
             case PROVISION_STATE_FACTORY_RESET:
+                devicePolicyController.wipeData();
+                break;
             case PROVISION_STATE_SUCCESS:
             case PROVISION_STATE_UNSPECIFIED:
-                return Result.success(
-                        new Data.Builder().putInt(KEY_LAST_RECEIVED_STATE, nextState).build());
+                // no-op
+                break;
             default:
                 throw new IllegalStateException(UNEXPECTED_PROVISION_STATE_ERROR_MESSAGE);
         }
+        return Result.success();
     }
 }
