@@ -46,7 +46,9 @@ import com.google.common.util.concurrent.ListenableFuture;
 import java.util.Collections;
 import java.util.Locale;
 
-/** Enforces UserRestriction policies. */
+/**
+ * Enforces UserRestriction policies.
+ */
 final class UserRestrictionsPolicyHandler implements PolicyHandler {
 
     private static final String TAG = "UserRestrictionsPolicyHandler";
@@ -89,7 +91,6 @@ final class UserRestrictionsPolicyHandler implements PolicyHandler {
         switch (state) {
             case SETUP_IN_PROGRESS:
             case SETUP_SUCCEEDED:
-            case SETUP_FAILED:
             case UNLOCKED:
             case KIOSK_SETUP:
                 setupRestrictions(mAlwaysOnRestrictions, true);
@@ -100,6 +101,7 @@ final class UserRestrictionsPolicyHandler implements PolicyHandler {
                 return Futures.transform(retrieveLockModeRestrictions(),
                         restrictions -> setupRestrictions(restrictions, true), mainHandler::post);
             case UNPROVISIONED:
+            case SETUP_FAILED:
             case CLEARED:
                 setupRestrictions(mAlwaysOnRestrictions, false);
                 return Futures.transform(retrieveLockModeRestrictions(),
@@ -119,11 +121,8 @@ final class UserRestrictionsPolicyHandler implements PolicyHandler {
     public ListenableFuture<Boolean> isCompliant(@DeviceState int state) {
         Handler mainHandler = new Handler(Looper.getMainLooper());
         switch (state) {
-            case UNPROVISIONED:
-                break;
             case SETUP_IN_PROGRESS:
             case SETUP_SUCCEEDED:
-            case SETUP_FAILED:
             case UNLOCKED:
             case KIOSK_SETUP:
                 if (checkRestrictions(mAlwaysOnRestrictions, true)) {
@@ -139,6 +138,8 @@ final class UserRestrictionsPolicyHandler implements PolicyHandler {
                             mainHandler::post);
                 }
                 break;
+            case UNPROVISIONED:
+            case SETUP_FAILED:
             case CLEARED:
                 if (checkRestrictions(mAlwaysOnRestrictions, false)) {
                     return Futures.transform(retrieveLockModeRestrictions(),
