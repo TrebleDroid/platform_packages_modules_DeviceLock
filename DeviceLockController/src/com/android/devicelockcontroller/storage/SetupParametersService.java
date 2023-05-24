@@ -32,7 +32,6 @@ import java.util.List;
  */
 public final class SetupParametersService extends Service {
     private static final String TAG = "SetupParametersService";
-
     private Context mContext;
 
     private final ISetupParametersService.Stub mBinder =
@@ -55,16 +54,6 @@ public final class SetupParametersService extends Service {
                 @Override
                 public String getKioskPackage() {
                     return SetupParameters.getKioskPackage(mContext);
-                }
-
-                @Override
-                public String getKioskDownloadUrl() {
-                    return SetupParameters.getKioskDownloadUrl(mContext);
-                }
-
-                @Override
-                public String getKioskSignatureChecksum() {
-                    return SetupParameters.getKioskSignatureChecksum(mContext);
                 }
 
                 @Override

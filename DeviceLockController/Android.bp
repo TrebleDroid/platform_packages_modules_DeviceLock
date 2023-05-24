@@ -96,7 +96,6 @@ android_library {
     resource_dirs: ["res"],
     libs: [
         "framework-annotations-lib",
-        "framework-connectivity",
         "framework-devicelock.impl",
         "org.apache.http.legacy",
     ],
