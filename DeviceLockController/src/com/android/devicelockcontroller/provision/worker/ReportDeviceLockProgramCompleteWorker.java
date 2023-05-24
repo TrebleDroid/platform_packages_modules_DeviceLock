@@ -21,6 +21,11 @@ import android.util.Pair;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
+import androidx.work.Constraints;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
@@ -38,7 +43,25 @@ import java.util.concurrent.Future;
  */
 public final class ReportDeviceLockProgramCompleteWorker extends Worker {
 
+    private static final String REPORT_DEVICE_LOCK_PROGRAM_COMPLETE_WORK_NAME =
+            "report-device-lock-program-complete";
     private final Future<DeviceFinalizeClient> mClient;
+
+    /**
+     * Report that this device has completed the devicelock program by enqueueing a work item.
+     */
+    public static void reportDeviceLockProgramComplete(WorkManager workManager) {
+        Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+        OneTimeWorkRequest work =
+                new OneTimeWorkRequest.Builder(ReportDeviceProvisionStateWorker.class)
+                        .setConstraints(constraints)
+                        .build();
+        workManager.enqueueUniqueWork(
+                REPORT_DEVICE_LOCK_PROGRAM_COMPLETE_WORK_NAME,
+                ExistingWorkPolicy.REPLACE, work);
+    }
 
     public ReportDeviceLockProgramCompleteWorker(@NonNull Context context,
             @NonNull WorkerParameters workerParams) {
