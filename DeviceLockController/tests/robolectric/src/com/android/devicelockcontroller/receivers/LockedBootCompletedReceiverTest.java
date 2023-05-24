@@ -44,7 +44,7 @@ import org.robolectric.shadows.ShadowPackageManager;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(shadows = {ShadowApplicationPackageManager.class})
-public class DlcLockedBootCompletedReceiverTest {
+public class LockedBootCompletedReceiverTest {
     private final TestDeviceLockControllerApplication mTestApplication =
             ApplicationProvider.getApplicationContext();
     private PackageManager mPm;
@@ -67,7 +67,7 @@ public class DlcLockedBootCompletedReceiverTest {
         when(mStateController.isInSetupState()).thenReturn(true);
         when(mStateController.isLocked()).thenReturn(true);
 
-        DlcLockedBootCompletedReceiver.startLockTaskModeIfApplicable(mTestApplication);
+        LockedBootCompletedReceiver.startLockTaskModeIfApplicable(mTestApplication);
 
         verify(mPolicyController, never()).enqueueStartLockTaskModeWorker(anyBoolean());
 
@@ -85,7 +85,7 @@ public class DlcLockedBootCompletedReceiverTest {
         when(mStateController.isInSetupState()).thenReturn(false);
         when(mStateController.isLocked()).thenReturn(true);
 
-        DlcLockedBootCompletedReceiver.startLockTaskModeIfApplicable(mTestApplication);
+        LockedBootCompletedReceiver.startLockTaskModeIfApplicable(mTestApplication);
 
         verify(mPolicyController).enqueueStartLockTaskModeWorker(eq(true));
 

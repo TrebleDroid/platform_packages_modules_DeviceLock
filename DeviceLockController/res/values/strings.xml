@@ -232,4 +232,7 @@
     </string>
     <!-- Content text of the notification that device will be reset. [CHAR LIMIT=NONE] -->
     <string name="device_reset_notification_content">All device data will be deleted. For help enrolling your device, contact <xliff:g id="provider name">%1$s</xliff:g></string>
+    <!-- TODO(b/279608060): Review this message with akintola@ -->
+    <!-- Toast message explaining why the user needs to grant permission to send notification. [CHAR LIMIT=NONE] -->
+    <string name="toast_message_grant_notification_permission">Please allow notification from DeviceLock to continue deferring the enrollment of the device.</string>
 </resources>
