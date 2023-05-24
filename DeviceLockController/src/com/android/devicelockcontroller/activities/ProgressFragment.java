@@ -16,7 +16,6 @@
 
 package com.android.devicelockcontroller.activities;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import android.os.Bundle;
@@ -28,6 +27,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.android.devicelockcontroller.R;
 
@@ -50,26 +50,35 @@ public final class ProgressFragment extends Fragment {
             LayoutInflater inflater,
             @Nullable ViewGroup container,
             @Nullable Bundle savedInstanceState) {
-        Bundle args = getArguments();
-        checkNotNull(args);
-        checkArgument(args.containsKey(KEY_ICON_ID));
-        checkArgument(args.containsKey(KEY_HEADER_TEXT_ID));
-
         View v = inflater.inflate(R.layout.fragment_progress, container, false);
 
         ImageView headerIconImageView = v.findViewById(R.id.header_icon);
         checkNotNull(headerIconImageView);
-        headerIconImageView.setImageResource(args.getInt(KEY_ICON_ID));
 
         TextView headerTextView = v.findViewById(R.id.header_text);
         checkNotNull(headerTextView);
-        headerTextView.setText(args.getInt(KEY_HEADER_TEXT_ID));
 
-        if (args.containsKey(KEY_SUBHEADER_TEXT_ID)) {
-            TextView subheaderTextView = v.findViewById(R.id.subheader_text);
-            checkNotNull(subheaderTextView);
-            subheaderTextView.setText(args.getInt(KEY_SUBHEADER_TEXT_ID));
-        }
+        TextView subheaderTextView = v.findViewById(R.id.subheader_text);
+        checkNotNull(subheaderTextView);
+
+        ProvisioningProgressViewModel provisioningProgressViewModel =
+                new ViewModelProvider(requireActivity()).get(ProvisioningProgressViewModel.class);
+        provisioningProgressViewModel.getProvisioningProgressLiveData().observe(
+                getViewLifecycleOwner(), provisioningProgress -> {
+                    if (provisioningProgress.mIconId != 0) {
+                        headerIconImageView.setImageResource(provisioningProgress.mIconId);
+                    }
+                    if (provisioningProgress.mHeaderId != 0) {
+                        headerTextView.setText(
+                                requireContext().getString(provisioningProgress.mHeaderId,
+                                        provisioningProgressViewModel
+                                                .mProviderNameLiveData.getValue()));
+                    }
+                    if (provisioningProgress.mSubheaderId != 0) {
+                        subheaderTextView.setText(
+                                requireContext().getString(provisioningProgress.mSubheaderId));
+                    }
+                });
 
         return v;
     }
