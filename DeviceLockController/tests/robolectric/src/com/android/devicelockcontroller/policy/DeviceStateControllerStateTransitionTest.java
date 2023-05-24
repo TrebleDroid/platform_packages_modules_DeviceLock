@@ -71,6 +71,7 @@ public class DeviceStateControllerStateTransitionTest {
     public static List<Object[]> parameters() {
         return Arrays.asList(new Object[][]{
                 {UNPROVISIONED, PROVISIONING_SUCCESS, SETUP_IN_PROGRESS},
+                {SETUP_FAILED, PROVISIONING_SUCCESS, SETUP_IN_PROGRESS},
                 {UNPROVISIONED, LOCK_DEVICE, PSEUDO_LOCKED},
                 {SETUP_IN_PROGRESS, SETUP_SUCCESS, SETUP_SUCCEEDED},
                 {SETUP_IN_PROGRESS, SETUP_FAILURE, SETUP_FAILED},
