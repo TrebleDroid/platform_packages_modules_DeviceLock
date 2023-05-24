@@ -383,13 +383,16 @@ public final class SetupControllerImpl implements SetupController {
                                 }
                                 return null;
                             }, MoreExecutors.directExecutor()), MoreExecutors.directExecutor());
-        } else {
+        } else if (mCurrentSetupState == SetupStatus.SETUP_FAILED) {
             return Futures.transform(
                     SetupParametersClient.getInstance().isProvisionMandatory(),
                     isMandatory -> {
                         if (isMandatory) mPolicyController.wipeData();
                         return null;
                     }, MoreExecutors.directExecutor());
+        } else {
+            return Futures.immediateFailedFuture(new IllegalStateException(
+                    "Can not finish setup when setup state is NOT_STARTED/IN_PROGRESS!"));
         }
     }
 
