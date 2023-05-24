@@ -91,13 +91,13 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
             case PSEUDO_UNLOCKED:
             case PSEUDO_LOCKED:
                 return Futures.immediateFuture(SUCCESS);
+            case SETUP_FAILED:
             case UNLOCKED:
             case CLEARED:
             case UNPROVISIONED:
                 return disableLockTaskMode();
             case SETUP_IN_PROGRESS:
             case SETUP_SUCCEEDED:
-            case SETUP_FAILED:
             case KIOSK_SETUP:
             case LOCKED:
                 return Futures.transformAsync(composeAllowlist(), empty -> enableLockTaskMode(),
