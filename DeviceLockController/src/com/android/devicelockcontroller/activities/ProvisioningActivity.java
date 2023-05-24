@@ -42,10 +42,8 @@ public final class ProvisioningActivity extends AppCompatActivity {
         }
         ProvisioningProgressViewModel viewModel = new ViewModelProvider(this).get(
                 ProvisioningProgressViewModel.class);
-        viewModel.mProvisioningProgressMutableLiveData.observe(this, progress -> {
-            ProgressFragment progressFragment =
-                    ProgressFragment.create(
-                            progress.mIconId, progress.mHeaderId, progress.mSubheaderId);
+        viewModel.getProvisioningProgressLiveData().observe(this, progress -> {
+            ProgressFragment progressFragment = new ProgressFragment();
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.fragment_container, progressFragment)
