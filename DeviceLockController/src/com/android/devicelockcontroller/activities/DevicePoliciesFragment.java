@@ -29,7 +29,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -99,29 +98,26 @@ public final class DevicePoliciesFragment extends Fragment {
 
         ProvisioningProgressViewModel provisioningProgressViewModel =
                 new ViewModelProvider(requireActivity()).get(ProvisioningProgressViewModel.class);
-        MutableLiveData<ProvisioningProgress> progressLiveData =
-                provisioningProgressViewModel.getProvisioningProgressMutableLiveData();
         Button button = view.findViewById(R.id.button_next);
         checkNotNull(button);
         button.setOnClickListener(
                 v -> {
-                    progressLiveData.setValue(ProvisioningProgress.GETTING_DEVICE_READY);
+                    provisioningProgressViewModel.setProvisioningProgress(
+                            ProvisioningProgress.GETTING_DEVICE_READY);
                     Futures.addCallback(
                             setupController.startSetupFlow(getActivity()),
                             new FutureCallback<>() {
                                 @Override
                                 public void onSuccess(Void result) {
                                     LogUtil.i(TAG, "Setup flow has started installing kiosk app");
-                                    progressLiveData.postValue(
+                                    provisioningProgressViewModel.setProvisioningProgress(
                                             ProvisioningProgress.INSTALLING_KIOSK_APP);
                                 }
 
                                 @Override
                                 public void onFailure(Throwable t) {
                                     LogUtil.e(TAG, "Failed to start setup flow!", t);
-                                    // TODO: set the days, 3 is a placeholder
-                                    DeviceLockNotificationManager.sendDeviceResetNotification(
-                                            getContext(), 3);
+                                    // TODO(b/279969959): show setup failure UI
                                 }
                             }, MoreExecutors.directExecutor());
                 });
@@ -130,14 +126,14 @@ public final class DevicePoliciesFragment extends Fragment {
             @Override
             public void setupFailed(int reason) {
                 LogUtil.e(TAG, "Failed to finish setup flow!");
-                // TODO: set the days, 3 is a placeholder
-                DeviceLockNotificationManager.sendDeviceResetNotification(getContext(), 3);
+                // TODO(b/279969959): show setup failure UI
             }
 
             @Override
             public void setupCompleted() {
                 LogUtil.i(TAG, "Successfully finished setup flow!");
-                progressLiveData.postValue(ProvisioningProgress.OPENING_KIOSK_APP);
+                provisioningProgressViewModel.setProvisioningProgress(
+                        ProvisioningProgress.OPENING_KIOSK_APP);
             }
         });
     }

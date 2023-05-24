@@ -36,13 +36,19 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.WorkerParameters;
 
+import com.android.devicelockcontroller.activities.DeviceLockNotificationManager;
 import com.android.devicelockcontroller.common.DeviceLockConstants.SetupFailureReason;
+import com.android.devicelockcontroller.policy.DevicePolicyController;
+import com.android.devicelockcontroller.policy.DeviceStateController;
+import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
 import com.android.devicelockcontroller.policy.SetupController;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.ReportDeviceProvisionStateGrpcResponse;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
 
 import com.google.common.util.concurrent.Futures;
+
+import java.time.Duration;
 
 /**
  * A worker class dedicated to report state of provision for the device lock program.
@@ -57,6 +63,7 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
     static final String UNEXPECTED_PROVISION_STATE_ERROR_MESSAGE = "Unexpected provision state!";
 
     public static final String REPORT_PROVISION_STATE_WORK_NAME = "report-provision-state";
+    private static final int NOTIFICATION_REPORT_INTERVAL_DAYS = 1;
 
     /**
      * Get a {@link SetupController.SetupUpdatesCallbacks} which will enqueue this worker to report
@@ -68,18 +75,36 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
         return new SetupController.SetupUpdatesCallbacks() {
             @Override
             public void setupFailed(@SetupFailureReason int reason) {
-                enqueueReportWork(false, reason, workManager);
+                reportSetupFailed(reason, workManager);
             }
 
             @Override
             public void setupCompleted() {
-                enqueueReportWork(true, /* ignored */ SetupFailureReason.SETUP_FAILED, workManager);
+                reportSetupCompleted(workManager);
             }
         };
     }
 
+    private static void reportSetupFailed(@SetupFailureReason int reason, WorkManager workManager) {
+        enqueueReportWork(false, reason, workManager, Duration.ZERO);
+    }
+
+    private static void reportSetupCompleted(WorkManager workManager) {
+        enqueueReportWork(true, /* ignored */ SetupFailureReason.SETUP_FAILED, workManager,
+                Duration.ZERO);
+    }
+
+    private static void reportStateInOneDay(WorkManager workManager) {
+        // Report that we have shown a failure notification to the user for one day and we did
+        // not retry setup between this and the last report. The failure reason and setup result
+        // have been reported in previous report.
+        enqueueReportWork(/* ignored */ false, /* ignored */ SetupFailureReason.SETUP_FAILED,
+                workManager,
+                Duration.ofDays(NOTIFICATION_REPORT_INTERVAL_DAYS));
+    }
+
     private static void enqueueReportWork(boolean isSuccessful, int reason,
-            WorkManager workManager) {
+            WorkManager workManager, Duration delay) {
         Data inputData = new Data.Builder()
                 .putBoolean(KEY_IS_PROVISION_SUCCESSFUL, isSuccessful)
                 .putInt(KEY_DEVICE_PROVISION_FAILURE_REASON, reason)
@@ -91,6 +116,7 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
                 new OneTimeWorkRequest.Builder(ReportDeviceProvisionStateWorker.class)
                         .setConstraints(constraints)
                         .setInputData(inputData)
+                        .setInitialDelay(delay)
                         .build();
         workManager.enqueueUniqueWork(
                 REPORT_PROVISION_STATE_WORK_NAME,
@@ -130,17 +156,36 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
         // TODO(b/276392181): Handle next state properly
         int nextState = response.getNextClientProvisionState();
         Futures.getUnchecked(globalParametersClient.setLastReceivedProvisionState(nextState));
+
+        PolicyObjectsInterface policyObjects =
+                (PolicyObjectsInterface) mContext.getApplicationContext();
+        DevicePolicyController devicePolicyController = policyObjects.getPolicyController();
+        DeviceStateController deviceStateController = policyObjects.getStateController();
         switch (nextState) {
             case PROVISION_STATE_RETRY:
+                DeviceCheckInHelper.setProvisionSucceeded(deviceStateController,
+                        devicePolicyController, mContext, /* isMandatory= */ false);
+                break;
             case PROVISION_STATE_DISMISSIBLE_UI:
+                // TODO(b/284003841): Update the remaining day.
+                DeviceLockNotificationManager.sendDeviceResetNotification(mContext, /* days= */ 4);
+                reportStateInOneDay(WorkManager.getInstance(mContext));
+                break;
             case PROVISION_STATE_PERSISTENT_UI:
+                // TODO(b/284003841): Update the remaining day.
+                DeviceLockNotificationManager.sendDeviceResetNotification(mContext, /* days= */ 1);
+                reportStateInOneDay(WorkManager.getInstance(mContext));
+                break;
             case PROVISION_STATE_FACTORY_RESET:
+                devicePolicyController.wipeData();
+                break;
             case PROVISION_STATE_SUCCESS:
             case PROVISION_STATE_UNSPECIFIED:
-                return Result.success(
-                        new Data.Builder().putInt(KEY_LAST_RECEIVED_STATE, nextState).build());
+                // no-op
+                break;
             default:
                 throw new IllegalStateException(UNEXPECTED_PROVISION_STATE_ERROR_MESSAGE);
         }
+        return Result.success();
     }
 }

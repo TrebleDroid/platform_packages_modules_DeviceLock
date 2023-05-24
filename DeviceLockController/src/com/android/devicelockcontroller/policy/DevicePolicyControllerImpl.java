@@ -193,12 +193,12 @@ public final class DevicePolicyControllerImpl
         switch (state) {
             case DeviceState.SETUP_IN_PROGRESS:
             case DeviceState.SETUP_SUCCEEDED:
-            case DeviceState.SETUP_FAILED:
                 return getLandingActivityIntent();
             case DeviceState.KIOSK_SETUP:
                 return getKioskSetupActivityIntent();
             case DeviceState.LOCKED:
                 return getLockScreenActivityIntent();
+            case DeviceState.SETUP_FAILED:
             case DeviceState.UNLOCKED:
             case DeviceState.CLEARED:
             case DeviceState.UNPROVISIONED:
