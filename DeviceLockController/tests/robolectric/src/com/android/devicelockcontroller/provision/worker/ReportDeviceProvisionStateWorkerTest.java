@@ -16,29 +16,41 @@
 
 package com.android.devicelockcontroller.provision.worker;
 
+import static com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState.PROVISION_STATE_DISMISSIBLE_UI;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState.PROVISION_STATE_FACTORY_RESET;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState.PROVISION_STATE_PERSISTENT_UI;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState.PROVISION_STATE_RETRY;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState.PROVISION_STATE_SUCCESS;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState.PROVISION_STATE_UNSPECIFIED;
-import static com.android.devicelockcontroller.provision.worker.ReportDeviceProvisionStateWorker.KEY_LAST_RECEIVED_STATE;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.PROVISIONING_SUCCESS;
 import static com.android.devicelockcontroller.provision.worker.ReportDeviceProvisionStateWorker.UNEXPECTED_PROVISION_STATE_ERROR_MESSAGE;
 
 import static com.google.common.truth.Truth.assertThat;
 
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.content.Context;
+import android.os.Looper;
 
 import androidx.annotation.NonNull;
 import androidx.test.core.app.ApplicationProvider;
-import androidx.work.Data;
 import androidx.work.ListenableWorker;
 import androidx.work.ListenableWorker.Result;
 import androidx.work.WorkerFactory;
 import androidx.work.WorkerParameters;
 import androidx.work.testing.TestWorkerBuilder;
 
+import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
+import com.android.devicelockcontroller.policy.DevicePolicyController;
+import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.ReportDeviceProvisionStateGrpcResponse;
+
+import com.google.common.util.concurrent.Futures;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -48,6 +60,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.Shadows;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -62,15 +75,16 @@ public final class ReportDeviceProvisionStateWorkerTest {
     @Mock
     private ReportDeviceProvisionStateGrpcResponse mResponse;
     private ReportDeviceProvisionStateWorker mWorker;
+    private TestDeviceLockControllerApplication mTestApp;
 
     @Before
     public void setUp() throws Exception {
-        final Context context = ApplicationProvider.getApplicationContext();
+        mTestApp = ApplicationProvider.getApplicationContext();
         final Executor executor = Executors.newSingleThreadExecutor();
         when(mClient.reportDeviceProvisionState(anyInt(), anyInt(), anyBoolean())).thenReturn(
                 mResponse);
         mWorker = TestWorkerBuilder.from(
-                        context, ReportDeviceProvisionStateWorker.class, executor)
+                        mTestApp, ReportDeviceProvisionStateWorker.class, executor)
                 .setWorkerFactory(
                         new WorkerFactory() {
                             @Override
@@ -87,8 +101,15 @@ public final class ReportDeviceProvisionStateWorkerTest {
     }
 
     @Test
-    public void doWork_responseIsNotSuccessful_returnFailure() {
-        when(mResponse.isSuccessful()).thenReturn(false);
+    public void doWork_responseHasRecoverableError_returnRetry() {
+        when(mResponse.hasRecoverableError()).thenReturn(true);
+
+        assertThat(mWorker.doWork()).isEqualTo(Result.retry());
+    }
+
+    @Test
+    public void doWork_responseHasFatalError_returnFailure() {
+        when(mResponse.hasFatalError()).thenReturn(true);
 
         assertThat(mWorker.doWork()).isEqualTo(Result.failure());
     }
@@ -111,11 +132,62 @@ public final class ReportDeviceProvisionStateWorkerTest {
     public void doWork_nextProvisionStateUnspecified_shouldReturnSuccess() {
         when(mResponse.isSuccessful()).thenReturn(true);
         when(mResponse.getNextClientProvisionState()).thenReturn(PROVISION_STATE_UNSPECIFIED);
-        Result expectedResult = Result.success(new Data.Builder().putInt(KEY_LAST_RECEIVED_STATE,
-                PROVISION_STATE_UNSPECIFIED).build());
 
-        Result actualResult = mWorker.doWork();
+        assertThat(mWorker.doWork()).isEqualTo(Result.success());
+    }
 
-        assertThat(actualResult).isEqualTo(expectedResult);
+    @Test
+    public void doWork_nextProvisionStateSuccess_shouldReturnSuccess() {
+        when(mResponse.isSuccessful()).thenReturn(true);
+        when(mResponse.getNextClientProvisionState()).thenReturn(PROVISION_STATE_SUCCESS);
+
+        assertThat(mWorker.doWork()).isEqualTo(Result.success());
+    }
+
+    @Test
+    public void doWork_nextProvisionStateRetry_shouldRetrySetup() {
+        when(mResponse.isSuccessful()).thenReturn(true);
+        when(mResponse.getNextClientProvisionState()).thenReturn(PROVISION_STATE_RETRY);
+        DevicePolicyController devicePolicyController = mTestApp.getPolicyController();
+        DeviceStateController deviceStateController = mTestApp.getStateController();
+        when(deviceStateController.setNextStateForEvent(PROVISIONING_SUCCESS)).thenReturn(
+                Futures.immediateVoidFuture());
+
+        assertThat(mWorker.doWork()).isEqualTo(Result.success());
+
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+        verify(deviceStateController).setNextStateForEvent(eq(PROVISIONING_SUCCESS));
+        verify(devicePolicyController).enqueueStartLockTaskModeWorker(eq(false));
+    }
+
+    @Test
+    public void doWork_nextProvisionStateDissmissableUI_shouldReturnSuccess() {
+        when(mResponse.isSuccessful()).thenReturn(true);
+        when(mResponse.getNextClientProvisionState()).thenReturn(PROVISION_STATE_DISMISSIBLE_UI);
+
+        // TODO(b/284003841): add test content
+
+        assertThat(mWorker.doWork()).isEqualTo(Result.success());
+    }
+
+    @Test
+    public void doWork_nextProvisionStatePersistentUI_shouldReturnSuccess() {
+        when(mResponse.isSuccessful()).thenReturn(true);
+        when(mResponse.getNextClientProvisionState()).thenReturn(PROVISION_STATE_PERSISTENT_UI);
+
+        // TODO(b/284003841): add test content
+
+        assertThat(mWorker.doWork()).isEqualTo(Result.success());
+    }
+
+    @Test
+    public void doWork_nextProvisionStateFactoryReset_shouldResetDevice() {
+        when(mResponse.isSuccessful()).thenReturn(true);
+        when(mResponse.getNextClientProvisionState()).thenReturn(PROVISION_STATE_FACTORY_RESET);
+        DevicePolicyController devicePolicyController = mTestApp.getPolicyController();
+
+        assertThat(mWorker.doWork()).isEqualTo(Result.success());
+
+        verify(devicePolicyController).wipeData();
     }
 }
