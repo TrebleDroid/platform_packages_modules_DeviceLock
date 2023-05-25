@@ -91,7 +91,8 @@ public final class SetupControllerImpl implements SetupController {
         this.mStateController = stateController;
         this.mPolicyController = policyController;
         int state = stateController.getState();
-        if (state == DeviceState.SETUP_IN_PROGRESS || state == DeviceState.UNPROVISIONED) {
+        if (state == DeviceState.SETUP_IN_PROGRESS || state == DeviceState.UNPROVISIONED
+                || state == DeviceState.PSEUDO_UNLOCKED || state == DeviceState.PSEUDO_LOCKED) {
             mCurrentSetupState = SetupStatus.SETUP_NOT_STARTED;
         } else if (state == DeviceState.SETUP_FAILED) {
             mCurrentSetupState = SetupStatus.SETUP_FAILED;
