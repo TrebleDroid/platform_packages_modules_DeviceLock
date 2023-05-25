@@ -19,7 +19,6 @@ package com.android.devicelockcontroller.policy;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.CLEAR;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.LOCK_DEVICE;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.PROVISIONING_SUCCESS;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.RESET;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.SETUP_COMPLETE;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.SETUP_FAILURE;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.SETUP_SUCCESS;
@@ -83,9 +82,9 @@ public class DeviceStateControllerStateTransitionTest {
                 {LOCKED, UNLOCK_DEVICE, UNLOCKED},
                 {LOCKED, CLEAR, CLEARED},
                 {PSEUDO_LOCKED, UNLOCK_DEVICE, PSEUDO_UNLOCKED},
-                {PSEUDO_LOCKED, RESET, UNPROVISIONED},
+                {PSEUDO_LOCKED, PROVISIONING_SUCCESS, SETUP_IN_PROGRESS},
                 {PSEUDO_UNLOCKED, LOCK_DEVICE, PSEUDO_LOCKED},
-                {PSEUDO_UNLOCKED, RESET, UNPROVISIONED}
+                {PSEUDO_UNLOCKED, PROVISIONING_SUCCESS, SETUP_IN_PROGRESS}
         });
     }
 
