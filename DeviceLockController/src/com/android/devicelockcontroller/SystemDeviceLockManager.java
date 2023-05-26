@@ -50,4 +50,16 @@ public interface SystemDeviceLockManager {
     void setExemptFromActivityBackgroundStartRestriction(boolean exempt,
             @CallbackExecutor Executor executor,
             @NonNull OutcomeReceiver<Void, Exception> callback);
+
+    /**
+     * Set the kiosk app exempt from hibernation (for the calling user).
+     *
+     * @param packageName kiosk app package name.
+     * @param exempt true if the Controller should be exempt from hibernation.
+     * @param executor the {@link Executor} on which to invoke the callback.
+     * @param callback callback this returns either success or an exception.
+     */
+    void setExemptFromHibernation(String packageName, boolean exempt,
+            @CallbackExecutor Executor executor,
+            @NonNull OutcomeReceiver<Void, Exception> callback);
 }

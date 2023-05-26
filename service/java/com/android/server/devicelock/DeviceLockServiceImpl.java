@@ -16,6 +16,7 @@
 
 package com.android.server.devicelock;
 
+import static android.app.AppOpsManager.OPSTR_SYSTEM_EXEMPT_FROM_HIBERNATION;
 import static android.app.role.RoleManager.MANAGE_HOLDERS_FLAG_DONT_KILL_APP;
 import static android.content.IntentFilter.SYSTEM_HIGH_PRIORITY;
 import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DEFAULT;
@@ -35,6 +36,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.pm.PackageManager.PackageInfoFlags;
 import android.content.pm.ServiceInfo;
 import android.devicelock.DeviceId.DeviceIdType;
 import android.devicelock.DeviceLockManager;
@@ -405,18 +407,26 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
 
     // For calls from Controller to System Service.
 
-    private boolean checkDeviceLockControllerPermission() {
-        return mContext.checkCallingOrSelfPermission(MANAGE_DEVICE_LOCK_SERVICE_FROM_CONTROLLER)
-                == PERMISSION_GRANTED;
+    private void reportErrorToCaller(@NonNull RemoteCallback remoteCallback) {
+        final Bundle result = new Bundle();
+        result.putBoolean(KEY_REMOTE_CALLBACK_RESULT, false);
+        remoteCallback.sendResult(result);
+    }
+
+    private boolean checkDeviceLockControllerPermission(@NonNull RemoteCallback remoteCallback) {
+        if (mContext.checkCallingOrSelfPermission(MANAGE_DEVICE_LOCK_SERVICE_FROM_CONTROLLER)
+                != PERMISSION_GRANTED) {
+            reportErrorToCaller(remoteCallback);
+            return false;
+        }
+
+        return true;
     }
 
     @Override
     public void addFinancedDeviceKioskRole(@NonNull String packageName,
             @NonNull RemoteCallback remoteCallback) {
-        if (!checkDeviceLockControllerPermission()) {
-            final Bundle result = new Bundle();
-            result.putBoolean(KEY_REMOTE_CALLBACK_RESULT, false);
-            remoteCallback.sendResult(result);
+        if (!checkDeviceLockControllerPermission(remoteCallback)) {
             return;
         }
 
@@ -437,29 +447,57 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
         Binder.restoreCallingIdentity(identity);
     }
 
-    @Override
-    public void setExemptFromActivityBackgroundStartRestriction(boolean exempt,
+    private void setExemption(String packageName, int uid, String appOp, boolean exempt,
             @NonNull RemoteCallback remoteCallback) {
-        final Bundle result = new Bundle();
-
-        if (!checkDeviceLockControllerPermission()) {
-            result.putBoolean(KEY_REMOTE_CALLBACK_RESULT, false);
-            remoteCallback.sendResult(result);
-            return;
-        }
-
-        final int uid = Binder.getCallingUid();
         final AppOpsManager appOpsManager = mContext.getSystemService(AppOpsManager.class);
         final long identity = Binder.clearCallingIdentity();
 
         final int mode = exempt ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_DEFAULT;
 
-        appOpsManager.setMode(OPSTR_SYSTEM_EXEMPT_FROM_ACTIVITY_BG_START_RESTRICTION,
-                uid, mServiceInfo.packageName, mode);
+        appOpsManager.setMode(appOp, uid, packageName, mode);
 
         Binder.restoreCallingIdentity(identity);
 
+        final Bundle result = new Bundle();
         result.putBoolean(KEY_REMOTE_CALLBACK_RESULT, true);
         remoteCallback.sendResult(result);
+    }
+
+    @Override
+    public void setExemptFromActivityBackgroundStartRestriction(boolean exempt,
+            @NonNull RemoteCallback remoteCallback) {
+        if (!checkDeviceLockControllerPermission(remoteCallback)) {
+            return;
+        }
+
+        setExemption(mServiceInfo.packageName, Binder.getCallingUid(),
+                OPSTR_SYSTEM_EXEMPT_FROM_ACTIVITY_BG_START_RESTRICTION, exempt, remoteCallback);
+    }
+
+    @Override
+    public void setExemptFromHibernation(String packageName, boolean exempt,
+            @NonNull RemoteCallback remoteCallback) {
+        if (!checkDeviceLockControllerPermission(remoteCallback)) {
+            return;
+        }
+
+        final UserHandle controllerUserHandle = Binder.getCallingUserHandle();
+        final int controllerUserId = controllerUserHandle.getIdentifier();
+        final PackageManager packageManager = mContext.getPackageManager();
+        int kioskUid;
+        final long identity = Binder.clearCallingIdentity();
+        try {
+            kioskUid = packageManager.getPackageUidAsUser(packageName, PackageInfoFlags.of(0),
+                    controllerUserId);
+        } catch (NameNotFoundException e) {
+            Binder.restoreCallingIdentity(identity);
+            Slog.e(TAG, "Failed to set hibernation appop", e);
+            reportErrorToCaller(remoteCallback);
+            return;
+        }
+        Binder.restoreCallingIdentity(identity);
+
+        setExemption(packageName, kioskUid, OPSTR_SYSTEM_EXEMPT_FROM_HIBERNATION, exempt,
+                remoteCallback);
     }
 }
