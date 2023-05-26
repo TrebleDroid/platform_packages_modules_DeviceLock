@@ -25,6 +25,7 @@ import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import android.Manifest;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -49,6 +50,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.devicelockcontroller.R;
 import com.android.devicelockcontroller.util.LogUtil;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Objects;
 
 /**
@@ -62,8 +65,7 @@ public final class ProvisionInfoFragment extends Fragment {
             registerForActivityResult(new ActivityResultContracts.RequestPermission(),
                     isGranted -> {
                             if (isGranted) {
-                                // TODO(b/279608060): Add code to send sticky notification.
-                                getActivity().finish();
+                                createNotificationAndCloseActivity();
                             } else {
                                 Toast.makeText(getActivity(),
                                         R.string.toast_message_grant_notification_permission,
@@ -187,8 +189,7 @@ public final class ProvisionInfoFragment extends Fragment {
                                             Manifest.permission.POST_NOTIFICATIONS);
                                     if (PackageManager.PERMISSION_GRANTED
                                             == notificationPermission) {
-                                        // TODO(b/279608060): Add code to send sticky notification.
-                                        getActivity().finish();
+                                        createNotificationAndCloseActivity();
                                     } else {
                                         requestPermissionLauncher.launch(
                                                 Manifest.permission.POST_NOTIFICATIONS);
@@ -196,5 +197,18 @@ public final class ProvisionInfoFragment extends Fragment {
                                 });
                     }
                 });
+    }
+
+    private void createNotificationAndCloseActivity() {
+        // TODO(b/283160311): Add code to resume provisioning in 1 hour.
+        PendingIntent intent = PendingIntent.getActivity(
+                requireContext(),
+                /* requestCode= */ 0,
+                getActivity().getIntent(),
+                PendingIntent.FLAG_IMMUTABLE);
+        Instant resumeTime = Instant.now().plus(Duration.ofHours(1));
+        DeviceLockNotificationManager.sendDeferredEnrollmentNotification(requireContext(),
+                resumeTime, intent);
+        getActivity().finish();
     }
 }
