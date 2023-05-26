@@ -63,7 +63,7 @@
     <!-- List item on a screen. This item lets a user know that they won't be able to access Settings if the device is restricted by the credit provider. [CHAR_LIMIT=80] -->
     <string name="locked_settings_usage_text">Settings</string>
     <!-- List item on a screen. This item lets a user know that they will be able to back up and restore data if the device is locked. [CHAR_LIMIT=80] -->
-    <string name="locked_backup_and_restore_text">Backing up and restoring your data</string>
+    <string name="locked_backup_and_restore_text"><![CDATA[<a href="https://support.google.com/android/answer/2819582">Backing up and restoring</a>]]> your data</string>
     <!-- Title text for section describing data available to creditor. [CHAR_LIMIT=80] -->
     <string name="exposure_section_title">What\'s visible to <xliff:g id="creditor_app">%1$s</xliff:g>\u003F</string>
     <!-- Text explaining install and uninstall of creditor app. [CHAR_LIMIT=80] -->

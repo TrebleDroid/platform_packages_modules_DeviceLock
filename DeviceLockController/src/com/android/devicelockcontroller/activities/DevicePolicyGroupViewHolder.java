@@ -17,10 +17,18 @@
 package com.android.devicelockcontroller.activities;
 
 import android.content.Context;
+import android.content.Intent;
+import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.URLSpan;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.devicelockcontroller.R;
@@ -49,7 +57,13 @@ final class DevicePolicyGroupViewHolder extends RecyclerView.ViewHolder {
         for (int i = 0; i < devicePolicyGroup.getDevicePolicyList().size(); ++i) {
             TextView devicePolicyItemView = (TextView) mDevicePolicyItems.getChildAt(i);
             DevicePolicy devicePolicy = devicePolicyGroup.getDevicePolicyList().get(i);
-            devicePolicyItemView.setText(context.getString(devicePolicy.getTextId(), providerName));
+            String policyText = context.getString(devicePolicy.getTextId(), providerName);
+            SpannableString text =
+                    new SpannableString(Html.fromHtml(policyText, Html.FROM_HTML_MODE_COMPACT));
+            if (handleUrlSpan(text)) {
+                devicePolicyItemView.setMovementMethod(LinkMovementMethod.getInstance());
+            }
+            devicePolicyItemView.setText(text);
             devicePolicyItemView.setCompoundDrawablesRelativeWithIntrinsicBounds(
                     devicePolicy.getDrawableId(),
                     /* top=*/ 0,
@@ -61,6 +75,39 @@ final class DevicePolicyGroupViewHolder extends RecyclerView.ViewHolder {
         for (int i = devicePolicyGroup.getDevicePolicyList().size(); i < maxDevicePolicy; ++i) {
             TextView devicePolicyItemView = (TextView) mDevicePolicyItems.getChildAt(i);
             devicePolicyItemView.setVisibility(View.GONE);
+        }
+    }
+
+    private boolean handleUrlSpan(SpannableString text) {
+        boolean hasUrl = false;
+        URLSpan[] spans = text.getSpans(0, text.length(), URLSpan.class);
+        for (URLSpan span : spans) {
+            int start = text.getSpanStart(span);
+            int end = text.getSpanEnd(span);
+            ClickableSpan clickableSpan = new CustomClickableSpan(span.getURL());
+            text.removeSpan(span);
+            text.setSpan(clickableSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            hasUrl = true;
+        }
+        return hasUrl;
+    }
+
+    /**
+     * A custom clickable span to open URL as a web intent.
+     */
+    private static final class CustomClickableSpan extends ClickableSpan {
+        final String mUrl;
+
+        CustomClickableSpan(String url) {
+            mUrl = url;
+        }
+
+        @Override
+        public void onClick(@NonNull View view) {
+            Context context = view.getContext();
+            Intent webIntent = new Intent(context, HelpActivity.class);
+            webIntent.putExtra(HelpActivity.EXTRA_URL_PARAM, mUrl);
+            context.startActivity(webIntent);
         }
     }
 }
