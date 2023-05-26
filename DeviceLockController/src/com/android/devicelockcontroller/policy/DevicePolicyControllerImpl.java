@@ -64,7 +64,7 @@ import java.util.Locale;
 
 /**
  * Class that listens to state changes and applies the corresponding policies.
- *
+ * <p>
  * Note that some APIs return a listenable future because the underlying calls to
  * SetupParameterClient return a listenable future for inter process calls.
  */
@@ -132,8 +132,14 @@ public final class DevicePolicyControllerImpl
 
     @Override
     public void enqueueStartLockTaskModeWorker(boolean isMandatory) {
+        enqueueStartLockTaskModeWorkerWithDelay(isMandatory, Duration.ZERO);
+    }
+
+    @Override
+    public void enqueueStartLockTaskModeWorkerWithDelay(boolean isMandatory, Duration delay) {
         final OneTimeWorkRequest.Builder startLockTaskModeRequestBuilder =
                 new OneTimeWorkRequest.Builder(StartLockTaskModeWorker.class)
+                        .setInitialDelay(delay)
                         .setBackoffCriteria(BackoffPolicy.LINEAR,
                                 Duration.ofSeconds(START_LOCK_TASK_MODE_WORKER_INTERVAL));
         if (isMandatory) {

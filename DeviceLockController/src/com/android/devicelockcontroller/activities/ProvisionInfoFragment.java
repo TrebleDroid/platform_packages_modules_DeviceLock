@@ -46,8 +46,10 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.work.WorkManager;
 
 import com.android.devicelockcontroller.R;
+import com.android.devicelockcontroller.provision.worker.PauseProvisioningWorker;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import java.time.Duration;
@@ -184,6 +186,10 @@ public final class ProvisionInfoFragment extends Fragment {
                     if (!isProvisionForced) {
                         previous.setOnClickListener(
                                 v -> {
+                                    WorkManager workManager =
+                                            WorkManager.getInstance(requireContext());
+                                    PauseProvisioningWorker
+                                            .reportProvisionPausedByUser(workManager);
                                     int notificationPermission = ContextCompat.checkSelfPermission(
                                             requireContext(),
                                             Manifest.permission.POST_NOTIFICATIONS);
@@ -200,7 +206,6 @@ public final class ProvisionInfoFragment extends Fragment {
     }
 
     private void createNotificationAndCloseActivity() {
-        // TODO(b/283160311): Add code to resume provisioning in 1 hour.
         PendingIntent intent = PendingIntent.getActivity(
                 requireContext(),
                 /* requestCode= */ 0,
