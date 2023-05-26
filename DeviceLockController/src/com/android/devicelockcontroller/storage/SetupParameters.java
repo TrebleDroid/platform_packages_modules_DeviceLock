@@ -20,11 +20,9 @@ import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_ALLOWLIST;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_APP_PROVIDER_NAME;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_DISABLE_OUTGOING_CALLS;
-import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_DOWNLOAD_URL;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_ENABLE_NOTIFICATIONS_IN_LOCK_TASK_MODE;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_PACKAGE;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_SETUP_ACTIVITY;
-import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_SIGNATURE_CHECKSUM;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_MANDATORY_PROVISION;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_PROVISIONING_TYPE;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_SUPPORT_URL;
@@ -58,11 +56,8 @@ import java.util.Set;
  */
 final class SetupParameters {
     private static final String TAG = "SetupParameters";
-
     private static final String FILENAME = "setup-prefs";
     private static final String KEY_KIOSK_PACKAGE = "kiosk-package-name";
-    private static final String KEY_KIOSK_DOWNLOAD_URL = "kiosk-download-url";
-    private static final String KEY_KIOSK_SIGNATURE_CHECKSUM = "kiosk-signature-checksum";
     private static final String KEY_KIOSK_SETUP_ACTIVITY = "kiosk-setup-activity";
     private static final String KEY_KIOSK_ALLOWLIST = "kiosk-allowlist";
     private static final String KEY_KIOSK_DISABLE_OUTGOING_CALLS =
@@ -101,8 +96,6 @@ final class SetupParameters {
         LogUtil.d(TAG, String.format(Locale.US,
                 "Dumping SetupParameters ...\n"
                 + "%s: %s\n"    // kiosk-package-name:
-                + "%s: %s\n"    // kiosk-download-url:
-                + "%s: %s\n"    // kiosk-signature-checksum:
                 + "%s: %s\n"    // kiosk-setup-activity:
                 + "%s: %s\n"    // kiosk-allowlist:
                 + "%s: %s\n"    // kiosk-disable-outgoing-calls:
@@ -114,8 +107,6 @@ final class SetupParameters {
                 + "%s: %s\n"    // terms-and-conditions-url:
                 + "%s: %s\n",   // support-url:
                 KEY_KIOSK_PACKAGE, getKioskPackage(context),
-                KEY_KIOSK_DOWNLOAD_URL, getKioskDownloadUrl(context),
-                KEY_KIOSK_SIGNATURE_CHECKSUM, getKioskSignatureChecksum(context),
                 KEY_KIOSK_SETUP_ACTIVITY, getKioskSetupActivity(context),
                 KEY_KIOSK_ALLOWLIST, getKioskAllowlist(context),
                 KEY_KIOSK_DISABLE_OUTGOING_CALLS, getOutgoingCallsDisabled(context),
@@ -152,9 +143,6 @@ final class SetupParameters {
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(KEY_KIOSK_PACKAGE, bundle.getString(EXTRA_KIOSK_PACKAGE));
-        editor.putString(KEY_KIOSK_DOWNLOAD_URL, bundle.getString(EXTRA_KIOSK_DOWNLOAD_URL));
-        editor.putString(KEY_KIOSK_SIGNATURE_CHECKSUM,
-                bundle.getString(EXTRA_KIOSK_SIGNATURE_CHECKSUM));
         editor.putString(KEY_KIOSK_SETUP_ACTIVITY, bundle.getString(EXTRA_KIOSK_SETUP_ACTIVITY));
         editor.putBoolean(KEY_KIOSK_DISABLE_OUTGOING_CALLS,
                 bundle.getBoolean(EXTRA_KIOSK_DISABLE_OUTGOING_CALLS));
@@ -183,29 +171,6 @@ final class SetupParameters {
     @Nullable
     static String getKioskPackage(Context context) {
         return getSharedPreferences(context).getString(KEY_KIOSK_PACKAGE, null /* defValue */);
-    }
-
-    /**
-     * Get the kiosk app download URL.
-     *
-     * @param context Context used to get the shared preferences.
-     * @return Kiosk app download URL.
-     */
-    @Nullable
-    static String getKioskDownloadUrl(Context context) {
-        return getSharedPreferences(context).getString(KEY_KIOSK_DOWNLOAD_URL, null /* defValue */);
-    }
-
-    /**
-     * Get the kiosk app signature checksum.
-     *
-     * @param context Context used to get the shared preferences.
-     * @return Signature checksum.
-     */
-    @Nullable
-    static String getKioskSignatureChecksum(Context context) {
-        return getSharedPreferences(context)
-                .getString(KEY_KIOSK_SIGNATURE_CHECKSUM, null /* defValue */);
     }
 
     /**
