@@ -82,10 +82,7 @@ apex {
     min_sdk_version: "UpsideDownCake",
     bootclasspath_fragments: ["com.android.devicelock-bootclasspath-fragment"],
     systemserverclasspath_fragments: ["com.android.devicelock-systemserverclasspath-fragment"],
-    prebuilts: [
-        "current_sdkinfo",
-        "privapp_allowlist_com.android.devicelockcontroller.xml",
-    ],
+    prebuilts: ["current_sdkinfo"],
     manifest: "manifest.json",
     androidManifest: "AndroidManifest.xml",
     file_contexts: ":com.android.devicelock-file_contexts",
