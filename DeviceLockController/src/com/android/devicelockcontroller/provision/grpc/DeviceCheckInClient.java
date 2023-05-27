@@ -33,7 +33,7 @@ import com.android.devicelockcontroller.common.DeviceLockConstants.SetupFailureR
 public abstract class DeviceCheckInClient {
     @Nullable
     protected final String mRegisteredId;
-    private static DeviceCheckInClient sClient;
+    private static volatile DeviceCheckInClient sClient;
 
     protected DeviceCheckInClient(@Nullable String registeredId) {
         mRegisteredId = registeredId;
@@ -45,13 +45,20 @@ public abstract class DeviceCheckInClient {
     public static DeviceCheckInClient getInstance(String className, String hostName, int portNumber,
             @Nullable String registeredId) {
         if (sClient == null) {
-            try {
-                Class<?> clazz = Class.forName(className);
-                sClient = (DeviceCheckInClient) clazz.getDeclaredConstructor(
-                                String.class, Integer.TYPE, String.class)
-                        .newInstance(hostName, portNumber, registeredId);
-            } catch (Exception e) {
-                throw new RuntimeException("Failed to get DeviceCheckInClient instance", e);
+            synchronized (DeviceCheckInClient.class) {
+                try {
+                    // In case the initialization is already done by other thread use existing
+                    // instance.
+                    if (sClient != null) {
+                        return sClient;
+                    }
+                    Class<?> clazz = Class.forName(className);
+                    sClient = (DeviceCheckInClient) clazz.getDeclaredConstructor(
+                                    String.class, Integer.TYPE, String.class)
+                            .newInstance(hostName, portNumber, registeredId);
+                } catch (Exception e) {
+                    throw new RuntimeException("Failed to get DeviceCheckInClient instance", e);
+                }
             }
         }
         return sClient;

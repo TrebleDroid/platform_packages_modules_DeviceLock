@@ -221,7 +221,7 @@ final class UserRestrictionsPolicyHandler implements PolicyHandler {
                         mOptionalAlwaysOnRestrictions = new ArraySet<>(1);
                         if (Futures.getDone(installingFromUnknownSourcesDisallowedTask)) {
                             mOptionalAlwaysOnRestrictions.add(
-                                    UserManager.DISALLOW_INSTALL_UNKNOWN_SOURCES_GLOBALLY);
+                                    UserManager.DISALLOW_INSTALL_UNKNOWN_SOURCES);
                         }
                     }
                     return mOptionalAlwaysOnRestrictions;
