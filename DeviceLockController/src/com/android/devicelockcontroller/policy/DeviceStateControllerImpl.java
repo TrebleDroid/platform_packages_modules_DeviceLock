@@ -96,7 +96,8 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
 
     @Override
     public boolean isCheckInNeeded() {
-        return mState == DeviceState.UNPROVISIONED;
+        return mState == DeviceState.UNPROVISIONED || mState == DeviceState.PSEUDO_LOCKED
+                || mState == DeviceState.PSEUDO_UNLOCKED;
     }
 
     @Override
@@ -125,7 +126,9 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
     int getNextState(@DeviceEvent int event) throws StateTransitionException {
         switch (event) {
             case DeviceEvent.PROVISIONING_SUCCESS:
-                if (mState == DeviceState.UNPROVISIONED || mState == DeviceState.SETUP_FAILED) {
+                if (mState == DeviceState.UNPROVISIONED || mState == DeviceState.SETUP_FAILED
+                        || mState == DeviceState.PSEUDO_LOCKED
+                        || mState == DeviceState.PSEUDO_UNLOCKED) {
                     return DeviceState.SETUP_IN_PROGRESS;
                 }
                 break;
@@ -165,12 +168,6 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
                         || mState == DeviceState.UNLOCKED
                         || mState == DeviceState.KIOSK_SETUP) {
                     return DeviceState.CLEARED;
-                }
-                break;
-            case DeviceEvent.RESET:
-                if (mState == DeviceState.PSEUDO_LOCKED
-                        || mState == DeviceState.PSEUDO_UNLOCKED) {
-                    return DeviceState.UNPROVISIONED;
                 }
                 break;
             default:
