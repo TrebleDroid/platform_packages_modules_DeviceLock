@@ -16,24 +16,27 @@
 
 package com.android.devicelockcontroller.provision.worker;
 
-import static com.android.devicelockcontroller.provision.worker.PauseProvisioningWorker.KEY_SHOULD_FORCE_PROVISION;
+import static com.android.devicelockcontroller.provision.worker.PauseProvisioningWorker.PROVISION_PAUSED_HOUR;
 
 import static com.google.common.truth.Truth.assertThat;
 
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.test.core.app.ApplicationProvider;
-import androidx.work.Data;
 import androidx.work.ListenableWorker;
 import androidx.work.ListenableWorker.Result;
 import androidx.work.WorkerFactory;
 import androidx.work.WorkerParameters;
 import androidx.work.testing.TestWorkerBuilder;
 
+import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
+import com.android.devicelockcontroller.policy.DevicePolicyController;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.PauseDeviceProvisioningGrpcResponse;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
@@ -49,6 +52,7 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
 
+import java.time.Duration;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -61,14 +65,15 @@ public final class PauseProvisioningWorkerTest {
     @Mock
     private PauseDeviceProvisioningGrpcResponse mResponse;
     private PauseProvisioningWorker mWorker;
+    private TestDeviceLockControllerApplication mTestApp;
 
     @Before
     public void setUp() throws Exception {
-        final Context context = ApplicationProvider.getApplicationContext();
+        mTestApp = ApplicationProvider.getApplicationContext();
         final Executor executor = Executors.newSingleThreadExecutor();
         when(mClient.pauseDeviceProvisioning(anyInt())).thenReturn(mResponse);
         mWorker = TestWorkerBuilder.from(
-                        context, PauseProvisioningWorker.class, executor)
+                        mTestApp, PauseProvisioningWorker.class, executor)
                 .setWorkerFactory(
                         new WorkerFactory() {
                             @Override
@@ -88,12 +93,12 @@ public final class PauseProvisioningWorkerTest {
     public void doWork_responseIsSuccessful_provisionShouldBeForced_globalParameterIsSet() {
         when(mResponse.isSuccessful()).thenReturn(true);
         when(mResponse.shouldForceProvisioning()).thenReturn(true);
-        Result expectedResult = Result.success(
-                new Data.Builder().putBoolean(KEY_SHOULD_FORCE_PROVISION, true).build());
+        DevicePolicyController devicePolicyController = mTestApp.getPolicyController();
 
-        Result actualResult = mWorker.doWork();
+        assertThat(mWorker.doWork()).isEqualTo(Result.success());
 
-        assertThat(actualResult).isEqualTo(expectedResult);
+        verify(devicePolicyController).enqueueStartLockTaskModeWorkerWithDelay(eq(false), eq(
+                Duration.ofHours(PROVISION_PAUSED_HOUR)));
         assertThat(Futures.getUnchecked(
                 GlobalParametersClient.getInstance().isProvisionForced())).isEqualTo(true);
     }
@@ -102,14 +107,12 @@ public final class PauseProvisioningWorkerTest {
     public void doWork_responseIsSuccessful_provisionShouldNotBeForced_globalParameterIsSet() {
         when(mResponse.isSuccessful()).thenReturn(true);
         when(mResponse.shouldForceProvisioning()).thenReturn(false);
-        Result expectedResult = Result.success(
-                new Data.Builder().putBoolean(KEY_SHOULD_FORCE_PROVISION, false).build());
+        DevicePolicyController devicePolicyController = mTestApp.getPolicyController();
 
-        Result actualResult = mWorker.doWork();
+        assertThat(mWorker.doWork()).isEqualTo(Result.success());
 
-        assertThat(actualResult).isEqualTo(expectedResult);
-        assertThat(actualResult.getOutputData().getBoolean(KEY_SHOULD_FORCE_PROVISION,
-                true)).isFalse();
+        verify(devicePolicyController).enqueueStartLockTaskModeWorkerWithDelay(eq(false), eq(
+                Duration.ofHours(PROVISION_PAUSED_HOUR)));
         assertThat(Futures.getUnchecked(
                 GlobalParametersClient.getInstance().isProvisionForced())).isEqualTo(false);
     }
