@@ -18,7 +18,6 @@ package com.android.devicelockcontroller.provision.grpc;
 
 import android.util.Pair;
 
-import androidx.annotation.GuardedBy;
 import androidx.annotation.NonNull;
 
 import io.grpc.Status;
@@ -28,9 +27,7 @@ import io.grpc.Status;
  * Device finalize service.
  */
 public abstract class DeviceFinalizeClient {
-    private static final Object sInstanceLock = new Object();
-    @GuardedBy("sInstanceLock")
-    private static DeviceFinalizeClient sClient;
+    private static volatile DeviceFinalizeClient sClient;
     protected static String sEnrollmentToken = "";
     protected static String sRegisteredId = "";
     protected static String sHostName = "";
@@ -48,8 +45,13 @@ public abstract class DeviceFinalizeClient {
             Pair<String, String> apiKey,
             String registeredId,
             String enrollmentToken) {
-        synchronized (sInstanceLock) {
-            if (sClient == null) {
+        if (sClient == null) {
+            synchronized (DeviceFinalizeClient.class) {
+                // In case the initialization is already done by other thread use existing
+                // instance.
+                if (sClient != null) {
+                    return sClient;
+                }
                 sHostName = hostName;
                 sPortNumber = portNumber;
                 sRegisteredId = registeredId;
@@ -62,8 +64,8 @@ public abstract class DeviceFinalizeClient {
                     throw new RuntimeException("Failed to get DeviceFinalizeClient instance", e);
                 }
             }
-            return sClient;
         }
+        return sClient;
     }
 
     /**
