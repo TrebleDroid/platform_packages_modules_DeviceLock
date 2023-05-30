@@ -24,7 +24,9 @@ import com.android.devicelockcontroller.provision.grpc.ReportDeviceProvisionStat
 
 import io.grpc.Status;
 
-/** Wrapper for a response and status object of {@link ReportDeviceProvisionStateResponse} */
+/**
+ * Wrapper for a response and status object of {@link ReportDeviceProvisionStateResponse}
+ */
 public final class ReportDeviceProvisionStateGrpcResponseWrapper extends
         ReportDeviceProvisionStateGrpcResponse {
 
@@ -84,5 +86,17 @@ public final class ReportDeviceProvisionStateGrpcResponseWrapper extends
     @Override
     public String getEnrollmentToken() {
         return mResponse != null ? mResponse.getEnrollmentToken() : null;
+    }
+
+    /**
+     * Get the number of days left until the device should factory reset because of a failed
+     * provision. This number will be used to show a dismissible notification to the user.
+     *
+     * @return a non-negative number of days
+     */
+    @Override
+    public int getDaysLeftUntilReset() {
+        if (mResponse == null) throw new IllegalStateException("Response is not available!");
+        return mResponse.getDaysLeftUntilReset();
     }
 }
