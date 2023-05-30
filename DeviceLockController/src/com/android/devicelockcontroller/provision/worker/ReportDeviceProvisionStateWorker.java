@@ -57,13 +57,12 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
 
     public static final String KEY_DEVICE_PROVISION_FAILURE_REASON =
             "device-provision-failure-reason";
-    public static final String KEY_LAST_RECEIVED_STATE = "last-received-state";
     public static final String KEY_IS_PROVISION_SUCCESSFUL = "is-provision-successful";
     @VisibleForTesting
     static final String UNEXPECTED_PROVISION_STATE_ERROR_MESSAGE = "Unexpected provision state!";
 
     public static final String REPORT_PROVISION_STATE_WORK_NAME = "report-provision-state";
-    private static final int NOTIFICATION_REPORT_INTERVAL_DAYS = 1;
+    private static final int NOTIFICATION_REPORT_INTERVAL_DAY = 1;
 
     /**
      * Get a {@link SetupController.SetupUpdatesCallbacks} which will enqueue this worker to report
@@ -100,7 +99,7 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
         // have been reported in previous report.
         enqueueReportWork(/* ignored */ false, /* ignored */ SetupFailureReason.SETUP_FAILED,
                 workManager,
-                Duration.ofDays(NOTIFICATION_REPORT_INTERVAL_DAYS));
+                Duration.ofDays(NOTIFICATION_REPORT_INTERVAL_DAY));
     }
 
     private static void enqueueReportWork(boolean isSuccessful, int reason,
@@ -167,16 +166,16 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
                         devicePolicyController, mContext, /* isMandatory= */ false);
                 break;
             case PROVISION_STATE_DISMISSIBLE_UI:
-                // TODO(b/284003841): Update the remaining day.
-                DeviceLockNotificationManager.sendDeviceResetNotification(mContext, /* days= */ 4);
+                DeviceLockNotificationManager.sendDeviceResetNotification(mContext,
+                        response.getDaysLeftUntilReset());
                 reportStateInOneDay(WorkManager.getInstance(mContext));
                 break;
             case PROVISION_STATE_PERSISTENT_UI:
-                // TODO(b/284003841): Update the remaining day.
-                DeviceLockNotificationManager.sendDeviceResetNotification(mContext, /* days= */ 1);
+                DeviceLockNotificationManager.sendDeviceResetInOneDayOngoingNotification(mContext);
                 reportStateInOneDay(WorkManager.getInstance(mContext));
                 break;
             case PROVISION_STATE_FACTORY_RESET:
+                // TODO(b/284003841): Show a count down timer.
                 devicePolicyController.wipeData();
                 break;
             case PROVISION_STATE_SUCCESS:

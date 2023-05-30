@@ -31,20 +31,20 @@ option java_multiple_files = true;
 service DeviceLockCheckinService {
   // Fetches the check-in status of the device.
   rpc GetDeviceCheckinStatus(GetDeviceCheckinStatusRequest)
-      returns (GetDeviceCheckinStatusResponse) { }
+      returns (GetDeviceCheckinStatusResponse) {}
 
   // Determines if a device is in an approved country.
   rpc IsDeviceInApprovedCountry(IsDeviceInApprovedCountryRequest)
-      returns (IsDeviceInApprovedCountryResponse) { }
+      returns (IsDeviceInApprovedCountryResponse) {}
 
   // Pauses the provisioning of the device.
   rpc PauseDeviceProvisioning(PauseDeviceProvisioningRequest)
-      returns (PauseDeviceProvisioningResponse) { }
+      returns (PauseDeviceProvisioningResponse) {}
 
   // Reports the device provision state of a device that is undergoing device
   // provisioning.
   rpc ReportDeviceProvisionState(ReportDeviceProvisionStateRequest)
-      returns (ReportDeviceProvisionStateResponse) { }
+      returns (ReportDeviceProvisionStateResponse) {}
 }
 
 // Request to retrieve the check-in status of the device.
@@ -263,4 +263,8 @@ message ReportDeviceProvisionStateResponse {
   // communication with the Device Lock server post-provisioning. This is only
   // provided if device provisioning was a success.
   optional string enrollment_token = 2;
+  // The number of days left until the device should factory reset because of a failed provision.
+  // This number should only be used when next_client_provision_state is
+  // CLIENT_PROVISION_STATE_DISMISSIBLE_UI
+  optional uint32 days_left_until_reset = 3;
 }
