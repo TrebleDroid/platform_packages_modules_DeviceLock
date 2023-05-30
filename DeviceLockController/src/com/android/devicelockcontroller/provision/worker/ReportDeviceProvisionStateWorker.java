@@ -23,7 +23,12 @@ import static com.android.devicelockcontroller.common.DeviceLockConstants.Device
 import static com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState.PROVISION_STATE_SUCCESS;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState.PROVISION_STATE_UNSPECIFIED;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.os.SystemClock;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
@@ -49,6 +54,7 @@ import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.google.common.util.concurrent.Futures;
 
 import java.time.Duration;
+import java.util.Objects;
 
 /**
  * A worker class dedicated to report state of provision for the device lock program.
@@ -63,6 +69,7 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
 
     public static final String REPORT_PROVISION_STATE_WORK_NAME = "report-provision-state";
     private static final int NOTIFICATION_REPORT_INTERVAL_DAY = 1;
+    public static final int RESET_COUNT_DOWN_MINUTES = 30;
 
     /**
      * Get a {@link SetupController.SetupUpdatesCallbacks} which will enqueue this worker to report
@@ -175,8 +182,19 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
                 reportStateInOneDay(WorkManager.getInstance(mContext));
                 break;
             case PROVISION_STATE_FACTORY_RESET:
-                // TODO(b/284003841): Show a count down timer.
-                devicePolicyController.wipeData();
+                long countDownBase = SystemClock.elapsedRealtime()
+                        + Duration.ofMinutes(RESET_COUNT_DOWN_MINUTES).toMillis();
+                DeviceLockNotificationManager.sendDeviceResetTimerNotification(mContext,
+                        countDownBase);
+                PendingIntent resetDeviceBroadcast = PendingIntent.getBroadcast(
+                        mContext, /* ignored */ 0,
+                        new Intent(mContext, ResetDeviceReceiver.class),
+                        PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
+                AlarmManager alarmManager = mContext.getSystemService(AlarmManager.class);
+                Objects.requireNonNull(alarmManager).setExactAndAllowWhileIdle(
+                        AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                        countDownBase,
+                        resetDeviceBroadcast);
                 break;
             case PROVISION_STATE_SUCCESS:
             case PROVISION_STATE_UNSPECIFIED:
@@ -186,5 +204,20 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
                 throw new IllegalStateException(UNEXPECTED_PROVISION_STATE_ERROR_MESSAGE);
         }
         return Result.success();
+    }
+
+    /**
+     * A receiver that will reset the device when it receive a broadcast.
+     */
+    private static final class ResetDeviceReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (!ResetDeviceReceiver.class.getName().equals(intent.getComponent().getClassName())) {
+                throw new IllegalArgumentException("Can not handle implicit intent!");
+            }
+            ((PolicyObjectsInterface) context.getApplicationContext())
+                    .getPolicyController().wipeData();
+        }
     }
 }

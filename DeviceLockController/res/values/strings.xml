@@ -232,6 +232,8 @@
             other {Device will reset in # days}
         }
     </string>
+    <!-- Title of the notification that device will be reset with a count down timer. [CHAR LIMIT=40] -->
+    <string name="device_reset_timer_notification_title">Device will reset in <xliff:g id="timer">%s</xliff:g></string>
     <!-- Content text of the notification that device will be reset. [CHAR LIMIT=NONE] -->
     <string name="device_reset_notification_content">All device data will be deleted. For help enrolling your device, contact <xliff:g id="provider name">%1$s</xliff:g></string>
     <!-- TODO(b/279608060): Review this message with akintola@ -->
