@@ -151,7 +151,7 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
                 if (mState == DeviceState.UNPROVISIONED || mState == DeviceState.PSEUDO_UNLOCKED) {
                     return DeviceState.PSEUDO_LOCKED;
                 }
-                if (mState == DeviceState.UNLOCKED) {
+                if (mState == DeviceState.UNLOCKED || mState == DeviceState.LOCKED) {
                     return DeviceState.LOCKED;
                 }
                 break;
@@ -159,7 +159,8 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
                 if (mState == DeviceState.PSEUDO_LOCKED) {
                     return DeviceState.PSEUDO_UNLOCKED;
                 }
-                if (mState == DeviceState.LOCKED || mState == DeviceState.KIOSK_SETUP) {
+                if (mState == DeviceState.LOCKED || mState == DeviceState.UNLOCKED
+                        || mState == DeviceState.KIOSK_SETUP) {
                     return DeviceState.UNLOCKED;
                 }
                 break;
