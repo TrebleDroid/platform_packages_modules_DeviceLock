@@ -67,7 +67,8 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
             (DevicePolicyManager.LOCK_TASK_FEATURE_SYSTEM_INFO
              | DevicePolicyManager.LOCK_TASK_FEATURE_KEYGUARD
              | DevicePolicyManager.LOCK_TASK_FEATURE_HOME
-             | DevicePolicyManager.LOCK_TASK_FEATURE_GLOBAL_ACTIONS);
+             | DevicePolicyManager.LOCK_TASK_FEATURE_GLOBAL_ACTIONS
+             | DevicePolicyManager.LOCK_TASK_FEATURE_BLOCK_ACTIVITY_START_IN_TASK);
     private static final String TAG = "LockTaskModePolicyHandler";
     private final Context mContext;
     private final DevicePolicyManager mDpm;
