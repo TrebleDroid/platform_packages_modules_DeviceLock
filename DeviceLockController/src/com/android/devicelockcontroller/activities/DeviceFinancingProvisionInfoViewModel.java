@@ -28,7 +28,7 @@ public class DeviceFinancingProvisionInfoViewModel extends ProvisionInfoViewMode
 
     private static final int HEADER_DRAWABLE_ID = R.drawable.ic_info_24px;
 
-    private static final int HEADER_TEXT_ID = R.string.device_provided_by_creditor;
+    private static final int HEADER_TEXT_ID = R.string.device_provided_by_provider;
 
     private static final Integer[] DRAWABLE_IDS = new Integer[]{
             R.drawable.ic_file_download_24px, R.drawable.ic_lock_outline_24px,
