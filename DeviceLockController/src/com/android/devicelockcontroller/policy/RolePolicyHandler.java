@@ -143,23 +143,4 @@ public final class RolePolicyHandler implements PolicyHandler {
                         new IllegalStateException(String.valueOf(state)));
         }
     }
-
-    @Override
-    public ListenableFuture<Boolean> isCompliant(@DeviceState int state) {
-        switch (state) {
-            case UNLOCKED:
-            case LOCKED:
-            case KIOSK_SETUP:
-            case CLEARED:
-            case UNPROVISIONED:
-            case SETUP_IN_PROGRESS:
-            case SETUP_SUCCEEDED:
-            case SETUP_FAILED:
-                // TODO: We don't have a way to read the role at this moment.
-                return Futures.immediateFuture(true);
-            default:
-                return Futures.immediateFailedFuture(
-                        new IllegalStateException(String.valueOf(state)));
-        }
-    }
 }
