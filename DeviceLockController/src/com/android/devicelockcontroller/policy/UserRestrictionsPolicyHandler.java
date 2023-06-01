@@ -53,15 +53,6 @@ final class UserRestrictionsPolicyHandler implements PolicyHandler {
 
     private static final String TAG = "UserRestrictionsPolicyHandler";
 
-    private static final String[] RESTRICTIONS_ALL_BUILDS = {
-            UserManager.DISALLOW_SAFE_BOOT,
-            UserManager.DISALLOW_CONFIG_DATE_TIME
-    };
-
-    private static final String[] RESTRICTIONS_RELEASE_BUILDS = {
-            UserManager.DISALLOW_DEBUGGING_FEATURES
-    };
-
     private final ArraySet<String> mAlwaysOnRestrictions = new ArraySet<>();
 
     /**
@@ -84,9 +75,9 @@ final class UserRestrictionsPolicyHandler implements PolicyHandler {
 
         LogUtil.i(TAG, String.format(Locale.US, "Build type DEBUG = %s", isDebug));
 
-        Collections.addAll(mAlwaysOnRestrictions, RESTRICTIONS_ALL_BUILDS);
+        Collections.addAll(mAlwaysOnRestrictions, UserManager.DISALLOW_SAFE_BOOT);
         if (!isDebug) {
-            Collections.addAll(mAlwaysOnRestrictions, RESTRICTIONS_RELEASE_BUILDS);
+            Collections.addAll(mAlwaysOnRestrictions, UserManager.DISALLOW_DEBUGGING_FEATURES);
         }
     }
 
@@ -131,51 +122,6 @@ final class UserRestrictionsPolicyHandler implements PolicyHandler {
         }
 
 
-    }
-
-    @Override
-    public ListenableFuture<Boolean> isCompliant(@DeviceState int state) {
-        Handler mainHandler = new Handler(Looper.getMainLooper());
-        switch (state) {
-            case SETUP_IN_PROGRESS:
-            case SETUP_SUCCEEDED:
-            case UNLOCKED:
-            case KIOSK_SETUP:
-                if (checkRestrictions(mAlwaysOnRestrictions, true)) {
-                    return Futures.whenAllSucceed(
-                                    checkRestrictions(retrieveOptionalAlwaysOnRestrictions(), true),
-                                    checkRestrictions(retrieveLockModeRestrictions(), false))
-                            .call(
-                                    () -> true, mainHandler::post);
-                }
-                break;
-            case LOCKED:
-                if (checkRestrictions(mAlwaysOnRestrictions, true)) {
-                    return Futures.whenAllSucceed(
-                                    checkRestrictions(retrieveOptionalAlwaysOnRestrictions(), true),
-                                    checkRestrictions(retrieveLockModeRestrictions(), true))
-                            .call(
-                                    () -> true, mainHandler::post);
-                }
-                break;
-            case UNPROVISIONED:
-            case SETUP_FAILED:
-            case CLEARED:
-                if (checkRestrictions(mAlwaysOnRestrictions, false)) {
-                    return Futures.whenAllSucceed(
-                                    checkRestrictions(retrieveOptionalAlwaysOnRestrictions(),
-                                            false),
-                                    checkRestrictions(retrieveLockModeRestrictions(), false))
-                            .call(
-                                    () -> true, mainHandler::post);
-                }
-                break;
-            default:
-                LogUtil.i(TAG, String.format(Locale.US, "Unhandled state %d", state));
-                return Futures.immediateFailedFuture(
-                        new IllegalStateException(String.valueOf(state)));
-        }
-        return Futures.immediateFuture(false);
     }
 
     @MainThread
