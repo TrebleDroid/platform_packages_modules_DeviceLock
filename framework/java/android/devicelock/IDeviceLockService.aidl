@@ -64,7 +64,15 @@ oneway interface IDeviceLockService {
     // Value is a boolean for success (true) or failure (false).
     const String KEY_REMOTE_CALLBACK_RESULT = "KEY_REMOTE_CALLBACK_RESULT";
 
+    /**
+     * Add the android.app.role.FINANCED_DEVICE_KIOSK role to the kiosk app.
+     */
     void addFinancedDeviceKioskRole(in String packageName, in RemoteCallback remoteCallback);
+
+    /**
+     * Remove the android.app.role.FINANCED_DEVICE_KIOSK role from the kiosk app.
+     */
+    void removeFinancedDeviceKioskRole(in String packageName, in RemoteCallback remoteCallback);
 
     /**
      * Set the Device Lock Controller exempt from starting an activity from the background

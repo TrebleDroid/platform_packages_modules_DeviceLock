@@ -95,7 +95,7 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
 
             final PendingResult pendingResult = goAsync();
 
-            mDeviceLockControllerConnector.clearDevice(new OutcomeReceiver<>() {
+            mDeviceLockControllerConnector.clearDeviceRestrictions(new OutcomeReceiver<>() {
 
                 private void setResult(int resultCode) {
                     pendingResult.setResultCode(resultCode);
@@ -423,6 +423,15 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
         return true;
     }
 
+    private void reportResult(boolean accepted, long identity,
+            @NonNull RemoteCallback remoteCallback) {
+        Binder.restoreCallingIdentity(identity);
+
+        final Bundle result = new Bundle();
+        result.putBoolean(KEY_REMOTE_CALLBACK_RESULT, accepted);
+        remoteCallback.sendResult(result);
+    }
+
     @Override
     public void addFinancedDeviceKioskRole(@NonNull String packageName,
             @NonNull RemoteCallback remoteCallback) {
@@ -436,13 +445,25 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
 
         roleManager.addRoleHolderAsUser(RoleManager.ROLE_FINANCED_DEVICE_KIOSK, packageName,
                 MANAGE_HOLDERS_FLAG_DONT_KILL_APP, userHandle, mContext.getMainExecutor(),
-                accepted -> {
-                    Binder.restoreCallingIdentity(identity);
+                accepted -> reportResult(accepted, identity, remoteCallback));
 
-                    final Bundle result = new Bundle();
-                    result.putBoolean(KEY_REMOTE_CALLBACK_RESULT, accepted);
-                    remoteCallback.sendResult(result);
-                });
+        Binder.restoreCallingIdentity(identity);
+    }
+
+    @Override
+    public void removeFinancedDeviceKioskRole(@NonNull String packageName,
+            @NonNull RemoteCallback remoteCallback) {
+        if (!checkDeviceLockControllerPermission(remoteCallback)) {
+            return;
+        }
+
+        final UserHandle userHandle = Binder.getCallingUserHandle();
+        final RoleManager roleManager = mContext.getSystemService(RoleManager.class);
+        final long identity = Binder.clearCallingIdentity();
+
+        roleManager.removeRoleHolderAsUser(RoleManager.ROLE_FINANCED_DEVICE_KIOSK, packageName,
+                MANAGE_HOLDERS_FLAG_DONT_KILL_APP, userHandle, mContext.getMainExecutor(),
+                accepted -> reportResult(accepted, identity, remoteCallback));
 
         Binder.restoreCallingIdentity(identity);
     }
