@@ -24,14 +24,10 @@ import static com.android.devicelockcontroller.proto.ClientProvisionFailureReaso
 import static com.android.devicelockcontroller.proto.ClientProvisionFailureReason.CLIENT_PROVISION_FAILURE_REASON_SETUP_FAILED;
 import static com.android.devicelockcontroller.proto.ClientProvisionFailureReason.CLIENT_PROVISION_FAILURE_REASON_VERIFICATION_FAILED;
 
-import android.content.res.Resources;
 import android.util.ArraySet;
-import android.util.Pair;
 
 import androidx.annotation.Keep;
 
-import com.android.devicelockcontroller.DeviceLockControllerApplication;
-import com.android.devicelockcontroller.R;
 import com.android.devicelockcontroller.common.DeviceId;
 import com.android.devicelockcontroller.common.DeviceLockConstants;
 import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceIdType;
@@ -67,16 +63,12 @@ import io.grpc.okhttp.OkHttpChannelBuilder;
 public final class DeviceCheckInClientImpl extends DeviceCheckInClient {
     private final DeviceLockCheckinServiceBlockingStub mBlockingStub;
 
-    public DeviceCheckInClientImpl(String hostName, int portNumber, @Nullable String registeredId) {
-        super(registeredId);
-        Resources resources = DeviceLockControllerApplication.getAppContext().getResources();
+    public DeviceCheckInClientImpl() {
         mBlockingStub = DeviceLockCheckinServiceGrpc.newBlockingStub(
                         OkHttpChannelBuilder
-                                .forAddress(hostName, portNumber)
+                                .forAddress(sHostName, sPortNumber)
                                 .build())
-                .withInterceptors(new ApiKeyClientInterceptor(
-                        new Pair<>(resources.getString(R.string.check_in_service_api_key_name),
-                                resources.getString(R.string.check_in_service_api_key_value))));
+                .withInterceptors(new ApiKeyClientInterceptor(sApiKey));
     }
 
     @Override
@@ -108,7 +100,7 @@ public final class DeviceCheckInClientImpl extends DeviceCheckInClient {
         try {
             return new IsDeviceInApprovedCountryGrpcResponseWrapper(
                     mBlockingStub.isDeviceInApprovedCountry(
-                            createIsDeviceInApprovedCountryRequest(carrierInfo, mRegisteredId)));
+                            createIsDeviceInApprovedCountryRequest(carrierInfo, sRegisteredId)));
         } catch (StatusRuntimeException e) {
             return new IsDeviceInApprovedCountryGrpcResponseWrapper(e.getStatus());
         }
@@ -119,7 +111,7 @@ public final class DeviceCheckInClientImpl extends DeviceCheckInClient {
         try {
             return new PauseDeviceProvisioningGrpcResponseWrapper(
                     mBlockingStub.pauseDeviceProvisioning(
-                            createPauseDeviceProvisioningRequest(mRegisteredId, reason)));
+                            createPauseDeviceProvisioningRequest(sRegisteredId, reason)));
 
         } catch (StatusRuntimeException e) {
             return new PauseDeviceProvisioningGrpcResponseWrapper(e.getStatus());
@@ -148,7 +140,7 @@ public final class DeviceCheckInClientImpl extends DeviceCheckInClient {
             return new ReportDeviceProvisionStateGrpcResponseWrapper(
                     mBlockingStub.reportDeviceProvisionState(
                             createReportDeviceProvisionStateRequest(reasonOfFailure,
-                                    lastReceivedProvisionState, isSuccessful, mRegisteredId)));
+                                    lastReceivedProvisionState, isSuccessful, sRegisteredId)));
         } catch (StatusRuntimeException e) {
             return new ReportDeviceProvisionStateGrpcResponseWrapper(e.getStatus());
         }
