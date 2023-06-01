@@ -93,7 +93,7 @@ public final class DeviceLockControllerService extends Service {
                 }
 
                 @Override
-                public void clearDevice(RemoteCallback remoteCallback) {
+                public void clearDeviceRestrictions(RemoteCallback remoteCallback) {
                     Futures.addCallback(
                             Futures.transform(mStateController.setNextStateForEvent(CLEAR),
                                     (Void unused) -> {
