@@ -109,12 +109,6 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
         }
     }
 
-    @Override
-    public ListenableFuture<Boolean> isCompliant(@DeviceState int state) {
-        // TODO (b/147291511): On boot, the policies need to be verified.
-        return Futures.immediateFuture(true);
-    }
-
     /**
      * Sets the activity as the preferred activity for home intent. Activity is cleared when the
      * device leaves lock task mode.
