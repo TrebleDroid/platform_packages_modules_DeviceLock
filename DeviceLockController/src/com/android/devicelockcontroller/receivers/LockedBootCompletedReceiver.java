@@ -25,6 +25,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.UserManager;
 
 import androidx.annotation.VisibleForTesting;
 
@@ -72,6 +73,13 @@ public final class LockedBootCompletedReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         LogUtil.d(TAG, "Locked Boot completed");
         if (!intent.getAction().equals(Intent.ACTION_LOCKED_BOOT_COMPLETED)) {
+            return;
+        }
+
+        final boolean isUserProfile =
+                context.getSystemService(UserManager.class).isProfile();
+
+        if (isUserProfile) {
             return;
         }
 
