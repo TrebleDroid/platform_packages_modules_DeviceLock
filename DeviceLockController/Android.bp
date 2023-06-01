@@ -53,7 +53,10 @@ java_library {
 
 java_library {
     name: "devicelockcontroller-common-lib",
-    srcs: ["src/com/android/devicelockcontroller/common/*.java"],
+    srcs: [
+        "src/com/android/devicelockcontroller/common/*.java",
+        "src/com/android/devicelockcontroller/util/*.java",
+    ],
     sdk_version: "module_current",
     min_sdk_version: "UpsideDownCake",
     apex_available: ["com.android.devicelock"],
