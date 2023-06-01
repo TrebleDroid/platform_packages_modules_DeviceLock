@@ -23,6 +23,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Process;
+import android.os.UserManager;
 import android.text.TextUtils;
 
 import androidx.annotation.StringDef;
@@ -71,6 +72,13 @@ public final class DeviceLockCommandReceiver extends BroadcastReceiver {
 
         if (!TextUtils.equals(intent.getComponent().getClassName(), getClass().getName())) {
             throw new IllegalArgumentException("Intent does not match this class!");
+        }
+
+        final boolean isUserProfile =
+                context.getSystemService(UserManager.class).isProfile();
+        if (isUserProfile) {
+            LogUtil.w(TAG, "Broadcast should not target user profiles");
+            return;
         }
 
         @Commands

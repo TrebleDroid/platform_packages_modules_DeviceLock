@@ -20,6 +20,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.UserManager;
 import android.text.TextUtils;
 
 import com.android.devicelockcontroller.storage.SetupParametersClient;
@@ -47,6 +48,14 @@ public final class SetupParametersOverrider extends BroadcastReceiver {
             LogUtil.w(TAG, "Implicit intent should not be used!");
             return;
         }
+
+        final boolean isUserProfile =
+                context.getSystemService(UserManager.class).isProfile();
+        if (isUserProfile) {
+            LogUtil.w(TAG, "Broadcast should not target user profiles");
+            return;
+        }
+
         Futures.addCallback(
                 SetupParametersClient.getInstance().overridePrefs(intent.getExtras()),
                 new FutureCallback<>() {
