@@ -19,6 +19,7 @@ package com.android.devicelockcontroller.receivers;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.UserManager;
 
 /**
  * Boot completed broadcast receiver to start lock task mode if applicable. This broadcast receiver
@@ -33,6 +34,13 @@ public final class LockTaskBootCompletedReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (!intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) return;
+
+        final boolean isUserProfile =
+                context.getSystemService(UserManager.class).isProfile();
+
+        if (isUserProfile) {
+            return;
+        }
 
         BootUtils.startLockTaskModeAtBoot(context);
     }

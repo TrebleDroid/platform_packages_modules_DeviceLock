@@ -19,6 +19,7 @@ package com.android.devicelockcontroller.receivers;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.UserManager;
 
 import androidx.annotation.VisibleForTesting;
 
@@ -68,6 +69,13 @@ public final class CheckInBootCompletedReceiver extends BroadcastReceiver {
         if (!intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) return;
 
         LogUtil.i(TAG, "Received boot completed intent");
+
+        final boolean isUserProfile =
+                context.getSystemService(UserManager.class).isProfile();
+
+        if (isUserProfile) {
+            return;
+        }
 
         checkInIfNeeded(
                 ((PolicyObjectsInterface) context.getApplicationContext()).getStateController(),
