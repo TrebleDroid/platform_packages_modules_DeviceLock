@@ -47,7 +47,4 @@ public interface PolicyHandler {
      */
     @ResultType
     ListenableFuture<@ResultType Integer> setPolicyForState(@DeviceState int state);
-
-    /** Verifies policy compliance for the state. */
-    ListenableFuture<Boolean> isCompliant(@DeviceState int state);
 }

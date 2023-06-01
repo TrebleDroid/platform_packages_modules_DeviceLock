@@ -75,57 +75,6 @@ final class PackagePolicyHandler implements PolicyHandler {
         }
     }
 
-    @Override
-    public ListenableFuture<Boolean> isCompliant(@DeviceState int state) {
-        switch (state) {
-            case UNLOCKED:
-            case LOCKED:
-            case KIOSK_SETUP:
-                return isKioskPackageProtected();
-            case CLEARED:
-                return Futures.transform(isKioskPackageProtected(), result -> !result,
-                        MoreExecutors.directExecutor());
-            case UNPROVISIONED:
-            case SETUP_IN_PROGRESS:
-            case SETUP_SUCCEEDED:
-            case SETUP_FAILED:
-                return Futures.immediateFuture(true);
-            default:
-                return Futures.immediateFailedFuture(
-                        new IllegalStateException(String.valueOf(state)));
-        }
-    }
-
-    private ListenableFuture<Boolean> isKioskPackageProtected() {
-        return Futures.transform(SetupParametersClient.getInstance().getKioskPackage(),
-                packageName -> {
-                    if (packageName == null) {
-                        LogUtil.e(TAG, "Kiosk package is not set");
-                        return false;
-                    }
-
-                    try {
-                        if (!mDpm.isUninstallBlocked(null /* admin */, packageName)) {
-                            return false;
-                        }
-                    } catch (SecurityException e) {
-                        LogUtil.e(TAG, "Could not read device policy", e);
-                        return false;
-                    }
-
-                    final List<String> packages;
-                    try {
-                        packages = mDpm.getUserControlDisabledPackages(null /* admin */);
-                    } catch (SecurityException e) {
-                        LogUtil.e(TAG, "Could not read device policy");
-                        return false;
-                    }
-
-                    return packages != null && packages.contains(packageName);
-                }, MoreExecutors.directExecutor());
-
-    }
-
     private ListenableFuture<@ResultType Integer> enablePackageProtection(boolean enableForKiosk,
             @DeviceState int state) {
         return Futures.transform(SetupParametersClient.getInstance().getKioskPackage(),
