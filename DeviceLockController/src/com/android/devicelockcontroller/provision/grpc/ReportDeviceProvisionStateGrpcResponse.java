@@ -61,8 +61,5 @@ public abstract class ReportDeviceProvisionStateGrpcResponse extends DeviceCheck
      *
      * @return a non-negative number of days
      */
-    public int getDaysLeftUntilReset() {
-        //TODO: Make this method abstract after override by all subclasses.
-        throw new RuntimeException("Not implemented. Must override in a subclass.");
-    }
+    public abstract int getDaysLeftUntilReset();
 }

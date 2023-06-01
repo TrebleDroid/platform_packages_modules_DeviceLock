@@ -16,11 +16,8 @@
 
 package com.android.devicelockcontroller.provision.grpc.impl;
 
-import android.content.res.Resources;
-
 import androidx.annotation.Keep;
 
-import com.android.devicelockcontroller.DeviceLockControllerApplication;
 import com.android.devicelockcontroller.proto.DeviceLockFinalizeServiceGrpc;
 import com.android.devicelockcontroller.proto.ReportDeviceProgramCompleteRequest;
 import com.android.devicelockcontroller.provision.grpc.DeviceFinalizeClient;
@@ -36,7 +33,6 @@ public final class DeviceFinalizeClientImpl extends DeviceFinalizeClient {
     private final DeviceLockFinalizeServiceGrpc.DeviceLockFinalizeServiceBlockingStub mBlockingStub;
 
     public DeviceFinalizeClientImpl() {
-        Resources resources = DeviceLockControllerApplication.getAppContext().getResources();
         mBlockingStub = DeviceLockFinalizeServiceGrpc.newBlockingStub(
                         OkHttpChannelBuilder
                                 .forAddress(sHostName, sPortNumber)
