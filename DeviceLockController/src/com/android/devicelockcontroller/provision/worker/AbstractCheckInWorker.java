@@ -17,6 +17,8 @@
 package com.android.devicelockcontroller.provision.worker;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.util.Pair;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
@@ -43,15 +45,16 @@ public abstract class AbstractCheckInWorker extends Worker {
     AbstractCheckInWorker(@NonNull Context context,
             @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
-        final String hostName = context.getResources().getString(
-                R.string.check_in_server_host_name);
-        final int portNumber = context.getResources().getInteger(
-                R.integer.check_in_server_port_number);
-        final String className = context.getResources().getString(
-                R.string.device_check_in_client_class_name);
+        Resources resources = context.getResources();
+        String hostName = resources.getString(R.string.check_in_server_host_name);
+        int portNumber = resources.getInteger(R.integer.check_in_server_port_number);
+        String className = resources.getString(R.string.device_check_in_client_class_name);
+        Pair<String, String> apikey = new Pair<>(
+                resources.getString(R.string.check_in_service_api_key_name),
+                resources.getString(R.string.check_in_service_api_key_value));
         mClient = Futures.transform(GlobalParametersClient.getInstance().getRegisteredDeviceId(),
                 registeredId -> DeviceCheckInClient.getInstance(
-                        className, hostName, portNumber, registeredId),
+                        className, hostName, portNumber, apikey, registeredId),
                 MoreExecutors.directExecutor());
         mContext = context;
     }
