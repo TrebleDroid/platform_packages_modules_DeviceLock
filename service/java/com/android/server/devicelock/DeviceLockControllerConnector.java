@@ -363,7 +363,7 @@ final class DeviceLockControllerConnector {
         }, callback);
     }
 
-    public void clearDevice(OutcomeReceiver<Void, Exception> callback) {
+    public void clearDeviceRestrictions(OutcomeReceiver<Void, Exception> callback) {
         RemoteCallback remoteCallback = new RemoteCallback(checkTimeout(callback, result -> {
             final boolean success =
                     result.getBoolean(IDeviceLockControllerService.KEY_CLEAR_DEVICE_RESULT);
@@ -378,7 +378,7 @@ final class DeviceLockControllerConnector {
             @Override
             @SuppressWarnings("GuardedBy") // mLock already held in callControllerApi (error prone).
             public Void call() throws Exception {
-                mDeviceLockControllerService.clearDevice(remoteCallback);
+                mDeviceLockControllerService.clearDeviceRestrictions(remoteCallback);
                 return null;
             }
         }, callback);

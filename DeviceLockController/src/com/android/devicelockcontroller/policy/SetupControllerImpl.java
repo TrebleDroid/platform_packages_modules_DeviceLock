@@ -134,7 +134,8 @@ public final class SetupControllerImpl implements SetupController {
         return Futures.transformAsync(isKioskAppPreInstalled(),
                 isPreinstalled -> {
                     if (isPreinstalled) {
-                        return assignRoleToPreinstalledPackage(workManager, owner);
+                        setupFlowTaskSuccessCallbackHandler();
+                        return Futures.immediateVoidFuture();
                     } else if (mContext.getUser().isSystem()) {
                         final Class<? extends ListenableWorker> playInstallTaskClass =
                                 ((DeviceLockControllerApplication) mContext.getApplicationContext())
@@ -186,10 +187,8 @@ public final class SetupControllerImpl implements SetupController {
 
                     final OneTimeWorkRequest playInstallPackageTask =
                             getPlayInstallPackageTask(playInstallTaskClass, kioskPackageName);
-                    final OneTimeWorkRequest addFinancedDeviceKioskRoleTask =
-                            getAddFinancedDeviceKioskRoleTask(kioskPackageName);
                     createAndRunTasks(workManager, owner, SETUP_PLAY_INSTALL_TASKS_NAME,
-                            playInstallPackageTask, addFinancedDeviceKioskRoleTask);
+                            playInstallPackageTask);
                     return null;
                 }, mContext.getMainExecutor());
     }
@@ -204,27 +203,7 @@ public final class SetupControllerImpl implements SetupController {
                     final String kioskPackageName = Futures.getDone(kioskPackageTask);
 
                     createAndRunTasks(workManager, owner, SETUP_INSTALL_EXISTING_PACKAGE_TASK,
-                            getInstallExistingPackageTask(Futures.getDone(kioskPackageTask)),
-                            getAddFinancedDeviceKioskRoleTask(kioskPackageName));
-                    return null;
-                }, mContext.getMainExecutor());
-    }
-
-    @VisibleForTesting
-    ListenableFuture<Void> assignRoleToPreinstalledPackage(WorkManager workManager,
-            LifecycleOwner owner) {
-
-        final SetupParametersClient setupParametersClient = SetupParametersClient.getInstance();
-        final ListenableFuture<String> getKioskPackageTask =
-                setupParametersClient.getKioskPackage();
-        return Futures.transform(getKioskPackageTask,
-                kioskPackage -> {
-                    LogUtil.v(TAG, "assigning role to pre-installed package");
-                    OneTimeWorkRequest addFinancedDeviceKioskRoleTask =
-                            getAddFinancedDeviceKioskRoleTask(kioskPackage);
-                    createAndRunTasks(workManager, owner,
-                            SETUP_PRE_INSTALLED_PACKAGE_TASK,
-                            addFinancedDeviceKioskRoleTask);
+                            getInstallExistingPackageTask(Futures.getDone(kioskPackageTask)));
                     return null;
                 }, mContext.getMainExecutor());
     }
@@ -244,13 +223,6 @@ public final class SetupControllerImpl implements SetupController {
                 playInstallTaskClass).setInputData(
                 new Data.Builder().putString(
                         EXTRA_KIOSK_PACKAGE, kioskPackageName).build()).build();
-    }
-
-    @NonNull
-    private static OneTimeWorkRequest getAddFinancedDeviceKioskRoleTask(String kioskPackageName) {
-        return new OneTimeWorkRequest.Builder(AddFinancedDeviceKioskRoleTask.class)
-                .setInputData(new Data.Builder().putString(EXTRA_KIOSK_PACKAGE,
-                        kioskPackageName).build()).build();
     }
 
     @MainThread
