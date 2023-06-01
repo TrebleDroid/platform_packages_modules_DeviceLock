@@ -78,8 +78,8 @@
     <string name="footer_notice">The other management capabilities in <b>Settings > Security > Managed device info</b> don\'t apply to this device</string>
     <!-- Accessibility text for the footer notice. [CHAR_LIMIT=NONE] -->
     <string name="footer_notice_content_description">The management capabilities in the financed device section of Security settings don\'t apply to this device.</string>
-    <!-- Text explaining that this device is provided by the creditor. [CHAT_LIMIT=80] -->
-    <string name="device_provided_by_creditor">This device is provided by <xliff:g id="provider name">%1$s</xliff:g></string>
+    <!-- Text explaining that this device is provided by the device provider. [CHAR_LIMIT=80] -->
+    <string name="device_provided_by_provider">This device is provided by <xliff:g id="provider name">%1$s</xliff:g></string>
     <!-- Text explaining the kiosk app will be downloaded and installed. [CHAR_LIMIT=NONE] -->
     <string name="download_kiosk_app">The Kiosk app will be downloaded and installed automatically</string>
     <!-- Text explaining that the kiosk app will be installed for this newly created secondary user. [CHAR_LIMIT=NONE] -->
@@ -145,12 +145,14 @@
 
     <!-- Title of banner in Settings. This tells the user this device is provided by the carrier / reseller. [CHAR_LIMIT=80] -->
     <string name="settings_banner_title">Device provided by <xliff:g id="provider name">%1$s</xliff:g></string>
-    <!-- Body text of the banner in Settings. This tells the user the device provider can change settings. [CHAT_LIMIT=60]-->
+    <!-- Body text of the banner in Settings. This tells the user the device provider can change settings. [CHAR_LIMIT=60]-->
     <string name="settings_banner_body"><xliff:g id="provider name">%1$s</xliff:g> can change settings on this device</string>
-    <!-- Button text of the banner in Settings. This tells the user they can tap the button get more information. [CHAT_LIMIT=20]-->
+    <!-- Button text of the banner in Settings. This tells the user they can tap the button get more information. [CHAR_LIMIT=20]-->
     <string name="settings_banner_button">Learn more</string>
+    <!-- Title of the settings screen. This screen summarize what would happen on the device under a finance program. [CHAR_LIMIT=40]-->
+    <string name="settings_screen_title">Financed device info</string>
     <!-- Top introduction on the Settings screen, summarizing the changes a device provider can make to this device. [CHAR LIMIT=NONE] -->
-    <string name="settings_intro"><xliff:g id="provider name">%1$s</xliff:g> can change settings and install the Kiosk app on this device.\n\nIf you miss a payment, <xliff:g id="provider name">%1$s</xliff:g> can restrict your device and change device settings.\n\nTo learn more, contact <xliff:g id="provider name">%1$s</xliff:g>.</string>
+    <string name="settings_intro">Your credit provider can change settings and install the Kiosk app on the device.\n\n<xliff:g id="provider name">%1$s</xliff:g> may restrict this device if you don\u2019t make the necessary payments or stop using <xliff:g id="provider name">%1$s</xliff:g>\u2019s SIM.\n\nTo learn more, contact <xliff:g id="provider name">%1$s</xliff:g>.</string>
     <!-- Key of the settings_intro Preference. translatable="false" -->
     <string name="settings_intro_preference_key">settings_intro_preference_key</string>
     <!-- Section header. This section shows what restrictions will be enforced on the device when it is financed / subsidized. [CHAR LIMIT=60] -->
