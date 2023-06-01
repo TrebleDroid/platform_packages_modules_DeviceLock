@@ -15,7 +15,7 @@
   -->
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-                  android:title="@string/device_provided_by_creditor">
+                  android:title="@string/settings_screen_title">
 
     <com.android.settingslib.widget.TopIntroPreference
         android:key="@string/settings_intro_preference_key"
