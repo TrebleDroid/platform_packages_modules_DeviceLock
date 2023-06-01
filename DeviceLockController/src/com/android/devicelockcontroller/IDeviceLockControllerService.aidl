@@ -36,5 +36,5 @@ oneway interface IDeviceLockControllerService {
     void getDeviceIdentifier(in RemoteCallback callback);
 
     const String KEY_CLEAR_DEVICE_RESULT = "KEY_CLEAR_DEVICE_RESULT";
-    void clearDevice(in RemoteCallback callback);
+    void clearDeviceRestrictions(in RemoteCallback callback);
 }
