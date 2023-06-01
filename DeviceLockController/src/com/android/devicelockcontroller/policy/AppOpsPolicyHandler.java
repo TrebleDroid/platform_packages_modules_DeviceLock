@@ -16,12 +16,9 @@
 
 package com.android.devicelockcontroller.policy;
 
-import static android.app.AppOpsManager.OPSTR_SYSTEM_EXEMPT_FROM_HIBERNATION;
-
 import android.app.AppOpsManager;
 import android.content.Context;
 import android.os.OutcomeReceiver;
-import android.os.Process;
 
 import androidx.concurrent.futures.CallbackToFutureAdapter;
 
@@ -138,41 +135,6 @@ final class AppOpsPolicyHandler implements PolicyHandler {
             case DeviceState.UNPROVISIONED:
             case DeviceState.CLEARED:
                 return getExemptFromBackgroundStartAndHibernationFuture(false /* exempt */);
-            default:
-                return Futures.immediateFailedFuture(
-                        new IllegalStateException(String.valueOf(state)));
-        }
-    }
-
-    @Override
-    public ListenableFuture<Boolean> isCompliant(@DeviceState int state) {
-        final int backgroundStartRestrictionExemptionMode = mAppOpsManager.unsafeCheckOpNoThrow(
-                OPSTR_SYSTEM_EXEMPT_FROM_ACTIVITY_BG_START_RESTRICTION,
-                Process.myUid(), mContext.getPackageName());
-
-        final int hibernationExemptionMode = mAppOpsManager.unsafeCheckOpNoThrow(
-                OPSTR_SYSTEM_EXEMPT_FROM_HIBERNATION,
-                Process.myUid(), mContext.getPackageName());
-
-        switch (state) {
-            case DeviceState.PSEUDO_LOCKED:
-            case DeviceState.PSEUDO_UNLOCKED:
-                return Futures.immediateFuture(true);
-            case DeviceState.SETUP_IN_PROGRESS:
-            case DeviceState.SETUP_SUCCEEDED:
-            case DeviceState.SETUP_FAILED:
-            case DeviceState.KIOSK_SETUP:
-                return Futures.immediateFuture(
-                        backgroundStartRestrictionExemptionMode == AppOpsManager.MODE_ALLOWED);
-            case DeviceState.UNLOCKED:
-            case DeviceState.LOCKED:
-                return Futures.immediateFuture(
-                        backgroundStartRestrictionExemptionMode == AppOpsManager.MODE_ALLOWED
-                                && hibernationExemptionMode == AppOpsManager.MODE_ALLOWED);
-            case DeviceState.UNPROVISIONED:
-            case DeviceState.CLEARED:
-                return Futures.immediateFuture(
-                        backgroundStartRestrictionExemptionMode == AppOpsManager.MODE_DEFAULT);
             default:
                 return Futures.immediateFailedFuture(
                         new IllegalStateException(String.valueOf(state)));
