@@ -78,12 +78,16 @@ public class DeviceStateControllerStateTransitionTest {
                 {KIOSK_SETUP, UNLOCK_DEVICE, UNLOCKED},
                 {KIOSK_SETUP, CLEAR, CLEARED},
                 {UNLOCKED, LOCK_DEVICE, LOCKED},
+                {UNLOCKED, UNLOCK_DEVICE, UNLOCKED},
                 {UNLOCKED, CLEAR, CLEARED},
                 {LOCKED, UNLOCK_DEVICE, UNLOCKED},
+                {LOCKED, LOCK_DEVICE, LOCKED},
                 {LOCKED, CLEAR, CLEARED},
                 {PSEUDO_LOCKED, UNLOCK_DEVICE, PSEUDO_UNLOCKED},
+                {PSEUDO_LOCKED, LOCK_DEVICE, PSEUDO_LOCKED},
                 {PSEUDO_LOCKED, PROVISIONING_SUCCESS, SETUP_IN_PROGRESS},
                 {PSEUDO_UNLOCKED, LOCK_DEVICE, PSEUDO_LOCKED},
+                {PSEUDO_UNLOCKED, UNLOCK_DEVICE, PSEUDO_UNLOCKED},
                 {PSEUDO_UNLOCKED, PROVISIONING_SUCCESS, SETUP_IN_PROGRESS}
         });
     }
