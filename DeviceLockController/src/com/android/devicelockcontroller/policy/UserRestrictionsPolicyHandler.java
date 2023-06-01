@@ -53,15 +53,6 @@ final class UserRestrictionsPolicyHandler implements PolicyHandler {
 
     private static final String TAG = "UserRestrictionsPolicyHandler";
 
-    private static final String[] RESTRICTIONS_ALL_BUILDS = {
-            UserManager.DISALLOW_SAFE_BOOT,
-            UserManager.DISALLOW_CONFIG_DATE_TIME
-    };
-
-    private static final String[] RESTRICTIONS_RELEASE_BUILDS = {
-            UserManager.DISALLOW_DEBUGGING_FEATURES
-    };
-
     private final ArraySet<String> mAlwaysOnRestrictions = new ArraySet<>();
 
     /**
@@ -84,9 +75,9 @@ final class UserRestrictionsPolicyHandler implements PolicyHandler {
 
         LogUtil.i(TAG, String.format(Locale.US, "Build type DEBUG = %s", isDebug));
 
-        Collections.addAll(mAlwaysOnRestrictions, RESTRICTIONS_ALL_BUILDS);
+        Collections.addAll(mAlwaysOnRestrictions, UserManager.DISALLOW_SAFE_BOOT);
         if (!isDebug) {
-            Collections.addAll(mAlwaysOnRestrictions, RESTRICTIONS_RELEASE_BUILDS);
+            Collections.addAll(mAlwaysOnRestrictions, UserManager.DISALLOW_DEBUGGING_FEATURES);
         }
     }
 
