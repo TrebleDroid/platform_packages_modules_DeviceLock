@@ -18,6 +18,7 @@ package com.android.devicelockcontroller;
 
 import android.app.Application;
 import android.content.Context;
+import android.os.UserManager;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.Nullable;
@@ -54,6 +55,14 @@ public class DeviceLockControllerApplication extends Application implements
         super.onCreate();
         sApplicationContext = getApplicationContext();
         LogUtil.i(TAG, "onCreate");
+
+        final boolean isUserProfile =
+                sApplicationContext.getSystemService(UserManager.class).isProfile();
+
+        if (isUserProfile) {
+            return;
+        }
+
         // Make sure policies are enforced when the controller is started.
         getStateController().enforcePoliciesForCurrentState().addListener(
                 () -> LogUtil.i(TAG, "Policies enforced"), MoreExecutors.directExecutor());
