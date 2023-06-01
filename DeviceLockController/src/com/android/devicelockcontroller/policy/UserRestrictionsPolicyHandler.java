@@ -124,51 +124,6 @@ final class UserRestrictionsPolicyHandler implements PolicyHandler {
 
     }
 
-    @Override
-    public ListenableFuture<Boolean> isCompliant(@DeviceState int state) {
-        Handler mainHandler = new Handler(Looper.getMainLooper());
-        switch (state) {
-            case SETUP_IN_PROGRESS:
-            case SETUP_SUCCEEDED:
-            case UNLOCKED:
-            case KIOSK_SETUP:
-                if (checkRestrictions(mAlwaysOnRestrictions, true)) {
-                    return Futures.whenAllSucceed(
-                                    checkRestrictions(retrieveOptionalAlwaysOnRestrictions(), true),
-                                    checkRestrictions(retrieveLockModeRestrictions(), false))
-                            .call(
-                                    () -> true, mainHandler::post);
-                }
-                break;
-            case LOCKED:
-                if (checkRestrictions(mAlwaysOnRestrictions, true)) {
-                    return Futures.whenAllSucceed(
-                                    checkRestrictions(retrieveOptionalAlwaysOnRestrictions(), true),
-                                    checkRestrictions(retrieveLockModeRestrictions(), true))
-                            .call(
-                                    () -> true, mainHandler::post);
-                }
-                break;
-            case UNPROVISIONED:
-            case SETUP_FAILED:
-            case CLEARED:
-                if (checkRestrictions(mAlwaysOnRestrictions, false)) {
-                    return Futures.whenAllSucceed(
-                                    checkRestrictions(retrieveOptionalAlwaysOnRestrictions(),
-                                            false),
-                                    checkRestrictions(retrieveLockModeRestrictions(), false))
-                            .call(
-                                    () -> true, mainHandler::post);
-                }
-                break;
-            default:
-                LogUtil.i(TAG, String.format(Locale.US, "Unhandled state %d", state));
-                return Futures.immediateFailedFuture(
-                        new IllegalStateException(String.valueOf(state)));
-        }
-        return Futures.immediateFuture(false);
-    }
-
     @MainThread
     public ListenableFuture<ArraySet<String>> retrieveLockModeRestrictions() {
         if (mLockModeRestrictions != null) return Futures.immediateFuture(mLockModeRestrictions);
