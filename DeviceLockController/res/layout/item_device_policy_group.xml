@@ -21,6 +21,7 @@
               android:orientation="vertical">
     <TextView
         android:id="@+id/text_view_device_policy_group_title"
+        android:textStyle="bold"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="16sp"
