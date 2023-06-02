@@ -16,19 +16,25 @@
 
 package com.android.devicelockcontroller.debug;
 
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.CLEARED;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.LOCKED;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNLOCKED;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNPROVISIONED;
+
 import static java.lang.annotation.RetentionPolicy.SOURCE;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.os.Process;
 import android.os.UserManager;
 import android.text.TextUtils;
 
 import androidx.annotation.StringDef;
 
+import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
+import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.storage.SetupParametersClient;
 import com.android.devicelockcontroller.storage.UserParameters;
@@ -36,6 +42,7 @@ import com.android.devicelockcontroller.util.LogUtil;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 
 import java.lang.annotation.Retention;
@@ -85,43 +92,70 @@ public final class DeviceLockCommandReceiver extends BroadcastReceiver {
         String command = String.valueOf(intent.getStringExtra(EXTRA_COMMAND));
         switch (command) {
             case Commands.RESET:
-                UserParameters.clear(context);
-                Futures.addCallback(Futures.whenAllSucceed(
-                                        SetupParametersClient.getInstance().clear(),
-                                        GlobalParametersClient.getInstance().clear())
-                                .call(() -> null,
-                                        MoreExecutors.directExecutor()),
-                        new FutureCallback<>() {
-                            @Override
-                            public void onSuccess(Object v) {
-                                LogUtil.i(TAG, "Successfully reset to unprovisioned state.");
-                                Process.killProcess(Process.myPid());
-                            }
-
-                            @Override
-                            public void onFailure(Throwable t) {
-                                LogUtil.e(TAG, "Failed to reset to unprovisioned state!", t);
-                            }
-                        }, MoreExecutors.directExecutor());
+                forceReset(context);
                 break;
             case Commands.LOCK:
-                if (UserParameters.setDeviceStateSync(context, DeviceState.LOCKED)) {
-                    LogUtil.i(TAG, "Successfully put device into locked state!");
-                    Process.killProcess(Process.myPid());
-                } else {
-                    LogUtil.w(TAG, "Failed to put device into locked state!");
-                }
+                Futures.addCallback(forceSetState(context, LOCKED),
+                        getSetStateCallBack(LOCKED), MoreExecutors.directExecutor());
                 break;
             case Commands.UNLOCK:
-                if (UserParameters.setDeviceStateSync(context, DeviceState.UNLOCKED)) {
-                    LogUtil.i(TAG, "Successfully to put device into unlocked state!");
-                    Process.killProcess(Process.myPid());
-                } else {
-                    LogUtil.w(TAG, "Failed to put device into locked state!");
-                }
+                Futures.addCallback(forceSetState(context, UNLOCKED),
+                        getSetStateCallBack(UNLOCKED), MoreExecutors.directExecutor());
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported command: " + command);
         }
+    }
+
+    private static ListenableFuture<Void> forceSetState(Context context, @DeviceState int state) {
+        PolicyObjectsInterface policyObjectsInterface =
+                (PolicyObjectsInterface) context.getApplicationContext();
+        policyObjectsInterface.destroyObjects();
+        UserParameters.setDeviceStateSync(context, state);
+        return policyObjectsInterface.getStateController().enforcePoliciesForCurrentState();
+    }
+
+    private static void forceReset(Context context) {
+        ListenableFuture<Void> resetFuture = Futures.transformAsync(
+                // First clear restrictions
+                forceSetState(context, CLEARED),
+                // Then clear storage, this will reset state to the default state which is
+                // UNPROVISIONED.
+                (Void unused) -> clearStorage(context),
+                MoreExecutors.directExecutor());
+        Futures.addCallback(
+                resetFuture,
+                getSetStateCallBack(UNPROVISIONED),
+                MoreExecutors.directExecutor());
+    }
+
+    private static FutureCallback<Void> getSetStateCallBack(@DeviceState int state) {
+
+        return new FutureCallback<>() {
+
+            @Override
+            public void onSuccess(Void v) {
+                LogUtil.i(TAG,
+                        "Successfully set state to: " + DeviceStateController.stateToString(state));
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                LogUtil.e(TAG,
+                        "Unsuccessfully set state to: "
+                                + DeviceStateController.stateToString(state), t);
+            }
+        };
+    }
+
+    private static ListenableFuture<Void> clearStorage(Context context) {
+        UserParameters.clear(context);
+        return Futures.whenAllSucceed(
+                        SetupParametersClient.getInstance().clear(),
+                        GlobalParametersClient.getInstance().clear())
+                .call(() -> {
+                    ((PolicyObjectsInterface) context.getApplicationContext()).destroyObjects();
+                    return null;
+                }, MoreExecutors.directExecutor());
     }
 }

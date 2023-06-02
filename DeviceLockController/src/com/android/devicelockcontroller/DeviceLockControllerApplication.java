@@ -94,6 +94,12 @@ public class DeviceLockControllerApplication extends Application implements
         return mSetupController;
     }
 
+    @Override
+    public void destroyObjects() {
+        mPolicyController = null;
+        mSetupController = null;
+    }
+
     public static Context getAppContext() {
         return sApplicationContext;
     }
