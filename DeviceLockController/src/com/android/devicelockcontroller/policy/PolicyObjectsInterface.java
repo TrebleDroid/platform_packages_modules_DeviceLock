@@ -28,4 +28,7 @@ public interface PolicyObjectsInterface {
 
     /** Returns an instance of SetupController. */
     SetupController getSetupController();
+
+    /** Destroy all the singleton objects */
+    void destroyObjects();
 }
