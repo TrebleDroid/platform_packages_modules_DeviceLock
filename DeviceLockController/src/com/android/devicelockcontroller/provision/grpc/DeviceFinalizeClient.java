@@ -16,9 +16,13 @@
 
 package com.android.devicelockcontroller.provision.grpc;
 
+import android.os.Build;
+import android.os.SystemProperties;
 import android.util.Pair;
 
 import androidx.annotation.NonNull;
+
+import com.android.devicelockcontroller.util.LogUtil;
 
 import io.grpc.Status;
 
@@ -27,6 +31,9 @@ import io.grpc.Status;
  * Device finalize service.
  */
 public abstract class DeviceFinalizeClient {
+    public static final String TAG = "DeviceFinalizeClient";
+    public static final String DEVICE_FINALIZE_CLIENT_DEBUG_CLASS_NAME =
+            "com.android.devicelockcontroller.debug.DeviceFinalizeClientDebug";
     private static volatile DeviceFinalizeClient sClient;
     protected static String sEnrollmentToken = "";
     protected static String sRegisteredId = "";
@@ -58,6 +65,11 @@ public abstract class DeviceFinalizeClient {
                 sEnrollmentToken = enrollmentToken;
                 sApiKey = apiKey;
                 try {
+                    if (Build.isDebuggable() && SystemProperties.getBoolean(
+                            "debug.devicelock.finalize", true)) {
+                        className = DEVICE_FINALIZE_CLIENT_DEBUG_CLASS_NAME;
+                    }
+                    LogUtil.d(TAG, "Creating instance for " + className);
                     Class<?> clazz = Class.forName(className);
                     sClient = (DeviceFinalizeClient) clazz.getDeclaredConstructor().newInstance();
                 } catch (Exception e) {
