@@ -36,7 +36,9 @@ import org.robolectric.TestLifecycleApplication;
 
 import java.lang.reflect.Method;
 
-/** Application class that provides mock objects for tests. */
+/**
+ * Application class that provides mock objects for tests.
+ */
 public final class TestDeviceLockControllerApplication extends Application implements
         PolicyObjectsInterface, TestLifecycleApplication {
 
@@ -71,6 +73,14 @@ public final class TestDeviceLockControllerApplication extends Application imple
     }
 
     @Override
+    public void destroyObjects() {
+        mPolicyController = null;
+        mStateController = null;
+        mSetupController = null;
+    }
+
+
+    @Override
     public void beforeTest(Method method) {
         mSetupParametersClient = SetupParametersClient.getInstance(this,
                 TestingExecutors.sameThreadScheduledExecutor());
@@ -85,7 +95,6 @@ public final class TestDeviceLockControllerApplication extends Application imple
 
     @Override
     public void prepareTest(Object test) {
-
     }
 
     @Override
