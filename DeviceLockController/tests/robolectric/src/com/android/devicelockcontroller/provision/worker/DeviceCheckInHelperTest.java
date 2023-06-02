@@ -74,7 +74,10 @@ import java.util.concurrent.TimeoutException;
 @RunWith(RobolectricTestRunner.class)
 public final class DeviceCheckInHelperTest {
     static final Duration TEST_CHECK_RETRY_DURATION = Duration.ofDays(30);
+    static final Duration TEST_NEGATIVE_CHECK_RETRY_DURATION =
+            Duration.ZERO.minus(TEST_CHECK_RETRY_DURATION);
     public static final boolean IS_PROVISIONING_MANDATORY = false;
+    private static final int GET_WORK_INFO_TIMEOUT_MILLIS = 500;
     private TestDeviceLockControllerApplication mTestApplication;
     static final int TOTAL_SLOT_COUNT = 2;
     static final int TOTAL_ID_COUNT = 4;
@@ -184,7 +187,24 @@ public final class DeviceCheckInHelperTest {
         WorkManager workManager = WorkManager.getInstance(mTestApplication);
 
         List<WorkInfo> workInfo = workManager.getWorkInfosForUniqueWork(
-                DeviceCheckInHelper.CHECK_IN_WORK_NAME).get(500, TimeUnit.MILLISECONDS);
+                DeviceCheckInHelper.CHECK_IN_WORK_NAME).get(GET_WORK_INFO_TIMEOUT_MILLIS,
+                TimeUnit.MILLISECONDS);
+        assertThat(workInfo.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void handleGetDeviceCheckInStatusResponse_retryCheckIn_durationIsNegative_shouldRetry()
+            throws ExecutionException, InterruptedException, TimeoutException {
+        final GetDeviceCheckInStatusGrpcResponse response = createRetryResponse(
+                Instant.now().plus(TEST_NEGATIVE_CHECK_RETRY_DURATION));
+
+        assertThat(mHelper.handleGetDeviceCheckInStatusResponse(response)).isTrue();
+
+        WorkManager workManager = WorkManager.getInstance(mTestApplication);
+
+        List<WorkInfo> workInfo = workManager.getWorkInfosForUniqueWork(
+                DeviceCheckInHelper.CHECK_IN_WORK_NAME).get(GET_WORK_INFO_TIMEOUT_MILLIS,
+                TimeUnit.MILLISECONDS);
         assertThat(workInfo.size()).isEqualTo(1);
     }
 
