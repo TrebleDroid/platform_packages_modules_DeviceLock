@@ -67,7 +67,8 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
             (DevicePolicyManager.LOCK_TASK_FEATURE_SYSTEM_INFO
              | DevicePolicyManager.LOCK_TASK_FEATURE_KEYGUARD
              | DevicePolicyManager.LOCK_TASK_FEATURE_HOME
-             | DevicePolicyManager.LOCK_TASK_FEATURE_GLOBAL_ACTIONS);
+             | DevicePolicyManager.LOCK_TASK_FEATURE_GLOBAL_ACTIONS
+             | DevicePolicyManager.LOCK_TASK_FEATURE_BLOCK_ACTIVITY_START_IN_TASK);
     private static final String TAG = "LockTaskModePolicyHandler";
     private final Context mContext;
     private final DevicePolicyManager mDpm;
@@ -106,12 +107,6 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
                 return Futures.immediateFailedFuture(
                         new IllegalStateException(String.valueOf(state)));
         }
-    }
-
-    @Override
-    public ListenableFuture<Boolean> isCompliant(@DeviceState int state) {
-        // TODO (b/147291511): On boot, the policies need to be verified.
-        return Futures.immediateFuture(true);
     }
 
     /**

@@ -27,6 +27,7 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceGroup;
 import androidx.preference.PreferenceManager;
 
 import com.android.devicelockcontroller.R;
@@ -44,11 +45,13 @@ public final class DeviceInfoSettingsFragment extends PreferenceFragmentCompat {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        requireActivity().setTitle(getString(R.string.settings_screen_title));
 
         DeviceInfoSettingsViewModel viewModel = new ViewModelProvider(this).get(
                 DeviceInfoSettingsViewModel.class);
         viewModel.mProviderNameLiveData.observe(getViewLifecycleOwner(), providerName -> {
             PreferenceManager preferenceManager = getPreferenceManager();
+            hideIconView(preferenceManager.getPreferenceScreen());
             for (Pair<Integer, Integer> keyTitlePair : viewModel.mPreferenceKeyTitlePairs) {
                 Preference preference = preferenceManager.findPreference(
                         getString(keyTitlePair.first));
@@ -56,5 +59,18 @@ public final class DeviceInfoSettingsFragment extends PreferenceFragmentCompat {
                 preference.setTitle(getString(keyTitlePair.second, providerName));
             }
         });
+    }
+
+    /**
+     * Hide the unused icon view of the given {@code preference} and its child preference if any.
+     */
+    private static void hideIconView(Preference preference) {
+        preference.setIconSpaceReserved(false);
+        if (preference instanceof PreferenceGroup) {
+            PreferenceGroup preferenceGroup = (PreferenceGroup) preference;
+            for (int i = 0; i < preferenceGroup.getPreferenceCount(); i++) {
+                hideIconView(preferenceGroup.getPreference(i));
+            }
+        }
     }
 }

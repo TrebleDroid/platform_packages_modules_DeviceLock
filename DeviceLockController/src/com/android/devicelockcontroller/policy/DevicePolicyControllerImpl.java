@@ -104,6 +104,7 @@ public final class DevicePolicyControllerImpl
                 context.getSystemService(AppOpsManager.class)));
         mPolicyList.add(mLockTaskHandler);
         mPolicyList.add(new PackagePolicyHandler(context, dpm));
+        mPolicyList.add(new RolePolicyHandler(context, SystemDeviceLockManagerImpl.getInstance()));
         stateController.addCallback(this);
     }
 

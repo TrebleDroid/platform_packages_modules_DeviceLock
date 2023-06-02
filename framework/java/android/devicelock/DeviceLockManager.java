@@ -123,6 +123,18 @@ public final class DeviceLockManager {
     }
 
     /**
+     * Return the underlying service interface.
+     * This is used to implement private APIs between the Device Lock Controller and the
+     * Device Lock System Service.
+     *
+     * @hide
+     */
+    @NonNull
+    public IDeviceLockService getService() {
+        return mService;
+    }
+
+    /**
      * Lock the device.
      *
      * @param executor the {@link Executor} on which to invoke the callback.

@@ -55,7 +55,7 @@ public final class ReportDeviceLockProgramCompleteWorker extends Worker {
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build();
         OneTimeWorkRequest work =
-                new OneTimeWorkRequest.Builder(ReportDeviceProvisionStateWorker.class)
+                new OneTimeWorkRequest.Builder(ReportDeviceLockProgramCompleteWorker.class)
                         .setConstraints(constraints)
                         .build();
         workManager.enqueueUniqueWork(
