@@ -83,6 +83,7 @@ public interface DeviceStateController {
             DeviceState.UNPROVISIONED,
             DeviceState.SETUP_IN_PROGRESS,
             DeviceState.SETUP_SUCCEEDED,
+            DeviceState.SETUP_PAUSED,
             DeviceState.SETUP_FAILED,
             DeviceState.KIOSK_SETUP,
             DeviceState.UNLOCKED,
@@ -102,26 +103,29 @@ public interface DeviceStateController {
         /* Setup has succeeded */
         int SETUP_SUCCEEDED = 2;
 
+        /** Setup is paused */
+        int SETUP_PAUSED = 3;
+
         /* Setup has failed */
-        int SETUP_FAILED = 3;
+        int SETUP_FAILED = 4;
 
         /* Showing kiosk setup activity */
-        int KIOSK_SETUP = 4;
+        int KIOSK_SETUP = 5;
 
         /* Device is unlocked */
-        int UNLOCKED = 5;
+        int UNLOCKED = 6;
 
         /* Device is locked */
-        int LOCKED = 6;
+        int LOCKED = 7;
 
         /* Fully cleared from locking */
-        int CLEARED = 7;
+        int CLEARED = 8;
 
         /* Device appears to be locked. No Actual locking is performed. Used for testing */
-        int PSEUDO_LOCKED = 8;
+        int PSEUDO_LOCKED = 9;
 
         /* Device appears to be unlocked. No Actual unlocking is performed. Used for testing */
-        int PSEUDO_UNLOCKED = 9;
+        int PSEUDO_UNLOCKED = 10;
     }
 
     /**
@@ -161,6 +165,7 @@ public interface DeviceStateController {
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({
             DeviceEvent.PROVISIONING_SUCCESS,
+            DeviceEvent.SETUP_PAUSE,
             DeviceEvent.SETUP_SUCCESS,
             DeviceEvent.SETUP_FAILURE,
             DeviceEvent.SETUP_COMPLETE,
@@ -173,23 +178,26 @@ public interface DeviceStateController {
         /* App provisioned */
         int PROVISIONING_SUCCESS = 0;
 
+        /** Pause setup */
+        int SETUP_PAUSE = 1;
+
         /* Setup completed successfully */
-        int SETUP_SUCCESS = 1;
+        int SETUP_SUCCESS = 2;
 
         /* Setup failed to complete */
-        int SETUP_FAILURE = 2;
+        int SETUP_FAILURE = 3;
 
         /* Setup has complete */
-        int SETUP_COMPLETE = 3;
+        int SETUP_COMPLETE = 4;
 
         /* Lock device */
-        int LOCK_DEVICE = 4;
+        int LOCK_DEVICE = 5;
 
         /* Unlock device */
-        int UNLOCK_DEVICE = 5;
+        int UNLOCK_DEVICE = 6;
 
         /* Clear device lock restrictions */
-        int CLEAR = 6;
+        int CLEAR = 7;
     }
 
     /**

@@ -32,6 +32,8 @@ import androidx.work.WorkManager;
 import androidx.work.WorkerParameters;
 
 import com.android.devicelockcontroller.policy.DevicePolicyController;
+import com.android.devicelockcontroller.policy.DeviceStateController;
+import com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.PauseDeviceProvisioningGrpcResponse;
@@ -46,7 +48,6 @@ import java.time.Duration;
  * A worker class dedicated to request pause of provisioning for device lock program.
  */
 public final class PauseProvisioningWorker extends AbstractCheckInWorker {
-
     private static final String KEY_PAUSE_DEVICE_PROVISIONING_REASON =
             "PAUSE_DEVICE_PROVISIONING_REASON";
     private static final String REPORT_PROVISION_PAUSED_BY_USER_WORK =
@@ -95,13 +96,18 @@ public final class PauseProvisioningWorker extends AbstractCheckInWorker {
             boolean shouldForceProvisioning = response.shouldForceProvisioning();
             Futures.getUnchecked(GlobalParametersClient.getInstance().setProvisionForced(
                     shouldForceProvisioning));
-            DevicePolicyController policyController =
-                    ((PolicyObjectsInterface) mContext.getApplicationContext())
-                            .getPolicyController();
-            //TODO: Cancel the work if user starts provisioning within 1 hr.
+            PolicyObjectsInterface policyObjects =
+                    (PolicyObjectsInterface) mContext.getApplicationContext();
+            DevicePolicyController policyController = policyObjects.getPolicyController();
+            // TODO: Cancel the work if user starts provisioning within 1 hr.
+            // TODO(b/286160722): Fix Device provisioning is not resumed after 1 hour in case
+            //  user pauses it
             policyController.enqueueStartLockTaskModeWorkerWithDelay(
                     /* isMandatory= */ false,
                     Duration.ofHours(PROVISION_PAUSED_HOUR));
+            DeviceStateController deviceStateController = policyObjects.getStateController();
+            Futures.getUnchecked(
+                    deviceStateController.setNextStateForEvent(DeviceEvent.SETUP_PAUSE));
             return Result.success();
         }
         LogUtil.w(TAG, "Pause provisioning request failed: " + response);

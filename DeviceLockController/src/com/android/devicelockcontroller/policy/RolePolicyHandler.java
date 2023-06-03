@@ -24,6 +24,7 @@ import static com.android.devicelockcontroller.policy.DeviceStateController.Devi
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PSEUDO_UNLOCKED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_FAILED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_IN_PROGRESS;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_PAUSED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_SUCCEEDED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNLOCKED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNPROVISIONED;
@@ -130,6 +131,7 @@ public final class RolePolicyHandler implements PolicyHandler {
             case UNLOCKED:
             case LOCKED:
             case SETUP_IN_PROGRESS:
+            case SETUP_PAUSED:
             case SETUP_FAILED:
             case PSEUDO_LOCKED:
             case PSEUDO_UNLOCKED:

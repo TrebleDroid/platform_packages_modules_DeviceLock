@@ -26,6 +26,7 @@ import static com.android.devicelockcontroller.policy.DeviceStateController.Devi
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PSEUDO_UNLOCKED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_FAILED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_IN_PROGRESS;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_PAUSED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_SUCCEEDED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNLOCKED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNPROVISIONED;
@@ -94,6 +95,7 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
             case UNPROVISIONED:
                 return Futures.immediateFuture(SUCCESS);
             case SETUP_FAILED:
+            case SETUP_PAUSED:
             case UNLOCKED:
             case CLEARED:
                 return disableLockTaskMode();
