@@ -37,7 +37,7 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 
@@ -98,10 +98,10 @@ public final class DeviceLockNotificationManager {
     // Already requested POST_NOTIFICATION permission in ProvisionInfoFragment
     @SuppressLint("MissingPermission")
     public static void sendDeferredEnrollmentNotification(Context context,
-            Instant resumeTime, PendingIntent pendingIntent) {
+            LocalDateTime resumeDateTime, PendingIntent pendingIntent) {
         createNotificationChannel(context);
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT);
-        String enrollmentResumeTime = timeFormatter.format(resumeTime);
+        String enrollmentResumeTime = timeFormatter.format(resumeDateTime);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(
                 context, PROVISION_NOTIFICATION_CHANNEL_ID)
                 .setContentTitle(context.getString(R.string.device_enrollment_header_text))
