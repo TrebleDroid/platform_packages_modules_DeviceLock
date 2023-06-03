@@ -29,9 +29,6 @@ import android.os.RemoteException;
 
 import androidx.annotation.NonNull;
 
-import com.android.devicelockcontroller.util.LogUtil;
-
-import java.lang.reflect.Field;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 
@@ -48,26 +45,10 @@ public final class SystemDeviceLockManagerImpl implements SystemDeviceLockManage
                     + "MANAGE_DEVICE_LOCK_SERVICE_FROM_CONTROLLER";
 
     private SystemDeviceLockManagerImpl(Context context) {
-        final Field[] allFields = DeviceLockManager.class.getDeclaredFields();
         final DeviceLockManager deviceLockManager =
                 context.getSystemService(DeviceLockManager.class);
-        IDeviceLockService deviceLockService = null;
-        for (Field field: allFields) {
-            if (field.getType().equals(IDeviceLockService.class)) {
-                field.setAccessible(true);
-                try {
-                    deviceLockService = (IDeviceLockService) field.get(deviceLockManager);
-                    break;
-                } catch (IllegalAccessException e) {
-                    LogUtil.e(TAG, "Cannot get device lock service interface", e);
-                }
-            }
-        }
-        if (deviceLockService == null) {
-            LogUtil.e(TAG, "Cannot find device lock service interface");
-        }
 
-        mIDeviceLockService = deviceLockService;
+        mIDeviceLockService = deviceLockManager.getService();
     }
 
     private SystemDeviceLockManagerImpl() {
@@ -87,18 +68,6 @@ public final class SystemDeviceLockManagerImpl implements SystemDeviceLockManage
         return SystemDeviceLockManagerHolder.sSystemDeviceLockManager;
     }
 
-    private boolean isDeviceLockServiceAvailable(@CallbackExecutor Executor executor,
-            @NonNull OutcomeReceiver<?, Exception> callback) {
-        if (mIDeviceLockService == null) {
-            executor.execute(() -> callback.onError(
-                    new IllegalStateException("IDeviceLockService is null.")));
-
-            return false;
-        }
-
-        return true;
-    }
-
     @Override
     @RequiresPermission(MANAGE_DEVICE_LOCK_SERVICE_FROM_CONTROLLER)
     public void addFinancedDeviceKioskRole(@NonNull String packageName,
@@ -106,10 +75,6 @@ public final class SystemDeviceLockManagerImpl implements SystemDeviceLockManage
             @NonNull OutcomeReceiver<Void, Exception> callback) {
         Objects.requireNonNull(executor);
         Objects.requireNonNull(callback);
-
-        if (!isDeviceLockServiceAvailable(executor, callback)) {
-            return;
-        }
 
         try {
             mIDeviceLockService.addFinancedDeviceKioskRole(packageName,
@@ -136,10 +101,6 @@ public final class SystemDeviceLockManagerImpl implements SystemDeviceLockManage
         Objects.requireNonNull(executor);
         Objects.requireNonNull(callback);
 
-        if (!isDeviceLockServiceAvailable(executor, callback)) {
-            return;
-        }
-
         try {
             mIDeviceLockService.removeFinancedDeviceKioskRole(packageName,
                     new RemoteCallback(result -> executor.execute(() -> {
@@ -164,10 +125,6 @@ public final class SystemDeviceLockManagerImpl implements SystemDeviceLockManage
             @NonNull OutcomeReceiver<Void, Exception> callback) {
         Objects.requireNonNull(executor);
         Objects.requireNonNull(callback);
-
-        if (!isDeviceLockServiceAvailable(executor, callback)) {
-            return;
-        }
 
         try {
             mIDeviceLockService.setExemptFromActivityBackgroundStartRestriction(exempt,
@@ -195,10 +152,6 @@ public final class SystemDeviceLockManagerImpl implements SystemDeviceLockManage
         Objects.requireNonNull(packageName);
         Objects.requireNonNull(executor);
         Objects.requireNonNull(callback);
-
-        if (!isDeviceLockServiceAvailable(executor, callback)) {
-            return;
-        }
 
         try {
             mIDeviceLockService.setExemptFromHibernation(packageName, exempt,
