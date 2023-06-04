@@ -134,9 +134,9 @@ android_app {
     min_sdk_version: "UpsideDownCake",
     updatable: true,
     privileged: true,
+    privapp_allowlist: ":privapp_allowlist_com.android.devicelockcontroller.xml",
     certificate: "platform",
     rename_resources_package: false,
-    required: ["privapp_allowlist_com.android.devicelockcontroller.xml"],
 
     srcs: [":devicelockcontroller-grpc-impl-sources"],
 
@@ -167,9 +167,9 @@ android_app {
     min_sdk_version: "UpsideDownCake",
     updatable: true,
     privileged: true,
+    privapp_allowlist: ":privapp_allowlist_com.android.devicelockcontroller.xml",
     certificate: "platform",
     rename_resources_package: false,
-    required: ["privapp_allowlist_com.android.devicelockcontroller.xml"],
 
     srcs: [":devicelockcontroller-grpc-impl-sources"],
 
