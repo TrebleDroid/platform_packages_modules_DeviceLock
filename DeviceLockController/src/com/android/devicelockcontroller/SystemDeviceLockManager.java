@@ -73,4 +73,24 @@ public interface SystemDeviceLockManager {
     void setExemptFromHibernation(String packageName, boolean exempt,
             @CallbackExecutor Executor executor,
             @NonNull OutcomeReceiver<Void, Exception> callback);
+
+    /**
+     * Enable kiosk keepalive, making sure the kiosk app is restarted on crash.
+     *
+     * @param packageName kiosk app package name.
+     * @param executor the {@link Executor} on which to invoke the callback.
+     * @param callback callback this returns either success or an exception.
+     */
+    void enableKioskKeepalive(String packageName,
+            @CallbackExecutor Executor executor,
+            @NonNull OutcomeReceiver<Void, Exception> callback);
+
+    /**
+     * Disable kiosk keepalive.
+     *
+     * @param executor the {@link Executor} on which to invoke the callback.
+     * @param callback callback this returns either success or an exception.
+     */
+    void disableKioskKeepalive(@CallbackExecutor Executor executor,
+            @NonNull OutcomeReceiver<Void, Exception> callback);
 }

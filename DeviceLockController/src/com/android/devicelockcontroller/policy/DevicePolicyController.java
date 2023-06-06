@@ -16,6 +16,8 @@
 
 package com.android.devicelockcontroller.policy;
 
+import android.os.UserHandle;
+
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.time.Duration;
@@ -30,6 +32,15 @@ public interface DevicePolicyController {
      * device state. Returns false if package containing the activity is not in the allowlist.
      */
     ListenableFuture<Boolean> launchActivityInLockedMode();
+
+    /**
+     * Similar to
+     * {@link DevicePolicyController#launchActivityInLockedMode()} but the activity is started
+     * for the specified user.
+     *
+     * @param userHandle User handle for which the activity should be started.
+     */
+    ListenableFuture<Boolean> launchActivityInLockedModeAsUser(UserHandle userHandle);
 
     /**
      * Similar to
