@@ -50,7 +50,7 @@ import java.time.Duration;
 public final class PauseProvisioningWorker extends AbstractCheckInWorker {
     private static final String KEY_PAUSE_DEVICE_PROVISIONING_REASON =
             "PAUSE_DEVICE_PROVISIONING_REASON";
-    private static final String REPORT_PROVISION_PAUSED_BY_USER_WORK =
+    public static final String REPORT_PROVISION_PAUSED_BY_USER_WORK =
             "report-provision-paused-by-user";
     @VisibleForTesting
     static final int PROVISION_PAUSED_HOUR = 1;
@@ -71,7 +71,7 @@ public final class PauseProvisioningWorker extends AbstractCheckInWorker {
                         .setInputData(inputData)
                         .build();
         workManager.enqueueUniqueWork(REPORT_PROVISION_PAUSED_BY_USER_WORK,
-                ExistingWorkPolicy.REPLACE, work);
+                ExistingWorkPolicy.KEEP, work);
     }
 
     public PauseProvisioningWorker(@NonNull Context context,

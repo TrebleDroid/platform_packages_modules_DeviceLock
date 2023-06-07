@@ -67,8 +67,7 @@ import java.util.Locale;
  * Helper class to perform the device check-in process with device lock backend server
  */
 public final class DeviceCheckInHelper extends AbstractDeviceCheckInHelper {
-    @VisibleForTesting
-    public static final String CHECK_IN_WORK_NAME = "checkIn";
+    public static final String DEVICE_CHECK_IN_WORK_NAME = "device-check-in";
     private static final String TAG = "DeviceCheckInHelper";
     private static final int CHECK_IN_INTERVAL_HOURS = 1;
     private final Context mAppContext;
@@ -106,7 +105,7 @@ public final class DeviceCheckInHelper extends AbstractDeviceCheckInHelper {
                         .setBackoffCriteria(BackoffPolicy.LINEAR,
                                 Duration.ofHours(CHECK_IN_INTERVAL_HOURS));
         if (isExpedited) builder.setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST);
-        WorkManager.getInstance(mAppContext).enqueueUniqueWork(CHECK_IN_WORK_NAME,
+        WorkManager.getInstance(mAppContext).enqueueUniqueWork(DEVICE_CHECK_IN_WORK_NAME,
                 ExistingWorkPolicy.REPLACE, builder.build());
     }
 

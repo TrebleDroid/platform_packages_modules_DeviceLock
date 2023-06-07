@@ -23,6 +23,7 @@ import static com.android.devicelockcontroller.policy.DeviceStateController.Devi
 
 import static java.lang.annotation.RetentionPolicy.SOURCE;
 
+import android.app.AlarmManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -31,10 +32,15 @@ import android.os.UserManager;
 import android.text.TextUtils;
 
 import androidx.annotation.StringDef;
+import androidx.work.WorkManager;
 
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
+import com.android.devicelockcontroller.provision.worker.DeviceCheckInWorker;
+import com.android.devicelockcontroller.provision.worker.PauseProvisioningWorker;
+import com.android.devicelockcontroller.provision.worker.ReportDeviceLockProgramCompleteWorker;
+import com.android.devicelockcontroller.provision.worker.ReportDeviceProvisionStateWorker;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.storage.SetupParametersClient;
 import com.android.devicelockcontroller.storage.UserParameters;
@@ -46,6 +52,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 
 import java.lang.annotation.Retention;
+import java.util.Objects;
 
 /**
  * A {@link BroadcastReceiver} that can handle reset, lock, unlock command.
@@ -116,6 +123,21 @@ public final class DeviceLockCommandReceiver extends BroadcastReceiver {
     }
 
     private static void forceReset(Context context) {
+        // Cancel provision works
+        LogUtil.d(TAG, "cancelling works");
+        WorkManager workManager = WorkManager.getInstance(context);
+        workManager.cancelAllWorkByTag(DeviceCheckInWorker.class.getName());
+        workManager.cancelAllWorkByTag(PauseProvisioningWorker.class.getName());
+        workManager.cancelAllWorkByTag(
+                ReportDeviceProvisionStateWorker.class.getName());
+        workManager.cancelAllWorkByTag(
+                ReportDeviceLockProgramCompleteWorker.class.getName());
+
+        // Cancel reset device alarm
+        AlarmManager alarmManager = context.getSystemService(AlarmManager.class);
+        Objects.requireNonNull(alarmManager).cancel(
+                ReportDeviceProvisionStateWorker.getResetDevicePendingIntent(context));
+
         ListenableFuture<Void> resetFuture = Futures.transformAsync(
                 // First clear restrictions
                 forceSetState(context, CLEARED),

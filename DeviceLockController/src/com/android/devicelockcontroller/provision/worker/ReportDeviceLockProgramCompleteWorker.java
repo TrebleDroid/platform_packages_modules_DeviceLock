@@ -43,7 +43,7 @@ import java.util.concurrent.Future;
  */
 public final class ReportDeviceLockProgramCompleteWorker extends Worker {
 
-    private static final String REPORT_DEVICE_LOCK_PROGRAM_COMPLETE_WORK_NAME =
+    public static final String REPORT_DEVICE_LOCK_PROGRAM_COMPLETE_WORK_NAME =
             "report-device-lock-program-complete";
     private final Future<DeviceFinalizeClient> mClient;
 

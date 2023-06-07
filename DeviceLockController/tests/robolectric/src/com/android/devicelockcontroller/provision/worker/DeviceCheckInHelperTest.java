@@ -187,7 +187,7 @@ public final class DeviceCheckInHelperTest {
         WorkManager workManager = WorkManager.getInstance(mTestApplication);
 
         List<WorkInfo> workInfo = workManager.getWorkInfosForUniqueWork(
-                DeviceCheckInHelper.CHECK_IN_WORK_NAME).get(GET_WORK_INFO_TIMEOUT_MILLIS,
+                DeviceCheckInHelper.DEVICE_CHECK_IN_WORK_NAME).get(GET_WORK_INFO_TIMEOUT_MILLIS,
                 TimeUnit.MILLISECONDS);
         assertThat(workInfo.size()).isEqualTo(1);
     }
@@ -203,7 +203,7 @@ public final class DeviceCheckInHelperTest {
         WorkManager workManager = WorkManager.getInstance(mTestApplication);
 
         List<WorkInfo> workInfo = workManager.getWorkInfosForUniqueWork(
-                DeviceCheckInHelper.CHECK_IN_WORK_NAME).get(GET_WORK_INFO_TIMEOUT_MILLIS,
+                DeviceCheckInHelper.DEVICE_CHECK_IN_WORK_NAME).get(GET_WORK_INFO_TIMEOUT_MILLIS,
                 TimeUnit.MILLISECONDS);
         assertThat(workInfo.size()).isEqualTo(1);
     }
