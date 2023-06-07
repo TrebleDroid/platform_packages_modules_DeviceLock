@@ -31,18 +31,33 @@ public final class ProvisioningProgress {
     public static final ProvisioningProgress OPENING_KIOSK_APP = new ProvisioningProgress(
             R.drawable.ic_open_in_new_24px, R.string.opening_kiosk_app);
 
+    public static final ProvisioningProgress PROVISIONING_FAILED = new ProvisioningProgress(
+            R.drawable.ic_warning_24px, R.string.provisioning_failed,
+            R.string.click_to_contact_financier, /* progressBarVisible=*/ false,
+            /* bottomViewVisible= */ true);
+
     final int mIconId;
     final int mHeaderId;
     final int mSubheaderId;
+    final boolean mProgressBarVisible;
+    final boolean mBottomViewVisible;
 
     ProvisioningProgress(int iconId, int headerId) {
         this(iconId, headerId, 0);
     }
 
     ProvisioningProgress(int iconId, int headerId, int subheaderId) {
-        this.mHeaderId = headerId;
-        this.mIconId = iconId;
-        this.mSubheaderId = subheaderId;
+        this(iconId, headerId, subheaderId, /* progressBarVisible= */ true,
+                /* bottomViewVisible= */ false);
+    }
+
+    ProvisioningProgress(int iconId, int headerId, int subheaderId, boolean progressBarVisible,
+            boolean bottomViewVisible) {
+        mHeaderId = headerId;
+        mIconId = iconId;
+        mSubheaderId = subheaderId;
+        mProgressBarVisible = progressBarVisible;
+        mBottomViewVisible = bottomViewVisible;
     }
 
 }
