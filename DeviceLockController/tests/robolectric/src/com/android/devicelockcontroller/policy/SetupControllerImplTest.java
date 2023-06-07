@@ -149,7 +149,7 @@ public final class SetupControllerImplTest {
         Futures.getUnchecked(setupController.finishSetup());
         verify(mMockStateController).setNextStateForEvent(DeviceEvent.SETUP_COMPLETE);
         verify(mMockPolicyController).launchActivityInLockedMode();
-        verify(mMockPolicyController, never()).wipeData();
+        verify(mMockPolicyController, never()).wipeDevice();
     }
 
     @Test
@@ -165,7 +165,7 @@ public final class SetupControllerImplTest {
         assertThat(setupController.getSetupState()).isEqualTo(
                 SetupController.SetupStatus.SETUP_FAILED);
         verify(mMockPolicyController, never()).launchActivityInLockedMode();
-        verify(mMockPolicyController).wipeData();
+        verify(mMockPolicyController).wipeDevice();
     }
 
     @Test
