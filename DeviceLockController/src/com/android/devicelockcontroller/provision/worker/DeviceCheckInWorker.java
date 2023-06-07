@@ -63,6 +63,9 @@ public final class DeviceCheckInWorker extends AbstractCheckInWorker {
         final GetDeviceCheckInStatusGrpcResponse response =
                 Futures.getUnchecked(mClient).getDeviceCheckInStatus(
                         deviceIds, carrierInfo, /* fcmRegistrationToken= */ null);
+        if (response.hasRecoverableError()) {
+            return Result.retry();
+        }
         if (response.isSuccessful()) {
             return mCheckInHelper.handleGetDeviceCheckInStatusResponse(response)
                     ? Result.success()
