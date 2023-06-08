@@ -87,11 +87,15 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
 
     @Override
     public boolean isLocked() {
+        return isLockedInternal() || mState == DeviceState.PSEUDO_LOCKED;
+    }
+
+    @Override
+    public boolean isLockedInternal() {
         return mState == DeviceState.SETUP_IN_PROGRESS
                 || mState == DeviceState.SETUP_SUCCEEDED
                 || mState == DeviceState.KIOSK_SETUP
-                || mState == DeviceState.LOCKED
-                || mState == DeviceState.PSEUDO_LOCKED;
+                || mState == DeviceState.LOCKED;
     }
 
     @Override

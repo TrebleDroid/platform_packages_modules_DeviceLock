@@ -160,7 +160,6 @@ public final class DeviceCheckInHelperTest {
                 response, stateController, policyController)).isTrue();
 
         verify(stateController).setNextStateForEvent(eq(DeviceEvent.PROVISIONING_SUCCESS));
-        verify(policyController).enqueueStartLockTaskModeWorker(eq(IS_PROVISIONING_MANDATORY));
         assertThat(Futures.getUnchecked(mGlobalParametersClient.needCheckIn())).isFalse();
     }
 

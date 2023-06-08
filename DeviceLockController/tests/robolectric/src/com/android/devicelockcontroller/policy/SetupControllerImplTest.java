@@ -117,8 +117,6 @@ public final class SetupControllerImplTest {
         mTestApplication = ApplicationProvider.getApplicationContext();
         mMockStateController = mTestApplication.getStateController();
         mMockPolicyController = mTestApplication.getPolicyController();
-        when(mMockPolicyController.launchActivityInLockedMode()).thenReturn(
-                Futures.immediateFuture(true));
         Shadows.shadowOf(mTestApplication).setComponentNameAndServiceForBindService(
                 new ComponentName(mTestApplication, SetupParametersService.class),
                 Robolectric.setupService(SetupParametersService.class).onBind(null));
@@ -148,7 +146,6 @@ public final class SetupControllerImplTest {
                 SetupController.SetupStatus.SETUP_FINISHED);
         Futures.getUnchecked(setupController.finishSetup());
         verify(mMockStateController).setNextStateForEvent(DeviceEvent.SETUP_COMPLETE);
-        verify(mMockPolicyController).launchActivityInLockedMode();
         verify(mMockPolicyController, never()).wipeDevice();
     }
 
@@ -164,7 +161,6 @@ public final class SetupControllerImplTest {
         Futures.getUnchecked(setupController.finishSetup());
         assertThat(setupController.getSetupState()).isEqualTo(
                 SetupController.SetupStatus.SETUP_FAILED);
-        verify(mMockPolicyController, never()).launchActivityInLockedMode();
         verify(mMockPolicyController).wipeDevice();
     }
 
@@ -353,7 +349,7 @@ public final class SetupControllerImplTest {
         return setupController;
     }
 
-    private final class TestWorkFactory extends WorkerFactory {
+    private static final class TestWorkFactory extends WorkerFactory {
 
         private final ListeningExecutorService mExecutorService;
 

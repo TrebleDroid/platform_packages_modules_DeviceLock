@@ -18,10 +18,6 @@ package com.android.devicelockcontroller.receivers;
 
 import static com.google.common.truth.Truth.assertThat;
 
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.content.ComponentName;
@@ -30,9 +26,10 @@ import android.content.pm.PackageManager;
 import androidx.test.core.app.ApplicationProvider;
 
 import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
-import com.android.devicelockcontroller.policy.DevicePolicyController;
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.shadows.ShadowApplicationPackageManager;
+
+import com.google.common.util.concurrent.Futures;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -50,26 +47,23 @@ public class LockedBootCompletedReceiverTest {
     private PackageManager mPm;
     private ShadowPackageManager mShadowPackageManager;
     private DeviceStateController mStateController;
-    private DevicePolicyController mPolicyController;
 
     @Before
     public void setUp() {
         mStateController = mTestApplication.getStateController();
-        mPolicyController = mTestApplication.getPolicyController();
+        when(mStateController.enforcePoliciesForCurrentState()).thenReturn(
+                Futures.immediateVoidFuture());
         mPm = mTestApplication.getPackageManager();
         mShadowPackageManager = Shadows.shadowOf(mTestApplication.getPackageManager());
 
     }
 
     @Test
-    public void
-            startLockTaskModeIfApplicable_whenDeviceIsInSetupState_doesNotStartLockTaskMode() {
+    public void startLockTaskModeIfApplicable_whenDeviceIsInSetupState_doesNotStartLockTaskMode() {
         when(mStateController.isInSetupState()).thenReturn(true);
-        when(mStateController.isLocked()).thenReturn(true);
+        when(mStateController.isLockedInternal()).thenReturn(true);
 
-        LockedBootCompletedReceiver.startLockTaskModeIfApplicable(mTestApplication);
-
-        verify(mPolicyController, never()).enqueueStartLockTaskModeWorker(anyBoolean());
+        LockedBootCompletedReceiver.enforceLockTaskMode(mTestApplication);
 
         final ComponentName componentName =
                 new ComponentName(mTestApplication, LockTaskBootCompletedReceiver.class);
@@ -80,14 +74,11 @@ public class LockedBootCompletedReceiverTest {
     }
 
     @Test
-    public void
-            startLockTaskModeIfApplicable_whenDeviceIsNotInSetupState_startLockTaskMode() {
+    public void startLockTaskModeIfApplicable_whenDeviceIsNotInSetupState_startLockTaskMode() {
         when(mStateController.isInSetupState()).thenReturn(false);
-        when(mStateController.isLocked()).thenReturn(true);
+        when(mStateController.isLockedInternal()).thenReturn(true);
 
-        LockedBootCompletedReceiver.startLockTaskModeIfApplicable(mTestApplication);
-
-        verify(mPolicyController).enqueueStartLockTaskModeWorker(eq(true));
+        LockedBootCompletedReceiver.enforceLockTaskMode(mTestApplication);
 
         final ComponentName componentName =
                 new ComponentName(mTestApplication, LockTaskBootCompletedReceiver.class);

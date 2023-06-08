@@ -50,9 +50,14 @@ public interface DeviceStateController {
     int getState();
 
     /**
-     * Returns true if the device is in locked state.
+     * Returns true if the device is in locked state including {@link DeviceState#PSEUDO_LOCKED}
      */
     boolean isLocked();
+
+    /**
+     * Returns true if the device is in locked state excluding {@link DeviceState#PSEUDO_LOCKED}
+     */
+    boolean isLockedInternal();
 
     /**
      * Returns true if the device needs to check in with DeviceLock server

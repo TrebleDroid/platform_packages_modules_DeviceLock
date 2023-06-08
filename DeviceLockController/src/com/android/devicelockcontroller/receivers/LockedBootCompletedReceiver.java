@@ -20,6 +20,7 @@ import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DEFAULT;
 import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
 import static android.content.pm.PackageManager.DONT_KILL_APP;
 
+import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -32,6 +33,12 @@ import androidx.annotation.VisibleForTesting;
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
 import com.android.devicelockcontroller.util.LogUtil;
+
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.MoreExecutors;
+
+import java.util.Objects;
 
 /**
  * Handle {@link  Intent#ACTION_LOCKED_BOOT_COMPLETED}. This receiver runs for any user
@@ -48,7 +55,13 @@ public final class LockedBootCompletedReceiver extends BroadcastReceiver {
     }
 
     @VisibleForTesting
-    static void startLockTaskModeIfApplicable(Context context) {
+    static void enforceLockTaskMode(Context context) {
+        final ActivityManager am =
+                Objects.requireNonNull(context.getSystemService(ActivityManager.class));
+        if (getDeviceStateController(context).isLockedInternal()
+                == (am.getLockTaskModeState() == ActivityManager.LOCK_TASK_MODE_LOCKED)) {
+            return;
+        }
         final PackageManager pm = context.getPackageManager();
         final ComponentName lockTaskBootCompletedReceiver = new ComponentName(context,
                 LockTaskBootCompletedReceiver.class);
@@ -63,7 +76,19 @@ public final class LockedBootCompletedReceiver extends BroadcastReceiver {
             return;
         }
 
-        BootUtils.startLockTaskModeAtBoot(context);
+        Futures.addCallback(getDeviceStateController(context).enforcePoliciesForCurrentState(),
+                new FutureCallback<>() {
+                    @Override
+                    public void onSuccess(Void result) {
+                        LogUtil.i(TAG, "Successfully called enforcePoliciesForCurrentState()");
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+                        LogUtil.e(TAG, "Failed to call enforcePoliciesForCurrentState()", t);
+                    }
+                },
+                MoreExecutors.directExecutor());
         pm.setComponentEnabledSetting(
                 new ComponentName(context, LockTaskBootCompletedReceiver.class),
                 COMPONENT_ENABLED_STATE_DISABLED, DONT_KILL_APP);
@@ -78,11 +103,10 @@ public final class LockedBootCompletedReceiver extends BroadcastReceiver {
 
         final boolean isUserProfile =
                 context.getSystemService(UserManager.class).isProfile();
-
         if (isUserProfile) {
             return;
         }
-
-        startLockTaskModeIfApplicable(context);
+        enforceLockTaskMode(context);
     }
+
 }

@@ -17,6 +17,7 @@
 package com.android.devicelockcontroller;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import android.app.Application;
 
@@ -60,6 +61,7 @@ public final class TestDeviceLockControllerApplication extends Application imple
     public DevicePolicyController getPolicyController() {
         if (mPolicyController == null) {
             mPolicyController = mock(DevicePolicyController.class);
+            when(mPolicyController.getStateController()).thenReturn(getStateController());
         }
         return mPolicyController;
     }
