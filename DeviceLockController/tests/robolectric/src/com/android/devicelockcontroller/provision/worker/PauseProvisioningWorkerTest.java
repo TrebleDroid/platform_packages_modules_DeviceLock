@@ -37,6 +37,8 @@ import androidx.work.testing.TestWorkerBuilder;
 
 import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
 import com.android.devicelockcontroller.policy.DevicePolicyController;
+import com.android.devicelockcontroller.policy.DeviceStateController;
+import com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.PauseDeviceProvisioningGrpcResponse;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
@@ -94,6 +96,9 @@ public final class PauseProvisioningWorkerTest {
         when(mResponse.isSuccessful()).thenReturn(true);
         when(mResponse.shouldForceProvisioning()).thenReturn(true);
         DevicePolicyController devicePolicyController = mTestApp.getPolicyController();
+        DeviceStateController deviceStateController = mTestApp.getStateController();
+        when(deviceStateController.setNextStateForEvent(DeviceEvent.SETUP_PAUSE))
+                .thenReturn(Futures.immediateVoidFuture());
 
         assertThat(mWorker.doWork()).isEqualTo(Result.success());
 
@@ -108,6 +113,9 @@ public final class PauseProvisioningWorkerTest {
         when(mResponse.isSuccessful()).thenReturn(true);
         when(mResponse.shouldForceProvisioning()).thenReturn(false);
         DevicePolicyController devicePolicyController = mTestApp.getPolicyController();
+        DeviceStateController deviceStateController = mTestApp.getStateController();
+        when(deviceStateController.setNextStateForEvent(DeviceEvent.SETUP_PAUSE))
+                .thenReturn(Futures.immediateVoidFuture());
 
         assertThat(mWorker.doWork()).isEqualTo(Result.success());
 

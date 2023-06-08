@@ -132,13 +132,20 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
                     return DeviceState.SETUP_IN_PROGRESS;
                 }
                 break;
-            case DeviceEvent.SETUP_SUCCESS:
+            case DeviceEvent.SETUP_PAUSE:
                 if (mState == DeviceState.SETUP_IN_PROGRESS) {
+                    return DeviceState.SETUP_PAUSED;
+                }
+                break;
+            case DeviceEvent.SETUP_SUCCESS:
+                if (mState == DeviceState.SETUP_IN_PROGRESS
+                        || mState == DeviceState.SETUP_PAUSED) {
                     return DeviceState.SETUP_SUCCEEDED;
                 }
                 break;
             case DeviceEvent.SETUP_FAILURE:
-                if (mState == DeviceState.SETUP_IN_PROGRESS) {
+                if (mState == DeviceState.SETUP_IN_PROGRESS
+                        || mState == DeviceState.SETUP_PAUSED) {
                     return DeviceState.SETUP_FAILED;
                 }
                 break;

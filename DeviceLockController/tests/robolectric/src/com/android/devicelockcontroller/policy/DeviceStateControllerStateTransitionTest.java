@@ -21,6 +21,7 @@ import static com.android.devicelockcontroller.policy.DeviceStateController.Devi
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.PROVISIONING_SUCCESS;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.SETUP_COMPLETE;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.SETUP_FAILURE;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.SETUP_PAUSE;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.SETUP_SUCCESS;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.UNLOCK_DEVICE;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.CLEARED;
@@ -30,6 +31,7 @@ import static com.android.devicelockcontroller.policy.DeviceStateController.Devi
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PSEUDO_UNLOCKED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_FAILED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_IN_PROGRESS;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_PAUSED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_SUCCEEDED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNLOCKED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNPROVISIONED;
@@ -74,6 +76,9 @@ public class DeviceStateControllerStateTransitionTest {
                 {UNPROVISIONED, LOCK_DEVICE, PSEUDO_LOCKED},
                 {SETUP_IN_PROGRESS, SETUP_SUCCESS, SETUP_SUCCEEDED},
                 {SETUP_IN_PROGRESS, SETUP_FAILURE, SETUP_FAILED},
+                {SETUP_IN_PROGRESS, SETUP_PAUSE, SETUP_PAUSED},
+                {SETUP_PAUSED, SETUP_SUCCESS, SETUP_SUCCEEDED},
+                {SETUP_PAUSED, SETUP_FAILURE, SETUP_FAILED},
                 {SETUP_SUCCEEDED, SETUP_COMPLETE, KIOSK_SETUP},
                 {KIOSK_SETUP, UNLOCK_DEVICE, UNLOCKED},
                 {KIOSK_SETUP, CLEAR, CLEARED},
