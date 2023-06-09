@@ -52,8 +52,7 @@ import com.android.devicelockcontroller.R;
 import com.android.devicelockcontroller.provision.worker.PauseProvisioningWorker;
 import com.android.devicelockcontroller.util.LogUtil;
 
-import java.time.Duration;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
@@ -211,9 +210,9 @@ public final class ProvisionInfoFragment extends Fragment {
                 /* requestCode= */ 0,
                 getActivity().getIntent(),
                 PendingIntent.FLAG_IMMUTABLE);
-        Instant resumeTime = Instant.now().plus(Duration.ofHours(1));
+        LocalDateTime resumeDateTime = LocalDateTime.now().plusHours(1);
         DeviceLockNotificationManager.sendDeferredEnrollmentNotification(requireContext(),
-                resumeTime, intent);
+                resumeDateTime, intent);
         getActivity().finish();
     }
 }

@@ -24,10 +24,13 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.os.SystemClock;
+import android.widget.RemoteViews;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import com.android.devicelockcontroller.DeviceLockControllerApplication;
 import com.android.devicelockcontroller.R;
 import com.android.devicelockcontroller.storage.SetupParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
@@ -37,7 +40,7 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 
@@ -73,6 +76,61 @@ public final class DeviceLockNotificationManager {
         sendDeviceResetNotification(context, days, /* ongoing= */ false);
     }
 
+    /**
+     * Send the device reset timer notification.
+     *
+     * @param context       the context where the notification will be sent out
+     * @param countDownBase the time when device will be reset in
+     *                      {@link SystemClock#elapsedRealtime()}.
+     */
+    public static void sendDeviceResetTimerNotification(Context context, long countDownBase) {
+        createNotificationChannel(context);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        Futures.addCallback(SetupParametersClient.getInstance().getKioskAppProviderName(),
+                new FutureCallback<>() {
+                    @Override
+                    public void onSuccess(String providerName) {
+                        Notification notification =
+                                new NotificationCompat.Builder(context,
+                                        PROVISION_NOTIFICATION_CHANNEL_ID)
+                                        .setSmallIcon(R.drawable.ic_action_lock)
+                                        .setOngoing(true)
+                                        .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
+                                        .setCustomContentView(
+                                                buildResetTimerNotif(countDownBase,
+                                                        providerName,
+                                                        false))
+                                        .setCustomBigContentView(
+                                                buildResetTimerNotif(countDownBase, providerName,
+                                                        true))
+                                        .build();
+                        LogUtil.d(TAG, "send device reset notification");
+                        notificationManager.notify(DEVICE_RESET_NOTIFICATION_TAG,
+                                DEVICE_RESET_NOTIFICATION_ID, notification);
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+                        LogUtil.e(TAG, "Failed to create device reset notification", t);
+                    }
+                }, context.getMainExecutor());
+    }
+
+    private static RemoteViews buildResetTimerNotif(long countDownBase, String providerName,
+            boolean isExpanded) {
+        Context appContext = DeviceLockControllerApplication.getAppContext();
+        RemoteViews content = new RemoteViews(appContext.getPackageName(),
+                isExpanded ? R.layout.reset_timer_notif_large : R.layout.reset_timer_notif_small);
+        content.setChronometer(R.id.reset_timer_title, countDownBase,
+                appContext.getString(R.string.device_reset_timer_notification_title),
+                /* started= */ true);
+        if (isExpanded) {
+            content.setCharSequence(R.id.reset_content, "setText",
+                    appContext.getString(R.string.device_reset_notification_content, providerName));
+        }
+        return content;
+    }
+
     private static void sendDeviceResetNotification(Context context, int days, boolean ongoing) {
         // TODO: check/request permission first
 
@@ -98,10 +156,10 @@ public final class DeviceLockNotificationManager {
     // Already requested POST_NOTIFICATION permission in ProvisionInfoFragment
     @SuppressLint("MissingPermission")
     public static void sendDeferredEnrollmentNotification(Context context,
-            Instant resumeTime, PendingIntent pendingIntent) {
+            LocalDateTime resumeDateTime, PendingIntent pendingIntent) {
         createNotificationChannel(context);
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT);
-        String enrollmentResumeTime = timeFormatter.format(resumeTime);
+        String enrollmentResumeTime = timeFormatter.format(resumeDateTime);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(
                 context, PROVISION_NOTIFICATION_CHANNEL_ID)
                 .setContentTitle(context.getString(R.string.device_enrollment_header_text))
@@ -116,13 +174,13 @@ public final class DeviceLockNotificationManager {
     }
 
     private static ListenableFuture<Notification> createDeviceResetNotification(Context context,
-            int days, boolean onging) {
+            int days, boolean ongoing) {
         return Futures.transform(SetupParametersClient.getInstance().getKioskAppProviderName(),
                 providerName ->
                         // TODO: update the icon
                         new NotificationCompat.Builder(context, PROVISION_NOTIFICATION_CHANNEL_ID)
                                 .setSmallIcon(R.drawable.ic_action_lock)
-                                .setOngoing(onging)
+                                .setOngoing(ongoing)
                                 .setContentTitle(StringUtil.getPluralString(context, days,
                                         R.string.device_reset_in_days_notification_title))
                                 .setContentText(context.getString(

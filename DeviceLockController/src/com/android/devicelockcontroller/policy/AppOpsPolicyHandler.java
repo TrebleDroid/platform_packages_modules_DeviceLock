@@ -125,6 +125,7 @@ final class AppOpsPolicyHandler implements PolicyHandler {
             case DeviceState.PSEUDO_UNLOCKED:
                 return Futures.immediateFuture(SUCCESS);
             case DeviceState.SETUP_IN_PROGRESS:
+            case DeviceState.SETUP_PAUSED:
             case DeviceState.SETUP_SUCCEEDED:
             case DeviceState.SETUP_FAILED:
             case DeviceState.KIOSK_SETUP:

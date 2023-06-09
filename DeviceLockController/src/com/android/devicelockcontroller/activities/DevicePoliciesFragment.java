@@ -117,7 +117,8 @@ public final class DevicePoliciesFragment extends Fragment {
                                 @Override
                                 public void onFailure(Throwable t) {
                                     LogUtil.e(TAG, "Failed to start setup flow!", t);
-                                    // TODO(b/279969959): show setup failure UI
+                                    provisioningProgressViewModel.setProvisioningProgress(
+                                            ProvisioningProgress.PROVISIONING_FAILED);
                                 }
                             }, MoreExecutors.directExecutor());
                 });
@@ -126,7 +127,8 @@ public final class DevicePoliciesFragment extends Fragment {
             @Override
             public void setupFailed(int reason) {
                 LogUtil.e(TAG, "Failed to finish setup flow!");
-                // TODO(b/279969959): show setup failure UI
+                provisioningProgressViewModel.setProvisioningProgress(
+                        ProvisioningProgress.PROVISIONING_FAILED);
             }
 
             @Override

@@ -206,6 +206,7 @@ public final class DevicePolicyControllerImpl
             case DeviceState.LOCKED:
                 return getLockScreenActivityIntent();
             case DeviceState.SETUP_FAILED:
+            case DeviceState.SETUP_PAUSED:
             case DeviceState.UNLOCKED:
             case DeviceState.CLEARED:
             case DeviceState.UNPROVISIONED:
