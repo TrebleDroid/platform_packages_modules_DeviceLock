@@ -186,8 +186,20 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
 
         final PackageManager controllerPackageManager = controllerContext.getPackageManager();
 
-        controllerPackageManager.setApplicationEnabledSetting(controllerPackageName,
-                COMPONENT_ENABLED_STATE_DEFAULT, DONT_KILL_APP);
+        // We cannot check if user control is disabled since
+        // DevicePolicyManager.getUserControlDisabledPackages() acts on the calling user.
+        // Additionally, we would have to catch SecurityException anyways to avoid TOCTOU bugs
+        // since checking and setting is not atomic.
+        try {
+            controllerPackageManager.setApplicationEnabledSetting(controllerPackageName,
+                    COMPONENT_ENABLED_STATE_DEFAULT, DONT_KILL_APP);
+        } catch (SecurityException ex) {
+            // This exception is thrown when Device Lock Controller has already enabled
+            // package protection for itself. This is an expected behaviour.
+            // Note: the exception description thrown by
+            // PackageManager.setApplicationEnabledSetting() is somehow misleading because it says
+            // that a protected package cannot be disabled (but we're actually trying to enable it).
+        }
     }
 
     private boolean checkCallerPermission() {
