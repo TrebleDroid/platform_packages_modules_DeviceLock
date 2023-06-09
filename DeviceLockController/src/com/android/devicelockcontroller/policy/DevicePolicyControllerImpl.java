@@ -166,11 +166,11 @@ public final class DevicePolicyControllerImpl
     }
 
     @Override
-    public boolean wipeData() {
+    public boolean wipeDevice() {
         LogUtil.i(TAG, "Wiping device");
 
         try {
-            mDpm.wipeData(DevicePolicyManager.WIPE_SILENTLY
+            mDpm.wipeDevice(DevicePolicyManager.WIPE_SILENTLY
                     | DevicePolicyManager.WIPE_RESET_PROTECTION_DATA);
         } catch (SecurityException e) {
             LogUtil.e(TAG, "Cannot wipe device", e);

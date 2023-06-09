@@ -66,8 +66,12 @@ public interface DevicePolicyController {
     /**
      * Factory resets the device when the setup has failed and cannot continue.
      * Returns true if action was successful.
+     * <p>
+     * Using the new {@code DevicePolicyManager#wipeDevice()} introduced in Android U to
+     * reset the device. This is because the {@code DevicePolicyManager#wipeData()} no longer resets
+     * the device when called as the device owner, as it used to do in earlier Android versions.
      */
-    boolean wipeData();
+    boolean wipeDevice();
 
     /**
      * Get the State Controller associated with this Policy Controller.

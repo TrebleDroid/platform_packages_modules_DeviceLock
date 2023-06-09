@@ -269,7 +269,7 @@ public final class SetupControllerImpl implements SetupController {
             return Futures.transform(
                     SetupParametersClient.getInstance().isProvisionMandatory(),
                     isMandatory -> {
-                        if (isMandatory) mPolicyController.wipeData();
+                        if (isMandatory) mPolicyController.wipeDevice();
                         return null;
                     }, MoreExecutors.directExecutor());
         } else {
