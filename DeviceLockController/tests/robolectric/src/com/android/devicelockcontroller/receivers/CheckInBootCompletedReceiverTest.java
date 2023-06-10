@@ -71,7 +71,7 @@ public class CheckInBootCompletedReceiverTest {
         CheckInBootCompletedReceiver.checkInIfNeeded(mDeviceStateController, mDeviceCheckInHelper);
 
         List<WorkInfo> workInfo = mWorkManager.getWorkInfosForUniqueWork(
-                DeviceCheckInHelper.CHECK_IN_WORK_NAME).get(500, TimeUnit.MILLISECONDS);
+                DeviceCheckInHelper.DEVICE_CHECK_IN_WORK_NAME).get(500, TimeUnit.MILLISECONDS);
         assertThat(workInfo.size()).isEqualTo(1);
     }
 
@@ -83,7 +83,7 @@ public class CheckInBootCompletedReceiverTest {
         CheckInBootCompletedReceiver.checkInIfNeeded(mDeviceStateController, mDeviceCheckInHelper);
 
         List<WorkInfo> workInfo = mWorkManager.getWorkInfosForUniqueWork(
-                DeviceCheckInHelper.CHECK_IN_WORK_NAME).get(500, TimeUnit.MILLISECONDS);
+                DeviceCheckInHelper.DEVICE_CHECK_IN_WORK_NAME).get(500, TimeUnit.MILLISECONDS);
         assertThat(workInfo).isEmpty();
     }
 }
