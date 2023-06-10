@@ -18,9 +18,7 @@
     <!-- Allowed device identifiers bitmap -->
     <integer name="device_id_type_bitmap">3</integer>
     <!-- Packages allow-listed in locked mode -->
-    <array name="lock_task_allowlist">
-        <item>com.android.devicelockcontroller</item>
-    </array>
+    <array name="lock_task_allowlist"/>
 
     <!-- Port number of the check in server -->
     <integer name="check_in_server_port_number">8843</integer>
