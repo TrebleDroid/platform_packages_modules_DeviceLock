@@ -171,4 +171,52 @@ public final class SystemDeviceLockManagerImpl implements SystemDeviceLockManage
             executor.execute(() -> callback.onError(new RuntimeException(e)));
         }
     }
+
+    @Override
+    @RequiresPermission(MANAGE_DEVICE_LOCK_SERVICE_FROM_CONTROLLER)
+    public void enableKioskKeepalive(String packageName, Executor executor,
+            @NonNull OutcomeReceiver<Void, Exception> callback) {
+        Objects.requireNonNull(packageName);
+        Objects.requireNonNull(executor);
+        Objects.requireNonNull(callback);
+
+        try {
+            mIDeviceLockService.enableKioskKeepalive(packageName,
+                    new RemoteCallback(result -> executor.execute(() -> {
+                        final boolean keepaliveEnabled = result.getBoolean(
+                                IDeviceLockService.KEY_REMOTE_CALLBACK_RESULT);
+                        if (keepaliveEnabled) {
+                            callback.onResult(null /* result */);
+                        } else {
+                            callback.onError(new Exception("Failed to enable keepalive "
+                                    + "for package: " + packageName));
+                        }
+                    }), new Handler(Looper.getMainLooper())));
+        } catch (RemoteException e) {
+            executor.execute(() -> callback.onError(new RuntimeException(e)));
+        }
+    }
+
+    @Override
+    @RequiresPermission(MANAGE_DEVICE_LOCK_SERVICE_FROM_CONTROLLER)
+    public void disableKioskKeepalive(Executor executor,
+            @NonNull OutcomeReceiver<Void, Exception> callback) {
+        Objects.requireNonNull(executor);
+        Objects.requireNonNull(callback);
+
+        try {
+            mIDeviceLockService.disableKioskKeepalive(
+                    new RemoteCallback(result -> executor.execute(() -> {
+                        final boolean keepaliveDisabled = result.getBoolean(
+                                IDeviceLockService.KEY_REMOTE_CALLBACK_RESULT);
+                        if (keepaliveDisabled) {
+                            callback.onResult(null /* result */);
+                        } else {
+                            callback.onError(new Exception("Failed to disable keepalive"));
+                        }
+                    }), new Handler(Looper.getMainLooper())));
+        } catch (RemoteException e) {
+            executor.execute(() -> callback.onError(new RuntimeException(e)));
+        }
+    }
 }

@@ -33,6 +33,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Build;
+import android.os.UserHandle;
 import android.os.UserManager;
 
 import androidx.annotation.NonNull;
@@ -46,6 +47,7 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import com.android.devicelockcontroller.DeviceLockControllerApplication;
+import com.android.devicelockcontroller.SystemDeviceLockManager;
 import com.android.devicelockcontroller.SystemDeviceLockManagerImpl;
 import com.android.devicelockcontroller.common.DeviceLockConstants;
 import com.android.devicelockcontroller.common.DeviceLockConstants.ProvisioningType;
@@ -98,18 +100,22 @@ public final class DevicePolicyControllerImpl
         mStateController = stateController;
         mLockTaskHandler = new LockTaskModePolicyHandler(context, dpm);
 
+        final SystemDeviceLockManager systemDeviceLockManager =
+                SystemDeviceLockManagerImpl.getInstance();
+
         mPolicyList.add(new UserRestrictionsPolicyHandler(dpm,
                 context.getSystemService(UserManager.class), Build.isDebuggable()));
-        mPolicyList.add(new AppOpsPolicyHandler(context, SystemDeviceLockManagerImpl.getInstance(),
+        mPolicyList.add(new AppOpsPolicyHandler(context, systemDeviceLockManager,
                 context.getSystemService(AppOpsManager.class)));
         mPolicyList.add(mLockTaskHandler);
         mPolicyList.add(new PackagePolicyHandler(context, dpm));
-        mPolicyList.add(new RolePolicyHandler(context, SystemDeviceLockManagerImpl.getInstance()));
+        mPolicyList.add(new RolePolicyHandler(context, systemDeviceLockManager));
+        mPolicyList.add(new KioskKeepalivePolicyHandler(context, systemDeviceLockManager));
         stateController.addCallback(this);
     }
 
     @Override
-    public ListenableFuture<Boolean> launchActivityInLockedMode() {
+    public ListenableFuture<Boolean> launchActivityInLockedModeAsUser(UserHandle userHandle) {
         return Futures.transform(getLockedActivity(), launchIntent -> {
             if (launchIntent == null) {
                 LogUtil.e(TAG, "Failed to get the locked activity");
@@ -125,10 +131,15 @@ public final class DevicePolicyControllerImpl
             launchIntent.addFlags(
                     Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             LogUtil.i(TAG, String.format(Locale.US, "Launching activity: %s", activity));
-            mContext.startActivity(launchIntent,
-                    ActivityOptions.makeBasic().setLockTaskEnabled(true).toBundle());
+            mContext.startActivityAsUser(launchIntent,
+                    ActivityOptions.makeBasic().setLockTaskEnabled(true).toBundle(), userHandle);
             return true;
         }, mContext.getMainExecutor());
+    }
+
+    @Override
+    public ListenableFuture<Boolean> launchActivityInLockedMode() {
+        return launchActivityInLockedModeAsUser(UserHandle.CURRENT);
     }
 
     @Override

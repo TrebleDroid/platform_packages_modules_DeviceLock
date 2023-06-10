@@ -34,6 +34,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.PackageManager.PackageInfoFlags;
@@ -47,6 +48,7 @@ import android.devicelock.IIsDeviceLockedCallback;
 import android.devicelock.ILockUnlockDeviceCallback;
 import android.os.Binder;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.os.OutcomeReceiver;
 import android.os.RemoteCallback;
 import android.os.RemoteException;
@@ -67,6 +69,9 @@ import java.util.List;
 final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
     private static final String TAG = "DeviceLockServiceImpl";
 
+    private static final String ACTION_DEVICE_LOCK_KIOSK_KEEPALIVE =
+            "com.android.devicelock.action.KEEPALIVE";
+
     private final Context mContext;
 
     private final DeviceLockControllerConnector mDeviceLockControllerConnector;
@@ -74,6 +79,10 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
     private final DeviceLockControllerPackageUtils mPackageUtils;
 
     private final ServiceInfo mServiceInfo;
+
+    // Map user id -> ServiceConnection for kiosk keepalive.
+    private final ArrayMap<Integer, KioskKeepaliveServiceConnection>
+            mKioskKeepaliveServiceConnections;
 
     // The following should be a SystemApi on AppOpsManager.
     private static final String OPSTR_SYSTEM_EXEMPT_FROM_ACTIVITY_BG_START_RESTRICTION =
@@ -129,6 +138,8 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
 
     DeviceLockServiceImpl(@NonNull Context context) {
         mContext = context;
+
+        mKioskKeepaliveServiceConnections = new ArrayMap<>();
 
         mPackageUtils = new DeviceLockControllerPackageUtils(context);
 
@@ -520,5 +531,122 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
 
         setExemption(packageName, kioskUid, OPSTR_SYSTEM_EXEMPT_FROM_HIBERNATION, exempt,
                 remoteCallback);
+    }
+
+    private class KioskKeepaliveServiceConnection implements ServiceConnection {
+        final UserHandle mUserHandle;
+
+        final Intent mService;
+
+        KioskKeepaliveServiceConnection(String packageName, UserHandle userHandle) {
+            super();
+            mUserHandle = userHandle;
+            mService = new Intent(ACTION_DEVICE_LOCK_KIOSK_KEEPALIVE).setPackage(packageName);
+        }
+
+        private boolean bind() {
+            return mContext.bindServiceAsUser(mService, this, Context.BIND_AUTO_CREATE,
+                    mUserHandle);
+        }
+
+        private boolean rebind() {
+            mContext.unbindService(this);
+            boolean bound = bind();
+
+            if (bound) {
+                mDeviceLockControllerConnector.startLockTaskModeAsUser(mUserHandle,
+                        new OutcomeReceiver<>() {
+                            @Override
+                            public void onResult(Void result) {
+                                Slog.i(TAG, "Lock task mode started");
+                            }
+
+                            @Override
+                            public void onError(Exception ex) {
+                                Slog.e(TAG, "Start lock task mode error: ", ex);
+                            }
+                        });
+            }
+
+            return bound;
+        }
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            Slog.i(TAG, "Kiosk keepalive successful for user " + mUserHandle);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            if (rebind()) {
+                Slog.i(TAG, "onServiceDisconnected rebind successful for user " + mUserHandle);
+            } else {
+                Slog.e(TAG, "onServiceDisconnected rebind failed for user " + mUserHandle);
+            }
+        }
+
+        @Override
+        public void onBindingDied(ComponentName name) {
+            ServiceConnection.super.onBindingDied(name);
+            if (rebind()) {
+                Slog.i(TAG, "onBindingDied rebind successful for user " + mUserHandle);
+            } else {
+                Slog.e(TAG, "onBindingDied rebind failed for user " + mUserHandle);
+            }
+        }
+    }
+
+    @Override
+    public void enableKioskKeepalive(String packageName, @NonNull RemoteCallback remoteCallback) {
+        final UserHandle controllerUserHandle = Binder.getCallingUserHandle();
+        final int controllerUserId = controllerUserHandle.getIdentifier();
+        boolean keepaliveEnabled = false;
+        synchronized (this) {
+            if (mKioskKeepaliveServiceConnections.get(controllerUserId) == null) {
+                final KioskKeepaliveServiceConnection serviceConnection =
+                        new KioskKeepaliveServiceConnection(packageName, controllerUserHandle);
+                final long identity = Binder.clearCallingIdentity();
+                if (serviceConnection.bind()) {
+                    mKioskKeepaliveServiceConnections.put(controllerUserId, serviceConnection);
+                    keepaliveEnabled = true;
+                } else {
+                    Slog.w(TAG, "enableKioskKeepalive: failed to bind to keepalive service for "
+                            + "user " + controllerUserHandle);
+                    mContext.unbindService(serviceConnection);
+                }
+                Binder.restoreCallingIdentity(identity);
+            } else {
+                // Consider success if we already have an entry for this user id.
+                keepaliveEnabled = true;
+            }
+        }
+
+        final Bundle result = new Bundle();
+        result.putBoolean(KEY_REMOTE_CALLBACK_RESULT, keepaliveEnabled);
+        remoteCallback.sendResult(result);
+    }
+
+    @Override
+    public void disableKioskKeepalive(@NonNull RemoteCallback remoteCallback) {
+        final UserHandle controllerUserHandle = Binder.getCallingUserHandle();
+        final int controllerUserId = controllerUserHandle.getIdentifier();
+        final KioskKeepaliveServiceConnection serviceConnection;
+
+        synchronized (this) {
+            serviceConnection = mKioskKeepaliveServiceConnections.remove(controllerUserId);
+        }
+
+        if (serviceConnection != null) {
+            final long identity = Binder.clearCallingIdentity();
+            mContext.unbindService(serviceConnection);
+            Binder.restoreCallingIdentity(identity);
+        } else {
+            Slog.e(TAG, "disableKioskKeepalive: Service connection not found for user "
+                    + controllerUserHandle);
+        }
+
+        final Bundle result = new Bundle();
+        result.putBoolean(KEY_REMOTE_CALLBACK_RESULT, serviceConnection != null);
+        remoteCallback.sendResult(result);
     }
 }
