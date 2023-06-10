@@ -224,7 +224,7 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
                 throw new IllegalArgumentException("Can not handle implicit intent!");
             }
             ((PolicyObjectsInterface) context.getApplicationContext())
-                    .getPolicyController().wipeData();
+                    .getPolicyController().wipeDevice();
         }
     }
 }
