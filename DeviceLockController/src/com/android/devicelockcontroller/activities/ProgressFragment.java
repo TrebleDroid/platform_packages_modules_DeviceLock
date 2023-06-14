@@ -31,6 +31,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.android.devicelockcontroller.R;
+import com.android.devicelockcontroller.activities.util.UrlUtils;
 
 /**
  * A screen which always displays a progress bar.
@@ -82,8 +83,11 @@ public final class ProgressFragment extends Fragment {
                                                 .mProviderNameLiveData.getValue()));
                     }
                     if (provisioningProgress.mSubheaderId != 0) {
-                        subheaderTextView.setText(
-                                requireContext().getString(provisioningProgress.mSubheaderId));
+                        UrlUtils.setUrlText(subheaderTextView,
+                                requireContext().getString(provisioningProgress.mSubheaderId,
+                                        provisioningProgressViewModel
+                                                .mSupportUrlLiveData
+                                                .getValue()));
                     }
                     if (provisioningProgress.mProgressBarVisible) {
                         progressBar.setVisibility(View.VISIBLE);

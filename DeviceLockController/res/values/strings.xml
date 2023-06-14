@@ -242,8 +242,7 @@
     <!-- Title text of the provisioning failed screen, this tells the user provisioning of their device failed. [CHAR LIMIT=60] -->
     <string name="provisioning_failed">Financing provisioning has failed</string>
     <!-- Subheader of the provisioning failed screen, this tells the user to click the link to contact their financier for help. [CHAR LIMIT=NONE] -->
-    <!-- TODO(b/286245345): "Learn more" should point to the support URL -->
-    <string name="click_to_contact_financier">Please click here for ways to contact your financier. Learn more</string>
+    <string name="click_to_contact_financier">Please click here for ways to contact your financier. <xliff:g id="support_url_start">&lt;a href="%1$s"></xliff:g>Learn more<xliff:g id="support_url_end">&lt;/a&gt;</xliff:g></string>
     <!-- Button text used to let the user exit the Device lock controller app. [CHAR LIMIT=20] -->
     <string name="exit">Exit</string>
     <!-- Button text used to let the user try provisioning one more time. [CHAR LIMIT=20] -->
