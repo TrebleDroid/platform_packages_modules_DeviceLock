@@ -16,7 +16,11 @@
 
 package com.android.server.devicelock;
 
+import android.annotation.NonNull;
 import android.content.Context;
+import android.os.Process;
+import android.os.UserHandle;
+import android.os.UserManager;
 import android.util.Slog;
 
 import com.android.server.SystemService;
@@ -50,20 +54,37 @@ public final class DeviceLockService extends SystemService {
         Slog.d(TAG, "onBootPhase: " + phase);
     }
 
+    @NonNull
+    private static Context getUserContext(@NonNull Context context, @NonNull UserHandle user) {
+        if (Process.myUserHandle().equals(user)) {
+            return context;
+        } else {
+            return context.createContextAsUser(user, 0 /* flags */);
+        }
+    }
+
     @Override
-    public void onUserSwitching(TargetUser from, TargetUser to) {
+    public boolean isUserSupported(@NonNull TargetUser user) {
+        final UserManager userManager =
+                getUserContext(getContext(),
+                        user.getUserHandle()).getSystemService(UserManager.class);
+        return !userManager.isProfile();
+    }
+
+    @Override
+    public void onUserSwitching(@NonNull TargetUser from, @NonNull TargetUser to) {
         Objects.requireNonNull(to);
-        Slog.d(TAG, "onUserSwitching");
+        Slog.d(TAG, "onUserSwitching from: " + from + " to: " + to);
         mImpl.setDeviceLockControllerPackageDefaultEnabledState(to.getUserHandle());
     }
 
     @Override
-    public void onUserUnlocking(TargetUser user) {
-        Slog.d(TAG, "onUserUnlocking");
+    public void onUserUnlocking(@NonNull TargetUser user) {
+        Slog.d(TAG, "onUserUnlocking: " + user);
     }
 
     @Override
-    public void onUserStopping(TargetUser user) {
-        Slog.d(TAG, "onUserStopping");
+    public void onUserStopping(@NonNull TargetUser user) {
+        Slog.d(TAG, "onUserStopping: " + user);
     }
 }
