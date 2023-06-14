@@ -17,14 +17,7 @@
 package com.android.devicelockcontroller.activities;
 
 import android.content.Context;
-import android.content.Intent;
-import android.text.Html;
-import android.text.Spannable;
-import android.text.SpannableString;
 import android.text.TextUtils;
-import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
-import android.text.style.URLSpan;
 import android.view.View;
 import android.widget.TextView;
 
@@ -33,6 +26,7 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.devicelockcontroller.R;
+import com.android.devicelockcontroller.activities.util.UrlUtils;
 import com.android.devicelockcontroller.util.LogUtil;
 
 /**
@@ -65,27 +59,9 @@ public final class ProvisionInfoViewHolder extends RecyclerView.ViewHolder {
                 LogUtil.e(TAG, "Terms and Conditions URL is empty, should not reach here.");
                 return;
             }
-
-            SpannableString spannedTextView = new SpannableString(Html.fromHtml(
-                    String.format(
-                            context.getString(R.string.restrict_device_if_dont_make_payment),
-                            providerName, termsAndConditionsUrl),
-                    Html.FROM_HTML_MODE_LEGACY));
-            URLSpan[] spans = spannedTextView.getSpans(0, spannedTextView.length(),
-                    URLSpan.class);
-
-            for (URLSpan span : spans) {
-                int start = spannedTextView.getSpanStart(span);
-                int end = spannedTextView.getSpanEnd(span);
-
-                ClickableSpan clickableSpan = new CustomClickableSpan(span.getURL());
-                spannedTextView.removeSpan(span);
-                spannedTextView.setSpan(clickableSpan, start, end,
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-
-            mTextView.setText(spannedTextView);
-            mTextView.setMovementMethod(LinkMovementMethod.getInstance());
+            UrlUtils.setUrlText(mTextView, String.format(
+                    context.getString(R.string.restrict_device_if_dont_make_payment),
+                    providerName, termsAndConditionsUrl));
         } else {
             mTextView.setText(context.getString(provisionInfo.getTextId(), providerName));
         }
@@ -94,21 +70,5 @@ public final class ProvisionInfoViewHolder extends RecyclerView.ViewHolder {
                 /* top=*/ 0,
                 /* end=*/ 0,
                 /* bottom=*/ 0);
-    }
-
-    private static final class CustomClickableSpan extends ClickableSpan {
-
-        final String mUrl;
-
-        CustomClickableSpan(String url) {
-            mUrl = url;
-        }
-
-        @Override
-        public void onClick(@NonNull View view) {
-            Intent webIntent = new Intent(view.getContext(), HelpActivity.class);
-            webIntent.putExtra(HelpActivity.EXTRA_URL_PARAM, mUrl);
-            view.getContext().startActivity(webIntent);
-        }
     }
 }
