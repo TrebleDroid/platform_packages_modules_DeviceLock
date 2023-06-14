@@ -66,8 +66,8 @@ public final class DeviceCheckInClientDebug extends DeviceCheckInClient {
             @Nullable
             @Override
             public String getRegisteredDeviceIdentifier() {
-                return DebugLogUtil.logAndReturn(TAG, SystemProperties.get(
-                        "debug.devicelock.checkin.registered-id"));
+                return DebugLogUtil.logAndReturn(TAG,
+                        deviceIds.size() > 0 ? deviceIds.valueAt(0).getId() : null);
             }
 
             @Nullable
