@@ -35,7 +35,7 @@ import java.util.List;
 
 /**
  * This class provides the resources and {@link ProvisionInfo} to render the
- * {@link ProvisionInfoFragment} and/or {@link ProvisionNotRequiredFragment}.
+ * {@link ProvisionInfoFragment}.
  */
 public abstract class ProvisionInfoViewModel extends ViewModel {
 

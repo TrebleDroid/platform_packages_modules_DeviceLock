@@ -134,18 +134,6 @@ public final class DeviceLockConstants {
     public static final String ACTION_START_DEVICE_SUBSIDY_DEFERRED_PROVISIONING =
             "com.android.devicelockcontroller.action.START_DEVICE_SUBSIDY_DEFERRED_PROVISIONING";
 
-    public static final String ACTION_DEVICE_FINANCING_PROVISION_NOT_REQUIRED =
-            "com.android.devicelockcontroller.action.DEVICE_FINANCING_PROVISION_NOT_REQUIRED";
-
-    public static final String ACTION_DEVICE_SUBSIDY_PROVISION_NOT_REQUIRED =
-            "com.android.devicelockcontroller.action.DEVICE_SUBSIDY_PROVISION_NOT_REQUIRED";
-
-    public static final String ACTION_START_DEVICE_FINANCING_ENROLLMENT =
-            "com.android.devicelockcontroller.action.START_DEVICE_FINANCING_ENROLLMENT";
-
-    public static final String ACTION_START_DEVICE_SUBSIDY_ENROLLMENT =
-            "com.android.devicelockcontroller.action.START_DEVICE_SUBSIDY_ENROLLMENT";
-
     /** Uses the package name of {@link Context#getPackageName()} to return the landing activity. */
     public static String getLandingActivity(Context context) {
         return context.getPackageName() + "/"

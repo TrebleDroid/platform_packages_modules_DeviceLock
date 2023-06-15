@@ -111,45 +111,6 @@
             </intent-filter>
         </activity-alias>
 
-        <activity-alias
-            android:name="com.android.devicelockcontroller.activities.DeviceFinancingProvisionNotRequiredLandingActivity"
-            android:exported="false"
-            android:targetActivity=".activities.LandingActivity">
-            <intent-filter>
-                <action android:name="com.android.devicelockcontroller.action.DEVICE_FINANCING_PROVISION_NOT_REQUIRED" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity-alias>
-
-        <activity-alias
-            android:name="com.android.devicelockcontroller.activities.DeviceSubsidyProvisionNotRequiredLandingActivity"
-            android:exported="false"
-            android:targetActivity=".activities.LandingActivity">
-            <intent-filter>
-                <action android:name="com.android.devicelockcontroller.action.DEVICE_SUBSIDY_PROVISION_NOT_REQUIRED" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity-alias>
-
-        <activity
-            android:name="com.android.devicelockcontroller.activities.DeviceEnrollmentActivity"
-            android:theme="@style/Theme.DeviceLock.NoActionBar"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.android.devicelockcontroller.action.START_DEVICE_FINANCING_ENROLLMENT"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </activity>
-        <activity-alias
-            android:name="com.android.devicelockcontroller.activities.DeviceSubsidyEnrollmentActivity"
-            android:targetActivity=".activities.DeviceEnrollmentActivity"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.android.devicelockcontroller.action.START_DEVICE_SUBSIDY_ENROLLMENT"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </activity-alias>
-
         <activity
             android:name="com.android.devicelockcontroller.activities.DeviceLockSettingsActivity"
             android:theme="@style/Theme.DeviceLock.NoActionBar"
