@@ -95,7 +95,10 @@ android_library {
     sdk_version: "module_current",
     min_sdk_version: "UpsideDownCake",
     srcs: ["src/**/*.java"],
-    exclude_srcs: [":devicelockcontroller-grpc-impl-sources"],
+    exclude_srcs: [
+        ":devicelockcontroller-grpc-impl-sources",
+        "src/com/android/devicelockcontroller/debug/*.java",
+    ],
     resource_dirs: ["res"],
     libs: [
         "framework-annotations-lib",
