@@ -32,10 +32,13 @@ import androidx.work.ListenableWorker;
 import androidx.work.ListenableWorker.Result;
 import androidx.work.WorkerFactory;
 import androidx.work.WorkerParameters;
-import androidx.work.testing.TestWorkerBuilder;
+import androidx.work.testing.TestListenableWorkerBuilder;
 
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.IsDeviceInApprovedCountryGrpcResponse;
+
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.testing.TestingExecutors;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -45,9 +48,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
-
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 @RunWith(RobolectricTestRunner.class)
 public final class IsDeviceInApprovedCountryWorkerTest {
@@ -62,10 +62,9 @@ public final class IsDeviceInApprovedCountryWorkerTest {
     @Before
     public void setUp() throws Exception {
         final Context context = ApplicationProvider.getApplicationContext();
-        final Executor executor = Executors.newSingleThreadExecutor();
         when(mClient.isDeviceInApprovedCountry(any())).thenReturn(mResponse);
-        mWorker = TestWorkerBuilder.from(
-                        context, IsDeviceInApprovedCountryWorker.class, executor)
+        mWorker = TestListenableWorkerBuilder.from(
+                        context, IsDeviceInApprovedCountryWorker.class)
                 .setWorkerFactory(
                         new WorkerFactory() {
                             @Override
@@ -75,7 +74,8 @@ public final class IsDeviceInApprovedCountryWorkerTest {
                                 return workerClassName.equals(
                                         IsDeviceInApprovedCountryWorker.class.getName())
                                         ? new IsDeviceInApprovedCountryWorker(
-                                        context, workerParameters, mClient)
+                                        context, workerParameters, mClient,
+                                        TestingExecutors.sameThreadScheduledExecutor())
                                         : null;
                             }
                         }).build();
@@ -88,7 +88,7 @@ public final class IsDeviceInApprovedCountryWorkerTest {
         Result expected = Result.success(
                 new Data.Builder().putBoolean(KEY_IS_IN_APPROVED_COUNTRY, true).build());
 
-        Result actual = mWorker.doWork();
+        Result actual = Futures.getUnchecked(mWorker.startWork());
 
         assertThat(actual).isEqualTo(expected);
     }
@@ -100,7 +100,7 @@ public final class IsDeviceInApprovedCountryWorkerTest {
         Result expected = Result.success(
                 new Data.Builder().putBoolean(KEY_IS_IN_APPROVED_COUNTRY, false).build());
 
-        Result actual = mWorker.doWork();
+        Result actual = Futures.getUnchecked(mWorker.startWork());
 
         assertThat(actual).isEqualTo(expected);
     }
@@ -111,7 +111,7 @@ public final class IsDeviceInApprovedCountryWorkerTest {
         when(mResponse.isDeviceInApprovedCountry()).thenReturn(false);
         Result expected = Result.failure();
 
-        Result actual = mWorker.doWork();
+        Result actual = Futures.getUnchecked(mWorker.startWork());
 
         assertThat(actual).isEqualTo(expected);
     }

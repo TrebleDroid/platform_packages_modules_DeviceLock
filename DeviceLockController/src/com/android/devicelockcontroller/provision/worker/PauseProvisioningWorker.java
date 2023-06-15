@@ -40,6 +40,9 @@ import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 
 /**
  * A worker class dedicated to request pause of provisioning for device lock program.
@@ -72,37 +75,41 @@ public final class PauseProvisioningWorker extends AbstractCheckInWorker {
     }
 
     public PauseProvisioningWorker(@NonNull Context context,
-            @NonNull WorkerParameters workerParams) {
-        super(context, workerParams);
+            @NonNull WorkerParameters workerParams, ListeningExecutorService executorService) {
+        super(context, workerParams, null, executorService);
     }
 
     @VisibleForTesting
     PauseProvisioningWorker(@NonNull Context context, @NonNull WorkerParameters workerParams,
-            DeviceCheckInClient client) {
-        super(context, workerParams, client);
+            DeviceCheckInClient client, ListeningExecutorService executorService) {
+        super(context, workerParams, client, executorService);
     }
 
     @NonNull
     @Override
-    public Result doWork() {
-        final int reason = getInputData().getInt(KEY_PAUSE_DEVICE_PROVISIONING_REASON,
-                REASON_UNSPECIFIED);
-        PauseDeviceProvisioningGrpcResponse response =
-                Futures.getUnchecked(mClient).pauseDeviceProvisioning(reason);
-        if (response.isSuccessful()) {
-            boolean shouldForceProvisioning = response.shouldForceProvisioning();
-            Futures.getUnchecked(GlobalParametersClient.getInstance().setProvisionForced(
-                    shouldForceProvisioning));
-            PolicyObjectsInterface policyObjects =
-                    (PolicyObjectsInterface) mContext.getApplicationContext();
-            // TODO(b/286160722): Fix Device provisioning is not resumed after 1 hour in case
-            //  user pauses it
-            DeviceStateController deviceStateController = policyObjects.getStateController();
-            Futures.getUnchecked(
-                    deviceStateController.setNextStateForEvent(DeviceEvent.SETUP_PAUSE));
-            return Result.success();
-        }
-        LogUtil.w(TAG, "Pause provisioning request failed: " + response);
-        return Result.failure();
+    public ListenableFuture<Result> startWork() {
+        return Futures.transform(mClient, client -> {
+            int reason = getInputData().getInt(KEY_PAUSE_DEVICE_PROVISIONING_REASON,
+                    REASON_UNSPECIFIED);
+            PauseDeviceProvisioningGrpcResponse response = client.pauseDeviceProvisioning(reason);
+            if (response.hasRecoverableError()) {
+                return Result.retry();
+            }
+            if (response.isSuccessful()) {
+                boolean shouldForceProvisioning = response.shouldForceProvisioning();
+                Futures.getUnchecked(GlobalParametersClient.getInstance().setProvisionForced(
+                        shouldForceProvisioning));
+                PolicyObjectsInterface policyObjects =
+                        (PolicyObjectsInterface) mContext.getApplicationContext();
+                // TODO(b/286160722): Fix Device provisioning is not resumed after 1 hour in case
+                //  user pauses it
+                DeviceStateController deviceStateController = policyObjects.getStateController();
+                Futures.getUnchecked(
+                        deviceStateController.setNextStateForEvent(DeviceEvent.SETUP_PAUSE));
+                return Result.success();
+            }
+            LogUtil.w(TAG, "Pause provisioning request failed: " + response);
+            return Result.failure();
+        }, MoreExecutors.directExecutor());
     }
 }

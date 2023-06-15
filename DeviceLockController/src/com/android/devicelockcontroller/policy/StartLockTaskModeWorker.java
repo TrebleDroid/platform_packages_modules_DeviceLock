@@ -29,10 +29,10 @@ import com.android.devicelockcontroller.util.LogUtil;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 
 import java.util.Objects;
-import java.util.concurrent.Executors;
 
 /**
  * A worker class dedicated to start lock task mode when device is locked.
@@ -42,12 +42,15 @@ public final class StartLockTaskModeWorker extends ListenableWorker {
     private static final String TAG = "StartLockTaskModeWorker";
     static final String START_LOCK_TASK_MODE_WORK_NAME = "start-lock-task-mode";
     private final Context mContext;
+    private final ListeningExecutorService mExecutorService;
 
     public StartLockTaskModeWorker(
             @NonNull Context context,
-            @NonNull WorkerParameters workerParams) {
+            @NonNull WorkerParameters workerParams,
+            ListeningExecutorService executorService) {
         super(context, workerParams);
         mContext = context;
+        mExecutorService = executorService;
     }
 
     @NonNull
@@ -58,7 +61,7 @@ public final class StartLockTaskModeWorker extends ListenableWorker {
         ListenableFuture<Boolean> isInLockTaskModeFuture =
                 Futures.submit(
                         () -> am.getLockTaskModeState() == ActivityManager.LOCK_TASK_MODE_LOCKED,
-                        Executors.newSingleThreadExecutor());
+                        mExecutorService);
         return Futures.transformAsync(isInLockTaskModeFuture, isInLockTaskMode -> {
             if (isInLockTaskMode) {
                 LogUtil.i(TAG, "Lock task mode is active now");

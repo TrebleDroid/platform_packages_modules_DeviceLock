@@ -42,7 +42,7 @@ import androidx.work.ListenableWorker;
 import androidx.work.ListenableWorker.Result;
 import androidx.work.WorkerFactory;
 import androidx.work.WorkerParameters;
-import androidx.work.testing.TestWorkerBuilder;
+import androidx.work.testing.TestListenableWorkerBuilder;
 
 import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
 import com.android.devicelockcontroller.policy.DevicePolicyController;
@@ -51,6 +51,8 @@ import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.ReportDeviceProvisionStateGrpcResponse;
 
 import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.UncheckedExecutionException;
+import com.google.common.util.concurrent.testing.TestingExecutors;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -62,9 +64,6 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.Shadows;
-
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 @RunWith(RobolectricTestRunner.class)
 public final class ReportDeviceProvisionStateWorkerTest {
@@ -81,11 +80,10 @@ public final class ReportDeviceProvisionStateWorkerTest {
     @Before
     public void setUp() throws Exception {
         mTestApp = ApplicationProvider.getApplicationContext();
-        final Executor executor = Executors.newSingleThreadExecutor();
         when(mClient.reportDeviceProvisionState(anyInt(), anyInt(), anyBoolean())).thenReturn(
                 mResponse);
-        mWorker = TestWorkerBuilder.from(
-                        mTestApp, ReportDeviceProvisionStateWorker.class, executor)
+        mWorker = TestListenableWorkerBuilder.from(
+                        mTestApp, ReportDeviceProvisionStateWorker.class)
                 .setWorkerFactory(
                         new WorkerFactory() {
                             @Override
@@ -95,7 +93,8 @@ public final class ReportDeviceProvisionStateWorkerTest {
                                 return workerClassName.equals(
                                         ReportDeviceProvisionStateWorker.class.getName())
                                         ? new ReportDeviceProvisionStateWorker(context,
-                                        workerParameters, mClient)
+                                        workerParameters, mClient,
+                                        TestingExecutors.sameThreadScheduledExecutor())
                                         : null;
                             }
                         }).build();
@@ -105,14 +104,14 @@ public final class ReportDeviceProvisionStateWorkerTest {
     public void doWork_responseHasRecoverableError_returnRetry() {
         when(mResponse.hasRecoverableError()).thenReturn(true);
 
-        assertThat(mWorker.doWork()).isEqualTo(Result.retry());
+        assertThat(Futures.getUnchecked(mWorker.startWork())).isEqualTo(Result.retry());
     }
 
     @Test
     public void doWork_responseHasFatalError_returnFailure() {
         when(mResponse.hasFatalError()).thenReturn(true);
 
-        assertThat(mWorker.doWork()).isEqualTo(Result.failure());
+        assertThat(Futures.getUnchecked(mWorker.startWork())).isEqualTo(Result.failure());
     }
 
     @Test
@@ -120,9 +119,9 @@ public final class ReportDeviceProvisionStateWorkerTest {
         when(mResponse.isSuccessful()).thenReturn(true);
         when(mResponse.getNextClientProvisionState()).thenReturn(UNEXPECTED_VALUE);
         try {
-            mWorker.doWork();
-        } catch (IllegalStateException actualException) {
-            assertThat(actualException).hasMessageThat().isEqualTo(
+            Futures.getUnchecked(mWorker.startWork());
+        } catch (UncheckedExecutionException actualException) {
+            assertThat(actualException.getCause()).hasMessageThat().isEqualTo(
                     UNEXPECTED_PROVISION_STATE_ERROR_MESSAGE);
             return;
         }
@@ -134,7 +133,7 @@ public final class ReportDeviceProvisionStateWorkerTest {
         when(mResponse.isSuccessful()).thenReturn(true);
         when(mResponse.getNextClientProvisionState()).thenReturn(PROVISION_STATE_UNSPECIFIED);
 
-        assertThat(mWorker.doWork()).isEqualTo(Result.success());
+        assertThat(Futures.getUnchecked(mWorker.startWork())).isEqualTo(Result.success());
     }
 
     @Test
@@ -142,7 +141,7 @@ public final class ReportDeviceProvisionStateWorkerTest {
         when(mResponse.isSuccessful()).thenReturn(true);
         when(mResponse.getNextClientProvisionState()).thenReturn(PROVISION_STATE_SUCCESS);
 
-        assertThat(mWorker.doWork()).isEqualTo(Result.success());
+        assertThat(Futures.getUnchecked(mWorker.startWork())).isEqualTo(Result.success());
     }
 
     @Test
@@ -154,7 +153,7 @@ public final class ReportDeviceProvisionStateWorkerTest {
         when(deviceStateController.setNextStateForEvent(PROVISIONING_SUCCESS)).thenReturn(
                 Futures.immediateVoidFuture());
 
-        assertThat(mWorker.doWork()).isEqualTo(Result.success());
+        assertThat(Futures.getUnchecked(mWorker.startWork())).isEqualTo(Result.success());
 
         Shadows.shadowOf(Looper.getMainLooper()).idle();
         verify(deviceStateController).setNextStateForEvent(eq(PROVISIONING_SUCCESS));
@@ -167,7 +166,7 @@ public final class ReportDeviceProvisionStateWorkerTest {
 
         // TODO(b/284003841): add test content
 
-        assertThat(mWorker.doWork()).isEqualTo(Result.success());
+        assertThat(Futures.getUnchecked(mWorker.startWork())).isEqualTo(Result.success());
     }
 
     @Test
@@ -177,7 +176,7 @@ public final class ReportDeviceProvisionStateWorkerTest {
 
         // TODO(b/284003841): add test content
 
-        assertThat(mWorker.doWork()).isEqualTo(Result.success());
+        assertThat(Futures.getUnchecked(mWorker.startWork())).isEqualTo(Result.success());
     }
 
     @Ignore //TODO(b/284003841): Figure out how to verify the expectation
@@ -187,6 +186,6 @@ public final class ReportDeviceProvisionStateWorkerTest {
         when(mResponse.getNextClientProvisionState()).thenReturn(PROVISION_STATE_FACTORY_RESET);
         DevicePolicyController devicePolicyController = mTestApp.getPolicyController();
 
-        assertThat(mWorker.doWork()).isEqualTo(Result.success());
+        assertThat(Futures.getUnchecked(mWorker.startWork())).isEqualTo(Result.success());
     }
 }

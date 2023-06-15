@@ -33,7 +33,6 @@ import com.android.devicelockcontroller.policy.DeviceStateControllerImpl;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
 import com.android.devicelockcontroller.policy.SetupController;
 import com.android.devicelockcontroller.policy.SetupControllerImpl;
-import com.android.devicelockcontroller.policy.TaskWorkerFactory;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import com.google.common.util.concurrent.MoreExecutors;
@@ -108,7 +107,7 @@ public class DeviceLockControllerApplication extends Application implements
     @Override
     public Configuration getWorkManagerConfiguration() {
         final DelegatingWorkerFactory factory = new DelegatingWorkerFactory();
-        factory.addFactory(new TaskWorkerFactory());
+        factory.addFactory(new DeviceLockControllerWorkerFactory());
         return new Configuration.Builder()
                 .setWorkerFactory(factory)
                 .setMinimumLoggingLevel(android.util.Log.INFO)

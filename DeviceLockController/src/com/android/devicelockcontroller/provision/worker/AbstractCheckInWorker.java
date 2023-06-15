@@ -21,8 +21,8 @@ import android.content.res.Resources;
 import android.util.Pair;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.VisibleForTesting;
-import androidx.work.Worker;
+import androidx.annotation.Nullable;
+import androidx.work.ListenableWorker;
 import androidx.work.WorkerParameters;
 
 import com.android.devicelockcontroller.R;
@@ -31,39 +31,40 @@ import com.android.devicelockcontroller.storage.GlobalParametersClient;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 
 /**
  * A base class for workers that execute gRPC requests with DeviceLock backend server.
  */
-public abstract class AbstractCheckInWorker extends Worker {
+public abstract class AbstractCheckInWorker extends ListenableWorker {
 
     static final String TAG = "CheckInWorker";
     final ListenableFuture<DeviceCheckInClient> mClient;
+    final ListeningExecutorService mExecutorService;
     final Context mContext;
 
     AbstractCheckInWorker(@NonNull Context context,
-            @NonNull WorkerParameters workerParams) {
-        super(context, workerParams);
-        Resources resources = context.getResources();
-        String hostName = resources.getString(R.string.check_in_server_host_name);
-        int portNumber = resources.getInteger(R.integer.check_in_server_port_number);
-        String className = resources.getString(R.string.device_check_in_client_class_name);
-        Pair<String, String> apikey = new Pair<>(
-                resources.getString(R.string.check_in_service_api_key_name),
-                resources.getString(R.string.check_in_service_api_key_value));
-        mClient = Futures.transform(GlobalParametersClient.getInstance().getRegisteredDeviceId(),
-                registeredId -> DeviceCheckInClient.getInstance(
-                        className, hostName, portNumber, apikey, registeredId),
-                MoreExecutors.directExecutor());
-        mContext = context;
-    }
-
-    @VisibleForTesting
-    AbstractCheckInWorker(@NonNull Context context,
-            @NonNull WorkerParameters workerParameters, DeviceCheckInClient client) {
+            @NonNull WorkerParameters workerParameters, @Nullable DeviceCheckInClient client,
+            ListeningExecutorService executorService) {
         super(context, workerParameters);
-        mClient = Futures.immediateFuture(client);
+        if (client != null) {
+            mClient = Futures.immediateFuture(client);
+        } else {
+            Resources resources = context.getResources();
+            String hostName = resources.getString(R.string.check_in_server_host_name);
+            int portNumber = resources.getInteger(R.integer.check_in_server_port_number);
+            String className = resources.getString(R.string.device_check_in_client_class_name);
+            Pair<String, String> apikey = new Pair<>(
+                    resources.getString(R.string.check_in_service_api_key_name),
+                    resources.getString(R.string.check_in_service_api_key_value));
+            mClient = Futures.transform(
+                    GlobalParametersClient.getInstance().getRegisteredDeviceId(),
+                    registeredId -> DeviceCheckInClient.getInstance(
+                            className, hostName, portNumber, apikey, registeredId),
+                    MoreExecutors.directExecutor());
+        }
         mContext = context;
+        mExecutorService = executorService;
     }
 }

@@ -66,7 +66,10 @@ import java.util.Locale;
 public final class DevicePolicyControllerImpl
         implements DevicePolicyController, DeviceStateController.StateListener {
     private static final String TAG = "DevicePolicyControllerImpl";
-    private static final int START_LOCK_TASK_MODE_WORKER_INTERVAL = 5;
+
+    // The minimum backoff time for work (in milliseconds) that has to be retried is 10 seconds.
+    // Any interval shorter than that is effectively equal to 10 seconds.
+    private static final int START_LOCK_TASK_MODE_WORKER_RETRY_INTERVAL_SECONDS = 10;
     private final List<PolicyHandler> mPolicyList = new ArrayList<>();
     private final Context mContext;
     private final DevicePolicyManager mDpm;
@@ -141,7 +144,8 @@ public final class DevicePolicyControllerImpl
                         new OneTimeWorkRequest.Builder(StartLockTaskModeWorker.class)
                                 .setBackoffCriteria(
                                         BackoffPolicy.EXPONENTIAL,
-                                        Duration.ofSeconds(START_LOCK_TASK_MODE_WORKER_INTERVAL))
+                                        Duration.ofSeconds(
+                                                START_LOCK_TASK_MODE_WORKER_RETRY_INTERVAL_SECONDS))
                                 .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                                 .build();
                 WorkManager.getInstance(mContext)
@@ -238,10 +242,9 @@ public final class DevicePolicyControllerImpl
                                         resolvedInfo.activityInfo.name));
                     }
                     // Kiosk app does not have an activity to handle the default home intent.
-                    // Fall back to the
-                    // launch activity.
-                    // Note that in this case, Kiosk App can't be effectively set as the
-                    // default home activity.
+                    // Fall back to the launch activity.
+                    // Note that in this case, Kiosk App can't be effectively set as the default
+                    // home activity.
                     final Intent launchIntent = packageManager.getLaunchIntentForPackage(
                             kioskPackage);
                     if (launchIntent == null) {
