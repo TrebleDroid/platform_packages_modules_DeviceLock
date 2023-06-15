@@ -18,7 +18,6 @@ package com.android.devicelockcontroller.policy;
 
 import static android.app.admin.DevicePolicyManager.LOCK_TASK_FEATURE_NOTIFICATIONS;
 
-import static com.android.devicelockcontroller.policy.DevicePolicyControllerImpl.START_LOCK_TASK_MODE_WORK_NAME;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.CLEARED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.KIOSK_SETUP;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.LOCKED;
@@ -30,6 +29,7 @@ import static com.android.devicelockcontroller.policy.DeviceStateController.Devi
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_SUCCEEDED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNLOCKED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNPROVISIONED;
+import static com.android.devicelockcontroller.policy.StartLockTaskModeWorker.START_LOCK_TASK_MODE_WORK_NAME;
 
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
@@ -73,9 +73,12 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
     private static final String TAG = "LockTaskModePolicyHandler";
     private final Context mContext;
     private final DevicePolicyManager mDpm;
+    private final DevicePolicyController mPolicyController;
 
-    LockTaskModePolicyHandler(Context context, DevicePolicyManager dpm) {
+    LockTaskModePolicyHandler(Context context, DevicePolicyManager dpm,
+            DevicePolicyController policyController) {
         mContext = context;
+        mPolicyController = policyController;
         mDpm = dpm;
     }
 
@@ -119,7 +122,7 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
      * Sets the activity as the preferred activity for home intent. Activity is cleared when the
      * device leaves lock task mode.
      */
-    public boolean setPreferredActivityForHome(ComponentName activity) {
+    private boolean setPreferredActivityForHome(ComponentName activity) {
         if (!mDpm.isLockTaskPermitted(activity.getPackageName())) {
             LogUtil.e(TAG, String.format(Locale.US, "%s is not permitted in lock task mode",
                     activity.getPackageName()));
@@ -167,7 +170,10 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
     private @ResultType ListenableFuture<@ResultType Integer> enableLockTaskMode() {
         ListenableFuture<Boolean> notificationsInLockTaskModeEnabled =
                 SetupParametersClient.getInstance().isNotificationsInLockTaskModeEnabled();
+        ListenableFuture<Intent> launchIntent =
+                mPolicyController.getLaunchIntentForCurrentLockedActivity();
         return Futures.whenAllSucceed(
+                        launchIntent,
                         notificationsInLockTaskModeEnabled,
                         updateAllowlist())
                 .call(
@@ -177,6 +183,8 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
                                 flags |= LOCK_TASK_FEATURE_NOTIFICATIONS;
                             }
                             mDpm.setLockTaskFeatures(null, flags);
+                            setPreferredActivityForHome(
+                                    Futures.getDone(launchIntent).getComponent());
                             return SUCCESS;
                         }, mContext.getMainExecutor());
     }

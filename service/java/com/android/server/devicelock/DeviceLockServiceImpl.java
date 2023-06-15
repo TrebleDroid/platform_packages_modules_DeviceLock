@@ -165,8 +165,7 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
         final IntentFilter intentFilter = new IntentFilter(DeviceLockClearReceiver.ACTION_CLEAR);
         // Run before any eventual app receiver (there should be none).
         intentFilter.setPriority(SYSTEM_HIGH_PRIORITY);
-        context.registerReceiver(new DeviceLockClearReceiver(),
-                intentFilter,
+        context.registerReceiver(new DeviceLockClearReceiver(), intentFilter,
                 Manifest.permission.MANAGE_DEVICE_LOCK_STATE, null /* scheduler */,
                 Context.RECEIVER_EXPORTED);
     }
@@ -220,9 +219,8 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
         }
     }
 
-    private OutcomeReceiver<Void, Exception>
-            getLockUnlockOutcomeReceiver(@NonNull ILockUnlockDeviceCallback callback,
-                @NonNull String successMessage) {
+    private OutcomeReceiver<Void, Exception> getLockUnlockOutcomeReceiver(
+            @NonNull ILockUnlockDeviceCallback callback, @NonNull String successMessage) {
         return new OutcomeReceiver<>() {
             @Override
             public void onResult(Void ignored) {
@@ -279,30 +277,27 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
             return;
         }
 
-        mDeviceLockControllerConnector.isDeviceLocked(
-                new OutcomeReceiver<>() {
-                    @Override
-                    public void onResult(Boolean isLocked) {
-                        Slog.i(TAG, isLocked ? "Device is locked" : "Device is not locked");
-                        try {
-                            callback.onIsDeviceLocked(isLocked);
-                        } catch (RemoteException e) {
-                            Slog.e(TAG, "isDeviceLocked() - Unable to send result to the "
-                                    + "callback", e);
-                        }
-                    }
+        mDeviceLockControllerConnector.isDeviceLocked(new OutcomeReceiver<>() {
+            @Override
+            public void onResult(Boolean isLocked) {
+                Slog.i(TAG, isLocked ? "Device is locked" : "Device is not locked");
+                try {
+                    callback.onIsDeviceLocked(isLocked);
+                } catch (RemoteException e) {
+                    Slog.e(TAG, "isDeviceLocked() - Unable to send result to the " + "callback", e);
+                }
+            }
 
-                    @Override
-                    public void onError(Exception ex) {
-                            Slog.e(TAG, "Exception: ", ex);
-                            try {
-                                callback.onError(ILockUnlockDeviceCallback.ERROR_UNKNOWN);
-                            } catch (RemoteException e) {
-                                Slog.e(TAG, "isDeviceLocked() - Unable to send error to the "
-                                        + "callback", e);
-                            }
-                        }
-                });
+            @Override
+            public void onError(Exception ex) {
+                Slog.e(TAG, "Exception: ", ex);
+                try {
+                    callback.onError(ILockUnlockDeviceCallback.ERROR_UNKNOWN);
+                } catch (RemoteException e) {
+                    Slog.e(TAG, "isDeviceLocked() - Unable to send error to the " + "callback", e);
+                }
+            }
+        });
     }
 
     @VisibleForTesting
@@ -316,8 +311,7 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
             Slog.e(TAG, "getDeviceId() - Unable to send result to the callback", e);
         }
 
-        final TelephonyManager telephonyManager =
-                mContext.getSystemService(TelephonyManager.class);
+        final TelephonyManager telephonyManager = mContext.getSystemService(TelephonyManager.class);
         int activeModemCount = telephonyManager.getActiveModemCount();
         List<String> imeiList = new ArrayList<String>();
         List<String> meidList = new ArrayList<String>();
@@ -341,42 +335,41 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
         }
 
         mDeviceLockControllerConnector.getDeviceId(new OutcomeReceiver<>() {
-                @Override
-                public void onResult(String deviceId) {
-                    Slog.i(TAG, "Get Device ID ");
-                    try {
-                        if (meidList.contains(deviceId)) {
-                            callback.onDeviceIdReceived(DEVICE_ID_TYPE_MEID, deviceId);
-                            return;
-                        }
-                        if (imeiList.contains(deviceId)) {
-                            callback.onDeviceIdReceived(DEVICE_ID_TYPE_IMEI, deviceId);
-                            return;
-                        }
-                        // When a device ID is returned from DLC App, but none of the IDs
-                        // got from TelephonyManager matches that device ID.
-                        //
-                        // TODO(b/270392813): Send the device ID back to the callback
-                        // with UNSPECIFIED device ID type.
-                        callback.onError(IGetDeviceIdCallback.ERROR_CANNOT_GET_DEVICE_ID);
-                    } catch (RemoteException e) {
-                        Slog.e(TAG, "getDeviceId() - Unable to send result to the "
-                                + "callback", e);
+            @Override
+            public void onResult(String deviceId) {
+                Slog.i(TAG, "Get Device ID ");
+                try {
+                    if (meidList.contains(deviceId)) {
+                        callback.onDeviceIdReceived(DEVICE_ID_TYPE_MEID, deviceId);
+                        return;
                     }
-                }
-
-                @Override
-                public void onError(Exception ex) {
-                    Slog.e(TAG, "Exception: ", ex);
-                    try {
-                        callback.onError(IGetDeviceIdCallback.ERROR_CANNOT_GET_DEVICE_ID);
-                    } catch (RemoteException e) {
-                        Slog.e(TAG, "getDeviceId() - Unable to send error to the "
-                                + "callback", e);
+                    if (imeiList.contains(deviceId)) {
+                        callback.onDeviceIdReceived(DEVICE_ID_TYPE_IMEI, deviceId);
+                        return;
                     }
+                    // When a device ID is returned from DLC App, but none of the IDs got from
+                    // TelephonyManager matches that device ID.
+                    //
+                    // TODO(b/270392813): Send the device ID back to the callback with
+                    //  UNSPECIFIED device ID type.
+                    callback.onError(IGetDeviceIdCallback.ERROR_CANNOT_GET_DEVICE_ID);
+                } catch (RemoteException e) {
+                    Slog.e(TAG, "getDeviceId() - Unable to send result to the callback", e);
                 }
             }
-        );
+
+            @Override
+            public void onError(Exception ex) {
+                Slog.e(TAG, "Exception: ", ex);
+                try {
+                    callback.onError(IGetDeviceIdCallback.ERROR_CANNOT_GET_DEVICE_ID);
+                } catch (RemoteException e) {
+                    Slog.e(TAG,
+                            "getDeviceId() - " + "Unable to send error to" + " the " + "callback",
+                            e);
+                }
+            }
+        });
     }
 
     @Override
@@ -566,18 +559,17 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
             boolean bound = bind();
 
             if (bound) {
-                mDeviceLockControllerConnector.startLockTaskModeAsUser(mUserHandle,
-                        new OutcomeReceiver<>() {
-                            @Override
-                            public void onResult(Void result) {
-                                Slog.i(TAG, "Lock task mode started");
-                            }
+                mDeviceLockControllerConnector.lockDevice(new OutcomeReceiver<>() {
+                    @Override
+                    public void onResult(Void result) {
+                        Slog.i(TAG, "Lock task mode started");
+                    }
 
-                            @Override
-                            public void onError(Exception ex) {
-                                Slog.e(TAG, "Start lock task mode error: ", ex);
-                            }
-                        });
+                    @Override
+                    public void onError(Exception ex) {
+                        Slog.e(TAG, "Start lock task mode error: ", ex);
+                    }
+                });
             }
 
             return bound;

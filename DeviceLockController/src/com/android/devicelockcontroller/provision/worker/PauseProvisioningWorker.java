@@ -31,7 +31,6 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.WorkerParameters;
 
-import com.android.devicelockcontroller.policy.DevicePolicyController;
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
@@ -41,8 +40,6 @@ import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import com.google.common.util.concurrent.Futures;
-
-import java.time.Duration;
 
 /**
  * A worker class dedicated to request pause of provisioning for device lock program.
@@ -98,13 +95,8 @@ public final class PauseProvisioningWorker extends AbstractCheckInWorker {
                     shouldForceProvisioning));
             PolicyObjectsInterface policyObjects =
                     (PolicyObjectsInterface) mContext.getApplicationContext();
-            DevicePolicyController policyController = policyObjects.getPolicyController();
-            // TODO: Cancel the work if user starts provisioning within 1 hr.
             // TODO(b/286160722): Fix Device provisioning is not resumed after 1 hour in case
             //  user pauses it
-            policyController.enqueueStartLockTaskModeWorkerWithDelay(
-                    /* isMandatory= */ false,
-                    Duration.ofHours(PROVISION_PAUSED_HOUR));
             DeviceStateController deviceStateController = policyObjects.getStateController();
             Futures.getUnchecked(
                     deviceStateController.setNextStateForEvent(DeviceEvent.SETUP_PAUSE));

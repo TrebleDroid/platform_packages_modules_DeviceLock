@@ -16,10 +16,21 @@
 
 package com.android.devicelockcontroller.receivers;
 
+import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.UserManager;
+
+import com.android.devicelockcontroller.policy.DeviceStateController;
+import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
+import com.android.devicelockcontroller.util.LogUtil;
+
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.MoreExecutors;
+
+import java.util.Objects;
 
 /**
  * Boot completed broadcast receiver to start lock task mode if applicable. This broadcast receiver
@@ -42,6 +53,26 @@ public final class LockTaskBootCompletedReceiver extends BroadcastReceiver {
             return;
         }
 
-        BootUtils.startLockTaskModeAtBoot(context);
+        DeviceStateController stateController =
+                ((PolicyObjectsInterface) context.getApplicationContext())
+                        .getPolicyController().getStateController();
+        ActivityManager am =
+                Objects.requireNonNull(context.getSystemService(ActivityManager.class));
+        if (stateController.isLockedInternal()
+                != (am.getLockTaskModeState() == ActivityManager.LOCK_TASK_MODE_LOCKED)) {
+            Futures.addCallback(stateController.enforcePoliciesForCurrentState(),
+                    new FutureCallback<>() {
+                        @Override
+                        public void onSuccess(Void result) {
+                            LogUtil.i(TAG, "Successfully called enforcePoliciesForCurrentState()");
+                        }
+
+                        @Override
+                        public void onFailure(Throwable t) {
+                            LogUtil.e(TAG, "Failed to call enforcePoliciesForCurrentState()", t);
+                        }
+                    },
+                    MoreExecutors.directExecutor());
+        }
     }
 }

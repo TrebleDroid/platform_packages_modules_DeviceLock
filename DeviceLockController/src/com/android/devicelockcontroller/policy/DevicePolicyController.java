@@ -16,52 +16,20 @@
 
 package com.android.devicelockcontroller.policy;
 
-import android.os.UserHandle;
+import android.content.Intent;
 
 import com.google.common.util.concurrent.ListenableFuture;
-
-import java.time.Duration;
 
 /**
  * Interface for the policy controller that is responsible for applying policies based
  * on state.
  */
 public interface DevicePolicyController {
-    /**
-     * Launches an activity in locked mode. The specific activity is resolved based on the current
-     * device state. Returns false if package containing the activity is not in the allowlist.
-     */
-    ListenableFuture<Boolean> launchActivityInLockedMode();
 
     /**
-     * Similar to
-     * {@link DevicePolicyController#launchActivityInLockedMode()} but the activity is started
-     * for the specified user.
-     *
-     * @param userHandle User handle for which the activity should be started.
+     * Get the intent to launch the locked activity for the current device state asynchronously.
      */
-    ListenableFuture<Boolean> launchActivityInLockedModeAsUser(UserHandle userHandle);
-
-    /**
-     * Similar to
-     * {@link DevicePolicyController#enqueueStartLockTaskModeWorkerWithDelay(boolean, Duration)}
-     * but with zero delay.
-     *
-     * @param isMandatory whether starting lock task mode is mandatory at the time of request.
-     */
-    void enqueueStartLockTaskModeWorker(boolean isMandatory);
-
-    /**
-     * Enqueue a worker to start lock task mode and launch corresponding activity with a delay of
-     * certain {@link Duration}.
-     * The work will be retried until device is in lock task mode.
-     *
-     * @param isMandatory whether starting lock task mode is mandatory at the time of request.
-     * @param delay       The {@link Duration} that should be delayed before device enters lock
-     *                    task mode.
-     */
-    void enqueueStartLockTaskModeWorkerWithDelay(boolean isMandatory, Duration delay);
-
+    ListenableFuture<Intent> getLaunchIntentForCurrentLockedActivity();
 
     /**
      * Factory resets the device when the setup has failed and cannot continue.

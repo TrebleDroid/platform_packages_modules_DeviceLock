@@ -204,12 +204,12 @@ final class DeviceLockControllerConnector {
                 unbindLocked();
             }
         }
-    };
+    }
 
     /**
      * Create a new connector to the Device Lock Controller service.
      *
-     * @param context the context for this call.
+     * @param context       the context for this call.
      * @param componentName Device Lock Controller service component name.
      */
     DeviceLockControllerConnector(@NonNull Context context,
@@ -299,7 +299,7 @@ final class DeviceLockControllerConnector {
                 mDeviceLockControllerService.lockDevice(remoteCallback);
                 return null;
             }
-        } , callback);
+        }, callback);
 
     }
 
@@ -379,29 +379,6 @@ final class DeviceLockControllerConnector {
             @SuppressWarnings("GuardedBy") // mLock already held in callControllerApi (error prone).
             public Void call() throws Exception {
                 mDeviceLockControllerService.clearDeviceRestrictions(remoteCallback);
-                return null;
-            }
-        }, callback);
-    }
-
-    public void startLockTaskModeAsUser(UserHandle userHandle,
-            OutcomeReceiver<Void, Exception> callback) {
-        RemoteCallback remoteCallback = new RemoteCallback(checkTimeout(callback, result -> {
-            final boolean success =
-                    result.getBoolean(IDeviceLockControllerService.KEY_START_LOCK_TASK_MODE_RESULT);
-            if (success) {
-                mHandler.post(() -> callback.onResult(null));
-            } else {
-                mHandler.post(() -> callback.onError(new Exception("Failed to start "
-                        + "lock task mode")));
-            }
-        }));
-
-        callControllerApi(new Callable<Void>() {
-            @Override
-            @SuppressWarnings("GuardedBy") // mLock already held in callControllerApi (error prone).
-            public Void call() throws Exception {
-                mDeviceLockControllerService.startLockTaskModeAsUser(userHandle, remoteCallback);
                 return null;
             }
         }, callback);
