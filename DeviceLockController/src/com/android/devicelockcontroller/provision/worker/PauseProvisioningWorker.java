@@ -20,6 +20,8 @@ import static com.android.devicelockcontroller.common.DeviceLockConstants.REASON
 import static com.android.devicelockcontroller.common.DeviceLockConstants.USER_DEFERRED_DEVICE_PROVISIONING;
 
 import android.content.Context;
+import android.os.Build;
+import android.os.SystemProperties;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
@@ -44,6 +46,8 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 
+import java.time.Duration;
+
 /**
  * A worker class dedicated to request pause of provisioning for device lock program.
  */
@@ -52,6 +56,9 @@ public final class PauseProvisioningWorker extends AbstractCheckInWorker {
             "PAUSE_DEVICE_PROVISIONING_REASON";
     public static final String REPORT_PROVISION_PAUSED_BY_USER_WORK =
             "report-provision-paused-by-user";
+    static final String PROVISION_PAUSED_MINUTES_SYS_PROPERTY_KEY =
+            "debug.devicelock.paused-minutes";
+    static final int PROVISION_PAUSED_MINUTES_DEFAULT = 60;
     @VisibleForTesting
     static final int PROVISION_PAUSED_HOUR = 1;
 
@@ -101,8 +108,13 @@ public final class PauseProvisioningWorker extends AbstractCheckInWorker {
                         shouldForceProvisioning));
                 PolicyObjectsInterface policyObjects =
                         (PolicyObjectsInterface) mContext.getApplicationContext();
-                // TODO(b/286160722): Fix Device provisioning is not resumed after 1 hour in case
-                //  user pauses it
+                Duration delay = Build.isDebuggable()
+                        ? Duration.ofMinutes(SystemProperties.getInt(
+                                PROVISION_PAUSED_MINUTES_SYS_PROPERTY_KEY,
+                                PROVISION_PAUSED_MINUTES_DEFAULT))
+                        : Duration.ofHours(PROVISION_PAUSED_HOUR);
+                ResumeProvisioningWorker.scheduleResumeProvisioningWorker(
+                        WorkManager.getInstance(mContext), delay);
                 DeviceStateController deviceStateController = policyObjects.getStateController();
                 Futures.getUnchecked(
                         deviceStateController.setNextStateForEvent(DeviceEvent.SETUP_PAUSE));

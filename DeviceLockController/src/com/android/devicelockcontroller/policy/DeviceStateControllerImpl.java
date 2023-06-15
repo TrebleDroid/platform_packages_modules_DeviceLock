@@ -183,6 +183,11 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
                     return DeviceState.CLEARED;
                 }
                 break;
+            case DeviceEvent.SETUP_RESUME:
+                if (mState == DeviceState.SETUP_PAUSED) {
+                    return DeviceState.SETUP_IN_PROGRESS;
+                }
+                break;
             default:
                 break;
         }
