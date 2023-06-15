@@ -37,7 +37,4 @@ oneway interface IDeviceLockControllerService {
 
     const String KEY_CLEAR_DEVICE_RESULT = "KEY_CLEAR_DEVICE_RESULT";
     void clearDeviceRestrictions(in RemoteCallback callback);
-
-    const String KEY_START_LOCK_TASK_MODE_RESULT = "KEY_START_LOCK_TASK_MODE_RESULT";
-    void startLockTaskModeAsUser(in UserHandle userHandle, in RemoteCallback callback);
 }

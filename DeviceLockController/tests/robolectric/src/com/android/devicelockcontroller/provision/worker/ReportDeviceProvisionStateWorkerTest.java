@@ -158,7 +158,6 @@ public final class ReportDeviceProvisionStateWorkerTest {
 
         Shadows.shadowOf(Looper.getMainLooper()).idle();
         verify(deviceStateController).setNextStateForEvent(eq(PROVISIONING_SUCCESS));
-        verify(devicePolicyController).enqueueStartLockTaskModeWorker(eq(false));
     }
 
     @Test

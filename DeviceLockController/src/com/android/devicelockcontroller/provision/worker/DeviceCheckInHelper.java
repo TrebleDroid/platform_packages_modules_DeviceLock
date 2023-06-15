@@ -233,7 +233,6 @@ public final class DeviceCheckInHelper extends AbstractDeviceCheckInHelper {
                         String.format(Locale.US,
                                 "State transition succeeded for event: %s",
                                 DeviceStateController.eventToString(PROVISIONING_SUCCESS)));
-                devicePolicyController.enqueueStartLockTaskModeWorker(isMandatory);
             }
 
             @Override
