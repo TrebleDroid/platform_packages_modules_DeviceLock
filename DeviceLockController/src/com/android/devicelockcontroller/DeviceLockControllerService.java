@@ -52,7 +52,8 @@ public final class DeviceLockControllerService extends Service {
                 @Override
                 public void lockDevice(RemoteCallback remoteCallback) {
                     Futures.addCallback(
-                            mStateController.setNextStateForEvent(LOCK_DEVICE),
+                            Futures.transform(mStateController.setNextStateForEvent(LOCK_DEVICE),
+                                    unused -> true, MoreExecutors.directExecutor()),
                             remoteCallbackWrapper(remoteCallback, KEY_LOCK_DEVICE_RESULT),
                             MoreExecutors.directExecutor());
                 }
