@@ -21,6 +21,7 @@ import android.os.SystemProperties;
 import android.util.Pair;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.WorkerThread;
 
 import com.android.devicelockcontroller.util.LogUtil;
 
@@ -40,6 +41,7 @@ public abstract class DeviceFinalizeClient {
     protected static String sHostName = "";
     protected static int sPortNumber = 0;
     protected static Pair<String, String> sApiKey = new Pair<>("", "");
+    private static volatile boolean sUseDebugClient;
 
     /**
      * Get a instance of {@link DeviceFinalizeClient} object.
@@ -52,11 +54,13 @@ public abstract class DeviceFinalizeClient {
             Pair<String, String> apiKey,
             String registeredId,
             String enrollmentToken) {
-        if (sClient == null) {
+        boolean useDebugClient = SystemProperties.getBoolean(
+                "debug.devicelock.finalize", false);
+        if (sClient == null || sUseDebugClient != useDebugClient) {
             synchronized (DeviceFinalizeClient.class) {
                 // In case the initialization is already done by other thread use existing
                 // instance.
-                if (sClient != null) {
+                if (sClient != null && sUseDebugClient == useDebugClient) {
                     return sClient;
                 }
                 sHostName = hostName;
@@ -64,9 +68,9 @@ public abstract class DeviceFinalizeClient {
                 sRegisteredId = registeredId;
                 sEnrollmentToken = enrollmentToken;
                 sApiKey = apiKey;
+                sUseDebugClient = useDebugClient;
                 try {
-                    if (Build.isDebuggable() && SystemProperties.getBoolean(
-                            "debug.devicelock.finalize", true)) {
+                    if (Build.isDebuggable() && sUseDebugClient) {
                         className = DEVICE_FINALIZE_CLIENT_DEBUG_CLASS_NAME;
                     }
                     LogUtil.d(TAG, "Creating instance for " + className);
@@ -83,6 +87,7 @@ public abstract class DeviceFinalizeClient {
     /**
      * Reports that a device completed a Device Lock program.
      */
+    @WorkerThread
     public abstract ReportDeviceProgramCompleteResponse reportDeviceProgramComplete();
 
     /**

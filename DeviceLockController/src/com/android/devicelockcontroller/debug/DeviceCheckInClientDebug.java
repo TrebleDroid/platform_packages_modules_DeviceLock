@@ -17,7 +17,7 @@
 package com.android.devicelockcontroller.debug;
 
 import static com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState.PROVISION_STATE_UNSPECIFIED;
-import static com.android.devicelockcontroller.common.DeviceLockConstants.STATUS_UNSPECIFIED;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.READY_FOR_PROVISION;
 
 import android.os.SystemProperties;
 import android.util.ArraySet;
@@ -61,7 +61,7 @@ public final class DeviceCheckInClientDebug extends DeviceCheckInClient {
             public int getDeviceCheckInStatus() {
                 return DebugLogUtil.logAndReturn(TAG,
                         SystemProperties.getInt("debug.devicelock.checkin.status",
-                                STATUS_UNSPECIFIED));
+                                READY_FOR_PROVISION));
             }
 
             @Nullable
@@ -98,16 +98,14 @@ public final class DeviceCheckInClientDebug extends DeviceCheckInClient {
 
             @Override
             public @ProvisioningType int getProvisioningType() {
-                return DebugLogUtil.logAndReturn(TAG,
-                        SystemProperties.getInt("debug.devicelock.checkin.provision-type",
-                                ProvisioningType.TYPE_UNDEFINED));
+                // This should be overridden using SetupParametersOverrider.
+                return ProvisioningType.TYPE_UNDEFINED;
             }
 
             @Override
             public boolean isProvisioningMandatory() {
-                return DebugLogUtil.logAndReturn(TAG, SystemProperties.getBoolean(
-                        "debug.devicelock.checkin.mandatory-provisioning",
-                        false));
+                // This should be overridden using SetupParametersOverrider.
+                return false;
             }
 
             @Override
