@@ -52,6 +52,9 @@ import com.android.devicelockcontroller.provision.grpc.ReportDeviceProvisionStat
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
 
 import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 
 import java.time.Duration;
 import java.util.Objects;
@@ -130,77 +133,81 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
     }
 
     public ReportDeviceProvisionStateWorker(@NonNull Context context,
-            @NonNull WorkerParameters workerParams) {
-        super(context, workerParams);
+            @NonNull WorkerParameters workerParams, ListeningExecutorService executorService) {
+        super(context, workerParams, null, executorService);
     }
 
     @VisibleForTesting
     ReportDeviceProvisionStateWorker(@NonNull Context context,
-            @NonNull WorkerParameters workerParams, DeviceCheckInClient client) {
-        super(context, workerParams, client);
+            @NonNull WorkerParameters workerParams, DeviceCheckInClient client,
+            ListeningExecutorService executorService) {
+        super(context, workerParams, client, executorService);
     }
 
     @NonNull
     @Override
-    public Result doWork() {
-        boolean isSuccessful = getInputData().getBoolean(
-                KEY_IS_PROVISION_SUCCESSFUL, /* defaultValue= */ false);
-        int reason = getInputData().getInt(KEY_DEVICE_PROVISION_FAILURE_REASON,
-                SetupFailureReason.SETUP_FAILED);
+    public ListenableFuture<Result> startWork() {
         GlobalParametersClient globalParametersClient = GlobalParametersClient.getInstance();
-        int lastState = Futures.getUnchecked(
-                globalParametersClient.getLastReceivedProvisionState());
-        final ReportDeviceProvisionStateGrpcResponse response =
-                Futures.getUnchecked(mClient).reportDeviceProvisionState(reason, lastState,
-                        isSuccessful);
-        if (response.hasRecoverableError()) return Result.retry();
-        if (response.hasFatalError()) return Result.failure();
-        String enrollmentToken = response.getEnrollmentToken();
-        if (!TextUtils.isEmpty(enrollmentToken)) {
-            Futures.getUnchecked(globalParametersClient.setEnrollmentToken(enrollmentToken));
-        }
-        // TODO(b/276392181): Handle next state properly
-        int nextState = response.getNextClientProvisionState();
-        Futures.getUnchecked(globalParametersClient.setLastReceivedProvisionState(nextState));
+        ListenableFuture<Integer> lastState =
+                globalParametersClient.getLastReceivedProvisionState();
+        return Futures.whenAllSucceed(mClient, lastState).call(() -> {
+            boolean isSuccessful = getInputData().getBoolean(
+                    KEY_IS_PROVISION_SUCCESSFUL, /* defaultValue= */ false);
+            int reason = getInputData().getInt(KEY_DEVICE_PROVISION_FAILURE_REASON,
+                    SetupFailureReason.SETUP_FAILED);
+            ReportDeviceProvisionStateGrpcResponse response =
+                    Futures.getDone(mClient).reportDeviceProvisionState(reason,
+                            Futures.getDone(lastState),
+                            isSuccessful);
+            if (response.hasRecoverableError()) return Result.retry();
+            if (response.hasFatalError()) return Result.failure();
+            String enrollmentToken = response.getEnrollmentToken();
+            if (!TextUtils.isEmpty(enrollmentToken)) {
+                Futures.getUnchecked(globalParametersClient.setEnrollmentToken(enrollmentToken));
+            }
+            int nextState = response.getNextClientProvisionState();
+            Futures.getUnchecked(globalParametersClient.setLastReceivedProvisionState(nextState));
 
-        PolicyObjectsInterface policyObjects =
-                (PolicyObjectsInterface) mContext.getApplicationContext();
-        DevicePolicyController devicePolicyController = policyObjects.getPolicyController();
-        DeviceStateController deviceStateController = policyObjects.getStateController();
-        switch (nextState) {
-            case PROVISION_STATE_RETRY:
-                DeviceCheckInHelper.setProvisionSucceeded(deviceStateController,
-                        devicePolicyController, mContext, /* isMandatory= */ false);
-                break;
-            case PROVISION_STATE_DISMISSIBLE_UI:
-                DeviceLockNotificationManager.sendDeviceResetNotification(mContext,
-                        response.getDaysLeftUntilReset());
-                reportStateInOneDay(WorkManager.getInstance(mContext));
-                break;
-            case PROVISION_STATE_PERSISTENT_UI:
-                DeviceLockNotificationManager.sendDeviceResetInOneDayOngoingNotification(mContext);
-                reportStateInOneDay(WorkManager.getInstance(mContext));
-                break;
-            case PROVISION_STATE_FACTORY_RESET:
-                long countDownBase = SystemClock.elapsedRealtime()
-                        + Duration.ofMinutes(RESET_COUNT_DOWN_MINUTES).toMillis();
-                DeviceLockNotificationManager.sendDeviceResetTimerNotification(mContext,
-                        countDownBase);
-                PendingIntent resetDeviceBroadcast = getResetDevicePendingIntent(mContext);
-                AlarmManager alarmManager = mContext.getSystemService(AlarmManager.class);
-                Objects.requireNonNull(alarmManager).setExactAndAllowWhileIdle(
-                        AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                        countDownBase,
-                        resetDeviceBroadcast);
-                break;
-            case PROVISION_STATE_SUCCESS:
-            case PROVISION_STATE_UNSPECIFIED:
-                // no-op
-                break;
-            default:
-                throw new IllegalStateException(UNEXPECTED_PROVISION_STATE_ERROR_MESSAGE);
-        }
-        return Result.success();
+            PolicyObjectsInterface policyObjects =
+                    (PolicyObjectsInterface) mContext.getApplicationContext();
+            DevicePolicyController devicePolicyController = policyObjects.getPolicyController();
+            DeviceStateController deviceStateController = policyObjects.getStateController();
+            switch (nextState) {
+                case PROVISION_STATE_RETRY:
+                    DeviceCheckInHelper.setProvisionSucceeded(deviceStateController,
+                            devicePolicyController, mContext, /* isMandatory= */ false);
+                    break;
+                case PROVISION_STATE_DISMISSIBLE_UI:
+                    DeviceLockNotificationManager.sendDeviceResetNotification(mContext,
+                            response.getDaysLeftUntilReset());
+                    reportStateInOneDay(WorkManager.getInstance(mContext));
+                    break;
+                case PROVISION_STATE_PERSISTENT_UI:
+                    DeviceLockNotificationManager.sendDeviceResetInOneDayOngoingNotification(
+                            mContext);
+                    reportStateInOneDay(WorkManager.getInstance(mContext));
+                    break;
+                case PROVISION_STATE_FACTORY_RESET:
+                    long countDownBase = SystemClock.elapsedRealtime()
+                            + Duration.ofMinutes(RESET_COUNT_DOWN_MINUTES).toMillis();
+                    DeviceLockNotificationManager.sendDeviceResetTimerNotification(mContext,
+                            countDownBase);
+                    PendingIntent resetDeviceBroadcast = getResetDevicePendingIntent(mContext);
+                    AlarmManager alarmManager = mContext.getSystemService(AlarmManager.class);
+                    Objects.requireNonNull(alarmManager).setExactAndAllowWhileIdle(
+                            AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                            countDownBase,
+                            resetDeviceBroadcast);
+                    break;
+                case PROVISION_STATE_SUCCESS:
+                case PROVISION_STATE_UNSPECIFIED:
+                    // no-op
+                    break;
+                default:
+                    throw new IllegalStateException(UNEXPECTED_PROVISION_STATE_ERROR_MESSAGE);
+            }
+            return Result.success();
+        }, MoreExecutors.directExecutor());
     }
 
     /**

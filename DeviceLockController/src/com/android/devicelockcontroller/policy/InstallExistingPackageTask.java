@@ -65,7 +65,6 @@ public final class InstallExistingPackageTask extends AbstractTask {
             "com.android.devicelockcontroller.policy.ACTION_INSTALL_EXISTING_APP_COMPLETE";
 
     private final Context mContext;
-    private final ListeningExecutorService mExecutorService;
     private final InstallExistingPackageCompleteBroadcastReceiver mBroadcastReceiver;
     private final PackageInstallerWrapper mPackageInstaller;
     private final PackageInstallPendingIntentProvider mPackageInstallPendingIntentProvider;
@@ -85,10 +84,9 @@ public final class InstallExistingPackageTask extends AbstractTask {
             InstallExistingPackageCompleteBroadcastReceiver broadcastReceiver,
             PackageInstallerWrapper packageInstaller,
             PackageInstallPendingIntentProvider packageInstallPendingIntentProvider) {
-        super(context, workerParameters);
+        super(context, workerParameters, executorService);
 
         mContext = context;
-        mExecutorService = executorService;
         mBroadcastReceiver = broadcastReceiver;
         mPackageInstaller = packageInstaller;
         mPackageInstallPendingIntentProvider = packageInstallPendingIntentProvider;

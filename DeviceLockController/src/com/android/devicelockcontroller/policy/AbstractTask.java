@@ -26,6 +26,8 @@ import androidx.work.WorkerParameters;
 
 import com.android.devicelockcontroller.util.LogUtil;
 
+import com.google.common.util.concurrent.ListeningExecutorService;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.Locale;
@@ -46,6 +48,7 @@ public abstract class AbstractTask extends ListenableWorker {
     static final int ERROR_CODE_NO_PACKAGE_NAME = 40;
     // Error code for add financed device kiosk role
     static final int ERROR_CODE_ADD_FINANCED_DEVICE_KIOSK_FAILED = 50;
+    protected final ListeningExecutorService mExecutorService;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({
@@ -59,8 +62,10 @@ public abstract class AbstractTask extends ListenableWorker {
     })
     @interface ErrorCode {}
 
-    public AbstractTask(@NonNull Context appContext, @NonNull WorkerParameters workerParams) {
+    AbstractTask(@NonNull Context appContext, @NonNull WorkerParameters workerParams,
+            ListeningExecutorService executorService) {
         super(appContext, workerParams);
+        mExecutorService = executorService;
     }
 
     /**
@@ -68,7 +73,7 @@ public abstract class AbstractTask extends ListenableWorker {
      * code in its output {@link Data} with the key {@link #TASK_RESULT_ERROR_CODE_KEY}.
      *
      * @param errorCode the error code that will be included in the result, it should be one of the
-     *     values defined in {@link ErrorCode}.
+     *                  values defined in {@link ErrorCode}.
      * @return a Failure result which contains error code.
      */
     static Result failure(@ErrorCode int errorCode) {

@@ -63,7 +63,6 @@ import com.android.devicelockcontroller.storage.SetupParametersService;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.testing.TestingExecutors;
 
 import org.junit.Before;
@@ -94,8 +93,6 @@ public final class SetupControllerImplTest {
 
     private static final String TEST_SETUP_ACTIVITY = "packagename/.activity";
     private static final String TEST_PACKAGE_NAME = "test.package.name";
-    public static final String DOWNLOAD_SUFFIX = "Download";
-    public static final String INSTALL_SUFFIX = "Install";
     public static final int ASYNC_TIMEOUT_MILLIS = 500;
 
     @Rule
@@ -350,15 +347,8 @@ public final class SetupControllerImplTest {
     }
 
     private static final class TestWorkFactory extends WorkerFactory {
-
-        private final ListeningExecutorService mExecutorService;
-
         private final ArrayMap<String, Integer> mResultMap =
                 new ArrayMap<>();
-
-        TestWorkFactory() {
-            mExecutorService = TestingExecutors.sameThreadScheduledExecutor();
-        }
 
         @Nullable
         @Override
@@ -366,7 +356,8 @@ public final class SetupControllerImplTest {
                 @NonNull Context context,
                 @NonNull String workerClassName,
                 @NonNull WorkerParameters workerParameters) {
-            return new AbstractTask(context, workerParameters) {
+            return new AbstractTask(context, workerParameters,
+                    TestingExecutors.sameThreadScheduledExecutor()) {
                 @NonNull
                 @Override
                 public ListenableFuture<Result> startWork() {

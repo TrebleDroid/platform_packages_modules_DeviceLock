@@ -36,11 +36,14 @@ import androidx.work.ListenableWorker;
 import androidx.work.ListenableWorker.Result;
 import androidx.work.WorkerFactory;
 import androidx.work.WorkerParameters;
-import androidx.work.testing.TestWorkerBuilder;
+import androidx.work.testing.TestListenableWorkerBuilder;
 
 import com.android.devicelockcontroller.common.DeviceId;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrpcResponse;
+
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.testing.TestingExecutors;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -50,9 +53,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
-
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 @RunWith(RobolectricTestRunner.class)
 public class DeviceCheckInWorkerTest {
@@ -74,11 +74,10 @@ public class DeviceCheckInWorkerTest {
     @Before
     public void setUp() throws Exception {
         final Context context = ApplicationProvider.getApplicationContext();
-        final Executor executor = Executors.newSingleThreadExecutor();
         when(mClient.getDeviceCheckInStatus(
                 eq(TEST_DEVICE_IDS), anyString(), isNull())).thenReturn(mResponse);
-        mWorker = TestWorkerBuilder.from(
-                        context, DeviceCheckInWorker.class, executor)
+        mWorker = TestListenableWorkerBuilder.from(
+                        context, DeviceCheckInWorker.class)
                 .setWorkerFactory(
                         new WorkerFactory() {
                             @Override
@@ -87,7 +86,8 @@ public class DeviceCheckInWorkerTest {
                                     @NonNull WorkerParameters workerParameters) {
                                 return workerClassName.equals(DeviceCheckInWorker.class.getName())
                                         ? new DeviceCheckInWorker(
-                                        context, workerParameters, mHelper, mClient)
+                                        context, workerParameters, mHelper, mClient,
+                                        TestingExecutors.sameThreadScheduledExecutor())
                                         : null;
                             }
                         }).build();
@@ -103,7 +103,7 @@ public class DeviceCheckInWorkerTest {
         setUpSuccessfulCheckInResponse(/* isHandleable= */ true);
 
         // WHEN work runs
-        final Result result = mWorker.doWork();
+        final Result result = Futures.getUnchecked(mWorker.startWork());
 
         // THEN work succeeded
         assertThat(result).isEqualTo(Result.success());
@@ -119,7 +119,7 @@ public class DeviceCheckInWorkerTest {
         setUpSuccessfulCheckInResponse(/* isHandleable= */ false);
 
         // WHEN work runs
-        final Result result = mWorker.doWork();
+        final Result result = Futures.getUnchecked(mWorker.startWork());
 
         // THEN work succeeded
         assertThat(result).isEqualTo(Result.retry());
@@ -135,7 +135,7 @@ public class DeviceCheckInWorkerTest {
         setUpFailedCheckInResponse(/* isRecoverable= */ true);
 
         // WHEN work runs
-        final Result result = mWorker.doWork();
+        final Result result = Futures.getUnchecked(mWorker.startWork());
 
         // THEN work succeeded
         assertThat(result).isEqualTo(Result.retry());
@@ -151,7 +151,7 @@ public class DeviceCheckInWorkerTest {
         setUpFailedCheckInResponse(/* isRecoverable= */ false);
 
         // WHEN work runs
-        final Result result = mWorker.doWork();
+        final Result result = Futures.getUnchecked(mWorker.startWork());
 
         // THEN work succeeded
         assertThat(result).isEqualTo(Result.failure());
@@ -164,7 +164,7 @@ public class DeviceCheckInWorkerTest {
         setCarrierInfoAvailability(/* isAvailable= */ false);
 
         // WHEN work runs
-        mWorker.doWork();
+        Futures.getUnchecked(mWorker.startWork());
 
         // THEN check-in is requested
         verify(mClient).getDeviceCheckInStatus(eq(TEST_DEVICE_IDS), eq(EMPTY_CARRIER_INFO),
@@ -178,7 +178,7 @@ public class DeviceCheckInWorkerTest {
         setCarrierInfoAvailability(/* isAvailable= */ false);
 
         // WHEN work runs
-        mWorker.doWork();
+        Futures.getUnchecked(mWorker.startWork());
 
         // THEN check-in is not requested
         verify(mClient, never()).getDeviceCheckInStatus(eq(TEST_DEVICE_IDS), eq(EMPTY_CARRIER_INFO),

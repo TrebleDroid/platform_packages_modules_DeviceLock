@@ -28,9 +28,12 @@ import androidx.work.ListenableWorker;
 import androidx.work.ListenableWorker.Result;
 import androidx.work.WorkerFactory;
 import androidx.work.WorkerParameters;
-import androidx.work.testing.TestWorkerBuilder;
+import androidx.work.testing.TestListenableWorkerBuilder;
 
 import com.android.devicelockcontroller.provision.grpc.DeviceFinalizeClient;
+
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.testing.TestingExecutors;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -40,9 +43,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
-
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 import io.grpc.Status;
 
@@ -57,9 +57,8 @@ public final class ReportDeviceLockProgramCompleteWorkerTest {
     @Before
     public void setUp() throws Exception {
         final Context context = ApplicationProvider.getApplicationContext();
-        final Executor executor = Executors.newSingleThreadExecutor();
-        mWorker = TestWorkerBuilder.from(
-                        context, ReportDeviceLockProgramCompleteWorker.class, executor)
+        mWorker = TestListenableWorkerBuilder.from(
+                        context, ReportDeviceLockProgramCompleteWorker.class)
                 .setWorkerFactory(
                         new WorkerFactory() {
                             @Override
@@ -69,7 +68,8 @@ public final class ReportDeviceLockProgramCompleteWorkerTest {
                                 return workerClassName.equals(
                                         ReportDeviceLockProgramCompleteWorker.class.getName())
                                         ? new ReportDeviceLockProgramCompleteWorker(context,
-                                        workerParameters, mClient)
+                                        workerParameters, mClient,
+                                        TestingExecutors.sameThreadScheduledExecutor())
                                         : null;
                             }
                         }).build();
@@ -80,7 +80,7 @@ public final class ReportDeviceLockProgramCompleteWorkerTest {
         when(mClient.reportDeviceProgramComplete()).thenReturn(
                 new DeviceFinalizeClient.ReportDeviceProgramCompleteResponse());
 
-        assertThat(mWorker.doWork()).isEqualTo(Result.success());
+        assertThat(Futures.getUnchecked(mWorker.startWork())).isEqualTo(Result.success());
     }
 
     @Test
@@ -88,7 +88,7 @@ public final class ReportDeviceLockProgramCompleteWorkerTest {
         when(mClient.reportDeviceProgramComplete()).thenReturn(
                 new DeviceFinalizeClient.ReportDeviceProgramCompleteResponse(Status.UNAVAILABLE));
 
-        assertThat(mWorker.doWork()).isEqualTo(Result.retry());
+        assertThat(Futures.getUnchecked(mWorker.startWork())).isEqualTo(Result.retry());
     }
 
     @Test
@@ -96,6 +96,6 @@ public final class ReportDeviceLockProgramCompleteWorkerTest {
         when(mClient.reportDeviceProgramComplete()).thenReturn(
                 new DeviceFinalizeClient.ReportDeviceProgramCompleteResponse(Status.UNKNOWN));
 
-        assertThat(mWorker.doWork()).isEqualTo(Result.failure());
+        assertThat(Futures.getUnchecked(mWorker.startWork())).isEqualTo(Result.failure());
     }
 }

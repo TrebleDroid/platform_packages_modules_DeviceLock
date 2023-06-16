@@ -29,7 +29,7 @@ import androidx.work.ListenableWorker;
 import androidx.work.ListenableWorker.Result;
 import androidx.work.WorkerFactory;
 import androidx.work.WorkerParameters;
-import androidx.work.testing.TestWorkerBuilder;
+import androidx.work.testing.TestListenableWorkerBuilder;
 
 import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
 import com.android.devicelockcontroller.policy.DeviceStateController;
@@ -39,6 +39,7 @@ import com.android.devicelockcontroller.provision.grpc.PauseDeviceProvisioningGr
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
 
 import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.testing.TestingExecutors;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -48,9 +49,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
-
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 @RunWith(RobolectricTestRunner.class)
 public final class PauseProvisioningWorkerTest {
@@ -66,10 +64,9 @@ public final class PauseProvisioningWorkerTest {
     @Before
     public void setUp() throws Exception {
         mTestApp = ApplicationProvider.getApplicationContext();
-        final Executor executor = Executors.newSingleThreadExecutor();
         when(mClient.pauseDeviceProvisioning(anyInt())).thenReturn(mResponse);
-        mWorker = TestWorkerBuilder.from(
-                        mTestApp, PauseProvisioningWorker.class, executor)
+        mWorker = TestListenableWorkerBuilder.from(
+                        mTestApp, PauseProvisioningWorker.class)
                 .setWorkerFactory(
                         new WorkerFactory() {
                             @Override
@@ -79,7 +76,8 @@ public final class PauseProvisioningWorkerTest {
                                 return workerClassName.equals(
                                         PauseProvisioningWorker.class.getName())
                                         ? new PauseProvisioningWorker(context,
-                                        workerParameters, mClient)
+                                        workerParameters, mClient,
+                                        TestingExecutors.sameThreadScheduledExecutor())
                                         : null;
                             }
                         }).build();
@@ -93,7 +91,7 @@ public final class PauseProvisioningWorkerTest {
         when(deviceStateController.setNextStateForEvent(DeviceEvent.SETUP_PAUSE))
                 .thenReturn(Futures.immediateVoidFuture());
 
-        assertThat(mWorker.doWork()).isEqualTo(Result.success());
+        assertThat(Futures.getUnchecked(mWorker.startWork())).isEqualTo(Result.success());
 
         assertThat(Futures.getUnchecked(
                 GlobalParametersClient.getInstance().isProvisionForced())).isEqualTo(true);
@@ -107,7 +105,7 @@ public final class PauseProvisioningWorkerTest {
         when(deviceStateController.setNextStateForEvent(DeviceEvent.SETUP_PAUSE))
                 .thenReturn(Futures.immediateVoidFuture());
 
-        assertThat(mWorker.doWork()).isEqualTo(Result.success());
+        assertThat(Futures.getUnchecked(mWorker.startWork())).isEqualTo(Result.success());
 
         assertThat(Futures.getUnchecked(
                 GlobalParametersClient.getInstance().isProvisionForced())).isEqualTo(false);
@@ -117,6 +115,6 @@ public final class PauseProvisioningWorkerTest {
     public void doWork_responseIsNotSuccessful_resultFailure() {
         when(mResponse.isSuccessful()).thenReturn(false);
 
-        assertThat(mWorker.doWork()).isEqualTo(Result.failure());
+        assertThat(Futures.getUnchecked(mWorker.startWork())).isEqualTo(Result.failure());
     }
 }

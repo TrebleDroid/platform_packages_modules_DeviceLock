@@ -27,6 +27,9 @@ import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.IsDeviceInApprovedCountryGrpcResponse;
 
 import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 
 /**
  * A worker class dedicated to check whether device is in approved country.
@@ -38,29 +41,32 @@ public final class IsDeviceInApprovedCountryWorker extends
     public static final String KEY_IS_IN_APPROVED_COUNTRY = "is-in-approved-country";
 
     IsDeviceInApprovedCountryWorker(@NonNull Context context,
-            @NonNull WorkerParameters workerParams) {
-        super(context, workerParams);
+            @NonNull WorkerParameters workerParams, ListeningExecutorService executorService) {
+        super(context, workerParams, null, executorService);
     }
 
     @VisibleForTesting
     IsDeviceInApprovedCountryWorker(@NonNull Context context,
             @NonNull WorkerParameters workerParameters,
-            DeviceCheckInClient client) {
-        super(context, workerParameters, client);
+            DeviceCheckInClient client, ListeningExecutorService executorService) {
+        super(context, workerParameters, client, executorService);
     }
 
     @NonNull
     @Override
-    public Result doWork() {
-        String carrierInfo = getInputData().getString(KEY_CARRIER_INFO);
-        IsDeviceInApprovedCountryGrpcResponse response = Futures.getUnchecked(
-                mClient).isDeviceInApprovedCountry(carrierInfo);
-
-        if (response.isSuccessful()) {
-            return Result.success(new Data.Builder().putBoolean(KEY_IS_IN_APPROVED_COUNTRY,
-                    response.isDeviceInApprovedCountry()).build());
-        }
-        return Result.failure();
+    public ListenableFuture<Result> startWork() {
+        return Futures.transform(mClient, client -> {
+            String carrierInfo = getInputData().getString(KEY_CARRIER_INFO);
+            IsDeviceInApprovedCountryGrpcResponse response =
+                    client.isDeviceInApprovedCountry(carrierInfo);
+            if (response.hasRecoverableError()) {
+                return Result.retry();
+            }
+            if (response.isSuccessful()) {
+                return Result.success(new Data.Builder().putBoolean(KEY_IS_IN_APPROVED_COUNTRY,
+                        response.isDeviceInApprovedCountry()).build());
+            }
+            return Result.failure();
+        }, MoreExecutors.directExecutor());
     }
-
 }
