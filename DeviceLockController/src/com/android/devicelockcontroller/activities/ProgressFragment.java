@@ -38,14 +38,6 @@ import com.android.devicelockcontroller.activities.util.UrlUtils;
  */
 public final class ProgressFragment extends Fragment {
 
-    /** The Bundle key for the resource id of the icon. */
-    private static final String KEY_ICON_ID = "key_icon_id";
-
-    /** The Bundle key for the resource id of the header text. */
-    private static final String KEY_HEADER_TEXT_ID = "key_header_text_id";
-
-    private static final String KEY_SUBHEADER_TEXT_ID = "key_subheader_text_id";
-
     @Nullable
     @Override
     public View onCreateView(
@@ -102,22 +94,6 @@ public final class ProgressFragment extends Fragment {
                 });
 
         return v;
-    }
-
-    static ProgressFragment create(int iconId, int headerTextId, int subheaderTextId) {
-        ProgressFragment progressFragment = new ProgressFragment();
-        Bundle bundle = new Bundle();
-        if (iconId != 0) {
-            bundle.putInt(KEY_ICON_ID, iconId);
-        }
-        if (headerTextId != 0) {
-            bundle.putInt(KEY_HEADER_TEXT_ID, headerTextId);
-        }
-        if (subheaderTextId != 0) {
-            bundle.putInt(KEY_SUBHEADER_TEXT_ID, subheaderTextId);
-        }
-        progressFragment.setArguments(bundle);
-        return progressFragment;
     }
 
 }
