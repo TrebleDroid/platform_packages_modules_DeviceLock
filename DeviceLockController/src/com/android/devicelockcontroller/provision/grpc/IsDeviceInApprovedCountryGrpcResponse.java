@@ -25,7 +25,7 @@ import io.grpc.Status;
  * device is in an approved country.
  */
 public abstract class IsDeviceInApprovedCountryGrpcResponse extends
-        DeviceCheckInGrpcResponse {
+        GrpcResponse {
     public IsDeviceInApprovedCountryGrpcResponse(@NonNull Status status) {
         super(status);
     }

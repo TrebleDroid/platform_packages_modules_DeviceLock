@@ -38,7 +38,6 @@ import com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.PauseDeviceProvisioningGrpcResponse;
-import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import com.google.common.util.concurrent.Futures;
@@ -103,15 +102,12 @@ public final class PauseProvisioningWorker extends AbstractCheckInWorker {
                 return Result.retry();
             }
             if (response.isSuccessful()) {
-                boolean shouldForceProvisioning = response.shouldForceProvisioning();
-                Futures.getUnchecked(GlobalParametersClient.getInstance().setProvisionForced(
-                        shouldForceProvisioning));
                 PolicyObjectsInterface policyObjects =
                         (PolicyObjectsInterface) mContext.getApplicationContext();
                 Duration delay = Build.isDebuggable()
                         ? Duration.ofMinutes(SystemProperties.getInt(
-                                PROVISION_PAUSED_MINUTES_SYS_PROPERTY_KEY,
-                                PROVISION_PAUSED_MINUTES_DEFAULT))
+                        PROVISION_PAUSED_MINUTES_SYS_PROPERTY_KEY,
+                        PROVISION_PAUSED_MINUTES_DEFAULT))
                         : Duration.ofHours(PROVISION_PAUSED_HOUR);
                 ResumeProvisioningWorker.scheduleResumeProvisioningWorker(
                         WorkManager.getInstance(mContext), delay);

@@ -26,15 +26,15 @@ import io.grpc.Status.Code;
  * Base class for encapsulating a device check in server response. This class handles the Grpc
  * status response, subclasses will handle request specific responses.
  */
-abstract class DeviceCheckInGrpcResponse {
+abstract class GrpcResponse {
     @Nullable
     Status mStatus;
 
-    DeviceCheckInGrpcResponse() {
+    GrpcResponse() {
         mStatus = null;
     }
 
-    DeviceCheckInGrpcResponse(@NonNull Status status) {
+    GrpcResponse(@NonNull Status status) {
         mStatus = status;
     }
 
@@ -44,10 +44,6 @@ abstract class DeviceCheckInGrpcResponse {
 
     public boolean isSuccessful() {
         return mStatus == null;
-    }
-
-    public boolean isStatusAlreadyExists() {
-        return mStatus != null && mStatus.getCode() == Code.ALREADY_EXISTS;
     }
 
     public boolean hasFatalError() {

@@ -176,13 +176,7 @@ message PauseDeviceProvisioningRequest {
 }
 
 // Response to a request to pause device provisioning of an eligible device.
-message PauseDeviceProvisioningResponse {
-  // The Device Lock server decision as to whether or not to force device
-  // provisioning after receiving the pause device provisioning request. If
-  // true, then device provisioning would be forced. Otherwise, if false, then
-  // the device provisioning can still be paused.
-  optional bool force_provisioning = 1;
-}
+message PauseDeviceProvisioningResponse {}
 
 // Request to report that device provisioning of an eligible device is complete.
 message ReportDeviceProvisionCompleteRequest {

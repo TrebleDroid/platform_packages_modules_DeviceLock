@@ -89,7 +89,7 @@ public abstract class DeviceFinalizeClient {
      * Class that used to indicate the successfulness / failure status of the response.
      */
     public static final class ReportDeviceProgramCompleteResponse extends
-            DeviceCheckInGrpcResponse {
+            GrpcResponse {
         public ReportDeviceProgramCompleteResponse() {
             super();
         }

@@ -27,7 +27,7 @@ import io.grpc.Status;
  * An abstract class that is used to encapsulate the response for reporting the current state of
  * device provisioning.
  */
-public abstract class ReportDeviceProvisionStateGrpcResponse extends DeviceCheckInGrpcResponse {
+public abstract class ReportDeviceProvisionStateGrpcResponse extends GrpcResponse {
     public ReportDeviceProvisionStateGrpcResponse() {
         mStatus = null;
     }
