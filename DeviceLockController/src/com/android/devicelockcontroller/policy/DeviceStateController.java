@@ -177,13 +177,14 @@ public interface DeviceStateController {
             DeviceEvent.LOCK_DEVICE,
             DeviceEvent.UNLOCK_DEVICE,
             DeviceEvent.CLEAR,
+            DeviceEvent.SETUP_RESUME,
     })
     @interface DeviceEvent {
 
         /* App provisioned */
         int PROVISIONING_SUCCESS = 0;
 
-        /** Pause setup */
+        /* Pause setup */
         int SETUP_PAUSE = 1;
 
         /* Setup completed successfully */
@@ -203,6 +204,9 @@ public interface DeviceStateController {
 
         /* Clear device lock restrictions */
         int CLEAR = 7;
+
+        /* Resume setup */
+        int SETUP_RESUME = 8;
     }
 
     /**
@@ -235,6 +239,8 @@ public interface DeviceStateController {
                 return "UNLOCK_DEVICE";
             case DeviceEvent.CLEAR:
                 return "CLEAR";
+            case DeviceEvent.SETUP_RESUME:
+                return "SETUP_RESUME";
             default:
                 return "UNKNOWN_EVENT";
         }
