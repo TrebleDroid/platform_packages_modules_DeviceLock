@@ -155,7 +155,7 @@ public final class ProvisionInfoFragment extends Fragment {
         viewModel.mSubHeaderTextLiveData.observe(getViewLifecycleOwner(),
                 pair -> {
                     if (pair.first > 0 && !TextUtils.isEmpty(pair.second)) {
-                        headerTextView.setText(getString(pair.first, pair.second));
+                        subheaderTextView.setText(getString(pair.first, pair.second));
                     }
                 });
         Button next = view.findViewById(R.id.button_next);
