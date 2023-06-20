@@ -154,7 +154,7 @@ public final class DeviceCheckInHelperTest {
         DeviceStateController stateController = mTestApplication.getStateController();
         DevicePolicyController policyController = mTestApplication.getPolicyController();
         when(stateController.setNextStateForEvent(DeviceEvent.PROVISIONING_SUCCESS)).thenReturn(
-                Futures.immediateVoidFuture());
+                Futures.immediateFuture(DeviceStateController.DeviceState.SETUP_SUCCEEDED));
 
         assertThat(mHelper.handleProvisionReadyResponse(
                 response, stateController, policyController)).isTrue();

@@ -255,7 +255,10 @@ public final class SetupControllerImpl implements SetupController {
     ListenableFuture<Void> finishSetup() {
         mCallbacks.remove(mReportStateCallbacks);
         if (mCurrentSetupState == SetupStatus.SETUP_FINISHED) {
-            return mStateController.setNextStateForEvent(DeviceEvent.SETUP_COMPLETE);
+            return Futures.transform(
+                    mStateController.setNextStateForEvent(DeviceEvent.SETUP_COMPLETE),
+                    (Integer unused) -> null,
+                    MoreExecutors.directExecutor());
         } else if (mCurrentSetupState == SetupStatus.SETUP_FAILED) {
             return Futures.transform(
                     SetupParametersClient.getInstance().isProvisionMandatory(),

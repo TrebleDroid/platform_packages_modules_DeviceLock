@@ -40,8 +40,12 @@ public interface DeviceStateController {
 
     /**
      * Moves the device to a new state based on the input event
+     *
+     * @return The next state {@link DeviceState} after the event, or an
+     * {@code ImmediateFailedFuture} if the state transition failed.
      */
-    ListenableFuture<Void> setNextStateForEvent(@DeviceEvent int event);
+    @DeviceState
+    ListenableFuture<Integer> setNextStateForEvent(@DeviceEvent int event);
 
     /**
      * Returns the current state of the device

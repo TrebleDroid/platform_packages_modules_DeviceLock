@@ -69,7 +69,7 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
     }
 
     @Override
-    public ListenableFuture<Void> setNextStateForEvent(@DeviceEvent int event) {
+    public ListenableFuture<Integer> setNextStateForEvent(@DeviceEvent int event) {
         try {
             updateState(getNextState(event));
         } catch (StateTransitionException e) {
@@ -77,7 +77,8 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
         }
         LogUtil.i(TAG, String.format(Locale.US, "handleEvent %d, newState %d", event, mState));
 
-        return enforcePoliciesForCurrentState();
+        return Futures.transform(enforcePoliciesForCurrentState(), (Void v) -> mState,
+                MoreExecutors.directExecutor());
     }
 
     @Override

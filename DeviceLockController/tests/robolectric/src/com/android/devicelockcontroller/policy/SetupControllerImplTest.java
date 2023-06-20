@@ -135,7 +135,7 @@ public final class SetupControllerImplTest {
         createParameters(b);
         when(mMockStateController.getState()).thenReturn(DeviceState.KIOSK_SETUP);
         when(mMockStateController.setNextStateForEvent(DeviceEvent.SETUP_COMPLETE)).thenReturn(
-                Futures.immediateVoidFuture());
+                Futures.immediateFuture(DeviceState.SETUP_SUCCEEDED));
         SetupControllerImpl setupController =
                 new SetupControllerImpl(
                         mTestApplication, mMockStateController, mMockPolicyController);
@@ -219,7 +219,7 @@ public final class SetupControllerImplTest {
     public void installKioskAppForSecondaryUser_kioskAppInstalled_allTaskSucceed() {
         // GIVEN all tasks succeed
         when(mMockStateController.setNextStateForEvent(DeviceEvent.SETUP_SUCCESS)).thenReturn(
-                Futures.immediateVoidFuture());
+                Futures.immediateFuture(DeviceState.SETUP_SUCCEEDED));
 
         setupLifecycle();
         final SetupControllerImpl setupController = createSetupControllerImpl(mMockCbs);
@@ -262,7 +262,7 @@ public final class SetupControllerImplTest {
                     }
                 };
         when(mMockStateController.setNextStateForEvent(DeviceEvent.SETUP_FAILURE)).thenReturn(
-                Futures.immediateVoidFuture());
+                Futures.immediateFuture(DeviceState.SETUP_FAILED));
         SetupControllerImpl setupController = createSetupControllerImpl(callbacks);
         setupController.setupFlowTaskFailureCallbackHandler(SetupFailureReason.DOWNLOAD_FAILED);
         assertThat(result.get()).isFalse();
@@ -287,7 +287,7 @@ public final class SetupControllerImplTest {
                 };
 
         when(mMockStateController.setNextStateForEvent(DeviceEvent.SETUP_SUCCESS)).thenReturn(
-                Futures.immediateVoidFuture());
+                Futures.immediateFuture(DeviceState.SETUP_SUCCEEDED));
 
         SetupControllerImpl setupController = createSetupControllerImpl(callbacks);
         setupController.setupFlowTaskSuccessCallbackHandler();
@@ -301,7 +301,7 @@ public final class SetupControllerImplTest {
         SetupControllerImpl setupController = createSetupControllerImpl(mMockCbs);
         setupController.removeListener(mMockCbs);
         when(mMockStateController.setNextStateForEvent(DeviceEvent.SETUP_SUCCESS)).thenReturn(
-                Futures.immediateVoidFuture());
+                Futures.immediateFuture(DeviceState.SETUP_SUCCEEDED));
 
         setupController.setupFlowTaskSuccessCallbackHandler();
         verify(mMockCbs, after(ASYNC_TIMEOUT_MILLIS).never()).setupCompleted();

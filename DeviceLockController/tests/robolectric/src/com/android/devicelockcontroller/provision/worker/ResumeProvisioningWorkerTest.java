@@ -47,7 +47,6 @@ import org.robolectric.RobolectricTestRunner;
 
 import java.time.Duration;
 
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -98,27 +97,23 @@ public final class ResumeProvisioningWorkerTest {
 
     @Test
     public void startWork_shouldDispatchResumeProvisionEvent() {
-        when(mDeviceStateController.setNextStateForEvent(anyInt()))
-                .thenReturn(Futures.immediateVoidFuture());
-        when(mDeviceStateController.getState()).thenReturn(DeviceState.SETUP_IN_PROGRESS);
+        when(mDeviceStateController.setNextStateForEvent(eq(DeviceEvent.SETUP_RESUME)))
+                .thenReturn(Futures.immediateFuture(DeviceState.SETUP_IN_PROGRESS));
 
         ListenableFuture<Result> result = mWorker.startWork();
 
         assertThat(Futures.getUnchecked(result)).isEqualTo(Result.success());
-        verify(mDeviceStateController).getState();
         verify(mDeviceStateController).setNextStateForEvent(eq(DeviceEvent.SETUP_RESUME));
     }
 
     @Test
     public void startWork_shouldFail_whenDeviceStateDidNotTransitionToInProgress() {
-        when(mDeviceStateController.setNextStateForEvent(anyInt()))
-                .thenReturn(Futures.immediateVoidFuture());
-        when(mDeviceStateController.getState()).thenReturn(DeviceState.SETUP_FAILED);
+        when(mDeviceStateController.setNextStateForEvent(eq(DeviceEvent.SETUP_RESUME)))
+                .thenReturn(Futures.immediateFuture(DeviceState.SETUP_FAILED));
 
         ListenableFuture<Result> result = mWorker.startWork();
 
         assertThat(Futures.getUnchecked(result)).isEqualTo(Result.failure());
-        verify(mDeviceStateController).getState();
         verify(mDeviceStateController).setNextStateForEvent(eq(DeviceEvent.SETUP_RESUME));
     }
 }
