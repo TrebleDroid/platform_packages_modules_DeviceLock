@@ -19,14 +19,10 @@ package com.android.devicelockcontroller.storage;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
-import android.util.ArraySet;
 
 import androidx.annotation.Nullable;
 
 import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState;
-
-import java.util.ArrayList;
-import java.util.Set;
 
 /**
  * Stores global parameters.
@@ -74,39 +70,6 @@ final class GlobalParameters {
      */
     static void setKioskSignature(Context context, String signature) {
         getSharedPreferences(context).edit().putString(KEY_KIOSK_SIGNING_CERT, signature).apply();
-    }
-
-    /**
-     * Gets the list of packages allowlisted in lock task mode.
-     *
-     * @param context Context used to get the shared preferences.
-     * @return List of packages that are allowed in lock task mode.
-     */
-    static ArrayList<String> getLockTaskAllowlist(Context context) {
-        final ArrayList<String> allowlistArray = new ArrayList<>();
-        SharedPreferences sharedPreferences = getSharedPreferences(context);
-        final Set<String> allowlist =
-                sharedPreferences.getStringSet(KEY_LOCK_TASK_ALLOWLIST, /* defValue= */ null);
-        if (allowlist != null) {
-            allowlistArray.addAll(allowlist);
-        }
-
-        return allowlistArray;
-    }
-
-    /**
-     * Sets the list of packages allowlisted in lock task mode.
-     *
-     * @param context   Context used to get the shared preferences.
-     * @param allowlist List of packages that are allowed in lock task mode.
-     */
-    static void setLockTaskAllowlist(Context context, ArrayList<String> allowlist) {
-        final Set<String> allowlistSet = new ArraySet<>(allowlist);
-
-        getSharedPreferences(context)
-                .edit()
-                .putStringSet(KEY_LOCK_TASK_ALLOWLIST, allowlistSet)
-                .apply();
     }
 
     /**

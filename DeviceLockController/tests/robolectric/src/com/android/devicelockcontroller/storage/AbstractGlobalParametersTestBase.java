@@ -19,9 +19,6 @@ package com.android.devicelockcontroller.storage;
 import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState;
 
 abstract class AbstractGlobalParametersTestBase {
-    static final String ALLOWLIST_PACKAGE_0 = "allowlist.package.0";
-    static final String ALLOWLIST_PACKAGE_1 = "allowlist.package.1";
-
     static final String KIOSK_SIGNING_CERT = "signing_certificate";
     static final boolean NEED_CHECK_IN = false;
     static final String REGISTERED_DEVICE_ID = "test_id";
