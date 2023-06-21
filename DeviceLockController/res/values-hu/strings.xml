@@ -124,7 +124,7 @@
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Az eszközön lévő minden adat törlésre kerül. Ha segítségre van szüksége eszköze regisztrálásához, forduljon a következőhöz: <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>."</string>
     <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Engedélyezze a DeviceLock értesítéseit, ha továbbra is halasztani szeretné az eszköz regisztrációját."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"A finanszírozási kiépítés sikertelen volt"</string>
-    <string name="click_to_contact_financier" msgid="8493790143035086516">"A finanszíróval való kapcsolatfelvételi módokért kattintson ide. További információ."</string>
+    <string name="click_to_contact_financier" msgid="9107827438262930445">"A finanszíróval való kapcsolatfelvételi módokért kattintson ide. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>További információ<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>."</string>
     <string name="exit" msgid="645084771882733921">"Kilépés"</string>
     <string name="retry" msgid="7497287909193345356">"Újra"</string>
 </resources>
