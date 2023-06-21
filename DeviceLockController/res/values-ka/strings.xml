@@ -124,7 +124,7 @@
     <string name="device_reset_notification_content" msgid="7642367488663440437">"მოწყობილობის ყველა მონაცემი წაიშლება. თქვენი მოწყობილობის რეგისტრაციასთან დაკავშირებით დახმარებისთვის დაუკავშირდით <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>-ს"</string>
     <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"გთხოვთ, დაუშვათ შეტყობინება DeviceLock-იდან მოწყობილობის რეგისტრაციის გადადების გასაგრძელებლად."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"დაფინანსების უზრუნველყოფა ვერ მოხერხდა"</string>
-    <string name="click_to_contact_financier" msgid="8493790143035086516">"გთხოვთ, დააწკაპუნოთ აქ თქვენს ფინანსისტთან დაკავშირების გზებისთვის. შეიტყვეთ მეტი"</string>
+    <string name="click_to_contact_financier" msgid="9107827438262930445">"დააწკაპუნეთ აქ თქვენს ფინანსისტთან დაკავშირების გზებისთვის. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>შეიტყვეთ მეტი<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"გასვლა"</string>
     <string name="retry" msgid="7497287909193345356">"ხელახლა ცდა"</string>
 </resources>
