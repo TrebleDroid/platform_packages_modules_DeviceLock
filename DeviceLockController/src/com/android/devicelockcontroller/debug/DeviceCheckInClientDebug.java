@@ -38,6 +38,7 @@ import com.android.devicelockcontroller.provision.grpc.ReportDeviceProvisionStat
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 
 /**
  * An implementation of the {@link DeviceCheckInClient} which simulate server responses by
@@ -82,8 +83,17 @@ public final class DeviceCheckInClientDebug extends DeviceCheckInClient {
             @Nullable
             @Override
             public ProvisioningConfiguration getProvisioningConfig() {
-                // Can be override using SetupParametersOverrider.
-                return null;
+                // This should be overridden using SetupParametersOverrider.
+                return new ProvisioningConfiguration(
+                        /* kioskAppProviderName= */ "",
+                        /* kioskAppPackageName= */ "",
+                        /* kioskAppMainActivity= */ "",
+                        /* kioskAppAllowlistPackages= */ List.of(""),
+                        /* kioskAppEnableOutgoingCalls= */ false,
+                        /* kioskAppEnableEnableNotifications= */ false,
+                        /* disallowInstallingFromUnknownSources= */ false,
+                        /* termsAndConditionsUrl= */ "",
+                        /* supportUrl= */ "");
             }
 
             @Override
