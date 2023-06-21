@@ -92,7 +92,7 @@ final class SetupParameters {
         dumpParameters(context);
     }
 
-    private static void dumpParameters(Context context) {
+    static void dumpParameters(Context context) {
         LogUtil.d(TAG, String.format(Locale.US,
                 "Dumping SetupParameters ...\n"
                 + "%s: %s\n"    // kiosk-package-name:

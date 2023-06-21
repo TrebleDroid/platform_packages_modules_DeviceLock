@@ -24,6 +24,7 @@ interface ISetupParametersService {
     void overridePrefs(in Bundle bundle);
     void createPrefs(in Bundle bundle);
     void clear();
+    void dump();
     String getKioskPackage();
     String getKioskSetupActivity();
     boolean getOutgoingCallsDisabled();
