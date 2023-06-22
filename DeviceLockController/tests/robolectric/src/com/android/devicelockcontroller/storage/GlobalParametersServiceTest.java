@@ -28,9 +28,6 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.android.controller.ServiceController;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @RunWith(RobolectricTestRunner.class)
 public class GlobalParametersServiceTest extends AbstractGlobalParametersTestBase {
     private IGlobalParametersService mIGlobalParametersService;
@@ -43,17 +40,6 @@ public class GlobalParametersServiceTest extends AbstractGlobalParametersTestBas
                 globalParametersServiceController.create().get();
         mIGlobalParametersService =
                 (IGlobalParametersService) globalParametersService.onBind(new Intent());
-    }
-
-    @Test
-    public void getLockTaskAllowlist_shouldReturnExpectedAllowlist() throws RemoteException {
-        assertThat(mIGlobalParametersService.getLockTaskAllowlist()).isEmpty();
-        final ArrayList<String> expectedAllowlist = new ArrayList<>();
-        expectedAllowlist.add(ALLOWLIST_PACKAGE_0);
-        expectedAllowlist.add(ALLOWLIST_PACKAGE_1);
-        mIGlobalParametersService.setLockTaskAllowlist(expectedAllowlist);
-        final List<String> actualAllowlist = mIGlobalParametersService.getLockTaskAllowlist();
-        assertThat(actualAllowlist).containsExactlyElementsIn(expectedAllowlist);
     }
 
     @Test

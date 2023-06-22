@@ -24,9 +24,6 @@ import android.os.IBinder;
 import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState;
 import com.android.devicelockcontroller.util.LogUtil;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * A class exposing Global Parameters as a service.
  */
@@ -40,16 +37,6 @@ public final class GlobalParametersService extends Service {
                 @Override
                 public void clear() {
                     GlobalParameters.clear(mContext);
-                }
-
-                @Override
-                public List<String> getLockTaskAllowlist() {
-                    return GlobalParameters.getLockTaskAllowlist(mContext);
-                }
-
-                @Override
-                public void setLockTaskAllowlist(List<String> allowlist) {
-                    GlobalParameters.setLockTaskAllowlist(mContext, new ArrayList<>(allowlist));
                 }
 
                 @Override
