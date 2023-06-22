@@ -21,20 +21,14 @@ import androidx.annotation.NonNull;
 import io.grpc.Status;
 
 /**
- * An abstract class that is used to encapsulate the response of pausing device provisioning
- * request.
+ * A class that is used to indicate the successfulness / failure status of the response of pausing
+ * device provisioning request.
  */
-public abstract class PauseDeviceProvisioningGrpcResponse extends DeviceCheckInGrpcResponse {
+public class PauseDeviceProvisioningGrpcResponse extends GrpcResponse {
     public PauseDeviceProvisioningGrpcResponse() {
     }
 
     public PauseDeviceProvisioningGrpcResponse(@NonNull Status status) {
         super(status);
     }
-
-    /**
-     * Check if provisioning should be forced.
-     * @return True if user can delay provisioning; false if user can not delay provisioning.
-     */
-    public abstract boolean shouldForceProvisioning();
 }

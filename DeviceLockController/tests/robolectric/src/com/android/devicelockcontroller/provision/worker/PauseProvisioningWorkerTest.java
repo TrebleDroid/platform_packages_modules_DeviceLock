@@ -32,11 +32,8 @@ import androidx.work.WorkerParameters;
 import androidx.work.testing.TestListenableWorkerBuilder;
 
 import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
-import com.android.devicelockcontroller.policy.DeviceStateController;
-import com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.PauseDeviceProvisioningGrpcResponse;
-import com.android.devicelockcontroller.storage.GlobalParametersClient;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.testing.TestingExecutors;
@@ -81,34 +78,6 @@ public final class PauseProvisioningWorkerTest {
                                         : null;
                             }
                         }).build();
-    }
-
-    @Test
-    public void doWork_responseIsSuccessful_provisionShouldBeForced_globalParameterIsSet() {
-        when(mResponse.isSuccessful()).thenReturn(true);
-        when(mResponse.shouldForceProvisioning()).thenReturn(true);
-        DeviceStateController deviceStateController = mTestApp.getStateController();
-        when(deviceStateController.setNextStateForEvent(DeviceEvent.SETUP_PAUSE))
-                .thenReturn(Futures.immediateVoidFuture());
-
-        assertThat(Futures.getUnchecked(mWorker.startWork())).isEqualTo(Result.success());
-
-        assertThat(Futures.getUnchecked(
-                GlobalParametersClient.getInstance().isProvisionForced())).isEqualTo(true);
-    }
-
-    @Test
-    public void doWork_responseIsSuccessful_provisionShouldNotBeForced_globalParameterIsSet() {
-        when(mResponse.isSuccessful()).thenReturn(true);
-        when(mResponse.shouldForceProvisioning()).thenReturn(false);
-        DeviceStateController deviceStateController = mTestApp.getStateController();
-        when(deviceStateController.setNextStateForEvent(DeviceEvent.SETUP_PAUSE))
-                .thenReturn(Futures.immediateVoidFuture());
-
-        assertThat(Futures.getUnchecked(mWorker.startWork())).isEqualTo(Result.success());
-
-        assertThat(Futures.getUnchecked(
-                GlobalParametersClient.getInstance().isProvisionForced())).isEqualTo(false);
     }
 
     @Test

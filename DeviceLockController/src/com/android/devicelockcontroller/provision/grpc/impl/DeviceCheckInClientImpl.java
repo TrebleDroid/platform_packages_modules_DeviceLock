@@ -109,12 +109,12 @@ public final class DeviceCheckInClientImpl extends DeviceCheckInClient {
     @Override
     public PauseDeviceProvisioningGrpcResponse pauseDeviceProvisioning(int reason) {
         try {
-            return new PauseDeviceProvisioningGrpcResponseWrapper(
-                    mBlockingStub.pauseDeviceProvisioning(
-                            createPauseDeviceProvisioningRequest(sRegisteredId, reason)));
 
+            mBlockingStub.pauseDeviceProvisioning(
+                    createPauseDeviceProvisioningRequest(sRegisteredId, reason));
+            return new PauseDeviceProvisioningGrpcResponse();
         } catch (StatusRuntimeException e) {
-            return new PauseDeviceProvisioningGrpcResponseWrapper(e.getStatus());
+            return new PauseDeviceProvisioningGrpcResponse(e.getStatus());
         }
     }
 

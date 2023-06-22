@@ -147,14 +147,7 @@ public final class DeviceCheckInClientDebug extends DeviceCheckInClient {
      */
     @Override
     public PauseDeviceProvisioningGrpcResponse pauseDeviceProvisioning(int reason) {
-        return new PauseDeviceProvisioningGrpcResponse() {
-            @Override
-            public boolean shouldForceProvisioning() {
-                return DebugLogUtil.logAndReturn(TAG, SystemProperties.getBoolean(
-                        "debug.devicelock.checkin.force-provisioning",
-                        true));
-            }
-        };
+        return new PauseDeviceProvisioningGrpcResponse();
     }
 
     /**
