@@ -27,9 +27,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @RunWith(RobolectricTestRunner.class)
 public final class GlobalParametersTest extends AbstractGlobalParametersTestBase {
     private Context mContext;
@@ -37,17 +34,6 @@ public final class GlobalParametersTest extends AbstractGlobalParametersTestBase
     @Before
     public void setup() {
         mContext = ApplicationProvider.getApplicationContext();
-    }
-
-    @Test
-    public void getLockTaskAllowlist_shouldReturnExpectedAllowlist() {
-        assertThat(GlobalParameters.getLockTaskAllowlist(mContext)).isEmpty();
-        final ArrayList<String> expectedAllowlist = new ArrayList<>();
-        expectedAllowlist.add(ALLOWLIST_PACKAGE_0);
-        expectedAllowlist.add(ALLOWLIST_PACKAGE_1);
-        GlobalParameters.setLockTaskAllowlist(mContext, expectedAllowlist);
-        final List<String> actualAllowlist = GlobalParameters.getLockTaskAllowlist(mContext);
-        assertThat(actualAllowlist).containsExactlyElementsIn(expectedAllowlist);
     }
 
     @Test

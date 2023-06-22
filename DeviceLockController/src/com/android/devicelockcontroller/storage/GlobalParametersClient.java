@@ -34,7 +34,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 
-import java.util.List;
 import java.util.concurrent.Executors;
 
 /**
@@ -100,29 +99,6 @@ public final class GlobalParametersClient extends DlcClient {
     public ListenableFuture<Void> clear() {
         return call(() -> {
             asInterface(getService()).clear();
-            return null;
-        });
-    }
-
-    /**
-     * Gets the list of packages allowlisted in lock task mode.
-     *
-     * @return List of packages that are allowed in lock task mode.
-     */
-    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
-    public ListenableFuture<List<String>> getLockTaskAllowlist() {
-        return call(() -> asInterface(getService()).getLockTaskAllowlist());
-    }
-
-    /**
-     * Sets the list of packages allowlisted in lock task mode.
-     *
-     * @param allowlist List of packages that are allowed in lock task mode.
-     */
-    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
-    public ListenableFuture<Void> setLockTaskAllowlist(List<String> allowlist) {
-        return call(() -> {
-            asInterface(getService()).setLockTaskAllowlist(allowlist);
             return null;
         });
     }

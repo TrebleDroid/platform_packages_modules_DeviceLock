@@ -41,13 +41,13 @@ import android.content.pm.ResolveInfo;
 import android.provider.Settings;
 import android.provider.Settings.Secure;
 import android.telecom.TelecomManager;
+import android.util.ArraySet;
 
 import androidx.annotation.VisibleForTesting;
 import androidx.work.WorkManager;
 
 import com.android.devicelockcontroller.R;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
-import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.storage.SetupParametersClient;
 import com.android.devicelockcontroller.storage.UserParameters;
 import com.android.devicelockcontroller.util.LogUtil;
@@ -56,10 +56,10 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.Executors;
 
 /** Handles lock task mode features. */
 final class LockTaskModePolicyHandler implements PolicyHandler {
@@ -104,14 +104,10 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
                 return disableLockTaskMode();
             case SETUP_IN_PROGRESS:
             case SETUP_SUCCEEDED:
-                return Futures.transformAsync(composeAllowlist(/* includeController= */ true),
-                        empty -> enableLockTaskMode(),
-                        MoreExecutors.directExecutor());
+                return enableLockTaskMode(/* includeController= */ true);
             case KIOSK_SETUP:
             case LOCKED:
-                return Futures.transformAsync(composeAllowlist(/* includeController= */ false),
-                        empty -> enableLockTaskMode(),
-                        MoreExecutors.directExecutor());
+                return enableLockTaskMode(/* includeController= */ false);
             default:
                 return Futures.immediateFailedFuture(
                         new IllegalStateException(String.valueOf(state)));
@@ -140,34 +136,28 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
         return true;
     }
 
-    private ListenableFuture<Void> updateAllowlist() {
-        return Futures.transform(GlobalParametersClient.getInstance().getLockTaskAllowlist(),
+    private ListenableFuture<Void> updateAllowlist(boolean includeController) {
+        return Futures.transform(composeAllowlist(includeController),
                 allowlist -> {
-                    if (allowlist.isEmpty()) {
-                        allowlist = new ArrayList<>(
-                                Arrays.asList(
-                                        mContext.getResources().getStringArray(
-                                                R.array.lock_task_allowlist)));
-                    }
-
-                    final TelecomManager telecomManager = mContext.getSystemService(
+                    TelecomManager telecomManager = mContext.getSystemService(
                             TelecomManager.class);
-                    final String defaultDialer = telecomManager.getDefaultDialerPackage();
+                    String defaultDialer = telecomManager.getDefaultDialerPackage();
                     if (defaultDialer != null && !allowlist.contains(defaultDialer)) {
                         LogUtil.i(TAG,
                                 String.format(Locale.US, "Adding default dialer %s to allowlist",
                                         defaultDialer));
                         allowlist.add(defaultDialer);
                     }
-                    final String[] allowlistPackages = allowlist.toArray(new String[0]);
+                    String[] allowlistPackages = allowlist.toArray(new String[0]);
                     mDpm.setLockTaskPackages(null /* admin */, allowlistPackages);
                     LogUtil.i(TAG, String.format(Locale.US, "Update Lock task allowlist %s",
                             Arrays.toString(allowlistPackages)));
                     return null;
-                }, mContext.getMainExecutor());
+                }, Executors.newSingleThreadExecutor());
     }
 
-    private @ResultType ListenableFuture<@ResultType Integer> enableLockTaskMode() {
+    private @ResultType ListenableFuture<@ResultType Integer> enableLockTaskMode(
+            boolean includeController) {
         ListenableFuture<Boolean> notificationsInLockTaskModeEnabled =
                 SetupParametersClient.getInstance().isNotificationsInLockTaskModeEnabled();
         ListenableFuture<Intent> launchIntent =
@@ -175,7 +165,7 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
         return Futures.whenAllSucceed(
                         launchIntent,
                         notificationsInLockTaskModeEnabled,
-                        updateAllowlist())
+                        updateAllowlist(includeController))
                 .call(
                         () -> {
                             int flags = DEFAULT_LOCK_TASK_FEATURES;
@@ -214,40 +204,40 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
      *   2. Find the default app used as dialer (should be a System App).
      *   3. Find the default app used for Settings (should be a System App).
      *   4. Find the default InputMethod.
-     *   4. Kiosk app
-     *   5. Append the packages allow-listed through setup parameters.
+     *   5. DLC or Kiosk app depending on the input.
+     *   6. Append the packages allow-listed through setup parameters if applicable.
      */
-    private ListenableFuture<Void> composeAllowlist(boolean includeController) {
-        final String[] allowlistArray =
+    private ListenableFuture<ArraySet<String>> composeAllowlist(boolean includeController) {
+        String[] allowlistArray =
                 mContext.getResources().getStringArray(R.array.lock_task_allowlist);
-        final ArrayList<String> allowlistPackages = new ArrayList<>(Arrays.asList(allowlistArray));
+        ArraySet<String> allowlistPackages = new ArraySet<>(allowlistArray);
         allowlistSystemAppForAction(Intent.ACTION_DIAL, allowlistPackages);
         allowlistSystemAppForAction(Settings.ACTION_SETTINGS, allowlistPackages);
         allowlistInputMethod(allowlistPackages);
         allowlistCellBroadcastReceiver(allowlistPackages);
         if (includeController) {
             allowlistPackages.add(mContext.getPackageName());
-            return GlobalParametersClient.getInstance().setLockTaskAllowlist(allowlistPackages);
+            return Futures.immediateFuture(allowlistPackages);
 
         } else {
-            final ListenableFuture<String> kioskPackageTask =
+            // Explicitly remove DLC package since it can be added from the config resource.
+            // If DLC is included incorrectly in the allowlist, kiosk app setup activity may not
+            // successfully be launched.
+            allowlistPackages.remove(mContext.getPackageName());
+            ListenableFuture<String> kioskPackageTask =
                     SetupParametersClient.getInstance().getKioskPackage();
-            final ListenableFuture<List<String>> kioskAllowlistTask =
+            ListenableFuture<List<String>> kioskAllowlistTask =
                     SetupParametersClient.getInstance().getKioskAllowlist();
-            return Futures.transformAsync(
-                    Futures.whenAllSucceed(kioskPackageTask, kioskAllowlistTask).call(
-                            () -> {
-                                allowlistPackages.add(Futures.getDone(kioskPackageTask));
-                                allowlistPackages.addAll(Futures.getDone(kioskAllowlistTask));
-                                return allowlistPackages;
-                            }, mContext.getMainExecutor()),
-                    packagesList ->
-                            GlobalParametersClient.getInstance().setLockTaskAllowlist(packagesList),
-                    mContext.getMainExecutor());
+            return Futures.whenAllSucceed(kioskPackageTask, kioskAllowlistTask).call(
+                    () -> {
+                        allowlistPackages.add(Futures.getDone(kioskPackageTask));
+                        allowlistPackages.addAll(Futures.getDone(kioskAllowlistTask));
+                        return allowlistPackages;
+                    }, MoreExecutors.directExecutor());
         }
     }
 
-    private void allowlistSystemAppForAction(String action, List<String> allowlistPackages) {
+    private void allowlistSystemAppForAction(String action, ArraySet<String> allowlistPackages) {
         final PackageManager pm = mContext.getPackageManager();
         final Intent intent = new Intent(action);
         intent.addCategory(Intent.CATEGORY_DEFAULT);
@@ -264,7 +254,7 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
         allowlistPackages.add(packageName);
     }
 
-    private void allowlistInputMethod(List<String> allowlistPackages) {
+    private void allowlistInputMethod(ArraySet<String> allowlistPackages) {
         final String defaultIme = Secure.getString(mContext.getContentResolver(),
                 Secure.DEFAULT_INPUT_METHOD);
         if (defaultIme == null) {
@@ -282,7 +272,7 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
         allowlistPackages.add(imeComponent.getPackageName());
     }
 
-    private void allowlistCellBroadcastReceiver(List<String> allowlistPackages) {
+    private void allowlistCellBroadcastReceiver(ArraySet<String> allowlistPackages) {
         final String packageName =
                 CellBroadcastUtils.getDefaultCellBroadcastReceiverPackageName(mContext);
         if (packageName == null) {
