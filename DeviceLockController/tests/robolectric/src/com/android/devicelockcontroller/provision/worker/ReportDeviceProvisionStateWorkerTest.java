@@ -47,6 +47,7 @@ import androidx.work.testing.TestListenableWorkerBuilder;
 import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
 import com.android.devicelockcontroller.policy.DevicePolicyController;
 import com.android.devicelockcontroller.policy.DeviceStateController;
+import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.ReportDeviceProvisionStateGrpcResponse;
 
@@ -151,7 +152,7 @@ public final class ReportDeviceProvisionStateWorkerTest {
         DevicePolicyController devicePolicyController = mTestApp.getPolicyController();
         DeviceStateController deviceStateController = mTestApp.getStateController();
         when(deviceStateController.setNextStateForEvent(PROVISIONING_SUCCESS)).thenReturn(
-                Futures.immediateVoidFuture());
+                Futures.immediateFuture(DeviceState.SETUP_SUCCEEDED));
 
         assertThat(Futures.getUnchecked(mWorker.startWork())).isEqualTo(Result.success());
 

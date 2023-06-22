@@ -70,8 +70,7 @@ public final class ResumeProvisioningWorker extends ListenableWorker {
         PolicyObjectsInterface policyObjects =
                 (PolicyObjectsInterface) getApplicationContext();
         return Futures.transform(policyObjects.getStateController().setNextStateForEvent(
-                DeviceStateController.DeviceEvent.SETUP_RESUME), (Void v) -> {
-            int deviceState = policyObjects.getStateController().getState();
+                DeviceStateController.DeviceEvent.SETUP_RESUME), (Integer deviceState) -> {
             LogUtil.i(TAG, String.format("DeviceState is: %s", deviceState));
             if (DeviceStateController.DeviceState.SETUP_IN_PROGRESS == deviceState) {
                 return Result.success();

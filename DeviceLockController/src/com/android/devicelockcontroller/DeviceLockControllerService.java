@@ -63,7 +63,7 @@ public final class DeviceLockControllerService extends Service {
                     Futures.addCallback(
                             Futures.transform(
                                     mStateController.setNextStateForEvent(UNLOCK_DEVICE),
-                                    (Void unused) -> true, MoreExecutors.directExecutor()),
+                                    (Integer unused) -> true, MoreExecutors.directExecutor()),
                             remoteCallbackWrapper(remoteCallback, KEY_UNLOCK_DEVICE_RESULT),
                             MoreExecutors.directExecutor());
 
@@ -88,7 +88,7 @@ public final class DeviceLockControllerService extends Service {
                 public void clearDeviceRestrictions(RemoteCallback remoteCallback) {
                     Futures.addCallback(
                             Futures.transform(mStateController.setNextStateForEvent(CLEAR),
-                                    (Void unused) -> {
+                                    (Integer unused) -> {
                                         WorkManager workManager =
                                                 WorkManager.getInstance(getApplicationContext());
                                         ReportDeviceLockProgramCompleteWorker
