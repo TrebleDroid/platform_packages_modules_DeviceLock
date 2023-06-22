@@ -104,6 +104,17 @@ public final class GlobalParametersClient extends DlcClient {
     }
 
     /**
+     * Dump current values of SetupParameters to logcat.
+     */
+    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
+    public ListenableFuture<Void> dump() {
+        return call(() -> {
+            asInterface(getService()).dump();
+            return null;
+        });
+    }
+
+    /**
      * Checks if a check-in request needs to be performed.
      *
      * @return true if check-in request needs to be performed.
@@ -194,30 +205,6 @@ public final class GlobalParametersClient extends DlcClient {
     public ListenableFuture<Void> setEnrollmentToken(String token) {
         return call(() -> {
             asInterface(getService()).setEnrollmentToken(token);
-            return null;
-        });
-    }
-
-    /**
-     * Get the kiosk app signature.
-     *
-     * @return the kiosk app signature.
-     */
-    @Nullable
-    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
-    public ListenableFuture<String> getKioskSignature() {
-        return call(() -> asInterface(getService()).getKioskSignature());
-    }
-
-    /**
-     * Sets the kiosk app signature.
-     *
-     * @param signature Kiosk app signature.
-     */
-    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
-    public ListenableFuture<Void> setKioskSignature(String signature) {
-        return call(() -> {
-            asInterface(getService()).setKioskSignature(signature);
             return null;
         });
     }

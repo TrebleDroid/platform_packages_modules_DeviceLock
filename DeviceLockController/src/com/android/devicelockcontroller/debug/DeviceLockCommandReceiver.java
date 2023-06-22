@@ -126,19 +126,22 @@ public final class DeviceLockCommandReceiver extends BroadcastReceiver {
                 tryCheckIn(appContext);
                 break;
             case Commands.DUMP:
-                dumpStorage();
+                dumpStorage(context);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported command: " + command);
         }
     }
 
-    private static void dumpStorage() {
-        // TODO(b/286576135): add dumping for GlobalParameters and UserParameters
-        Futures.addCallback(SetupParametersClient.getInstance().dump(),
+    private static void dumpStorage(Context context) {
+        Futures.addCallback(
+                Futures.transformAsync(SetupParametersClient.getInstance().dump(),
+                        unused -> GlobalParametersClient.getInstance().dump(),
+                        MoreExecutors.directExecutor()),
                 new FutureCallback<>() {
                     @Override
                     public void onSuccess(Void result) {
+                        UserParameters.dump(context);
                         LogUtil.i(TAG, "Successfully dumped storage");
                     }
 
