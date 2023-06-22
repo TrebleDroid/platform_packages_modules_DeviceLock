@@ -259,15 +259,27 @@ public final class DevicePolicyControllerImpl
     }
 
     private ListenableFuture<Intent> getKioskSetupActivityIntent() {
-        return Futures.transform(SetupParametersClient.getInstance().getKioskSetupActivity(),
-                setupActivity -> {
-                    if (setupActivity == null) {
-                        LogUtil.e(TAG, "Failed to get setup Activity");
-                        return null;
-                    }
+        ListenableFuture<String> kioskPackageTask =
+                SetupParametersClient.getInstance().getKioskPackage();
+        ListenableFuture<String> setupActivityTask =
+                SetupParametersClient.getInstance().getKioskSetupActivity();
+        return Futures.whenAllSucceed(kioskPackageTask, setupActivityTask)
+                .call(
+                        () -> {
+                            String kioskPackage = Futures.getDone(kioskPackageTask);
+                            if (kioskPackage == null) {
+                                LogUtil.e(TAG, "Missing kiosk package parameter");
+                                return null;
+                            }
 
-                    return new Intent().setComponent(
-                            ComponentName.unflattenFromString(setupActivity));
-                }, mContext.getMainExecutor());
+                            String setupActivity = Futures.getDone(setupActivityTask);
+                            if (setupActivity == null) {
+                                LogUtil.e(TAG, "Failed to get setup Activity");
+                                return null;
+                            }
+                            return new Intent()
+                                    .setComponent(new ComponentName(kioskPackage, setupActivity));
+                        },
+                        MoreExecutors.directExecutor());
     }
 }
