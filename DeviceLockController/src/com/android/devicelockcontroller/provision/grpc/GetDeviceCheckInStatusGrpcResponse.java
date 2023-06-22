@@ -29,7 +29,7 @@ import io.grpc.Status;
 /**
  * An abstract class that is used to encapsulate the response for getting device check in status.
  */
-public abstract class GetDeviceCheckInStatusGrpcResponse extends DeviceCheckInGrpcResponse {
+public abstract class GetDeviceCheckInStatusGrpcResponse extends GrpcResponse {
     public GetDeviceCheckInStatusGrpcResponse() {
     }
 
