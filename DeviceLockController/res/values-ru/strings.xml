@@ -124,8 +124,7 @@
     <string name="device_reset_notification_content" msgid="7642367488663440437">"С устройства будут удалены все данные. Если вам нужна помощь с регистрацией устройства, свяжитесь с кредитором \"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>\"."</string>
     <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Чтобы отложить регистрацию устройства, разрешите DeviceLock присылать вам уведомления."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Не удалось настроить финансирование"</string>
-    <!-- no translation found for click_to_contact_financier (9107827438262930445) -->
-    <skip />
+    <string name="click_to_contact_financier" msgid="9107827438262930445">"Вы можете связаться с финансовым специалистом. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Подробнее…<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Выйти"</string>
     <string name="retry" msgid="7497287909193345356">"Повторить попытку"</string>
 </resources>

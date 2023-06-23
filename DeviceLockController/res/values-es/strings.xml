@@ -124,8 +124,7 @@
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Se eliminarán todos los datos del dispositivo. Para obtener ayuda con el registro de tu dispositivo, contacta con <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>."</string>
     <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Habilita las notificaciones de Bloqueo del dispositivo para seguir aplazando el registro del dispositivo."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"No se ha podido aprovisionar la financiación"</string>
-    <!-- no translation found for click_to_contact_financier (9107827438262930445) -->
-    <skip />
+    <string name="click_to_contact_financier" msgid="9107827438262930445">"Haz clic aquí para consultar cómo contactar con tu asesor financiero. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Más información<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Salir"</string>
     <string name="retry" msgid="7497287909193345356">"Reintentar"</string>
 </resources>

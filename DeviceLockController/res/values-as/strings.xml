@@ -124,8 +124,7 @@
     <string name="device_reset_notification_content" msgid="7642367488663440437">"ডিভাইচৰ আটাইবোৰ ডেটা মচা হ’ব। আপোনাৰ ডিভাইচ পঞ্জীয়ন কৰাত সহায় পাবলৈ, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>ৰ সৈতে যোগাযোগ কৰক"</string>
     <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"ডিভাইচটোৰ পঞ্জীয়ন পিছুৱাই দিয়াটো অব্যাহত ৰাখিবলৈ  অনুগ্ৰহ কৰি DeviceLockৰ জাননীক অনুমতি দিয়ক।"</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"বিত্তীয় সহায় প্ৰদান কৰাৰ প্ৰ’ভিজনিং বিফল হৈছে"</string>
-    <!-- no translation found for click_to_contact_financier (9107827438262930445) -->
-    <skip />
+    <string name="click_to_contact_financier" msgid="9107827438262930445">"আপোনাৰ বিত্তৰ যোগান ধৰোঁতাৰ সৈতে যোগাযোগ কৰাৰ উপায়সমূহ জানিবলৈ অনুগ্ৰহ কৰি ইয়াত ক্লিক কৰক। <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>অধিক জানক<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"বাহিৰ ওলাওক"</string>
     <string name="retry" msgid="7497287909193345356">"পুনৰ চেষ্টা কৰক"</string>
 </resources>

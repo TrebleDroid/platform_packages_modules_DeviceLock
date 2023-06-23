@@ -124,8 +124,7 @@
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Сите податоци на уредот ќе се избришат. За помош со регистрирањето на вашиот уред, контактирајте со <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Дозволете ги известувањата од DeviceLock за да продолжите да го одложувате регистрирањето на уредот."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Финансиските подготовки не беа успешни"</string>
-    <!-- no translation found for click_to_contact_financier (9107827438262930445) -->
-    <skip />
+    <string name="click_to_contact_financier" msgid="9107827438262930445">"Кликнете овде за да ги видите начините за контакт со вашиот финансиер. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Дознајте повеќе<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Излези"</string>
     <string name="retry" msgid="7497287909193345356">"Обиди се пак"</string>
 </resources>

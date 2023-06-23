@@ -124,8 +124,7 @@
     <string name="device_reset_notification_content" msgid="7642367488663440437">"آلہ کا تمام ڈیٹا حذف کر دیا جائے گا۔ اپنے آلے کے اندراج میں مدد کے لیے، <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> سے رابطہ کریں"</string>
     <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"براہ کرم آلہ کا اندراج موخر کرنے کے لیے DeviceLock سے اطلاع کی اجازت دیں۔"</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"فنانسنگ کی فراہمی ناکام ہو گئی ہے"</string>
-    <!-- no translation found for click_to_contact_financier (9107827438262930445) -->
-    <skip />
+    <string name="click_to_contact_financier" msgid="9107827438262930445">"اپنے سرمایہ کار سے رابطہ کرنے کے طریقوں کیلئے براہ کرم یہاں کلک کریں۔ <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>مزید جانیں<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"باہر نکلیں"</string>
     <string name="retry" msgid="7497287909193345356">"پھر کوشش کریں"</string>
 </resources>

@@ -124,8 +124,7 @@
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Құрылғыдағы барлық дерек жойылады. Құрылғыны тіркеу бойынша көмек алу үшін кредиторға (<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>) хабарласыңыз."</string>
     <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Құрылғыны тіркеуді кейінге қалдыра беру үшін DeviceLock-тың хабарландыру жіберуіне рұқсат етіңіз."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Қаржымен қамтамасыз ету мүмкін болмады"</string>
-    <!-- no translation found for click_to_contact_financier (9107827438262930445) -->
-    <skip />
+    <string name="click_to_contact_financier" msgid="9107827438262930445">"Қаржыгермен қалай хабарласуға болатынын білу үшін осы жерді басыңыз. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Толық ақпарат<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Шығу"</string>
     <string name="retry" msgid="7497287909193345356">"Қайталау"</string>
 </resources>
