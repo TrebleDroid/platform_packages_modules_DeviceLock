@@ -45,6 +45,7 @@ public abstract class DeviceCheckInClient {
     protected static String sHostName = "";
     protected static int sPortNumber = 0;
     protected static Pair<String, String> sApiKey = new Pair<>("", "");
+    private static volatile boolean sUseDebugClient;
 
     /**
      * Get a instance of DeviceCheckInClient object.
@@ -55,20 +56,22 @@ public abstract class DeviceCheckInClient {
             int portNumber,
             Pair<String, String> apiKey,
             @Nullable String registeredId) {
-        if (sClient == null) {
+        boolean useDebugClient = SystemProperties.getBoolean(
+                "debug.devicelock.checkin", false);
+        if (sClient == null || sUseDebugClient != useDebugClient) {
             synchronized (DeviceCheckInClient.class) {
                 try {
                     // In case the initialization is already done by other thread use existing
                     // instance.
-                    if (sClient != null) {
+                    if (sClient != null && sUseDebugClient == useDebugClient) {
                         return sClient;
                     }
                     sHostName = hostName;
                     sPortNumber = portNumber;
                     sRegisteredId = registeredId;
                     sApiKey = apiKey;
-                    if (Build.isDebuggable() && SystemProperties.getBoolean(
-                            "debug.devicelock.checkin", true)) {
+                    sUseDebugClient = useDebugClient;
+                    if (Build.isDebuggable() && sUseDebugClient) {
                         className = DEVICE_CHECK_IN_CLIENT_DEBUG_CLASS_NAME;
                     }
                     LogUtil.d(TAG, "Creating instance for " + className);
@@ -106,6 +109,7 @@ public abstract class DeviceCheckInClient {
      *                    DeviceLock program. Could be null if unavailable.
      * @return A class that encapsulate the response from the backend server.
      */
+    @WorkerThread
     public abstract IsDeviceInApprovedCountryGrpcResponse isDeviceInApprovedCountry(
             @Nullable String carrierInfo);
 
