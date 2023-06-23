@@ -124,8 +124,7 @@
     <string name="device_reset_notification_content" msgid="7642367488663440437">"سيتم حذف جميع البيانات على الجهاز. للحصول على المساعدة في تسجيل جهازك، يُرجى التواصل مع \"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>\"."</string>
     <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"يُرجى السماح بإشعارات DeviceLock لمواصلة تأجيل عملية تسجيل الجهاز."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"تعذَّر توفير التمويل"</string>
-    <!-- no translation found for click_to_contact_financier (9107827438262930445) -->
-    <skip />
+    <string name="click_to_contact_financier" msgid="9107827438262930445">"يُرجى النقر هنا لمعرفة طُرق التواصل مع جهة التمويل الخاصة بك. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>مزيد من المعلومات<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"خروج"</string>
     <string name="retry" msgid="7497287909193345356">"إعادة المحاولة"</string>
 </resources>

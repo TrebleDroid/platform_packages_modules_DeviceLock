@@ -124,8 +124,7 @@
     <string name="device_reset_notification_content" msgid="7642367488663440437">"మొత్తం పరికరం డేటా తొలగించబడుతుంది. మీ పరికరాన్ని ఎన్‌రోల్ చేయడంలో సహాయం కోసం, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>ని సంప్రదించండి"</string>
     <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"పరికరం ఎన్‌రోల్‌మెంట్ జాప్యాన్ని కొనసాగించడానికి DeviceLock నుండి నోటిఫికేషన్‌ను అనుమతించండి."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"ఫైనాన్సింగ్ కేటాయింపు విఫలమైంది"</string>
-    <!-- no translation found for click_to_contact_financier (9107827438262930445) -->
-    <skip />
+    <string name="click_to_contact_financier" msgid="9107827438262930445">"మీ ఫైనాన్షియర్‌ను కాంటాక్ట్ చేయగల మార్గాల కోసం దయచేసి ఇక్కడ క్లిక్ చేయండి. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>మరింత తెలుసుకోండి<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"నిష్క్రమించు"</string>
     <string name="retry" msgid="7497287909193345356">"మళ్లీ ట్రై చేయండి"</string>
 </resources>

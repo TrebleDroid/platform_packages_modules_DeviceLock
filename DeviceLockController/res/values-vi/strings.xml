@@ -124,8 +124,7 @@
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Mọi dữ liệu trên thiết bị sẽ bị xoá. Để được trợ giúp đăng ký thiết bị của bạn, hãy liên hệ với <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Vui lòng cho phép DeviceLock gửi thông báo để tiếp tục trì hoãn quá trình đăng ký thiết bị."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Cấp vốn tài chính không thành công"</string>
-    <!-- no translation found for click_to_contact_financier (9107827438262930445) -->
-    <skip />
+    <string name="click_to_contact_financier" msgid="9107827438262930445">"Vui lòng nhấp vào đây để biết cách liên hệ với bên hỗ trợ tài chính của bạn. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Tìm hiểu thêm<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Thoát"</string>
     <string name="retry" msgid="7497287909193345356">"Thử lại"</string>
 </resources>

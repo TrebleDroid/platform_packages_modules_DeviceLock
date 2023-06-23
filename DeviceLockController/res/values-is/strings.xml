@@ -124,8 +124,7 @@
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Öllum gögnum tækis verður eytt. Hafðu samband við <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> til að fá aðstoð við að skrá tækið"</string>
     <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Leyfðu tilkynningu frá DeviceLock til að halda áfram að fresta skráningu tækisins."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Fjármögnunarúthlutun mistókst"</string>
-    <!-- no translation found for click_to_contact_financier (9107827438262930445) -->
-    <skip />
+    <string name="click_to_contact_financier" msgid="9107827438262930445">"Smelltu hér til að sjá leiðir til að ná sambandi við fjármögnunarþjónustuna. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Nánar<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Hætta"</string>
     <string name="retry" msgid="7497287909193345356">"Reyna aftur"</string>
 </resources>
