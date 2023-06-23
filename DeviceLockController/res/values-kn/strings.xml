@@ -124,7 +124,7 @@
     <string name="device_reset_notification_content" msgid="7642367488663440437">"ಎಲ್ಲಾ ಸಾಧನ ಡೇಟಾವನ್ನು ಅಳಿಸಲಾಗುತ್ತದೆ. ನಿಮ್ಮ ಸಾಧನವನ್ನು ನೋಂದಾಯಿಸಲು ಸಹಾಯಕ್ಕಾಗಿ, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ಅನ್ನು ಸಂಪರ್ಕಿಸಿ"</string>
     <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"ಸಾಧನ ನೋಂದಣಿಯನ್ನು ಮುಂದೂಡುವುದನ್ನು ಮುಂದುವರಿಸಲು DeviceLock ನಿಂದ ನೋಟಿಫಿಕೇಶನ್ ಅನ್ನು ಅನುಮತಿಸಿ."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"ಹಣಕಾಸು ಒದಗಿಸುವಿಕೆ ವಿಫಲವಾಗಿದೆ"</string>
-    <string name="click_to_contact_financier" msgid="8493790143035086516">"ನಿಮ್ಮ ಫೈನಾನ್ಷಿಯರ್ ಅನ್ನು ಸಂಪರ್ಕಿಸುವ ಮಾರ್ಗಗಳಿಗಾಗಿ ಇಲ್ಲಿ ಕ್ಲಿಕ್ ಮಾಡಿ. ಇನ್ನಷ್ಟು ತಿಳಿಯಿರಿ"</string>
+    <string name="click_to_contact_financier" msgid="9107827438262930445">"ನಿಮ್ಮ ಫೈನಾನ್ಷಿಯರ್ ಅನ್ನು ಸಂಪರ್ಕಿಸುವ ಮಾರ್ಗಗಳಿಗಾಗಿ ಇಲ್ಲಿ ಕ್ಲಿಕ್ ಮಾಡಿ. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>ಇನ್ನಷ್ಟು ತಿಳಿಯಿರಿ<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"ನಿರ್ಗಮಿಸಿ"</string>
     <string name="retry" msgid="7497287909193345356">"ಮರುಪ್ರಯತ್ನಿಸಿ"</string>
 </resources>

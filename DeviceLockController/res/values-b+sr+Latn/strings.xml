@@ -124,7 +124,7 @@
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Svi podaci sa uređaja će biti izbrisani. Za pomoć pri registrovanju uređaja, obratite se: <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Dozvolite obaveštenja Zaključavanja uređaja da biste nastavili sa odlaganjem registracije uređaja."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Dodeljivanje finansiranja nije uspelo"</string>
-    <string name="click_to_contact_financier" msgid="8493790143035086516">"Kliknite ovde da biste videli načine za stupanje u kontakt sa finansijerom. Saznajte više"</string>
+    <string name="click_to_contact_financier" msgid="9107827438262930445">"Kliknite ovde da biste videli načine za stupanje u kontakt sa finansijerom. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Saznajte više<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Izađi"</string>
     <string name="retry" msgid="7497287909193345356">"Probaj ponovo"</string>
 </resources>
