@@ -40,6 +40,11 @@ public final class GlobalParametersService extends Service {
                 }
 
                 @Override
+                public void dump() {
+                    GlobalParameters.dump(mContext);
+                }
+
+                @Override
                 public boolean needCheckIn() {
                     return GlobalParameters.needCheckIn(mContext);
                 }
@@ -77,16 +82,6 @@ public final class GlobalParametersService extends Service {
                 @Override
                 public void setEnrollmentToken(String token) {
                     GlobalParameters.setEnrollmentToken(mContext, token);
-                }
-
-                @Override
-                public String getKioskSignature() {
-                    return GlobalParameters.getKioskSignature(mContext);
-                }
-
-                @Override
-                public void setKioskSignature(String kioskSignature) {
-                    GlobalParameters.setKioskSignature(mContext, kioskSignature);
                 }
 
                 @Override

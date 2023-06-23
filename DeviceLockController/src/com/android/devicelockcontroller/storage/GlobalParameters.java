@@ -23,6 +23,9 @@ import android.os.Build;
 import androidx.annotation.Nullable;
 
 import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState;
+import com.android.devicelockcontroller.util.LogUtil;
+
+import java.util.Locale;
 
 /**
  * Stores global parameters.
@@ -33,13 +36,12 @@ import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisi
  */
 final class GlobalParameters {
     private static final String FILENAME = "global-params";
-    private static final String KEY_KIOSK_SIGNING_CERT = "kiosk_signing_cert";
-    private static final String KEY_LOCK_TASK_ALLOWLIST = "lock_task_allowlist";
     private static final String KEY_NEED_CHECK_IN = "need_check_in";
     private static final String KEY_REGISTERED_DEVICE_ID = "registered_device_id";
     private static final String KEY_FORCED_PROVISION = "forced_provision";
     private static final String KEY_ENROLLMENT_TOKEN = "enrollment_token";
     private static final String KEY_LAST_RECEIVED_PROVISION_STATE = "last-received-provision-state";
+    public static final String TAG = "GlobalParameters";
 
 
     private GlobalParameters() {
@@ -49,27 +51,6 @@ final class GlobalParameters {
         final Context deviceContext = context.createDeviceProtectedStorageContext();
 
         return deviceContext.getSharedPreferences(FILENAME, Context.MODE_PRIVATE);
-    }
-
-    /**
-     * Get the kiosk app signature.
-     *
-     * @param context Context used to get the shared preferences.
-     * @return the kiosk app signature.
-     */
-    @Nullable
-    static String getKioskSignature(Context context) {
-        return getSharedPreferences(context).getString(KEY_KIOSK_SIGNING_CERT, null);
-    }
-
-    /**
-     * Sets the kiosk app signature.
-     *
-     * @param context   Context used to get the shared preferences.
-     * @param signature Kiosk app signature.
-     */
-    static void setKioskSignature(Context context, String signature) {
-        getSharedPreferences(context).edit().putString(KEY_KIOSK_SIGNING_CERT, signature).apply();
     }
 
     /**
@@ -187,5 +168,21 @@ final class GlobalParameters {
             throw new SecurityException("Clear is not allowed in non-debuggable build!");
         }
         getSharedPreferences(context).edit().clear().commit();
+    }
+
+    static void dump(Context context) {
+        LogUtil.d(TAG, String.format(Locale.US,
+                "Dumping GlobalParameters ...\n"
+                        + "%s: %s\n"    // need_check_in:
+                        + "%s: %s\n"    // registered_device_id:
+                        + "%s: %s\n"    // forced_provision:
+                        + "%s: %s\n"    // enrollment_token:
+                        + "%s: %s\n",   // last-received-provision-state:
+                KEY_NEED_CHECK_IN, needCheckIn(context),
+                KEY_REGISTERED_DEVICE_ID, getRegisteredDeviceId(context),
+                KEY_FORCED_PROVISION, isProvisionForced(context),
+                KEY_ENROLLMENT_TOKEN, getEnrollmentToken(context),
+                KEY_LAST_RECEIVED_PROVISION_STATE, getLastReceivedProvisionState(context)
+        ));
     }
 }

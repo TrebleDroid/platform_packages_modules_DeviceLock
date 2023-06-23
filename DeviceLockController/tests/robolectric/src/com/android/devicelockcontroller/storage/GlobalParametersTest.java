@@ -37,15 +37,6 @@ public final class GlobalParametersTest extends AbstractGlobalParametersTestBase
     }
 
     @Test
-    public void getKioskSigningCertificate_shouldReturnExpectedResult() {
-        assertThat(GlobalParameters.getKioskSignature(mContext)).isNull();
-
-        GlobalParameters.setKioskSignature(mContext, KIOSK_SIGNING_CERT);
-
-        assertThat(GlobalParameters.getKioskSignature(mContext)).isEqualTo(KIOSK_SIGNING_CERT);
-    }
-
-    @Test
     public void needCheckIn_shouldReturnExpectedResult() {
         assertThat(GlobalParameters.needCheckIn(mContext)).isNotEqualTo(NEED_CHECK_IN);
 

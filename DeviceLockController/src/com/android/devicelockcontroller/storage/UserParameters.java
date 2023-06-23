@@ -23,6 +23,9 @@ import android.os.Build;
 import androidx.annotation.Nullable;
 
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
+import com.android.devicelockcontroller.util.LogUtil;
+
+import java.util.Locale;
 
 /**
  * Stores per-user local parameters.
@@ -106,5 +109,19 @@ public final class UserParameters {
             throw new SecurityException("Clear is not allowed in non-debuggable build!");
         }
         getSharedPreferences(context).edit().clear().commit();
+    }
+
+    /**
+     * Dump the current value of user parameters for the user associated with the input context.
+     */
+    public static void dump(Context context) {
+        LogUtil.d(TAG, String.format(Locale.US,
+                "Dumping UserParameters for user: %s ...\n"
+                        + "%s: %s\n"    // device_state:
+                        + "%s: %s\n",    // home_override_package:
+                context.getUser(),
+                KEY_DEVICE_STATE, getDeviceState(context),
+                KEY_HOME_PACKAGE_OVERRIDE, getPackageOverridingHome(context)
+        ));
     }
 }
