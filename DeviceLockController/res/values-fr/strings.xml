@@ -124,7 +124,7 @@
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Toute les données de l\'appareil seront supprimées. Pour obtenir de l\'aide lors de l\'enregistrement de votre appareil, contactez <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Veuillez autoriser les notifications de DeviceLock pour continuer à reporter l\'inscription de l\'appareil."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Le provisionnement du financement a échoué"</string>
-    <string name="click_to_contact_financier" msgid="8493790143035086516">"Pour contacter votre financier, cliquez ici. En savoir plus"</string>
+    <string name="click_to_contact_financier" msgid="9107827438262930445">"Pour contacter votre financier, cliquez ici. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>En savoir plus<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Quitter"</string>
     <string name="retry" msgid="7497287909193345356">"Réessayer"</string>
 </resources>

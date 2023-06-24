@@ -124,7 +124,7 @@
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Barcha qurilma maʼlumotlari oʻchirib tashlanadi. Qurilmangizni qayd qilish uchun <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> bilan bogʻlaning"</string>
     <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Qurilmani qayd qilishni kechiktirish uchun DeviceLock bildirishnomasiga ruxsat bering."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Moliyaviy taʼminot amalga oshmadi"</string>
-    <string name="click_to_contact_financier" msgid="8493790143035086516">"Moliyachingizga murojaat qilish usullari uchun shu yerga bosing. Batafsil"</string>
+    <string name="click_to_contact_financier" msgid="9107827438262930445">"Moliyachingizga murojaat qilish usullari uchun shu yerga bosing. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Batafsil<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Chiqish"</string>
     <string name="retry" msgid="7497287909193345356">"Qayta urinish"</string>
 </resources>

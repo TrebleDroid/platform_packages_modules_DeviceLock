@@ -124,7 +124,7 @@
     <string name="device_reset_notification_content" msgid="7642367488663440437">"All device data will be deleted. For help enrolling your device, contact <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Please allow notification from DeviceLock to continue deferring the enrolment of the device."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Financing provisioning has failed"</string>
-    <string name="click_to_contact_financier" msgid="8493790143035086516">"Please click here for ways to contact your financier. Learn more"</string>
+    <string name="click_to_contact_financier" msgid="9107827438262930445">"Please click here for ways to contact your financier. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Learn more<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Exit"</string>
     <string name="retry" msgid="7497287909193345356">"Retry"</string>
 </resources>
