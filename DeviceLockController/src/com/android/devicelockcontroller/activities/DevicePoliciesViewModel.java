@@ -41,8 +41,6 @@ public final class DevicePoliciesViewModel extends ViewModel {
 
     private static final int HEADER_TEXT_ID = R.string.setup_info_title_text;
 
-    private static final int FOOTER_TEXT_ID = R.string.footer_notice;
-
     private static final DevicePolicyGroup CONTROL_POLICY_GROUP =
             new DevicePolicyGroup.Builder()
                     .setTitleTextId(R.string.control_section_title)
@@ -86,7 +84,6 @@ public final class DevicePoliciesViewModel extends ViewModel {
     final MutableLiveData<Integer> mHeaderDrawableIdLiveData;
     final MutableLiveData<Integer> mHeaderTextIdLiveData;
     final MediatorLiveData<List<DevicePolicyGroup>> mDevicePolicyGroupListLiveData;
-    final MutableLiveData<Integer> mFooterTextIdLiveData;
 
     public DevicePoliciesViewModel() {
         mProviderNameLiveData = new MutableLiveData<>();
@@ -107,6 +104,5 @@ public final class DevicePoliciesViewModel extends ViewModel {
         mDevicePolicyGroupListLiveData = new MediatorLiveData<>();
         mDevicePolicyGroupListLiveData.addSource(mProviderNameLiveData,
                 unused -> mDevicePolicyGroupListLiveData.setValue(DEVICE_POLICY_GROUPS));
-        mFooterTextIdLiveData = new MutableLiveData<>(FOOTER_TEXT_ID);
     }
 }
