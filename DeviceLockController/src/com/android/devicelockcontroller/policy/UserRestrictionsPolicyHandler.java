@@ -107,6 +107,8 @@ final class UserRestrictionsPolicyHandler implements PolicyHandler {
                         .call(
                                 () -> SUCCESS, mainHandler::post);
             case UNPROVISIONED:
+                setupRestrictions(mAlwaysOnRestrictions, false);
+                return Futures.immediateFuture(SUCCESS);
             case SETUP_FAILED:
             case CLEARED:
                 setupRestrictions(mAlwaysOnRestrictions, false);
@@ -137,6 +139,9 @@ final class UserRestrictionsPolicyHandler implements PolicyHandler {
                         outgoingCallsDisabledTask)
                 .call(() -> {
                     if (Futures.getDone(kioskPackageTask) == null) {
+                        // TODO(b/288910733): it is not a good practice to log and throw, but the
+                        //  exception thrown here sometimes is swallowed silently
+                        LogUtil.d(TAG, "Setup parameters does not exist, should not reach here");
                         throw new IllegalStateException("Setup parameters does not exist!");
                     }
                     if (mLockModeRestrictions == null) {
@@ -163,6 +168,9 @@ final class UserRestrictionsPolicyHandler implements PolicyHandler {
                         installingFromUnknownSourcesDisallowedTask)
                 .call(() -> {
                     if (Futures.getDone(kioskPackageTask) == null) {
+                        // TODO(b/288910733): it is not a good practice to log and throw, but the
+                        //  exception thrown here sometimes is swallowed silently
+                        LogUtil.d(TAG, "Setup parameters does not exist, should not reach here");
                         throw new IllegalStateException("Setup parameters does not exist!");
                     }
                     if (mOptionalAlwaysOnRestrictions == null) {

@@ -88,10 +88,6 @@ public final class DevicePoliciesFragment extends Fragment {
                 textId -> headerTextView.setText(
                         getString(textId, viewModel.mProviderNameLiveData.getValue())));
 
-        TextView footerTextView = view.findViewById(R.id.footer_text);
-        checkNotNull(footerTextView);
-        viewModel.mFooterTextIdLiveData.observe(getViewLifecycleOwner(), footerTextView::setText);
-
         SetupController setupController =
                 ((PolicyObjectsInterface) getActivity().getApplicationContext())
                         .getSetupController();

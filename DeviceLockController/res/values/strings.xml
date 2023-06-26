@@ -74,8 +74,6 @@
     <string name="exposure_disable_dlc_text">If the <xliff:g id="creditor_app">%1$s</xliff:g> app isn\'t available</string>
     <!-- Overflow menu describing open source licenses. [CHAR_LIMIT=80] -->
     <string name="open_source_licenses">Open-source licenses</string>
-    <!-- Informational text at the bottom of a screen. This text lets a user know that the info listed in the "Managed device info" section in Settings doesn't apply to their device. [CHAR_LIMIT=200] -->
-    <string name="footer_notice">The other management capabilities in <b>Settings > Security > Managed device info</b> don\'t apply to this device</string>
     <!-- Accessibility text for the footer notice. [CHAR_LIMIT=NONE] -->
     <string name="footer_notice_content_description">The management capabilities in the financed device section of Security settings don\'t apply to this device.</string>
     <!-- Text explaining that this device is provided by the device provider. [CHAR_LIMIT=80] -->
