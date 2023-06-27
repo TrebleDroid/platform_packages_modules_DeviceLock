@@ -201,12 +201,20 @@ public final class DeviceLockCommandReceiver extends BroadcastReceiver {
         Objects.requireNonNull(alarmManager).cancel(
                 ReportDeviceProvisionStateWorker.getResetDevicePendingIntent(context));
 
+        DeviceStateController stateController =
+                ((PolicyObjectsInterface) context.getApplicationContext()).getStateController();
         ListenableFuture<Void> resetFuture = Futures.transformAsync(
                 // First clear restrictions
-                forceSetState(context, CLEARED),
+                stateController.isUnrestrictedState()
+                        ? Futures.immediateVoidFuture()
+                        : Futures.catching(forceSetState(context, CLEARED), RuntimeException.class,
+                                e -> {
+                                    LogUtil.w(TAG, "Failure encountered when force clear.", e);
+                                    return null;
+                                }, MoreExecutors.directExecutor()),
                 // Then clear storage, this will reset state to the default state which is
                 // UNPROVISIONED.
-                (Void unused) -> clearStorage(context),
+                unused -> clearStorage(context),
                 MoreExecutors.directExecutor());
         Futures.addCallback(
                 resetFuture,
