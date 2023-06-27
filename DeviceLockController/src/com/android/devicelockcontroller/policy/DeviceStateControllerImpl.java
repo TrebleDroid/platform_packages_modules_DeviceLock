@@ -92,6 +92,14 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
     }
 
     @Override
+    public boolean isUnrestrictedState() {
+        return mState == DeviceState.UNPROVISIONED
+                || mState == DeviceState.CLEARED
+                || mState == DeviceState.PSEUDO_UNLOCKED
+                || mState == DeviceState.PSEUDO_LOCKED;
+    }
+
+    @Override
     public boolean isLockedInternal() {
         return mState == DeviceState.SETUP_IN_PROGRESS
                 || mState == DeviceState.SETUP_SUCCEEDED
