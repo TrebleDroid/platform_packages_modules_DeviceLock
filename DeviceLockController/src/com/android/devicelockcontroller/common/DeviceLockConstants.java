@@ -145,28 +145,13 @@ public final class DeviceLockConstants {
     @IntDef(
             value = {
                     SetupFailureReason.SETUP_FAILED,
-                    SetupFailureReason.DOWNLOAD_FAILED,
-                    SetupFailureReason.VERIFICATION_FAILED,
                     SetupFailureReason.INSTALL_FAILED,
-                    SetupFailureReason.PACKAGE_DOES_NOT_EXIST,
-                    SetupFailureReason.DELETE_PACKAGE_FAILED,
-                    SetupFailureReason.INSTALL_EXISTING_FAILED,
             })
     public @interface SetupFailureReason {
         /** Setup failed to complete */
         int SETUP_FAILED = 0;
-        /** Failed to download the creditor apk. */
-        int DOWNLOAD_FAILED = 1;
-        /** Verification of the creditor apk failed. */
-        int VERIFICATION_FAILED = 2;
         /** Failed to install the creditor apk. */
-        int INSTALL_FAILED = 3;
-        /** Pre-installed package not found */
-        int PACKAGE_DOES_NOT_EXIST = 4;
-        /** Delete apk failed */
-        int DELETE_PACKAGE_FAILED = 5;
-        /** Install package for secondary users failed */
-        int INSTALL_EXISTING_FAILED = 6;
+        int INSTALL_FAILED = 1;
     }
 
     /** Definitions for device provision states. */

@@ -198,18 +198,8 @@ enum ClientProvisionFailureReason {
   CLIENT_PROVISION_FAILURE_REASON_UNSPECIFIED = 0;
   // Setup failed to complete on the device.
   CLIENT_PROVISION_FAILURE_REASON_SETUP_FAILED = 1;
-  // Failed to download the creditor apk.
-  CLIENT_PROVISION_FAILURE_REASON_DOWNLOAD_FAILED = 2;
-  // Verification of the creditor apk failed.
-  CLIENT_PROVISION_FAILURE_REASON_VERIFICATION_FAILED = 3;
   // Failed to install the creditor apk.
-  CLIENT_PROVISION_FAILURE_REASON_INSTALL_FAILED = 4;
-  // Pre-installed package not found.
-  CLIENT_PROVISION_FAILURE_REASON_PACKAGE_DOES_NOT_EXIST = 5;
-  // Delete apk failed.
-  CLIENT_PROVISION_FAILURE_REASON_DELETE_PACKAGE_FAILED = 6;
-  // Install package for secondary users failed.
-  CLIENT_PROVISION_FAILURE_REASON_INSTALL_EXISTING_FAILED = 7;
+  CLIENT_PROVISION_FAILURE_REASON_INSTALL_FAILED = 2;
 }
 
 // The different provision states of a device.
