@@ -167,6 +167,7 @@ public final class DeviceLockNotificationManager {
                         enrollmentResumeTime))
                 .setSmallIcon(R.drawable.ic_action_lock)
                 .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
                 .setOngoing(true);
         NotificationManagerCompat notificationManager =
                 NotificationManagerCompat.from(context);
