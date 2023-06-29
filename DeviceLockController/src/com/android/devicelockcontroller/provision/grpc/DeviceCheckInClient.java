@@ -56,16 +56,21 @@ public abstract class DeviceCheckInClient {
             int portNumber,
             Pair<String, String> apiKey,
             @Nullable String registeredId) {
-        boolean useDebugClient = SystemProperties.getBoolean(
-                "debug.devicelock.checkin", false);
-        if (sClient == null || sUseDebugClient != useDebugClient) {
-            synchronized (DeviceCheckInClient.class) {
-                try {
-                    // In case the initialization is already done by other thread use existing
-                    // instance.
-                    if (sClient != null && sUseDebugClient == useDebugClient) {
-                        return sClient;
-                    }
+        boolean useDebugClient = SystemProperties.getBoolean("debug.devicelock.checkin", false);
+        synchronized (DeviceCheckInClient.class) {
+            try {
+                boolean createRequired =
+                        (sClient == null || sUseDebugClient != useDebugClient)
+                                ? true
+                                : (registeredId != null && !registeredId.equals(sRegisteredId))
+                                        ? true
+                                        : (hostName != null && !hostName.equals(sHostName))
+                                                ? true
+                                                : (apiKey != null && !apiKey.equals(sApiKey))
+                                                        ? true
+                                                        : false;
+
+                if (createRequired) {
                     sHostName = hostName;
                     sPortNumber = portNumber;
                     sRegisteredId = registeredId;
@@ -77,9 +82,9 @@ public abstract class DeviceCheckInClient {
                     LogUtil.d(TAG, "Creating instance for " + className);
                     Class<?> clazz = Class.forName(className);
                     sClient = (DeviceCheckInClient) clazz.getDeclaredConstructor().newInstance();
-                } catch (Exception e) {
-                    throw new RuntimeException("Failed to get DeviceCheckInClient instance", e);
                 }
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to get DeviceCheckInClient instance", e);
             }
         }
         return sClient;
