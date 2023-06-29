@@ -23,6 +23,7 @@ import static com.android.devicelockcontroller.policy.DeviceStateController.Devi
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.PROVISION_PAUSE;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.PROVISION_READY;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.PROVISION_RESUME;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.PROVISION_RETRY;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.PROVISION_SUCCESS;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.UNLOCK_DEVICE;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.CLEARED;
@@ -83,6 +84,7 @@ public class DeviceStateControllerStateTransitionTest {
                 {PROVISION_SUCCEEDED, PROVISION_KIOSK, KIOSK_PROVISIONED},
                 {KIOSK_PROVISIONED, UNLOCK_DEVICE, UNLOCKED},
                 {KIOSK_PROVISIONED, CLEAR, CLEARED},
+                {PROVISION_FAILED, PROVISION_RETRY, PROVISION_IN_PROGRESS},
                 {UNLOCKED, LOCK_DEVICE, LOCKED},
                 {UNLOCKED, UNLOCK_DEVICE, UNLOCKED},
                 {UNLOCKED, CLEAR, CLEARED},

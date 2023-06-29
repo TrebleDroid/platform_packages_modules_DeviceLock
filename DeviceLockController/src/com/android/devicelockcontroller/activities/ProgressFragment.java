@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -32,6 +33,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.android.devicelockcontroller.R;
 import com.android.devicelockcontroller.activities.util.UrlUtils;
+import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
 
 /**
  * A screen which always displays a progress bar.
@@ -88,6 +90,16 @@ public final class ProgressFragment extends Fragment {
                     }
                     if (provisioningProgress.mBottomViewVisible) {
                         bottomView.setVisibility(View.VISIBLE);
+                        Button retryButton = bottomView.findViewById(R.id.button_retry);
+                        checkNotNull(retryButton);
+                        PolicyObjectsInterface policyObjects =
+                                (PolicyObjectsInterface) getActivity().getApplicationContext();
+
+                        retryButton.setOnClickListener(
+                                view -> provisioningProgressViewModel.retrySetupFlow(
+                                        policyObjects.getSetupController(),
+                                        policyObjects.getStateController(),
+                                        getActivity()));
                     } else {
                         bottomView.setVisibility(View.GONE);
                     }
