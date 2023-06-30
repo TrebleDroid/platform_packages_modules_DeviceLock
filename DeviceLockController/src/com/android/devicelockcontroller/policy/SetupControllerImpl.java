@@ -22,7 +22,7 @@ import static androidx.work.WorkInfo.State.SUCCEEDED;
 
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_PACKAGE;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.SetupFailureReason.INSTALL_FAILED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.SETUP_PAUSE;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.PROVISION_PAUSE;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
@@ -86,13 +86,13 @@ public final class SetupControllerImpl implements SetupController {
         mStateController = stateController;
         mPolicyController = policyController;
         int state = stateController.getState();
-        if (state == DeviceState.SETUP_IN_PROGRESS
-                || state == DeviceState.SETUP_PAUSED
+        if (state == DeviceState.PROVISION_IN_PROGRESS
+                || state == DeviceState.PROVISION_PAUSED
                 || state == DeviceState.UNPROVISIONED
                 || state == DeviceState.PSEUDO_UNLOCKED
                 || state == DeviceState.PSEUDO_LOCKED) {
             mCurrentSetupState = SetupStatus.SETUP_NOT_STARTED;
-        } else if (state == DeviceState.SETUP_FAILED) {
+        } else if (state == DeviceState.PROVISION_FAILED) {
             mCurrentSetupState = SetupStatus.SETUP_FAILED;
         } else {
             mCurrentSetupState = SetupStatus.SETUP_FINISHED;
@@ -106,12 +106,12 @@ public final class SetupControllerImpl implements SetupController {
         Futures.addCallback(
                 Futures.transformAsync(
                         GlobalParametersClient.getInstance().setProvisionForced(true),
-                        unused -> mStateController.setNextStateForEvent(SETUP_PAUSE),
+                        unused -> mStateController.setNextStateForEvent(PROVISION_PAUSE),
                         MoreExecutors.directExecutor()),
                 new FutureCallback<>() {
                     @Override
                     public void onSuccess(Integer newState) {
-                        if (newState == DeviceState.SETUP_PAUSED) {
+                        if (newState == DeviceState.PROVISION_PAUSED) {
                             WorkManager workManager = WorkManager.getInstance(mContext);
                             PauseProvisioningWorker.reportProvisionPausedByUser(workManager);
                             ResumeProvisioningWorker.scheduleResumeProvisioningWorker(workManager);
@@ -247,7 +247,7 @@ public final class SetupControllerImpl implements SetupController {
         mCallbacks.remove(mReportStateCallbacks);
         if (mCurrentSetupState == SetupStatus.SETUP_FINISHED) {
             return Futures.transform(
-                    mStateController.setNextStateForEvent(DeviceEvent.SETUP_COMPLETE),
+                    mStateController.setNextStateForEvent(DeviceEvent.PROVISION_KIOSK),
                     (Integer unused) -> null,
                     MoreExecutors.directExecutor());
         } else if (mCurrentSetupState == SetupStatus.SETUP_FAILED) {
@@ -282,8 +282,8 @@ public final class SetupControllerImpl implements SetupController {
     private void setupFlowTaskCallbackHandler(
             boolean result, @SetupFailureReason int failReason) {
         Futures.addCallback(
-                Futures.transformAsync(mStateController.setNextStateForEvent(
-                                result ? DeviceEvent.SETUP_SUCCESS : DeviceEvent.SETUP_FAILURE),
+                Futures.transformAsync(mStateController.setNextStateForEvent(result
+                                ? DeviceEvent.PROVISION_SUCCESS : DeviceEvent.PROVISION_FAILURE),
                         input -> {
                             if (result) {
                                 LogUtil.i(TAG, "Handling successful setup");

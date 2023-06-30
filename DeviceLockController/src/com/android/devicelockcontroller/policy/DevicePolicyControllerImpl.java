@@ -22,7 +22,6 @@ import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION
 import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_SUBSIDY_PROVISIONING;
 import static com.android.devicelockcontroller.policy.PolicyHandler.SUCCESS;
 
-import android.app.AppOpsManager;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -96,8 +95,7 @@ public final class DevicePolicyControllerImpl
 
         mPolicyList.add(new UserRestrictionsPolicyHandler(dpm,
                 context.getSystemService(UserManager.class), Build.isDebuggable()));
-        mPolicyList.add(new AppOpsPolicyHandler(context, systemDeviceLockManager,
-                context.getSystemService(AppOpsManager.class)));
+        mPolicyList.add(new AppOpsPolicyHandler(context, systemDeviceLockManager));
         mPolicyList.add(new LockTaskModePolicyHandler(context, dpm, this));
         mPolicyList.add(new PackagePolicyHandler(context, dpm));
         mPolicyList.add(new RolePolicyHandler(context, systemDeviceLockManager));
@@ -166,15 +164,15 @@ public final class DevicePolicyControllerImpl
         @DeviceState int state = mStateController.getState();
 
         switch (state) {
-            case DeviceState.SETUP_IN_PROGRESS:
-            case DeviceState.SETUP_SUCCEEDED:
+            case DeviceState.PROVISION_IN_PROGRESS:
+            case DeviceState.PROVISION_SUCCEEDED:
                 return getLandingActivityIntent();
-            case DeviceState.KIOSK_SETUP:
+            case DeviceState.KIOSK_PROVISIONED:
                 return getKioskSetupActivityIntent();
             case DeviceState.LOCKED:
                 return getLockScreenActivityIntent();
-            case DeviceState.SETUP_FAILED:
-            case DeviceState.SETUP_PAUSED:
+            case DeviceState.PROVISION_FAILED:
+            case DeviceState.PROVISION_PAUSED:
             case DeviceState.UNLOCKED:
             case DeviceState.CLEARED:
             case DeviceState.UNPROVISIONED:

@@ -17,14 +17,14 @@
 package com.android.devicelockcontroller.policy;
 
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.CLEARED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.KIOSK_SETUP;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.KIOSK_PROVISIONED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.LOCKED;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PROVISION_FAILED;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PROVISION_IN_PROGRESS;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PROVISION_PAUSED;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PROVISION_SUCCEEDED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PSEUDO_LOCKED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PSEUDO_UNLOCKED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_FAILED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_IN_PROGRESS;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_PAUSED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_SUCCEEDED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNLOCKED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNPROVISIONED;
 
@@ -88,11 +88,11 @@ final class UserRestrictionsPolicyHandler implements PolicyHandler {
         final Handler mainHandler = new Handler(Looper.getMainLooper());
         LogUtil.v(TAG, String.format(Locale.US, "Setting restrictions for %d", state));
         switch (state) {
-            case SETUP_IN_PROGRESS:
-            case SETUP_PAUSED:
-            case SETUP_SUCCEEDED:
+            case PROVISION_IN_PROGRESS:
+            case PROVISION_PAUSED:
+            case PROVISION_SUCCEEDED:
             case UNLOCKED:
-            case KIOSK_SETUP:
+            case KIOSK_PROVISIONED:
                 setupRestrictions(mAlwaysOnRestrictions, true);
                 return Futures.whenAllSucceed(
                                 setupRestrictions(retrieveOptionalAlwaysOnRestrictions(), true),
@@ -109,7 +109,7 @@ final class UserRestrictionsPolicyHandler implements PolicyHandler {
             case UNPROVISIONED:
                 setupRestrictions(mAlwaysOnRestrictions, false);
                 return Futures.immediateFuture(SUCCESS);
-            case SETUP_FAILED:
+            case PROVISION_FAILED:
             case CLEARED:
                 setupRestrictions(mAlwaysOnRestrictions, false);
                 return Futures.whenAllSucceed(

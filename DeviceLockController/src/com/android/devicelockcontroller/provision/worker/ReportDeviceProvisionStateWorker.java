@@ -174,8 +174,7 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
             DeviceStateController deviceStateController = policyObjects.getStateController();
             switch (nextState) {
                 case PROVISION_STATE_RETRY:
-                    DeviceCheckInHelper.setProvisionSucceeded(deviceStateController,
-                            devicePolicyController, mContext, /* isMandatory= */ false);
+                    DeviceCheckInHelper.setProvisionReady(deviceStateController, mContext);
                     break;
                 case PROVISION_STATE_DISMISSIBLE_UI:
                     DeviceLockNotificationManager.sendDeviceResetNotification(mContext,

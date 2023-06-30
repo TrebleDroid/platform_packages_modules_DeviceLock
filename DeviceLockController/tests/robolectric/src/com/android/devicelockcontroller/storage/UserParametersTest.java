@@ -43,8 +43,9 @@ public final class UserParametersTest {
     @Test
     public void getDeviceState_shouldReturnExpectedCurrentDeviceState() {
         assertThat(UserParameters.getDeviceState(mContext)).isEqualTo(DeviceState.UNPROVISIONED);
-        UserParameters.setDeviceState(mContext, DeviceState.SETUP_SUCCEEDED);
-        assertThat(UserParameters.getDeviceState(mContext)).isEqualTo(DeviceState.SETUP_SUCCEEDED);
+        UserParameters.setDeviceState(mContext, DeviceState.PROVISION_SUCCEEDED);
+        assertThat(UserParameters.getDeviceState(mContext))
+                .isEqualTo(DeviceState.PROVISION_SUCCEEDED);
     }
 
     @Test

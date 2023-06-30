@@ -127,16 +127,16 @@ public final class SetupControllerImplTest {
         Bundle b = new Bundle();
         b.putString(EXTRA_KIOSK_SETUP_ACTIVITY, TEST_SETUP_ACTIVITY);
         createParameters(b);
-        when(mMockStateController.getState()).thenReturn(DeviceState.KIOSK_SETUP);
-        when(mMockStateController.setNextStateForEvent(DeviceEvent.SETUP_COMPLETE)).thenReturn(
-                Futures.immediateFuture(DeviceState.SETUP_SUCCEEDED));
+        when(mMockStateController.getState()).thenReturn(DeviceState.KIOSK_PROVISIONED);
+        when(mMockStateController.setNextStateForEvent(DeviceEvent.PROVISION_KIOSK)).thenReturn(
+                Futures.immediateFuture(DeviceState.PROVISION_SUCCEEDED));
         SetupControllerImpl setupController =
                 new SetupControllerImpl(
                         mTestApplication, mMockStateController, mMockPolicyController);
         assertThat(setupController.getSetupState()).isEqualTo(
                 SetupController.SetupStatus.SETUP_FINISHED);
         Futures.getUnchecked(setupController.finishSetup());
-        verify(mMockStateController).setNextStateForEvent(DeviceEvent.SETUP_COMPLETE);
+        verify(mMockStateController).setNextStateForEvent(DeviceEvent.PROVISION_KIOSK);
         verify(mMockPolicyController, never()).wipeDevice();
     }
 
@@ -145,7 +145,7 @@ public final class SetupControllerImplTest {
         Bundle bundle = new Bundle();
         bundle.putBoolean(EXTRA_MANDATORY_PROVISION, true);
         createParameters(bundle);
-        when(mMockStateController.getState()).thenReturn(DeviceState.SETUP_FAILED);
+        when(mMockStateController.getState()).thenReturn(DeviceState.PROVISION_FAILED);
         SetupControllerImpl setupController =
                 new SetupControllerImpl(
                         mTestApplication, mMockStateController, mMockPolicyController);
@@ -211,7 +211,7 @@ public final class SetupControllerImplTest {
 
     @Test
     public void testInitialState_SetupNotStarted() {
-        when(mMockStateController.getState()).thenReturn(DeviceState.SETUP_IN_PROGRESS);
+        when(mMockStateController.getState()).thenReturn(DeviceState.PROVISION_IN_PROGRESS);
         SetupControllerImpl setupController =
                 new SetupControllerImpl(
                         mTestApplication, mMockStateController, mMockPolicyController);
@@ -235,8 +235,8 @@ public final class SetupControllerImplTest {
                         reason.set(failReason);
                     }
                 };
-        when(mMockStateController.setNextStateForEvent(DeviceEvent.SETUP_FAILURE)).thenReturn(
-                Futures.immediateFuture(DeviceState.SETUP_FAILED));
+        when(mMockStateController.setNextStateForEvent(DeviceEvent.PROVISION_FAILURE)).thenReturn(
+                Futures.immediateFuture(DeviceState.PROVISION_FAILED));
         SetupControllerImpl setupController = createSetupControllerImpl(callbacks);
         setupController.setupFlowTaskFailureCallbackHandler(SetupFailureReason.INSTALL_FAILED);
         assertThat(result.get()).isFalse();
@@ -260,8 +260,8 @@ public final class SetupControllerImplTest {
                     }
                 };
 
-        when(mMockStateController.setNextStateForEvent(DeviceEvent.SETUP_SUCCESS)).thenReturn(
-                Futures.immediateFuture(DeviceState.SETUP_SUCCEEDED));
+        when(mMockStateController.setNextStateForEvent(DeviceEvent.PROVISION_SUCCESS)).thenReturn(
+                Futures.immediateFuture(DeviceState.PROVISION_SUCCEEDED));
 
         SetupControllerImpl setupController = createSetupControllerImpl(callbacks);
         setupController.setupFlowTaskSuccessCallbackHandler();
@@ -274,8 +274,8 @@ public final class SetupControllerImplTest {
     public void testSetupUpdatesCallbacks_removeListener() {
         SetupControllerImpl setupController = createSetupControllerImpl(mMockCbs);
         setupController.removeListener(mMockCbs);
-        when(mMockStateController.setNextStateForEvent(DeviceEvent.SETUP_SUCCESS)).thenReturn(
-                Futures.immediateFuture(DeviceState.SETUP_SUCCEEDED));
+        when(mMockStateController.setNextStateForEvent(DeviceEvent.PROVISION_SUCCESS)).thenReturn(
+                Futures.immediateFuture(DeviceState.PROVISION_SUCCEEDED));
 
         setupController.setupFlowTaskSuccessCallbackHandler();
         verify(mMockCbs, after(ASYNC_TIMEOUT_MILLIS).never()).setupCompleted();

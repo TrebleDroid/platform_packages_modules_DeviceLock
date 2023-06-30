@@ -65,7 +65,7 @@ public final class LockedBootCompletedReceiver extends BroadcastReceiver {
         final PackageManager pm = context.getPackageManager();
         final ComponentName lockTaskBootCompletedReceiver = new ComponentName(context,
                 LockTaskBootCompletedReceiver.class);
-        if (getDeviceStateController(context).isInSetupState()) {
+        if (getDeviceStateController(context).isInProvisioningState()) {
             // b/172281939: WorkManager is not available at this moment, and we may not launch
             // lock task mode successfully. Therefore, defer it to LockTaskBootCompletedReceiver.
             LogUtil.i(TAG,

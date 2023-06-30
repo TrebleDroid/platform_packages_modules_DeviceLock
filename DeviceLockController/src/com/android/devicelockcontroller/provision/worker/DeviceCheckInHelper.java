@@ -25,7 +25,7 @@ import static com.android.devicelockcontroller.common.DeviceLockConstants.RETRY_
 import static com.android.devicelockcontroller.common.DeviceLockConstants.STATUS_UNSPECIFIED;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.STOP_CHECK_IN;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.TOTAL_DEVICE_ID_TYPES;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.PROVISIONING_SUCCESS;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.PROVISION_READY;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -46,8 +46,8 @@ import androidx.work.WorkManager;
 
 import com.android.devicelockcontroller.R;
 import com.android.devicelockcontroller.common.DeviceId;
-import com.android.devicelockcontroller.policy.DevicePolicyController;
 import com.android.devicelockcontroller.policy.DeviceStateController;
+import com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
 import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrpcResponse;
 import com.android.devicelockcontroller.provision.grpc.ProvisioningConfiguration;
@@ -172,8 +172,7 @@ public final class DeviceCheckInHelper extends AbstractDeviceCheckInHelper {
                         (PolicyObjectsInterface) mAppContext.getApplicationContext();
                 return handleProvisionReadyResponse(
                         response,
-                        policies.getStateController(),
-                        policies.getPolicyController());
+                        policies.getStateController());
             case RETRY_CHECK_IN:
                 try {
                     Duration delay = Duration.between(
@@ -200,8 +199,7 @@ public final class DeviceCheckInHelper extends AbstractDeviceCheckInHelper {
     @WorkerThread
     boolean handleProvisionReadyResponse(
             @NonNull GetDeviceCheckInStatusGrpcResponse response,
-            DeviceStateController stateController,
-            DevicePolicyController devicePolicyController) {
+            DeviceStateController stateController) {
         Futures.getUnchecked(GlobalParametersClient.getInstance().setProvisionForced(
                 response.isProvisionForced()));
         final ProvisioningConfiguration configuration = response.getProvisioningConfig();
@@ -215,24 +213,22 @@ public final class DeviceCheckInHelper extends AbstractDeviceCheckInHelper {
                 response.isProvisioningMandatory());
         Futures.getUnchecked(
                 SetupParametersClient.getInstance().createPrefs(provisionBundle));
-        setProvisionSucceeded(stateController, devicePolicyController, mAppContext,
-                response.isProvisioningMandatory());
+        setProvisionReady(stateController, mAppContext);
         return true;
     }
 
     /**
-     * Helper method to set the state for PROVISIONING_SUCCESS event.
+     * Helper method to set the state for {@link DeviceEvent#PROVISION_READY} event.
      */
-    public static void setProvisionSucceeded(DeviceStateController stateController,
-            DevicePolicyController devicePolicyController,
-            Context mAppContext, final boolean isMandatory) {
+    public static void setProvisionReady(DeviceStateController stateController,
+            Context mAppContext) {
         FutureCallback<Void> futureCallback = new FutureCallback<>() {
             @Override
             public void onSuccess(Void result) {
                 LogUtil.i(TAG,
                         String.format(Locale.US,
                                 "State transition succeeded for event: %s",
-                                DeviceStateController.eventToString(PROVISIONING_SUCCESS)));
+                                DeviceStateController.eventToString(PROVISION_READY)));
             }
 
             @Override
@@ -241,14 +237,14 @@ public final class DeviceCheckInHelper extends AbstractDeviceCheckInHelper {
                 LogUtil.e(TAG,
                         String.format(Locale.US,
                                 "State transition failed for event: %s",
-                                DeviceStateController.eventToString(PROVISIONING_SUCCESS)), t);
+                                DeviceStateController.eventToString(PROVISION_READY)), t);
             }
         };
         mAppContext.getMainExecutor().execute(
                 () -> {
                     ListenableFuture<Void> tasks = Futures.whenAllSucceed(
                                     GlobalParametersClient.getInstance().setNeedCheckIn(false),
-                                    stateController.setNextStateForEvent(PROVISIONING_SUCCESS))
+                                    stateController.setNextStateForEvent(PROVISION_READY))
                             .call(() -> null, MoreExecutors.directExecutor());
                     Futures.addCallback(tasks, futureCallback, MoreExecutors.directExecutor());
                 });

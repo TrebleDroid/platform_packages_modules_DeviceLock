@@ -48,6 +48,7 @@ import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceCheckIn
 import com.android.devicelockcontroller.policy.DevicePolicyController;
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent;
+import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
 import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrpcResponse;
 import com.android.devicelockcontroller.provision.grpc.ProvisioningConfiguration;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
@@ -153,13 +154,12 @@ public final class DeviceCheckInHelperTest {
         GetDeviceCheckInStatusGrpcResponse response = createReadyResponse(TEST_CONFIGURATION);
         DeviceStateController stateController = mTestApplication.getStateController();
         DevicePolicyController policyController = mTestApplication.getPolicyController();
-        when(stateController.setNextStateForEvent(DeviceEvent.PROVISIONING_SUCCESS)).thenReturn(
-                Futures.immediateFuture(DeviceStateController.DeviceState.SETUP_SUCCEEDED));
+        when(stateController.setNextStateForEvent(DeviceEvent.PROVISION_READY)).thenReturn(
+                Futures.immediateFuture(DeviceState.PROVISION_SUCCEEDED));
 
-        assertThat(mHelper.handleProvisionReadyResponse(
-                response, stateController, policyController)).isTrue();
+        assertThat(mHelper.handleProvisionReadyResponse(response, stateController)).isTrue();
 
-        verify(stateController).setNextStateForEvent(eq(DeviceEvent.PROVISIONING_SUCCESS));
+        verify(stateController).setNextStateForEvent(eq(DeviceEvent.PROVISION_READY));
         assertThat(Futures.getUnchecked(mGlobalParametersClient.needCheckIn())).isFalse();
     }
 
@@ -171,9 +171,9 @@ public final class DeviceCheckInHelperTest {
         DevicePolicyController policyController = mTestApplication.getPolicyController();
 
         assertThat(mHelper.handleProvisionReadyResponse(
-                response, stateController, policyController)).isFalse();
+                response, stateController)).isFalse();
 
-        verify(stateController, never()).setNextStateForEvent(eq(DeviceEvent.PROVISIONING_SUCCESS));
+        verify(stateController, never()).setNextStateForEvent(eq(DeviceEvent.PROVISION_READY));
     }
 
     @Test

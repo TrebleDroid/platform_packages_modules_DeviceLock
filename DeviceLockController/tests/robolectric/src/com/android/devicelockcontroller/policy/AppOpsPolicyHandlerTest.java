@@ -27,7 +27,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import android.app.AppOpsManager;
 import android.content.Context;
 import android.os.OutcomeReceiver;
 
@@ -89,10 +88,10 @@ public class AppOpsPolicyHandlerTest {
                 {DeviceState.PSEUDO_UNLOCKED,   true, false, true, false},
                 // Exempt from background activity start restrictions but should not
                 // change hibernation restrictions
-                {DeviceState.SETUP_IN_PROGRESS, true, true, true, false},
-                {DeviceState.SETUP_SUCCEEDED,   true, true, true, false},
-                {DeviceState.SETUP_FAILED,      true, true, true, false},
-                {DeviceState.KIOSK_SETUP,       true, true, true, false},
+                {DeviceState.PROVISION_IN_PROGRESS, true, true, true, false},
+                {DeviceState.PROVISION_SUCCEEDED,   true, true, true, false},
+                {DeviceState.PROVISION_FAILED,      true, true, true, false},
+                {DeviceState.KIOSK_PROVISIONED,       true, true, true, false},
                 // Exempt from background activity start and hibernation
                 {DeviceState.UNLOCKED,          true, true, true, true},
                 {DeviceState.LOCKED,            true, true, true, true},
@@ -119,7 +118,7 @@ public class AppOpsPolicyHandlerTest {
     @Test
     public void setPolicyForState_setsExpectedRestrictions() {
         PolicyHandler handler = new AppOpsPolicyHandler(mContext, mSystemDeviceLockManagerMock,
-                mContext.getSystemService(AppOpsManager.class), mSetupParametersClient);
+                mSetupParametersClient);
 
         doAnswer((Answer<Boolean>) invocation -> {
             OutcomeReceiver<Void, Exception> callback = invocation.getArgument(2 /* callback */);

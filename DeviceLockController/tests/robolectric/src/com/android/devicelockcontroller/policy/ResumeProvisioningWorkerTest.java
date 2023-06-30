@@ -95,23 +95,23 @@ public final class ResumeProvisioningWorkerTest {
 
     @Test
     public void startWork_shouldDispatchResumeProvisionEvent() {
-        when(mDeviceStateController.setNextStateForEvent(eq(DeviceEvent.SETUP_RESUME)))
-                .thenReturn(Futures.immediateFuture(DeviceState.SETUP_IN_PROGRESS));
+        when(mDeviceStateController.setNextStateForEvent(eq(DeviceEvent.PROVISION_RESUME)))
+                .thenReturn(Futures.immediateFuture(DeviceState.PROVISION_IN_PROGRESS));
 
         ListenableFuture<Result> result = mWorker.startWork();
 
         assertThat(Futures.getUnchecked(result)).isEqualTo(Result.success());
-        verify(mDeviceStateController).setNextStateForEvent(eq(DeviceEvent.SETUP_RESUME));
+        verify(mDeviceStateController).setNextStateForEvent(eq(DeviceEvent.PROVISION_RESUME));
     }
 
     @Test
     public void startWork_shouldFail_whenDeviceStateDidNotTransitionToInProgress() {
-        when(mDeviceStateController.setNextStateForEvent(eq(DeviceEvent.SETUP_RESUME)))
-                .thenReturn(Futures.immediateFuture(DeviceState.SETUP_FAILED));
+        when(mDeviceStateController.setNextStateForEvent(eq(DeviceEvent.PROVISION_RESUME)))
+                .thenReturn(Futures.immediateFuture(DeviceState.PROVISION_FAILED));
 
         ListenableFuture<Result> result = mWorker.startWork();
 
         assertThat(Futures.getUnchecked(result)).isEqualTo(Result.failure());
-        verify(mDeviceStateController).setNextStateForEvent(eq(DeviceEvent.SETUP_RESUME));
+        verify(mDeviceStateController).setNextStateForEvent(eq(DeviceEvent.PROVISION_RESUME));
     }
 }

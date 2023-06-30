@@ -18,22 +18,22 @@ package com.android.devicelockcontroller.policy;
 
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.CLEAR;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.LOCK_DEVICE;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.PROVISIONING_SUCCESS;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.SETUP_COMPLETE;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.SETUP_FAILURE;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.SETUP_PAUSE;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.SETUP_RESUME;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.SETUP_SUCCESS;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.PROVISION_FAILURE;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.PROVISION_KIOSK;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.PROVISION_PAUSE;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.PROVISION_READY;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.PROVISION_RESUME;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.PROVISION_SUCCESS;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.UNLOCK_DEVICE;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.CLEARED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.KIOSK_SETUP;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.KIOSK_PROVISIONED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.LOCKED;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PROVISION_FAILED;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PROVISION_IN_PROGRESS;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PROVISION_PAUSED;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PROVISION_SUCCEEDED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PSEUDO_LOCKED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PSEUDO_UNLOCKED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_FAILED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_IN_PROGRESS;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_PAUSED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_SUCCEEDED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNLOCKED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNPROVISIONED;
 
@@ -72,17 +72,17 @@ public class DeviceStateControllerStateTransitionTest {
             "Transition from {0} to {2} when {1} event happens")
     public static List<Object[]> parameters() {
         return Arrays.asList(new Object[][]{
-                {UNPROVISIONED, PROVISIONING_SUCCESS, SETUP_IN_PROGRESS},
-                {SETUP_FAILED, PROVISIONING_SUCCESS, SETUP_IN_PROGRESS},
+                {UNPROVISIONED, PROVISION_READY, PROVISION_IN_PROGRESS},
+                {PROVISION_FAILED, PROVISION_READY, PROVISION_IN_PROGRESS},
                 {UNPROVISIONED, LOCK_DEVICE, PSEUDO_LOCKED},
-                {SETUP_IN_PROGRESS, SETUP_SUCCESS, SETUP_SUCCEEDED},
-                {SETUP_IN_PROGRESS, SETUP_FAILURE, SETUP_FAILED},
-                {SETUP_IN_PROGRESS, SETUP_PAUSE, SETUP_PAUSED},
-                {SETUP_PAUSED, SETUP_SUCCESS, SETUP_SUCCEEDED},
-                {SETUP_PAUSED, SETUP_FAILURE, SETUP_FAILED},
-                {SETUP_SUCCEEDED, SETUP_COMPLETE, KIOSK_SETUP},
-                {KIOSK_SETUP, UNLOCK_DEVICE, UNLOCKED},
-                {KIOSK_SETUP, CLEAR, CLEARED},
+                {PROVISION_IN_PROGRESS, PROVISION_SUCCESS, PROVISION_SUCCEEDED},
+                {PROVISION_IN_PROGRESS, PROVISION_FAILURE, PROVISION_FAILED},
+                {PROVISION_IN_PROGRESS, PROVISION_PAUSE, PROVISION_PAUSED},
+                {PROVISION_PAUSED, PROVISION_SUCCESS, PROVISION_SUCCEEDED},
+                {PROVISION_PAUSED, PROVISION_FAILURE, PROVISION_FAILED},
+                {PROVISION_SUCCEEDED, PROVISION_KIOSK, KIOSK_PROVISIONED},
+                {KIOSK_PROVISIONED, UNLOCK_DEVICE, UNLOCKED},
+                {KIOSK_PROVISIONED, CLEAR, CLEARED},
                 {UNLOCKED, LOCK_DEVICE, LOCKED},
                 {UNLOCKED, UNLOCK_DEVICE, UNLOCKED},
                 {UNLOCKED, CLEAR, CLEARED},
@@ -91,11 +91,11 @@ public class DeviceStateControllerStateTransitionTest {
                 {LOCKED, CLEAR, CLEARED},
                 {PSEUDO_LOCKED, UNLOCK_DEVICE, PSEUDO_UNLOCKED},
                 {PSEUDO_LOCKED, LOCK_DEVICE, PSEUDO_LOCKED},
-                {PSEUDO_LOCKED, PROVISIONING_SUCCESS, SETUP_IN_PROGRESS},
+                {PSEUDO_LOCKED, PROVISION_READY, PROVISION_IN_PROGRESS},
                 {PSEUDO_UNLOCKED, LOCK_DEVICE, PSEUDO_LOCKED},
                 {PSEUDO_UNLOCKED, UNLOCK_DEVICE, PSEUDO_UNLOCKED},
-                {PSEUDO_UNLOCKED, PROVISIONING_SUCCESS, SETUP_IN_PROGRESS},
-                {SETUP_PAUSED, SETUP_RESUME, SETUP_IN_PROGRESS}
+                {PSEUDO_UNLOCKED, PROVISION_READY, PROVISION_IN_PROGRESS},
+                {PROVISION_PAUSED, PROVISION_RESUME, PROVISION_IN_PROGRESS}
         });
     }
 

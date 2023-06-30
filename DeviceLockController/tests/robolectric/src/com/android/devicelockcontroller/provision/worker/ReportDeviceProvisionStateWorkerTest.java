@@ -22,7 +22,7 @@ import static com.android.devicelockcontroller.common.DeviceLockConstants.Device
 import static com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState.PROVISION_STATE_RETRY;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState.PROVISION_STATE_SUCCESS;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState.PROVISION_STATE_UNSPECIFIED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.PROVISIONING_SUCCESS;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.PROVISION_READY;
 import static com.android.devicelockcontroller.provision.worker.ReportDeviceProvisionStateWorker.UNEXPECTED_PROVISION_STATE_ERROR_MESSAGE;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -160,13 +160,13 @@ public final class ReportDeviceProvisionStateWorkerTest {
         when(mResponse.getNextClientProvisionState()).thenReturn(PROVISION_STATE_RETRY);
         DevicePolicyController devicePolicyController = mTestApp.getPolicyController();
         DeviceStateController deviceStateController = mTestApp.getStateController();
-        when(deviceStateController.setNextStateForEvent(PROVISIONING_SUCCESS)).thenReturn(
-                Futures.immediateFuture(DeviceState.SETUP_SUCCEEDED));
+        when(deviceStateController.setNextStateForEvent(PROVISION_READY)).thenReturn(
+                Futures.immediateFuture(DeviceState.PROVISION_SUCCEEDED));
 
         assertThat(Futures.getUnchecked(mWorker.startWork())).isEqualTo(Result.success());
 
         Shadows.shadowOf(Looper.getMainLooper()).idle();
-        verify(deviceStateController).setNextStateForEvent(eq(PROVISIONING_SUCCESS));
+        verify(deviceStateController).setNextStateForEvent(eq(PROVISION_READY));
     }
 
     @Test
