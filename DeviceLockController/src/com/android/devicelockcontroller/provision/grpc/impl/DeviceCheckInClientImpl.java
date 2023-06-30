@@ -16,13 +16,8 @@
 
 package com.android.devicelockcontroller.provision.grpc.impl;
 
-import static com.android.devicelockcontroller.proto.ClientProvisionFailureReason.CLIENT_PROVISION_FAILURE_REASON_DELETE_PACKAGE_FAILED;
-import static com.android.devicelockcontroller.proto.ClientProvisionFailureReason.CLIENT_PROVISION_FAILURE_REASON_DOWNLOAD_FAILED;
-import static com.android.devicelockcontroller.proto.ClientProvisionFailureReason.CLIENT_PROVISION_FAILURE_REASON_INSTALL_EXISTING_FAILED;
 import static com.android.devicelockcontroller.proto.ClientProvisionFailureReason.CLIENT_PROVISION_FAILURE_REASON_INSTALL_FAILED;
-import static com.android.devicelockcontroller.proto.ClientProvisionFailureReason.CLIENT_PROVISION_FAILURE_REASON_PACKAGE_DOES_NOT_EXIST;
 import static com.android.devicelockcontroller.proto.ClientProvisionFailureReason.CLIENT_PROVISION_FAILURE_REASON_SETUP_FAILED;
-import static com.android.devicelockcontroller.proto.ClientProvisionFailureReason.CLIENT_PROVISION_FAILURE_REASON_VERIFICATION_FAILED;
 
 import android.util.ArraySet;
 
@@ -202,23 +197,8 @@ public final class DeviceCheckInClientImpl extends DeviceCheckInClient {
             case SetupFailureReason.SETUP_FAILED:
                 reason = CLIENT_PROVISION_FAILURE_REASON_SETUP_FAILED;
                 break;
-            case SetupFailureReason.DOWNLOAD_FAILED:
-                reason = CLIENT_PROVISION_FAILURE_REASON_DOWNLOAD_FAILED;
-                break;
-            case SetupFailureReason.VERIFICATION_FAILED:
-                reason = CLIENT_PROVISION_FAILURE_REASON_VERIFICATION_FAILED;
-                break;
             case SetupFailureReason.INSTALL_FAILED:
                 reason = CLIENT_PROVISION_FAILURE_REASON_INSTALL_FAILED;
-                break;
-            case SetupFailureReason.PACKAGE_DOES_NOT_EXIST:
-                reason = CLIENT_PROVISION_FAILURE_REASON_PACKAGE_DOES_NOT_EXIST;
-                break;
-            case SetupFailureReason.DELETE_PACKAGE_FAILED:
-                reason = CLIENT_PROVISION_FAILURE_REASON_DELETE_PACKAGE_FAILED;
-                break;
-            case SetupFailureReason.INSTALL_EXISTING_FAILED:
-                reason = CLIENT_PROVISION_FAILURE_REASON_INSTALL_EXISTING_FAILED;
                 break;
             default:
                 throw new IllegalStateException(

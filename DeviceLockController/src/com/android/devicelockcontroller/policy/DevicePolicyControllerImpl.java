@@ -18,7 +18,6 @@ package com.android.devicelockcontroller.policy;
 
 import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_FINANCING_DEFERRED_PROVISIONING;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_FINANCING_PROVISIONING;
-import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_FINANCING_SECONDARY_USER_PROVISIONING;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_SUBSIDY_DEFERRED_PROVISIONING;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_SUBSIDY_PROVISIONING;
 import static com.android.devicelockcontroller.policy.PolicyHandler.SUCCESS;
@@ -200,10 +199,10 @@ public final class DevicePolicyControllerImpl
                     boolean isMandatory = Futures.getDone(isMandatoryTask);
                     switch (Futures.getDone(provisioningTypeTask)) {
                         case ProvisioningType.TYPE_FINANCED:
-                            if (!mContext.getUser().isSystem()) {
-                                return resultIntent.setAction(
-                                        ACTION_START_DEVICE_FINANCING_SECONDARY_USER_PROVISIONING);
-                            }
+                            // TODO(b/288923554) this used to return an intent with action
+                            // ACTION_START_DEVICE_FINANCING_SECONDARY_USER_PROVISIONING
+                            // for secondary users. Rework once a decision has been made about
+                            // what to show to users.
                             return resultIntent.setAction(
                                     isMandatory ? ACTION_START_DEVICE_FINANCING_PROVISIONING
                                             : ACTION_START_DEVICE_FINANCING_DEFERRED_PROVISIONING);

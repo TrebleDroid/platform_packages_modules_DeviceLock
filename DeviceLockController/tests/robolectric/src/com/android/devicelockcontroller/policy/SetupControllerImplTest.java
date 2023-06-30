@@ -19,17 +19,11 @@ package com.android.devicelockcontroller.policy;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_PACKAGE;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_SETUP_ACTIVITY;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_MANDATORY_PROVISION;
-import static com.android.devicelockcontroller.common.DeviceLockConstants.SetupFailureReason.INSTALL_FAILED;
-import static com.android.devicelockcontroller.common.DeviceLockConstants.SetupFailureReason.SETUP_FAILED;
-import static com.android.devicelockcontroller.policy.AbstractTask.ERROR_CODE_CREATE_SESSION_FAILED;
-import static com.android.devicelockcontroller.policy.SetupControllerImpl.transformErrorCodeToFailureType;
 
 import static com.google.common.truth.Truth.assertThat;
 
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.after;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.robolectric.annotation.LooperMode.Mode.LEGACY;
@@ -48,7 +42,6 @@ import androidx.lifecycle.LifecycleRegistry;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.work.Configuration;
 import androidx.work.ListenableWorker;
-import androidx.work.WorkManager;
 import androidx.work.WorkerFactory;
 import androidx.work.WorkerParameters;
 import androidx.work.testing.WorkManagerTestInitHelper;
@@ -63,6 +56,7 @@ import com.android.devicelockcontroller.storage.SetupParametersService;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.testing.TestingExecutors;
 
 import org.junit.Before;
@@ -216,26 +210,6 @@ public final class SetupControllerImplTest {
     }
 
     @Test
-    public void installKioskAppForSecondaryUser_kioskAppInstalled_allTaskSucceed() {
-        // GIVEN all tasks succeed
-        when(mMockStateController.setNextStateForEvent(DeviceEvent.SETUP_SUCCESS)).thenReturn(
-                Futures.immediateFuture(DeviceState.SETUP_SUCCEEDED));
-
-        setupLifecycle();
-        final SetupControllerImpl setupController = createSetupControllerImpl(mMockCbs);
-
-        // WHEN install kiosk app for secondary user
-        Futures.getUnchecked(setupController.installKioskAppForSecondaryUser(
-                WorkManager.getInstance(mTestApplication),
-                mMockLifecycleOwner));
-
-        verify(mMockStateController, timeout(ASYNC_TIMEOUT_MILLIS)).setNextStateForEvent(
-                eq(DeviceEvent.SETUP_SUCCESS));
-        verify(mMockCbs).setupCompleted();
-    }
-
-
-    @Test
     public void testInitialState_SetupNotStarted() {
         when(mMockStateController.getState()).thenReturn(DeviceState.SETUP_IN_PROGRESS);
         SetupControllerImpl setupController =
@@ -264,9 +238,9 @@ public final class SetupControllerImplTest {
         when(mMockStateController.setNextStateForEvent(DeviceEvent.SETUP_FAILURE)).thenReturn(
                 Futures.immediateFuture(DeviceState.SETUP_FAILED));
         SetupControllerImpl setupController = createSetupControllerImpl(callbacks);
-        setupController.setupFlowTaskFailureCallbackHandler(SetupFailureReason.DOWNLOAD_FAILED);
+        setupController.setupFlowTaskFailureCallbackHandler(SetupFailureReason.INSTALL_FAILED);
         assertThat(result.get()).isFalse();
-        assertThat(reason.get()).isEqualTo(SetupFailureReason.DOWNLOAD_FAILED);
+        assertThat(reason.get()).isEqualTo(SetupFailureReason.INSTALL_FAILED);
         assertThat(setupController.getSetupState()).isEqualTo(
                 SetupController.SetupStatus.SETUP_FAILED);
     }
@@ -305,14 +279,6 @@ public final class SetupControllerImplTest {
 
         setupController.setupFlowTaskSuccessCallbackHandler();
         verify(mMockCbs, after(ASYNC_TIMEOUT_MILLIS).never()).setupCompleted();
-    }
-
-    @Test
-    public void testTransformErrorCodeToFailureType() {
-        assertThat(transformErrorCodeToFailureType(ERROR_CODE_CREATE_SESSION_FAILED))
-                .isEqualTo(INSTALL_FAILED);
-        int invalidErrorCode = 100;
-        assertThat(transformErrorCodeToFailureType(invalidErrorCode)).isEqualTo(SETUP_FAILED);
     }
 
     private static void createTestFile(String fileLocation) {
@@ -356,16 +322,16 @@ public final class SetupControllerImplTest {
                 @NonNull Context context,
                 @NonNull String workerClassName,
                 @NonNull WorkerParameters workerParameters) {
-            return new AbstractTask(context, workerParameters,
-                    TestingExecutors.sameThreadScheduledExecutor()) {
+            return new ListenableWorker(context, workerParameters) {
                 @NonNull
                 @Override
                 public ListenableFuture<Result> startWork() {
-                    return mExecutorService.submit(() -> {
-                        final Integer resultCode = mResultMap.get(workerClassName);
-                        return resultCode == null || resultCode < 0
-                                ? Result.success() : failure(resultCode);
-                    });
+                    return MoreExecutors.listeningDecorator(
+                            TestingExecutors.sameThreadScheduledExecutor()).submit(() -> {
+                                final Integer resultCode = mResultMap.get(workerClassName);
+                                return resultCode == null || resultCode < 0
+                                    ? Result.success() : Result.failure();
+                            });
                 }
             };
         }
