@@ -18,10 +18,13 @@ package com.android.devicelockcontroller.activities;
 
 import android.text.TextUtils;
 
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.android.devicelockcontroller.policy.DeviceStateController;
+import com.android.devicelockcontroller.policy.SetupController;
 import com.android.devicelockcontroller.storage.SetupParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
 
@@ -119,4 +122,34 @@ public final class ProvisioningProgressViewModel extends ViewModel {
         }
     }
 
+    /**
+     * Reset the {@link ProvisioningProgress} and retry the setup flow.
+     */
+    public void retrySetupFlow(SetupController setupController,
+            DeviceStateController stateController,
+            LifecycleOwner lifecycleOwner) {
+        LogUtil.d(TAG, "retry setup flow");
+        setProvisioningProgress(ProvisioningProgress.GETTING_DEVICE_READY);
+
+        Futures.addCallback(
+                Futures.transformAsync(stateController.setNextStateForEvent(
+                                DeviceStateController.DeviceEvent.PROVISION_RETRY),
+                        unused -> setupController.startSetupFlow(lifecycleOwner),
+                        MoreExecutors.directExecutor()),
+                new FutureCallback<>() {
+                    @Override
+                    public void onSuccess(Void result) {
+                        LogUtil.i(TAG, "Setup flow has started installing kiosk app");
+                        setProvisioningProgress(ProvisioningProgress.INSTALLING_KIOSK_APP);
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+                        LogUtil.e(TAG, "Failed to retry setup flow!", t);
+                        setProvisioningProgress(ProvisioningProgress.PROVISIONING_FAILED);
+                    }
+                }, MoreExecutors.directExecutor());
+        // TODO(b/286246218): update the ProvisioningProgress status should installing kiosk app
+        //  succeed
+    }
 }

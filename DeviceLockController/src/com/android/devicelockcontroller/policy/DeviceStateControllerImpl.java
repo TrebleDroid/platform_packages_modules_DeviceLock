@@ -197,6 +197,11 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
                     return DeviceState.PROVISION_IN_PROGRESS;
                 }
                 break;
+            case DeviceEvent.PROVISION_RETRY:
+                if (mState == DeviceState.PROVISION_FAILED) {
+                    return DeviceState.PROVISION_IN_PROGRESS;
+                }
+                break;
             default:
                 break;
         }

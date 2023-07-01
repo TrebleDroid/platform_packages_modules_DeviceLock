@@ -192,6 +192,7 @@ public interface DeviceStateController {
             DeviceEvent.UNLOCK_DEVICE,
             DeviceEvent.CLEAR,
             DeviceEvent.PROVISION_RESUME,
+            DeviceEvent.PROVISION_RETRY,
     })
     @interface DeviceEvent {
 
@@ -221,6 +222,9 @@ public interface DeviceStateController {
 
         /* Resume provisioning */
         int PROVISION_RESUME = 8;
+
+        /* Retry provision after failure */
+        int PROVISION_RETRY = 9;
     }
 
     /**
@@ -257,6 +261,8 @@ public interface DeviceStateController {
                 return "CLEAR";
             case DeviceEvent.PROVISION_RESUME:
                 return "PROVISION_RESUME";
+            case DeviceEvent.PROVISION_RETRY:
+                return "PROVISION_RETRY";
             default:
                 return "UNKNOWN_EVENT";
         }
