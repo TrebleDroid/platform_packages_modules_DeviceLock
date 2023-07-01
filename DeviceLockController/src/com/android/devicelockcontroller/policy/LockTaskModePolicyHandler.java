@@ -96,8 +96,10 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
             case PSEUDO_UNLOCKED:
             case PSEUDO_LOCKED:
             case UNPROVISIONED:
-                return Futures.immediateFuture(SUCCESS);
             case PROVISION_FAILED:
+                // TODO(b/286246493): do nothing for PROVISION_FAILED, exit button on the
+                //  provisioning failed screen should disable lock task mode
+                return Futures.immediateFuture(SUCCESS);
             case PROVISION_PAUSED:
             case UNLOCKED:
             case CLEARED:
