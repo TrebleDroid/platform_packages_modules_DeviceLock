@@ -17,8 +17,8 @@
 package com.android.devicelockcontroller.policy;
 
 
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.SETUP_RESUME;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_IN_PROGRESS;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.PROVISION_RESUME;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PROVISION_IN_PROGRESS;
 
 import android.content.Context;
 import android.os.Build;
@@ -82,10 +82,10 @@ public final class ResumeProvisioningWorker extends ListenableWorker {
         LogUtil.v(TAG, "StartWork");
         DeviceStateController stateController =
                 ((PolicyObjectsInterface) getApplicationContext()).getStateController();
-        return Futures.transform(stateController.setNextStateForEvent(SETUP_RESUME),
+        return Futures.transform(stateController.setNextStateForEvent(PROVISION_RESUME),
                 deviceState -> {
                     LogUtil.v(TAG, String.format("DeviceState is: %s", deviceState));
-                    if (SETUP_IN_PROGRESS == deviceState) {
+                    if (PROVISION_IN_PROGRESS == deviceState) {
                         return Result.success();
                     }
                     return Result.failure();

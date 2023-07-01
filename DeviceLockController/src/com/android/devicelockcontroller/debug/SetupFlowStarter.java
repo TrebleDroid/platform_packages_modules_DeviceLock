@@ -23,7 +23,6 @@ import android.os.Build;
 import android.os.UserManager;
 import android.text.TextUtils;
 
-import com.android.devicelockcontroller.policy.DevicePolicyController;
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
 import com.android.devicelockcontroller.provision.worker.DeviceCheckInHelper;
@@ -59,10 +58,8 @@ public final class SetupFlowStarter extends BroadcastReceiver {
 
         PolicyObjectsInterface policyObjects =
                 (PolicyObjectsInterface) context.getApplicationContext();
-        DevicePolicyController devicePolicyController = policyObjects.getPolicyController();
         DeviceStateController deviceStateController = policyObjects.getStateController();
 
-        DeviceCheckInHelper.setProvisionSucceeded(deviceStateController, devicePolicyController,
-                context, intent.getBooleanExtra(EXTRA_IS_MANDATORY, /* defaultValue= */ true));
+        DeviceCheckInHelper.setProvisionReady(deviceStateController, context);
     }
 }

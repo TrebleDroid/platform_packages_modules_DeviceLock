@@ -17,14 +17,14 @@
 package com.android.devicelockcontroller.policy;
 
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.CLEARED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.KIOSK_SETUP;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.KIOSK_PROVISIONED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.LOCKED;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PROVISION_FAILED;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PROVISION_IN_PROGRESS;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PROVISION_PAUSED;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PROVISION_SUCCEEDED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PSEUDO_LOCKED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PSEUDO_UNLOCKED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_FAILED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_IN_PROGRESS;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_PAUSED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_SUCCEEDED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNLOCKED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNPROVISIONED;
 
@@ -57,17 +57,17 @@ final class PackagePolicyHandler implements PolicyHandler {
     @Override
     public ListenableFuture<@ResultType Integer> setPolicyForState(@DeviceState int state) {
         switch (state) {
-            case KIOSK_SETUP:
+            case KIOSK_PROVISIONED:
             case UNLOCKED:
             case LOCKED:
                 return enablePackageProtection(true /* enableForKiosk */, state);
             case CLEARED:
             case UNPROVISIONED:
                 return enablePackageProtection(false /* enableForKiosk */, state);
-            case SETUP_IN_PROGRESS:
-            case SETUP_PAUSED:
-            case SETUP_SUCCEEDED:
-            case SETUP_FAILED:
+            case PROVISION_IN_PROGRESS:
+            case PROVISION_PAUSED:
+            case PROVISION_SUCCEEDED:
+            case PROVISION_FAILED:
             case PSEUDO_LOCKED:
             case PSEUDO_UNLOCKED:
                 return Futures.immediateFuture(SUCCESS);

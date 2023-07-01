@@ -26,8 +26,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-// TODO: rework the state and events for vNext
-
 /**
  * Interface for the device lock controller state machine.
  */
@@ -79,9 +77,9 @@ public interface DeviceStateController {
     boolean isCheckInNeeded();
 
     /**
-     * Returns true if the device is in setup flow.
+     * Returns true if the device is in provisioning flow.
      */
-    boolean isInSetupState();
+    boolean isInProvisioningState();
 
     /**
      * Register a callback to get notified on state change.
@@ -100,11 +98,11 @@ public interface DeviceStateController {
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({
             DeviceState.UNPROVISIONED,
-            DeviceState.SETUP_IN_PROGRESS,
-            DeviceState.SETUP_SUCCEEDED,
-            DeviceState.SETUP_PAUSED,
-            DeviceState.SETUP_FAILED,
-            DeviceState.KIOSK_SETUP,
+            DeviceState.PROVISION_IN_PROGRESS,
+            DeviceState.PROVISION_SUCCEEDED,
+            DeviceState.PROVISION_PAUSED,
+            DeviceState.PROVISION_FAILED,
+            DeviceState.KIOSK_PROVISIONED,
             DeviceState.UNLOCKED,
             DeviceState.LOCKED,
             DeviceState.CLEARED,
@@ -113,23 +111,23 @@ public interface DeviceStateController {
     })
     @interface DeviceState {
 
-        /* DLC is not provisioned */
+        /* Not provisioned */
         int UNPROVISIONED = 0;
 
-        /* Setup flow is in progress. This is where kiosk app will be downloaded. */
-        int SETUP_IN_PROGRESS = 1;
+        /* Provisioning flow is in progress. This is where kiosk app will be installed. */
+        int PROVISION_IN_PROGRESS = 1;
 
-        /* Setup has succeeded */
-        int SETUP_SUCCEEDED = 2;
+        /* Provisioning has succeeded */
+        int PROVISION_SUCCEEDED = 2;
 
-        /** Setup is paused */
-        int SETUP_PAUSED = 3;
+        /** Provisioning is paused */
+        int PROVISION_PAUSED = 3;
 
-        /* Setup has failed */
-        int SETUP_FAILED = 4;
+        /* Provisioning has failed */
+        int PROVISION_FAILED = 4;
 
-        /* Showing kiosk setup activity */
-        int KIOSK_SETUP = 5;
+        /* Kiosk app provisioned */
+        int KIOSK_PROVISIONED = 5;
 
         /* Device is unlocked */
         int UNLOCKED = 6;
@@ -154,14 +152,16 @@ public interface DeviceStateController {
         switch (state) {
             case DeviceState.UNPROVISIONED:
                 return "UNPROVISIONED";
-            case DeviceState.SETUP_IN_PROGRESS:
-                return "SETUP_IN_PROGRESS";
-            case DeviceState.SETUP_SUCCEEDED:
-                return "SETUP_SUCCEEDED";
-            case DeviceState.SETUP_FAILED:
-                return "SETUP_FAILED";
-            case DeviceState.KIOSK_SETUP:
-                return "KIOSK_SETUP";
+            case DeviceState.PROVISION_IN_PROGRESS:
+                return "PROVISION_IN_PROGRESS";
+            case DeviceState.PROVISION_SUCCEEDED:
+                return "PROVISION_SUCCEEDED";
+            case DeviceState.PROVISION_PAUSED:
+                return "PROVISION_PAUSED";
+            case DeviceState.PROVISION_FAILED:
+                return "PROVISION_FAILED";
+            case DeviceState.KIOSK_PROVISIONED:
+                return "KIOSK_PROVISIONED";
             case DeviceState.UNLOCKED:
                 return "UNLOCKED";
             case DeviceState.LOCKED:
@@ -183,32 +183,32 @@ public interface DeviceStateController {
      */
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({
-            DeviceEvent.PROVISIONING_SUCCESS,
-            DeviceEvent.SETUP_PAUSE,
-            DeviceEvent.SETUP_SUCCESS,
-            DeviceEvent.SETUP_FAILURE,
-            DeviceEvent.SETUP_COMPLETE,
+            DeviceEvent.PROVISION_READY,
+            DeviceEvent.PROVISION_PAUSE,
+            DeviceEvent.PROVISION_SUCCESS,
+            DeviceEvent.PROVISION_FAILURE,
+            DeviceEvent.PROVISION_KIOSK,
             DeviceEvent.LOCK_DEVICE,
             DeviceEvent.UNLOCK_DEVICE,
             DeviceEvent.CLEAR,
-            DeviceEvent.SETUP_RESUME,
+            DeviceEvent.PROVISION_RESUME,
     })
     @interface DeviceEvent {
 
-        /* App provisioned */
-        int PROVISIONING_SUCCESS = 0;
+        /* Ready for provisioning */
+        int PROVISION_READY = 0;
 
-        /* Pause setup */
-        int SETUP_PAUSE = 1;
+        /* Pause provisioning */
+        int PROVISION_PAUSE = 1;
 
-        /* Setup completed successfully */
-        int SETUP_SUCCESS = 2;
+        /* Provisioning completed successfully */
+        int PROVISION_SUCCESS = 2;
 
-        /* Setup failed to complete */
-        int SETUP_FAILURE = 3;
+        /* Provisioning failed to complete */
+        int PROVISION_FAILURE = 3;
 
-        /* Setup has complete */
-        int SETUP_COMPLETE = 4;
+        /* Provision Kiosk app */
+        int PROVISION_KIOSK = 4;
 
         /* Lock device */
         int LOCK_DEVICE = 5;
@@ -219,8 +219,8 @@ public interface DeviceStateController {
         /* Clear device lock restrictions */
         int CLEAR = 7;
 
-        /* Resume setup */
-        int SETUP_RESUME = 8;
+        /* Resume provisioning */
+        int PROVISION_RESUME = 8;
     }
 
     /**
@@ -239,22 +239,24 @@ public interface DeviceStateController {
      */
     static String eventToString(@DeviceEvent int event) {
         switch (event) {
-            case DeviceEvent.PROVISIONING_SUCCESS:
-                return "PROVISIONING_SUCCESS";
-            case DeviceEvent.SETUP_SUCCESS:
-                return "SETUP_SUCCESS";
-            case DeviceEvent.SETUP_FAILURE:
-                return "SETUP_FAILURE";
-            case DeviceEvent.SETUP_COMPLETE:
-                return "SETUP_COMPLETE";
+            case DeviceEvent.PROVISION_READY:
+                return "PROVISION_READY";
+            case DeviceEvent.PROVISION_PAUSE:
+                return "PROVISION_PAUSE";
+            case DeviceEvent.PROVISION_SUCCESS:
+                return "PROVISION_SUCCESS";
+            case DeviceEvent.PROVISION_FAILURE:
+                return "PROVISION_FAILURE";
+            case DeviceEvent.PROVISION_KIOSK:
+                return "PROVISION_KIOSK";
             case DeviceEvent.LOCK_DEVICE:
                 return "LOCK_DEVICE";
             case DeviceEvent.UNLOCK_DEVICE:
                 return "UNLOCK_DEVICE";
             case DeviceEvent.CLEAR:
                 return "CLEAR";
-            case DeviceEvent.SETUP_RESUME:
-                return "SETUP_RESUME";
+            case DeviceEvent.PROVISION_RESUME:
+                return "PROVISION_RESUME";
             default:
                 return "UNKNOWN_EVENT";
         }

@@ -16,7 +16,6 @@
 
 package com.android.devicelockcontroller.policy;
 
-import android.app.AppOpsManager;
 import android.content.Context;
 import android.os.OutcomeReceiver;
 
@@ -34,24 +33,18 @@ import com.google.common.util.concurrent.MoreExecutors;
 
 final class AppOpsPolicyHandler implements PolicyHandler {
     private static final String TAG = "AppOpsPolicyHandler";
-    // The following should be a SystemApi on AppOpsManager.
-    private static final String OPSTR_SYSTEM_EXEMPT_FROM_ACTIVITY_BG_START_RESTRICTION =
-            "android:system_exempt_from_activity_bg_start_restriction";
     private final Context mContext;
     private final SystemDeviceLockManager mSystemDeviceLockManager;
-    private final AppOpsManager mAppOpsManager;
     private final SetupParametersClientInterface mSetupParametersClient;
 
-    AppOpsPolicyHandler(Context context, SystemDeviceLockManager systemDeviceLockManager,
-            AppOpsManager appOpsManager) {
-        this(context, systemDeviceLockManager, appOpsManager, SetupParametersClient.getInstance());
+    AppOpsPolicyHandler(Context context, SystemDeviceLockManager systemDeviceLockManager) {
+        this(context, systemDeviceLockManager, SetupParametersClient.getInstance());
     }
 
     AppOpsPolicyHandler(Context context, SystemDeviceLockManager systemDeviceLockManager,
-            AppOpsManager appOpsManager, SetupParametersClientInterface setupParametersClient) {
+            SetupParametersClientInterface setupParametersClient) {
         mContext = context;
         mSystemDeviceLockManager = systemDeviceLockManager;
-        mAppOpsManager = appOpsManager;
         mSetupParametersClient = setupParametersClient;
     }
 
@@ -124,11 +117,11 @@ final class AppOpsPolicyHandler implements PolicyHandler {
             case DeviceState.PSEUDO_LOCKED:
             case DeviceState.PSEUDO_UNLOCKED:
                 return Futures.immediateFuture(SUCCESS);
-            case DeviceState.SETUP_IN_PROGRESS:
-            case DeviceState.SETUP_PAUSED:
-            case DeviceState.SETUP_SUCCEEDED:
-            case DeviceState.SETUP_FAILED:
-            case DeviceState.KIOSK_SETUP:
+            case DeviceState.PROVISION_IN_PROGRESS:
+            case DeviceState.PROVISION_PAUSED:
+            case DeviceState.PROVISION_SUCCEEDED:
+            case DeviceState.PROVISION_FAILED:
+            case DeviceState.KIOSK_PROVISIONED:
                 return getExemptFromBackgroundStartRestrictionsFuture(true /* exempt */);
             case DeviceState.UNLOCKED:
             case DeviceState.LOCKED:

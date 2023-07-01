@@ -101,9 +101,9 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
 
     @Override
     public boolean isLockedInternal() {
-        return mState == DeviceState.SETUP_IN_PROGRESS
-                || mState == DeviceState.SETUP_SUCCEEDED
-                || mState == DeviceState.KIOSK_SETUP
+        return mState == DeviceState.PROVISION_IN_PROGRESS
+                || mState == DeviceState.PROVISION_SUCCEEDED
+                || mState == DeviceState.KIOSK_PROVISIONED
                 || mState == DeviceState.LOCKED;
     }
 
@@ -114,10 +114,10 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
     }
 
     @Override
-    public boolean isInSetupState() {
-        return mState == DeviceState.SETUP_IN_PROGRESS
-                || mState == DeviceState.SETUP_SUCCEEDED
-                || mState == DeviceState.SETUP_FAILED;
+    public boolean isInProvisioningState() {
+        return mState == DeviceState.PROVISION_IN_PROGRESS
+                || mState == DeviceState.PROVISION_SUCCEEDED
+                || mState == DeviceState.PROVISION_FAILED;
     }
 
     @Override
@@ -138,33 +138,33 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
     @DeviceState
     int getNextState(@DeviceEvent int event) throws StateTransitionException {
         switch (event) {
-            case DeviceEvent.PROVISIONING_SUCCESS:
-                if (mState == DeviceState.UNPROVISIONED || mState == DeviceState.SETUP_FAILED
+            case DeviceEvent.PROVISION_READY:
+                if (mState == DeviceState.UNPROVISIONED || mState == DeviceState.PROVISION_FAILED
                         || mState == DeviceState.PSEUDO_LOCKED
                         || mState == DeviceState.PSEUDO_UNLOCKED) {
-                    return DeviceState.SETUP_IN_PROGRESS;
+                    return DeviceState.PROVISION_IN_PROGRESS;
                 }
                 break;
-            case DeviceEvent.SETUP_PAUSE:
-                if (mState == DeviceState.SETUP_IN_PROGRESS) {
-                    return DeviceState.SETUP_PAUSED;
+            case DeviceEvent.PROVISION_PAUSE:
+                if (mState == DeviceState.PROVISION_IN_PROGRESS) {
+                    return DeviceState.PROVISION_PAUSED;
                 }
                 break;
-            case DeviceEvent.SETUP_SUCCESS:
-                if (mState == DeviceState.SETUP_IN_PROGRESS
-                        || mState == DeviceState.SETUP_PAUSED) {
-                    return DeviceState.SETUP_SUCCEEDED;
+            case DeviceEvent.PROVISION_SUCCESS:
+                if (mState == DeviceState.PROVISION_IN_PROGRESS
+                        || mState == DeviceState.PROVISION_PAUSED) {
+                    return DeviceState.PROVISION_SUCCEEDED;
                 }
                 break;
-            case DeviceEvent.SETUP_FAILURE:
-                if (mState == DeviceState.SETUP_IN_PROGRESS
-                        || mState == DeviceState.SETUP_PAUSED) {
-                    return DeviceState.SETUP_FAILED;
+            case DeviceEvent.PROVISION_FAILURE:
+                if (mState == DeviceState.PROVISION_IN_PROGRESS
+                        || mState == DeviceState.PROVISION_PAUSED) {
+                    return DeviceState.PROVISION_FAILED;
                 }
                 break;
-            case DeviceEvent.SETUP_COMPLETE:
-                if (mState == DeviceState.SETUP_SUCCEEDED) {
-                    return DeviceState.KIOSK_SETUP;
+            case DeviceEvent.PROVISION_KIOSK:
+                if (mState == DeviceState.PROVISION_SUCCEEDED) {
+                    return DeviceState.KIOSK_PROVISIONED;
                 }
                 break;
             case DeviceEvent.LOCK_DEVICE:
@@ -181,20 +181,20 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
                     return DeviceState.PSEUDO_UNLOCKED;
                 }
                 if (mState == DeviceState.LOCKED || mState == DeviceState.UNLOCKED
-                        || mState == DeviceState.KIOSK_SETUP) {
+                        || mState == DeviceState.KIOSK_PROVISIONED) {
                     return DeviceState.UNLOCKED;
                 }
                 break;
             case DeviceEvent.CLEAR:
                 if (mState == DeviceState.LOCKED
                         || mState == DeviceState.UNLOCKED
-                        || mState == DeviceState.KIOSK_SETUP) {
+                        || mState == DeviceState.KIOSK_PROVISIONED) {
                     return DeviceState.CLEARED;
                 }
                 break;
-            case DeviceEvent.SETUP_RESUME:
-                if (mState == DeviceState.SETUP_PAUSED) {
-                    return DeviceState.SETUP_IN_PROGRESS;
+            case DeviceEvent.PROVISION_RESUME:
+                if (mState == DeviceState.PROVISION_PAUSED) {
+                    return DeviceState.PROVISION_IN_PROGRESS;
                 }
                 break;
             default:

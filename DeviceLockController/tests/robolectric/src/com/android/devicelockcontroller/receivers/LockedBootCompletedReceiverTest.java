@@ -59,8 +59,8 @@ public class LockedBootCompletedReceiverTest {
     }
 
     @Test
-    public void startLockTaskModeIfApplicable_whenDeviceIsInSetupState_doesNotStartLockTaskMode() {
-        when(mStateController.isInSetupState()).thenReturn(true);
+    public void startLockTaskModeIfApplicable_whenInProvisioningState_doesNotStartLockTaskMode() {
+        when(mStateController.isInProvisioningState()).thenReturn(true);
         when(mStateController.isLockedInternal()).thenReturn(true);
 
         LockedBootCompletedReceiver.enforceLockTaskMode(mTestApplication);
@@ -74,8 +74,8 @@ public class LockedBootCompletedReceiverTest {
     }
 
     @Test
-    public void startLockTaskModeIfApplicable_whenDeviceIsNotInSetupState_startLockTaskMode() {
-        when(mStateController.isInSetupState()).thenReturn(false);
+    public void startLockTaskModeIfApplicable_whenNotInProvisioningState_startLockTaskMode() {
+        when(mStateController.isInProvisioningState()).thenReturn(false);
         when(mStateController.isLockedInternal()).thenReturn(true);
 
         LockedBootCompletedReceiver.enforceLockTaskMode(mTestApplication);

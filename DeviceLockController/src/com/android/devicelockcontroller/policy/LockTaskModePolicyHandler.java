@@ -19,14 +19,14 @@ package com.android.devicelockcontroller.policy;
 import static android.app.admin.DevicePolicyManager.LOCK_TASK_FEATURE_NOTIFICATIONS;
 
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.CLEARED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.KIOSK_SETUP;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.KIOSK_PROVISIONED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.LOCKED;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PROVISION_FAILED;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PROVISION_IN_PROGRESS;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PROVISION_PAUSED;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PROVISION_SUCCEEDED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PSEUDO_LOCKED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PSEUDO_UNLOCKED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_FAILED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_IN_PROGRESS;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_PAUSED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.SETUP_SUCCEEDED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNLOCKED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNPROVISIONED;
 import static com.android.devicelockcontroller.policy.StartLockTaskModeWorker.START_LOCK_TASK_MODE_WORK_NAME;
@@ -97,15 +97,15 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
             case PSEUDO_LOCKED:
             case UNPROVISIONED:
                 return Futures.immediateFuture(SUCCESS);
-            case SETUP_FAILED:
-            case SETUP_PAUSED:
+            case PROVISION_FAILED:
+            case PROVISION_PAUSED:
             case UNLOCKED:
             case CLEARED:
                 return disableLockTaskMode();
-            case SETUP_IN_PROGRESS:
-            case SETUP_SUCCEEDED:
+            case PROVISION_IN_PROGRESS:
+            case PROVISION_SUCCEEDED:
                 return enableLockTaskMode(/* includeController= */ true);
-            case KIOSK_SETUP:
+            case KIOSK_PROVISIONED:
             case LOCKED:
                 return enableLockTaskMode(/* includeController= */ false);
             default:
