@@ -36,14 +36,8 @@ import android.util.ArraySet;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.annotation.WorkerThread;
-import androidx.work.BackoffPolicy;
-import androidx.work.Constraints;
-import androidx.work.ExistingWorkPolicy;
-import androidx.work.NetworkType;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.OutOfQuotaPolicy;
-import androidx.work.WorkManager;
 
+import com.android.devicelockcontroller.AbstractDeviceLockControllerScheduler;
 import com.android.devicelockcontroller.R;
 import com.android.devicelockcontroller.common.DeviceId;
 import com.android.devicelockcontroller.policy.DeviceStateController;
@@ -68,9 +62,7 @@ import java.util.Locale;
  * Helper class to perform the device check-in process with device lock backend server
  */
 public final class DeviceCheckInHelper extends AbstractDeviceCheckInHelper {
-    public static final String DEVICE_CHECK_IN_WORK_NAME = "device-check-in";
     private static final String TAG = "DeviceCheckInHelper";
-    private static final int CHECK_IN_INTERVAL_HOURS = 1;
     private final Context mAppContext;
     private final TelephonyManager mTelephonyManager;
 
@@ -79,40 +71,7 @@ public final class DeviceCheckInHelper extends AbstractDeviceCheckInHelper {
         mTelephonyManager = mAppContext.getSystemService(TelephonyManager.class);
     }
 
-    /**
-     * Enqueue the DeviceCheckIn work request to WorkManager
-     *
-     * @param isExpedited If true, the work request should be expedited;
-     */
     @Override
-    public void enqueueDeviceCheckInWork(boolean isExpedited) {
-        enqueueDeviceCheckInWork(isExpedited, Duration.ZERO);
-    }
-
-    /**
-     * Enqueue the DeviceCheckIn work request to WorkManager
-     *
-     * @param isExpedited If true, the work request should be expedited;
-     * @param delay       The duration that need to be delayed before performing check-in.
-     */
-    private void enqueueDeviceCheckInWork(boolean isExpedited, Duration delay) {
-        LogUtil.i(TAG, "enqueueDeviceCheckInWork with delay: " + delay);
-        final OneTimeWorkRequest.Builder builder =
-                new OneTimeWorkRequest.Builder(DeviceCheckInWorker.class)
-                        .setConstraints(
-                                new Constraints.Builder().setRequiredNetworkType(
-                                        NetworkType.CONNECTED).build())
-                        .setInitialDelay(delay)
-                        .setBackoffCriteria(BackoffPolicy.LINEAR,
-                                Duration.ofHours(CHECK_IN_INTERVAL_HOURS));
-        if (isExpedited) builder.setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST);
-        WorkManager.getInstance(mAppContext).enqueueUniqueWork(DEVICE_CHECK_IN_WORK_NAME,
-                ExistingWorkPolicy.REPLACE, builder.build());
-    }
-
-
-    @Override
-    @NonNull
     ArraySet<DeviceId> getDeviceUniqueIds() {
         final int deviceIdTypeBitmap = mAppContext.getResources().getInteger(
                 R.integer.device_id_type_bitmap);
@@ -154,7 +113,6 @@ public final class DeviceCheckInHelper extends AbstractDeviceCheckInHelper {
     }
 
     @Override
-    @NonNull
     String getCarrierInfo() {
         return mTelephonyManager.getSimOperator();
     }
@@ -162,7 +120,8 @@ public final class DeviceCheckInHelper extends AbstractDeviceCheckInHelper {
     @Override
     @WorkerThread
     boolean handleGetDeviceCheckInStatusResponse(
-            @NonNull GetDeviceCheckInStatusGrpcResponse response) {
+            GetDeviceCheckInStatusGrpcResponse response,
+            AbstractDeviceLockControllerScheduler scheduler) {
         Futures.getUnchecked(GlobalParametersClient.getInstance().setRegisteredDeviceId(
                 response.getRegisteredDeviceIdentifier()));
         LogUtil.d(TAG, "check in response: " + response.getDeviceCheckInStatus());
@@ -180,7 +139,7 @@ public final class DeviceCheckInHelper extends AbstractDeviceCheckInHelper {
                             response.getNextCheckInTime());
                     // Retry immediately if next check in time is in the past.
                     delay = delay.isNegative() ? Duration.ZERO : delay;
-                    enqueueDeviceCheckInWork(false, delay);
+                    scheduler.scheduleRetryCheckInWork(delay);
                     return true;
                 } catch (DateTimeException e) {
                     LogUtil.e(TAG, "No network time is available!");

@@ -35,12 +35,12 @@ import java.util.Objects;
 /**
  * Boot completed broadcast receiver to start lock task mode if applicable. This broadcast receiver
  * runs for every user on the device.
- * Note that this boot completed receiver differs with {@link CheckInBootCompletedReceiver} in the
- * way that it runs for any users.
+ * Note that this boot completed receiver differs with {@link SingleUserBootCompletedReceiver} in
+ * the way that it runs for any users.
  */
-public final class LockTaskBootCompletedReceiver extends BroadcastReceiver {
+public final class BootCompletedReceiver extends BroadcastReceiver {
 
-    static final String TAG = "LockTaskBootCompletedReceiver";
+    static final String TAG = "BootCompletedReceiver";
 
     @Override
     public void onReceive(Context context, Intent intent) {

@@ -22,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.work.WorkerParameters;
 
+import com.android.devicelockcontroller.DeviceLockControllerScheduler;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrpcResponse;
 import com.android.devicelockcontroller.util.LogUtil;
@@ -70,7 +71,8 @@ public final class DeviceCheckInWorker extends AbstractCheckInWorker {
                             return Result.retry();
                         }
                         if (response.isSuccessful()) {
-                            return mCheckInHelper.handleGetDeviceCheckInStatusResponse(response)
+                            return mCheckInHelper.handleGetDeviceCheckInStatusResponse(response,
+                                    new DeviceLockControllerScheduler(mContext))
                                     ? Result.success()
                                     : Result.retry();
                         }
