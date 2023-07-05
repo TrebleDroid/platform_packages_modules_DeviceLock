@@ -64,13 +64,10 @@ public final class ProvisionInfoFragment extends Fragment {
     private ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(),
                     isGranted -> {
-                        if (isGranted) {
-                            createNotificationAndCloseActivity();
-                        } else {
-                            Toast.makeText(getActivity(),
-                                    R.string.toast_message_grant_notification_permission,
-                                    Toast.LENGTH_LONG).show();
-                        }
+                        // According to b/289520962#comment3, we just let the scheduled work resume
+                        // the enrollment when the time is up, and don't show the notification, if
+                        // the user doesn't grant the permission to the app.
+                        createNotificationAndCloseActivity();
                     }
             );
 
