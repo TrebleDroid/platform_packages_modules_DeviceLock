@@ -41,12 +41,12 @@ import org.robolectric.Shadows;
 import org.robolectric.shadows.ShadowActivityManager;
 
 @RunWith(RobolectricTestRunner.class)
-public class LockTaskBootCompletedReceiverTest {
+public final class BootCompletedReceiverTest {
 
     private static final Intent BOOT_COMPLETED_INTENT = new Intent(
             Intent.ACTION_BOOT_COMPLETED);
 
-    private LockTaskBootCompletedReceiver mLockTaskBootCompletedReceiver;
+    private BootCompletedReceiver mBootCompletedReceiver;
     private DeviceStateController mStateController;
     private TestDeviceLockControllerApplication mTestApplication;
     private ShadowActivityManager mActivityManager;
@@ -57,7 +57,7 @@ public class LockTaskBootCompletedReceiverTest {
         mStateController = mTestApplication.getStateController();
         when(mStateController.enforcePoliciesForCurrentState()).thenReturn(
                 Futures.immediateVoidFuture());
-        mLockTaskBootCompletedReceiver = new LockTaskBootCompletedReceiver();
+        mBootCompletedReceiver = new BootCompletedReceiver();
         mActivityManager = Shadows.shadowOf(
                 mTestApplication.getSystemService(ActivityManager.class));
     }
@@ -66,7 +66,7 @@ public class LockTaskBootCompletedReceiverTest {
     public void onReceive_inLockedState_inLockTaskMode_doNotEnforcePolicies() {
         when(mStateController.isLockedInternal()).thenReturn(true);
         mActivityManager.setLockTaskModeState(LOCK_TASK_MODE_LOCKED);
-        mLockTaskBootCompletedReceiver.onReceive(mTestApplication, BOOT_COMPLETED_INTENT);
+        mBootCompletedReceiver.onReceive(mTestApplication, BOOT_COMPLETED_INTENT);
 
         verify(mStateController, never()).enforcePoliciesForCurrentState();
     }
@@ -75,7 +75,7 @@ public class LockTaskBootCompletedReceiverTest {
     public void onReceive_inLockedState_notInLockTaskMode_enforcePolicies() {
         when(mStateController.isLockedInternal()).thenReturn(true);
         mActivityManager.setLockTaskModeState(LOCK_TASK_MODE_NONE);
-        mLockTaskBootCompletedReceiver.onReceive(mTestApplication, BOOT_COMPLETED_INTENT);
+        mBootCompletedReceiver.onReceive(mTestApplication, BOOT_COMPLETED_INTENT);
 
         verify(mStateController).enforcePoliciesForCurrentState();
     }
@@ -84,7 +84,7 @@ public class LockTaskBootCompletedReceiverTest {
     public void onReceive_notInLockedState_inLockTaskMode_enforcePolicies() {
         when(mStateController.isLockedInternal()).thenReturn(false);
         mActivityManager.setLockTaskModeState(LOCK_TASK_MODE_LOCKED);
-        mLockTaskBootCompletedReceiver.onReceive(mTestApplication, BOOT_COMPLETED_INTENT);
+        mBootCompletedReceiver.onReceive(mTestApplication, BOOT_COMPLETED_INTENT);
 
         verify(mStateController).enforcePoliciesForCurrentState();
     }
@@ -93,7 +93,7 @@ public class LockTaskBootCompletedReceiverTest {
     public void onReceive_notInLockedState_notInLockTaskMode_doNotEnforcePolicies() {
         when(mStateController.isLockedInternal()).thenReturn(false);
         mActivityManager.setLockTaskModeState(LOCK_TASK_MODE_NONE);
-        mLockTaskBootCompletedReceiver.onReceive(mTestApplication, BOOT_COMPLETED_INTENT);
+        mBootCompletedReceiver.onReceive(mTestApplication, BOOT_COMPLETED_INTENT);
 
         verify(mStateController, never()).enforcePoliciesForCurrentState();
     }

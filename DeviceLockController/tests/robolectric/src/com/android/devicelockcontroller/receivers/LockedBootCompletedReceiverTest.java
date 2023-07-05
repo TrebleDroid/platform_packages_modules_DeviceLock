@@ -41,7 +41,7 @@ import org.robolectric.shadows.ShadowPackageManager;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(shadows = {ShadowApplicationPackageManager.class})
-public class LockedBootCompletedReceiverTest {
+public final class LockedBootCompletedReceiverTest {
     private final TestDeviceLockControllerApplication mTestApplication =
             ApplicationProvider.getApplicationContext();
     private PackageManager mPm;
@@ -66,7 +66,7 @@ public class LockedBootCompletedReceiverTest {
         LockedBootCompletedReceiver.enforceLockTaskMode(mTestApplication);
 
         final ComponentName componentName =
-                new ComponentName(mTestApplication, LockTaskBootCompletedReceiver.class);
+                new ComponentName(mTestApplication, BootCompletedReceiver.class);
         assertThat(mPm.getComponentEnabledSetting(componentName))
                 .isEqualTo(PackageManager.COMPONENT_ENABLED_STATE_DEFAULT);
         assertThat(mShadowPackageManager.getComponentEnabledSettingFlags(componentName))
@@ -81,7 +81,7 @@ public class LockedBootCompletedReceiverTest {
         LockedBootCompletedReceiver.enforceLockTaskMode(mTestApplication);
 
         final ComponentName componentName =
-                new ComponentName(mTestApplication, LockTaskBootCompletedReceiver.class);
+                new ComponentName(mTestApplication, BootCompletedReceiver.class);
         assertThat(mPm.getComponentEnabledSetting(componentName))
                 .isEqualTo(PackageManager.COMPONENT_ENABLED_STATE_DISABLED);
         assertThat(mShadowPackageManager.getComponentEnabledSettingFlags(componentName))
