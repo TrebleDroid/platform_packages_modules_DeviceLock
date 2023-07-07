@@ -26,9 +26,5 @@
 
     <!-- APEX does not have classes.dex -->
     <application android:hasCode="false">
-        <apex-system-service
-            android:name="com.android.server.devicelock.DeviceLockService"
-            android:path="/apex/com.android.devicelock/javalib/service-devicelock.jar"
-        />
     </application>
 </manifest>
