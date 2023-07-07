@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Noma yiziphi izicelo zokukhiya noma ukuvula ezivela ku-<xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Uma i-app ye-<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ingatholakali"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Amalayisensi omthombo ovulekile"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"Amanye amakhono okuphatha kokuthi "<b>"Amasethingi &gt; Ukuvikeleka &gt; Nolwazi lwedivayisi ephethwe"</b>" awasebenzi kule divayisi"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"Amandla wokuphatha esigabeni sedivayisi enikwe imali samasethingi wokuphepha awasebenzi kule divayisi."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"Le divayisi ihlinzekwa yi-<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"I-app ye-Kiosk izodawunilodwa futhi ifakwe ngokuzenzekelayo"</string>
@@ -122,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{Idivayisi izosethwa kabusha osukwini olungu-1}one{Idivayisi izosethwa kabusha ezinsukwini ezingu-#}other{Idivayisi izosethwa kabusha ezinsukwini ezingu-#}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"Idivayisi izosethwa kabusha ngo-<xliff:g id="TIMER">%s</xliff:g>"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Yonke idatha yedivayisi izosulwa. Ukuze uthole usizo lokubhalisa idivayisi yakho, thinta i-<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Sicela uvumele isaziso esisuka ku-DeviceLock ukuze uqhubeke nokudlulisa ukubhaliswa kwedivayisi."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Ukuxhaswa kwelungiselelo kuhlulekile"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"Sicela uchofoze lapha ukuze uthole izindlela zokuthinta umxhasi wakho wezezimali. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Funda kabanzi<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Phuma"</string>

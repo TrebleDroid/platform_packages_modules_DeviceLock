@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Anumang kahilingan sa pag-lock o pag-unlock mula sa <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Kung hindi available ang <xliff:g id="CREDITOR_APP">%1$s</xliff:g> app"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Mga open-source na lisensya"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"Hindi nalalapat sa device na ito ang iba pang kakayahan sa pamamahala sa "<b>"Mga Setting &gt; Seguridad &gt; Impormasyon ng pinapamahalaang device"</b></string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"Hindi nalalapat sa device na ito ang mga kakayahan sa pamamahala sa seksyon ng pinopondohang device ng Mga setting ng seguridad."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"Nagmula sa <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ang device na ito"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Awtomatikong ida-download at ii-install ang Kiosk app"</string>
@@ -122,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{Mare-reset ang device sa loob ng 1 araw}one{Mare-reset ang device sa loob ng # araw}other{Mare-reset ang device sa loob ng # na araw}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"Mare-reset ang device sa loob ng <xliff:g id="TIMER">%s</xliff:g>"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Made-delete ang lahat ng data ng device. Para sa tulong sa pag-enroll ng iyong device, makipag-ugnayan sa <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Payagan ang notification mula sa DeviceLock para patuloy na ipagpaliban ang pag-enroll ng device."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Hindi nagtagumpay ang provisioning ng financing"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"Mag-click dito para sa mga paraan para makipag-ugnayan sa iyong financier. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Matuto pa<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Lumabas"</string>

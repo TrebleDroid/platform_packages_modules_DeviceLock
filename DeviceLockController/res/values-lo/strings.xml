@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"ຄຳຮ້ອງຂໍການລັອກ ຫຼື ປົດລັອກຈາກ <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"ຫາກແອັບ <xliff:g id="CREDITOR_APP">%1$s</xliff:g> ບໍ່ພ້ອມໃຫ້ບໍລິການ"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"ໃບອະນຸຍາດໂອເພນຊອດ"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"ຄວາມສາມາດອື່ນໆໃນການຈັດການໃນ "<b>"ການຕັ້ງຄ່າ &gt; ຄວາມປອດໄພ &gt; ຂໍ້ມູນອຸປະກອນທີ່ມີການຈັດການ"</b>" ຈະບໍ່ໄດ້ນຳໃຊ້ກັບອຸປະກອນນີ້"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"ຈະບໍ່ມີການນຳໃຊ້ຄວາມສາມາດໃນການຈັດການໃນພາກສ່ວນອຸປະກອນທີ່ໄດ້ຮັບການສະໜັບສະໜູນທາງການເງິນຂອງການຕັ້ງຄ່າຄວາມປອດໄພກັບອຸປະກອນນີ້."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"ອຸປະກອນນີ້ໃຫ້ບໍລິການໂດຍ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"ລະບົບຈະດາວໂຫຼດແອັບ kiosk ແລະ ຕິດຕັ້ງໂດຍອັດຕະໂນມັດ"</string>
@@ -122,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{ອຸປະກອນຈະຣີເຊັດໃນອີກ 1 ມື້}other{ອຸປະກອນຈະຣີເຊັດໃນອີກ # ມື້}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"ອຸປະກອນຈະຣີເຊັດໃນອີກ <xliff:g id="TIMER">%s</xliff:g>"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"ຂໍ້ມູນທັງໝົດໃນອຸປະກອນຈະຖືກລຶບອອກ. ເພື່ອຂໍຄວາມຊ່ວຍເຫຼືອໃນການລົງທະບຽນອຸປະກອນຂອງທ່ານ, ກະລຸນາຕິດຕໍ່ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"ກະລຸນາອະນຸຍາດໃຫ້ມີການແຈ້ງເຕືອນຈາກ DeviceLock ເພື່ອເລື່ອນການລົງທະບຽນອຸປະກອນອອກໄປກ່ອນ."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"ການຈັດກຽມດ້ານການເງິນບໍ່ສຳເລັດ"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"ກະລຸນາຄລິກຢູ່ບ່ອນນີ້ສຳລັບວິທີໃນການຕິດຕໍ່ນັກການເງິນຂອງທ່ານ. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>ສຶກສາເພີ່ມເຕີມ<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"ອອກ"</string>

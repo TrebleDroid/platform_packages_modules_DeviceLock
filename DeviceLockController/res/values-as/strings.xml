@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g>ৰ পৰা অহা কোনো লক অথবা আনলক কৰাৰ অনুৰোধ"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"যদি <xliff:g id="CREDITOR_APP">%1$s</xliff:g> এপ্‌টো উপলব্ধ নহয়"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"মুক্ত উৎসৰ অনুজ্ঞাপত্ৰ"</string>
-    <string name="footer_notice" msgid="7606898520964750584"><b>"ছেটিং &gt; সুৰক্ষা &gt; পৰিচালিত ডিভাইচৰ তথ্য"</b>"ত থকা অন্য পৰিচালনাৰ সক্ষমতাসমূহ এই ডিভাইচটোত প্ৰযোজ্য নহয়"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"সুৰক্ষা সম্পৰ্কীয় ছেটিঙৰ বিত্তীয় সহায় পোৱা ডিভাইচৰ শাখাটোত থকা পৰিচালনাৰ সক্ষমতা এই ডিভাইচটোত প্ৰযোজ্য নহয়।"</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"এই ডিভাইচটো <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>এ প্ৰদান কৰিছে"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Kiosk এপ্‌টো স্বয়ংক্ৰিয়ভাৱে ডাউনল’ড কৰি ইনষ্টল কৰা হ’ব"</string>
@@ -122,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{১ দিনত ডিভাইচটো ৰিছেট হ’ব}one{# দিনত ডিভাইচটো ৰিছেট হ’ব}other{# দিনত ডিভাইচটো ৰিছেট হ’ব}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"<xliff:g id="TIMER">%s</xliff:g>ত ডিভাইচটো ৰিছেট হ’ব"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"ডিভাইচৰ আটাইবোৰ ডেটা মচা হ’ব। আপোনাৰ ডিভাইচ পঞ্জীয়ন কৰাত সহায় পাবলৈ, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>ৰ সৈতে যোগাযোগ কৰক"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"ডিভাইচটোৰ পঞ্জীয়ন পিছুৱাই দিয়াটো অব্যাহত ৰাখিবলৈ  অনুগ্ৰহ কৰি DeviceLockৰ জাননীক অনুমতি দিয়ক।"</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"বিত্তীয় সহায় প্ৰদান কৰাৰ প্ৰ’ভিজনিং বিফল হৈছে"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"আপোনাৰ বিত্তৰ যোগান ধৰোঁতাৰ সৈতে যোগাযোগ কৰাৰ উপায়সমূহ জানিবলৈ অনুগ্ৰহ কৰি ইয়াত ক্লিক কৰক। <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>অধিক জানক<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"বাহিৰ ওলাওক"</string>

@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"сите барања за заклучување или отклучување од <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"ако апликацијата <xliff:g id="CREDITOR_APP">%1$s</xliff:g> не е достапна"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Лиценци за софтвер со отворен код"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"Другите можности за управување во "<b>"Поставки &gt; Безбедност &gt; Информации за управуваните уреди"</b>" не важат за уредов"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"Можностите за управување во делот „финансиран уред“ од поставките за „Безбедност“ не важат за уредов."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> го обезбедува уредов"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Апликацијата Kiosk автоматски ќе се преземе и ќе се инсталира"</string>
@@ -122,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{Уредот ќе се ресетира за 1 ден}one{Уредот ќе се ресетира за # ден}other{Уредот ќе се ресетира за # дена}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"Уредот ќе се ресетира за <xliff:g id="TIMER">%s</xliff:g>"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Сите податоци на уредот ќе се избришат. За помош со регистрирањето на вашиот уред, контактирајте со <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Дозволете ги известувањата од DeviceLock за да продолжите да го одложувате регистрирањето на уредот."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Финансиските подготовки не беа успешни"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"Кликнете овде за да ги видите начините за контакт со вашиот финансиер. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Дознајте повеќе<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Излези"</string>

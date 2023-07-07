@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Qualquer pedido para bloquear ou desbloquear da app <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Se a app <xliff:g id="CREDITOR_APP">%1$s</xliff:g> não estiver disponível"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Licenças de código aberto"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"As outras capacidades de gestão em "<b>"Definições &gt; Segurança &gt; Informações do dispositivo gerido"</b>" não se aplicam a este dispositivo"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"As capacidades de gestão na secção de dispositivos financiados das Definições de segurança não se aplicam a este dispositivo."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"Este dispositivo foi fornecido pelo fornecedor <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>."</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"A app de quiosque vai ser transferida e instalada automaticamente"</string>
@@ -122,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{O dispositivo vai ser reposto dentro de 1 dia}other{O dispositivo vai ser reposto dentro de # dias}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"O dispositivo vai ser reposto dentro de <xliff:g id="TIMER">%s</xliff:g>"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Todos os dados do dispositivo vão ser eliminados. Para obter ajuda para inscrever o seu dispositivo, contacte o fornecedor <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Permita que a notificação do DeviceLock continue a adiar a inscrição do dispositivo."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"O aprovisionamento do financiamento falhou"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"Clique aqui para ver formas de contactar o seu financiador. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Saiba mais<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Sair"</string>

@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> എന്നതിൽ നിന്നുള്ള, ലോക്ക് ചെയ്യാനോ അൺലോക്ക് ചെയ്യാനോ ഉള്ള ഏത് അഭ്യർത്ഥനയും"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ആപ്പ് ലഭ്യമല്ലെങ്കിൽ"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"ഓപ്പൺ സോഴ്‌സ് ലൈസൻസുകൾ"</string>
-    <string name="footer_notice" msgid="7606898520964750584"><b>"ക്രമീകരണം &gt; സുരക്ഷ &gt; മാനേജ് ചെയ്യപ്പെടുന്ന ഉപകരണ വിവരങ്ങൾ"</b>" എന്നതിലെ മറ്റ് മാനേജ്‌മെന്റ് കഴിവുകൾ ഈ ഉപകരണത്തിന് ബാധകമാകില്ല"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"സുരക്ഷാ ക്രമീകരണത്തിലുള്ള ഫിനാൻസ് ചെയ്‌ത ഉപകരണ വിഭാഗത്തിലെ മാനേജ്മെന്റ് കഴിവുകൾ ഈ ഉപകരണത്തിന് ബാധകമല്ല."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> നൽകിയ ഉപകരണമാണിത്"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"കിയോസ്‌ക് ആപ്പ് സ്വയമേവ ഡൗൺലോഡ് ചെയ്ത് ഇൻസ്റ്റാൾ ചെയ്യും"</string>
@@ -122,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{ഒരു ദിവസത്തിനുള്ളിൽ ഉപകരണം റീസെറ്റ് ചെയ്യും}other{# ദിവസത്തിനുള്ളിൽ ഉപകരണം റീസെറ്റ് ചെയ്യും}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"<xliff:g id="TIMER">%s</xliff:g>-നുള്ളിൽ ഉപകരണം റീസെറ്റ് ചെയ്യും"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"എല്ലാ ഉപകരണ ഡാറ്റയും ഇല്ലാതാക്കും. നിങ്ങളുടെ ഉപകരണം എൻറോൾ ചെയ്യുന്നതിനുള്ള സഹായത്തിന്, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> എന്നതിനെ ബന്ധപ്പെടുക"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"ഉപകരണത്തിന്റെ എൻറോൾമെന്റ് മാറ്റിവയ്ക്കുന്നത് തുടരാൻ DeviceLock-ൽ നിന്നുള്ള അറിയിപ്പ് അനുവദിക്കുക."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"ഫിനാൻസിംഗ് പ്രൊവിഷനിംഗ് പരാജയപ്പെട്ടു"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"നിങ്ങളുടെ സാമ്പത്തിക വിദഗ്‌ധരെ ബന്ധപ്പെടുന്നതിനുള്ള മാർഗ്ഗങ്ങൾക്കായി ഇവിടെ ക്ലിക്ക് ചെയ്യുക. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>കൂടുതലറിയുക<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"പുറത്ത് കടക്കുക"</string>

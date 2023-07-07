@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Wszystkie prośby o zablokowanie i odblokowanie z aplikacji <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Jeśli aplikacja <xliff:g id="CREDITOR_APP">%1$s</xliff:g> nie jest dostępna"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Licencje typu open source"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"Inne możliwości zarządzania w sekcji "<b>"Ustawienia &gt; Bezpieczeństwo &gt; Informacje o urządzeniu zarządzanym"</b>" nie dotyczą tego urządzenia"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"Możliwości zarządzania w sekcji finansowanego urządzenia w ustawieniach Bezpieczeństwa nie dotyczą tego urządzenia"</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"To urządzenie dostarcza organizacja <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Aplikacja Kiosk zostanie pobrana i zainstalowana automatycznie"</string>
@@ -122,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{Urządzenie zostanie zresetowane za 1 dzień}few{Urządzenie zostanie zresetowane za # dni}many{Urządzenie zostanie zresetowane za # dni}other{Urządzenie zostanie zresetowane za # dnia}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"Urządzenie zostanie zresetowane za <xliff:g id="TIMER">%s</xliff:g>"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Wszystkie dane z urządzenia zostaną usunięte. Aby uzyskać pomoc w zarejestrowaniu urządzenia, skontaktuj się z <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Zezwól na powiadomienia z DeviceLock, aby nadal odraczać rejestrację urządzenia."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Inicjowanie finansowania nie powiodło się"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"Kliknij tutaj, aby dowiedzieć się, jak skontaktować się ze swoim podmiotem finansującym. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Więcej informacji<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Zakończ"</string>

@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"همه درخواست‌های قفل کردن یا باز کردن قفل ازطرف <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"اگر برنامه <xliff:g id="CREDITOR_APP">%1$s</xliff:g> دردسترس نباشد"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"پروانه‌های متن‌باز"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"دیگر قابلیت‌های مدیریتی موجود در "<b>"«تنظیمات &gt; امنیت &gt; اطلاعات دستگاه مدیریت‌شده»"</b>" شامل این دستگاه نمی‌شود"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"قابلیت‌های مدیریتی موجود در بخش دستگاه دارای پشتیبانی مالی از «تنظیمات امنیتی» شامل این دستگاه نمی‌شود."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"این دستگاه را <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ارائه کرده است"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"«برنامه کیوسکی» به‌طور خودکار بارگیری و نصب خواهد شد"</string>
@@ -122,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{دستگاه یک روز دیگر بازنشانی خواهد شد}one{دستگاه # روز دیگر بازنشانی خواهد شد}other{دستگاه # روز دیگر بازنشانی خواهد شد}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"دستگاه <xliff:g id="TIMER">%s</xliff:g> دیگر بازنشانی خواهد شد"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"همه داده‌های دستگاه حذف خواهد شد. برای دریافت راهنمایی درخصوص ثبت‌نام دستگاه، با <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> تماس بگیرید"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"برای ادامه یافتن به‌تأخیر انداختن ثبت‌نام این دستگاه، لطفاً به اعلان‌های DeviceLock اجازه دهید."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"تأمین مالی انجام نشد"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"برای اطلاع از روش‌های تماس با تأمین‌کننده مالی، لطفاً اینجا کلیک کنید. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>بیشتر بدانید<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"خارج شدن"</string>

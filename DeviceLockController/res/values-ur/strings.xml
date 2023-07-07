@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> سے مقفل یا غیر مقفل کرنے کی کوئی بھی درخواست"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"اگر <xliff:g id="CREDITOR_APP">%1$s</xliff:g> ایپ دستیاب نہیں ہے"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"اوپن سورس لائسنسز"</string>
-    <string name="footer_notice" msgid="7606898520964750584"><b>"ترتیبات &gt; سیکیورٹی &gt; نظم کردہ آلے کی معلومات"</b>" میں مینیجمنٹ کی دیگر صلاحیتیں اس آلہ پر لاگو نہیں ہوتی ہیں"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"سیکیورٹی کی ترتیبات کے مالی تعاون یافتہ آلے کے سیکشن میں موجود نظم و نسق کی صلاحیتیں اس آلے پر لاگو نہیں ہوتی ہیں۔"</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"یہ آلہ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> نے فراہم کیا ہے"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Kiosk ایپ خودکار طور پر ڈاؤن لوڈ اور انسٹال ہو جائے گی"</string>
@@ -122,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{آلہ 1 دن میں ری سیٹ ہو جائے گا}other{آلہ # دن میں ری سیٹ ہو جائے گا}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"آلہ <xliff:g id="TIMER">%s</xliff:g> میں ری سیٹ ہو جائے گا"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"آلہ کا تمام ڈیٹا حذف کر دیا جائے گا۔ اپنے آلے کے اندراج میں مدد کے لیے، <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> سے رابطہ کریں"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"براہ کرم آلہ کا اندراج موخر کرنے کے لیے DeviceLock سے اطلاع کی اجازت دیں۔"</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"فنانسنگ کی فراہمی ناکام ہو گئی ہے"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"اپنے سرمایہ کار سے رابطہ کرنے کے طریقوں کیلئے براہ کرم یہاں کلک کریں۔ <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>مزید جانیں<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"باہر نکلیں"</string>

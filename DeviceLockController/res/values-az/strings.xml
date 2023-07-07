@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> tətbiqinin kilidləmə və ya kilidaçma sorğuları"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> tətbiqi əlçatan olmadıqda"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Açıq mənbə lisenziyaları"</string>
-    <string name="footer_notice" msgid="7606898520964750584"><b>"Ayarlar &gt; Təhlükəsizlik &gt; İdarə edilən cihaz məlumatı"</b>" bölməsindəki digər idarəetmə imkanları bu cihaza tətbiq edilmir"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"Təhlükəsizlik ayarlarının maliyyələşdirilən cihaz bölməsindəki idarəetmə imkanları bu cihaza tətbiq edilmir."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"Bu cihaz <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> tərəfindən təmin edilib"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Köşk tətbiqi avtomatik endiriləcək və quraşdırılacaq"</string>
@@ -122,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{Cihaz 1 gündən sonra sıfırlanacaq}other{Cihaz # gündən sonra sıfırlanacaq}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"Cihaz <xliff:g id="TIMER">%s</xliff:g> sonra sıfırlanacaq"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Bütün cihaz datası silinəcək. Cihaz qeydiyyatı üzrə kömək üçün <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ilə əlaqə saxlayın"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Cihaz qeydiyyatını təxirə salmaq üçün DeviceLock bildirişinə icazə verin."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Maliyyə təminatı alınmadı"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"Maliyyəçi ilə əlaqə üsulları üçün bura klikləyin. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Ətraflı məlumat<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Çıxın"</string>

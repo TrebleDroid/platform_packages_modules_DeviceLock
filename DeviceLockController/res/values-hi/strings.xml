@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"लॉक या अनलॉक करने के लिए, <xliff:g id="CREDITOR_APP">%1$s</xliff:g> से किए गए अनुरोध"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"जब उपयोगकर्ता के डिवाइस में, <xliff:g id="CREDITOR_APP">%1$s</xliff:g> ऐप्लिकेशन मौजूद न हो"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"ओपन सोर्स लाइसेंस"</string>
-    <string name="footer_notice" msgid="7606898520964750584"><b>"सेटिंग &gt; सुरक्षा &gt; मैनेज किए जा रहे डिवाइस की जानकारी"</b>" में मौजूद मैनेज करने से जुड़ी दूसरी अनुमतियां, इस डिवाइस पर लागू नहीं होंगी"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"सुरक्षा सेटिंग के फ़ाइनेंस किए गए डिवाइस वाले सेक्शन में मौजूद, मैनेज करने से जुड़ी अनुमतियां, इस डिवाइस पर लागू नहीं होंगी."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"यह डिवाइस <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ने दिया है"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"कीऑस्क ऐप्लिकेशन, अपने-आप डाउनलोड और इंस्टॉल हो जाएगा"</string>
@@ -122,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{डिवाइस 1 दिन में रीसेट हो जाएगा}one{डिवाइस # दिन में रीसेट हो जाएगा}other{डिवाइस # दिन में रीसेट हो जाएगा}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"डिवाइस <xliff:g id="TIMER">%s</xliff:g> में रीसेट हो जाएगा"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"डिवाइस का सारा डेटा मिटा दिया जाएगा. अपने डिवाइस को रजिस्टर करने में मदद पाने के लिए, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> से संपर्क करें"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"डिवाइस का रजिस्ट्रेशन करने की तारीख आगे बढ़ाते रहने के लिए, कृपया DeviceLock से सूचना पाने की सुविधा चालू करें."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"डिवाइस प्रॉविज़निंग को फ़ाइनेंस नहीं किया जा सका"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"कृपया, अपने फ़ाइनेंशियर से संपर्क करने के तरीके जानने के लिए यहां क्लिक करें. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>ज़्यादा जानें<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"बाहर निकलें"</string>

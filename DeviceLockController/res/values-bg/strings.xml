@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Всички заявки за заключване или отключване от <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Ако приложението <xliff:g id="CREDITOR_APP">%1$s</xliff:g> не е налице"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Лицензи за отворен код"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"Другите възможности за управление в "<b>"Настройки &gt; Сигурност &gt; Информация за управляваното устройство"</b>" не важат за това устройство"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"Възможностите за управление в секцията за финансирано устройство, която се намира в настройките за сигурност, не са приложими за това устройство."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"Това устройство е предоставено от <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Павилионното приложение ще бъде изтеглено и инсталирано автоматично"</string>
@@ -122,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{Устройството ще бъде нулирано след 1 ден}other{Устройството ще бъде нулирано след # дни}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"Устройството ще бъде нулирано след <xliff:g id="TIMER">%s</xliff:g>"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Всички данни на устройството ще бъдат изтрити. За помощ относно регистрирането му се свържете с(ъс) <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Моля, разрешете известие от DeviceLock, за да продължите отлагането на регистрирането на устройството."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Обезпечаването за финансиране не бе успешно"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"Моля, кликнете тук за начини да се свържете с финансиста си. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Научете повече<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Изход"</string>

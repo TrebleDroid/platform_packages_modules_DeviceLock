@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Kõik lukustamise või avamise taotlused rakenduselt <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Kui rakendus <xliff:g id="CREDITOR_APP">%1$s</xliff:g> pole saadaval"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Avatud lähtekoodi litsentsid"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"Muud haldusfunktsioonid menüüs "<b>"Seaded &gt; Turvalisus &gt; Teave hallatud seadme kohta"</b>" selle seadme puhul ei kehti"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"Haldusfunktsioonid turvaseadete jaotises „Teave seadme finantsandmete kohta“ selle seadme puhul ei kehti."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"Selle seadme on andnud <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Kioskirakendus laaditakse alla ja installitakse automaatselt"</string>
@@ -122,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{Seade lähtestatakse 1 päeva pärast}other{Seade lähtestatakse # päeva pärast}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"Seade lähtestatakse <xliff:g id="TIMER">%s</xliff:g> pärast"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Kõik seadme andmed kustutatakse. Seadme registreerimisel abi saamiseks võtke ühendust pakkujaga <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Seadme registreerimise edasilükkamise jätkamiseks lubage märguanded rakenduselt DeviceLock."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Järelmaksu pakkumine ebaõnnestus"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"Klõpsake siin, et näha, kuidas oma järelmaksu pakkujaga ühendust võtta. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Lisateave<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Välju"</string>

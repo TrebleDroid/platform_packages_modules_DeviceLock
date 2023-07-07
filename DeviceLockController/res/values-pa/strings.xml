@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ਤੋਂ ਲਾਕ ਜਾਂ ਅਣਲਾਕ ਕਰਨ ਲਈ ਕੋਈ ਬੇਨਤੀ"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"ਜੇ <xliff:g id="CREDITOR_APP">%1$s</xliff:g> ਐਪ ਉਪਲਬਧ ਨਹੀਂ ਹੈ"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"ਖੁੱਲ੍ਹੇ ਸਰੋਤ ਲਾਇਸੰਸ"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"ਇਸ ਡੀਵਾਈਸ \'ਤੇ "<b>"ਸੈਟਿੰਗਾਂ, &amp;gt ਸੁਰੱਖਿਆ, &amp;gt ਪ੍ਰਬੰਧਿਤ ਕੀਤੇ ਡੀਵਾਈਸ ਬਾਰੇ ਜਾਣਕਾਰੀ"</b>" ਵਿੱਚ ਹੋਰ ਪ੍ਰਬੰਧਨ ਸਮਰੱਥਾਵਾਂ ਲਾਗੂ ਨਹੀਂ ਹੁੰਦੀਆਂ"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"ਸੁਰੱਖਿਆ ਸੈਟਿੰਗਾਂ ਦੇ ਵਿੱਤ ਪ੍ਰਬੰਧਿਤ ਡੀਵਾਈਸ ਸੈਕਸ਼ਨ ਵਿਚਲੀਆਂ ਪ੍ਰਬੰਧਨ ਸਮਰੱਥਾਵਾਂ ਇਸ ਡੀਵਾਈਸ \'ਤੇ ਲਾਗੂ ਨਹੀਂ ਹੁੰਦੀਆਂ।"</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"ਇਹ ਡੀਵਾਈਸ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ਵੱਲੋਂ ਮੁਹੱਈਆ ਕਰਵਾਇਆ ਗਿਆ ਹੈ"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"ਕਿਓਸਕ ਐਪ ਸਵੈਚਲਿਤ ਤੌਰ \'ਤੇ ਡਾਊਨਲੋਡ ਅਤੇ ਸਥਾਪਤ ਹੋ ਜਾਵੇਗੀ"</string>
@@ -122,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{ਡੀਵਾਈਸ 1 ਦਿਨ ਵਿੱਚ ਰੀਸੈੱਟ ਹੋ ਜਾਵੇਗਾ}one{ਡੀਵਾਈਸ # ਦਿਨ ਵਿੱਚ ਰੀਸੈੱਟ ਹੋ ਜਾਵੇਗਾ}other{ਡੀਵਾਈਸ # ਦਿਨਾਂ ਵਿੱਚ ਰੀਸੈੱਟ ਹੋ ਜਾਵੇਗਾ}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"ਡੀਵਾਈਸ <xliff:g id="TIMER">%s</xliff:g> ਵਿੱਚ ਰੀਸੈੱਟ ਹੋ ਜਾਵੇਗਾ"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"ਸਾਰੇ ਡੀਵਾਈਸ ਡਾਟੇ ਨੂੰ ਮਿਟਾ ਦਿੱਤਾ ਜਾਵੇਗਾ। ਤੁਹਾਡੇ ਡੀਵਾਈਸ ਨੂੰ ਦਰਜ ਕਰਨ ਵਿੱਚ ਮਦਦ ਲਈ, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ਨੂੰ ਸੰਪਰਕ ਕਰੋ"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"ਕਿਰਪਾ ਕਰਕੇ ਡੀਵਾਈਸ ਨੂੰ ਦਰਜ ਕਰਨ ਦੀ ਪ੍ਰਕਿਰਿਆ ਨੂੰ ਮੁਲਤਵੀ ਕਰਨਾ ਜਾਰੀ ਰੱਖਣ ਲਈ, DeviceLock ਤੋਂ ਸੂਚਨਾ ਦੀ ਇਜਾਜ਼ਤ ਦਿਓ।"</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"ਵਿੱਤ ਵਿਵਸਥਾ ਅਸਫਲ ਰਹੀ"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੇ ਫਾਈਨੈਂਸਰ ਨਾਲ ਸੰਪਰਕ ਕਰਨ ਦੇ ਤਰੀਕਿਆਂ ਲਈ ਇੱਥੇ ਕਲਿੱਕ ਕਰੋ। <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>ਹੋਰ ਜਾਣੋ<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"ਬਾਹਰ ਜਾਓ"</string>

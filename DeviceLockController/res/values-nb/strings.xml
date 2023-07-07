@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Alle forespørsler om å låse eller låse opp fra <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Hvis <xliff:g id="CREDITOR_APP">%1$s</xliff:g>-appen ikke er tilgjengelig"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Lisenser for åpen kildekode"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"De andre funksjonene for administrering i "<b>"Innstillinger &gt; Sikkerhet &gt; Informasjon om administrert enhet"</b>" gjelder ikke for denne enheten"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"Funksjonene for administrering i delen om finansiert enhet i Sikkerhet-innstillingene gjelder ikke for denne enheten."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"Denne enheten leveres av <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Kioskappen lastes ned og installeres automatisk"</string>
@@ -122,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{Enheten tilbakestilles om 1 dag}other{Enheten tilbakestilles om # dager}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"Enheten tilbakestilles om <xliff:g id="TIMER">%s</xliff:g>"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Alle enhetsdata slettes. Hvis du trenger hjelp med å registrere enheten din, bør du kontakte <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Du må tillate varsler fra DeviceLock for å fortsette å utsette registreringen av enheten."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Kunne ikke provisjonere finansiering"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"Klikk her for å finne måter å kontakte finansieringsløsningen din på. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Finn ut mer<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Avslutt"</string>

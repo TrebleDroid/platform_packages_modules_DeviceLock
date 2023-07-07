@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Minden zárolási és feloldási kérelem a következőtől: <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Ha a következő alkalmazás nem áll rendelkezésre: <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Nyílt forráskódú licencek"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"A "<b>"Beállítások &gt; Biztonság &gt; Felügyelt eszköz adatai"</b>" részben található további kezelési lehetőségek nem vonatkoznak erre az eszközre."</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"A Biztonsági beállítások Finanszírozott eszközök adatai részében található kezelési lehetőségek nem vonatkoznak erre az eszközre."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"Ezt az eszközt a(z) <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> biztosítja"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"A kioszkalkalmazás automatikusan letöltődik és települ"</string>
@@ -122,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{Az eszköz visszaállításra kerül 1 nap múlva}other{Az eszköz visszaállításra kerül # nap múlva}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"<xliff:g id="TIMER">%s</xliff:g> múlva az eszköz visszaállításra kerül"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Az eszközön lévő minden adat törlésre kerül. Ha segítségre van szüksége eszköze regisztrálásához, forduljon a következőhöz: <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>."</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Engedélyezze a DeviceLock értesítéseit, ha továbbra is halasztani szeretné az eszköz regisztrációját."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"A finanszírozási kiépítés sikertelen volt"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"A finanszíróval való kapcsolatfelvételi módokért kattintson ide. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>További információ<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>."</string>
     <string name="exit" msgid="645084771882733921">"Kilépés"</string>

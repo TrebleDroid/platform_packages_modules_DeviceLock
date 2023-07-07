@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"أي طلبات لقفل الجهاز أو فتح قفله من تطبيق \"<xliff:g id="CREDITOR_APP">%1$s</xliff:g>\""</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"إذا لم يكن تطبيق \"<xliff:g id="CREDITOR_APP">%1$s</xliff:g>\" متاحًا"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"تراخيص البرامج المفتوحة المصدر"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"لا تسري على هذا الجهاز ميزات الإدارة الأخرى المُدرجة في "<b>"الإعدادات &gt; الأمان &gt; معلومات الجهاز المُدار"</b>"."</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"لا تسري على هذا الجهاز ميزات الإدارة المُدرجة في قسم الجهاز المموَّل ضمن إعدادات الأمان."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"يتم توفير هذا الجهاز من قِبل \"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>\"."</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"سيتم تلقائيًا تنزيل تطبيق Kiosk وتثبيته."</string>
@@ -122,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{ستتم إعادة ضبط الجهاز بعد يوم واحد.}zero{ستتم إعادة ضبط الجهاز بعد # يوم.}two{ستتم إعادة ضبط الجهاز بعد يومَين.}few{ستتم إعادة ضبط الجهاز بعد # أيام.}many{ستتم إعادة ضبط الجهاز بعد # يومًا.}other{ستتم إعادة ضبط الجهاز بعد # يوم.}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"ستتم إعادة ضبط الجهاز بعد ‎<xliff:g id="TIMER">%s</xliff:g>"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"سيتم حذف جميع البيانات على الجهاز. للحصول على المساعدة في تسجيل جهازك، يُرجى التواصل مع \"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>\"."</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"يُرجى السماح بإشعارات DeviceLock لمواصلة تأجيل عملية تسجيل الجهاز."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"تعذَّر توفير التمويل"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"يُرجى النقر هنا لمعرفة طُرق التواصل مع جهة التمويل الخاصة بك. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>مزيد من المعلومات<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"خروج"</string>

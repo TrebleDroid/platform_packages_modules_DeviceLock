@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Permintaan kunci atau buka kunci apa pun dari <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Jika aplikasi <xliff:g id="CREDITOR_APP">%1$s</xliff:g> tidak tersedia"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Lisensi open source"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"Kemampuan pengelolaan lain di "<b>"Setelan &gt; Keamanan &gt; Info perangkat terkelola"</b>" tidak berlaku untuk perangkat ini"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"Kemampuan pengelolaan di bagian perangkat yang dibiayai di setelan Keamanan tidak berlaku untuk perangkat ini."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"Perangkat ini disediakan oleh <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Aplikasi Kios akan otomatis didownload dan diinstal"</string>
@@ -122,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{Perangkat akan direset dalam 1 hari}other{Perangkat akan direset dalam # hari}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"Perangkat akan direset dalam <xliff:g id="TIMER">%s</xliff:g>"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Semua data perangkat akan dihapus. Untuk mendapatkan bantuan dalam proses pendaftaran perangkat Anda, hubungi <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Berikan izin notifikasi dari DeviceLock untuk melanjutkan proses penundaan pendaftaran perangkat."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Penyediaan keuangan gagal"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"Klik di sini untuk mengetahui cara menghubungi penyedia dana Anda. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Pelajari lebih lanjut<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Keluar"</string>

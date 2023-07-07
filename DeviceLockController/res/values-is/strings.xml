@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Allar beiðnir frá <xliff:g id="CREDITOR_APP">%1$s</xliff:g> um að læsa eða taka úr lás"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Ef <xliff:g id="CREDITOR_APP">%1$s</xliff:g>-forritið er ekki í boði"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Leyfi opins kóða"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"Aðrir stjórnunareiginleikar í "<b>"Stillingar &gt; Öryggi &gt; Upplýsingar um stýrt tæki"</b>" gilda ekki um þetta tæki"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"Stjórnunareiginleikar í öryggisstillingum varðandi fjármögnunarhluta tækisins eiga ekki við um þetta tæki."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"Þetta tæki er frá <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Sjálfsalaforritið verður sótt og sett upp sjálfkrafa"</string>
@@ -122,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{Tæki verður endurstillt eftir 1 dag}one{Tæki verður endurstillt eftir # dag}other{Tæki verður endurstillt eftir # daga}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"Tækið verður endurstillt eftir <xliff:g id="TIMER">%s</xliff:g>"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Öllum gögnum tækis verður eytt. Hafðu samband við <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> til að fá aðstoð við að skrá tækið"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Leyfðu tilkynningu frá DeviceLock til að halda áfram að fresta skráningu tækisins."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Fjármögnunarúthlutun mistókst"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"Smelltu hér til að sjá leiðir til að ná sambandi við fjármögnunarþjónustuna. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Nánar<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Hætta"</string>

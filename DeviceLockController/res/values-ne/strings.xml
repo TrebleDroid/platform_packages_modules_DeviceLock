@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ले गर्ने लक वा अनलकसम्बन्धी सबै अनुरोधहरू"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> एप उपलब्ध छ कि छैन भन्ने कुरा"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"खुला स्रोतका लाइसेन्सहरू"</string>
-    <string name="footer_notice" msgid="7606898520964750584"><b>"सेटिङ &gt; सुरक्षा &gt; व्यवस्थापन गरिएको डिभाइससम्बन्धी जानकारी"</b>" मा भएका व्यवस्थापनसम्बन्धी अन्य सुविधाहरू यो डिभाइसमा लागू हुँदैनन्"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"सुरक्षासम्बन्धी सेटिङअन्तर्गतको \"किस्तामा खरिद गरिएको डिभाइस\" नामक खण्डमा भएका व्यवस्थापनसम्बन्धी सुविधाहरू यो डिभाइसमा लागू हुँदैनन्।"</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ले यो डिभाइस उपलब्ध गराएको हो"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"किअस्क एप स्वतः डाउनलोड र इन्स्टल गरिने छ"</string>
@@ -122,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{डिभाइस १ दिनपछि रिसेट हुने छ}other{डिभाइस # दिनपछि रिसेट हुने छ}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"डिभाइस <xliff:g id="TIMER">%s</xliff:g> पछि रिसेट हुने छ"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"डिभाइसमा रहेका सबै डेटा मेटाइने छ। आफ्नो डिभाइस दर्ता गर्न <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> मा सम्पर्क गर्नुहोस्"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"डिभाइस दर्ता गर्ने प्रक्रिया स्थगन गरिराख्न कृपया DeviceLock बाट सूचना प्राप्त गर्ने सुविधा अन गर्नुहोस्।"</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"किस्तामा भुक्तानी गर्ने प्रावधान प्राप्त गर्न सकिएन"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"किस्तामा भुक्तानी गर्ने सुविधा प्रदायकलाई सम्पर्क गर्ने तरिकाहरूका बारेमा जान्न कृपया यहाँ क्लिक गर्नुहोस्। <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>थप जान्नुहोस्<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"बाहिरिनुहोस्"</string>

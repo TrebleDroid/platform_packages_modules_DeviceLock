@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Enige sluit- of ontsluitversoeke deur <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"As die <xliff:g id="CREDITOR_APP">%1$s</xliff:g>-app nie beskikbaar is nie"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Oopbronlisensies"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"Die ander bestuurvermoëns in "<b>"Instellings &gt; Sekuriteit &gt; Inligting oor bestuurde toestel"</b>" is nie op hierdie toestel van toepassing nie"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"Die bestuurvermoëns in Sekuriteitinstellings se afdeling oor gefinansierde toestel is nie op hierdie toestel van toepassing nie"</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"Hierdie toestel word verskaf deur <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Die Kiosk-app sal afgelaai en outomaties geïnstalleer word"</string>
@@ -122,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{Toestel sal oor 1 dag teruggestel word}other{Toestel sal oor # dae teruggestel word}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"Toestel sal oor <xliff:g id="TIMER">%s</xliff:g> teruggestel word"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Alle toesteldata sal uitgevee word. Kontak <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> vir hulp met die inskrywing van jou toestel"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Laat asseblief kennisgewings van Toestelslot af toe om aan te hou om die inskrywing van die toestel uit te stel."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Kon nie finansiering opstel nie"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"Klik hier vir maniere om jou finansier te kontak. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Kom meer te wete<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Gaan uit"</string>

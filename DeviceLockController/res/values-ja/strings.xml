@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> からのロック / ロック解除のリクエスト"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> アプリが利用できない場合"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"オープンソース ライセンス"</string>
-    <string name="footer_notice" msgid="7606898520964750584"><b>"[設定] &gt; [セキュリティ] &gt; [管理対象デバイスの情報]"</b>" のその他の管理機能は、このデバイスに適用されません"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"セキュリティ設定の [ローンで購入したデバイスの情報] に記載されている管理機能は、このデバイスには適用されません。"</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"このデバイスは <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> から提供されています"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"キオスクアプリは自動的にダウンロード、インストールされます"</string>
@@ -122,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{デバイスは 1 日以内にリセットされます}other{デバイスは # 日以内にリセットされます}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"デバイスは <xliff:g id="TIMER">%s</xliff:g> にリセットされます"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"デバイスのデータはすべて削除されます。デバイスの登録についてサポートが必要な場合は、<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> にお問い合わせください"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"デバイスの登録を引き続き延期するには、DeviceLock からの通知を許可してください。"</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"融資のプロビジョニングに失敗しました"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"融資業者への連絡方法については、こちらをクリックしてください。<xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>詳細<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"終了"</string>

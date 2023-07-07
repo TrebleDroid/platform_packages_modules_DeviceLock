@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g>ରୁ ଯେ କୌଣସି ଲକ୍ କିମ୍ବା ଅନଲକ୍ କରିବାର ଅନୁରୋଧ"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"ଯଦି <xliff:g id="CREDITOR_APP">%1$s</xliff:g> ଆପ୍ ଉପଲବ୍ଧ ନାହିଁ"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"ଓପନ-ସୋର୍ସ ଲାଇସେନ୍ସଗୁଡ଼ିକ"</string>
-    <string name="footer_notice" msgid="7606898520964750584"><b>"ସେଟିଂସ &gt; ସୁରକ୍ଷା &gt; ପରିଚାଳିତ ଡିଭାଇସ ସୂଚନା"</b>"ରେ ଅନ୍ୟ ପରିଚାଳନା କ୍ଷମତାଗୁଡ଼ିକ ଏହି ଡିଭାଇସରେ ଲାଗୁ ହୁଏ ନାହିଁ"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"ସୁରକ୍ଷା ସେଟିଂସର ଫାଇନାନ୍ସଡ୍ ଡିଭାଇସ୍ ବିଭାଗରେ ଥିବା ପରିଚାଳନା ଦକ୍ଷତା ଏହି ଡିଭାଇସରେ ଲାଗୁ ହୁଏ ନାହିଁ।"</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"ଏହି ଡିଭାଇସ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ଦ୍ୱାରା ପ୍ରଦାନ କରାଯାଇଛି"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Kiosk ଆପ ସ୍ୱତଃ ଡାଉନଲୋଡ ଏବଂ ଇନଷ୍ଟଲ ହେବ"</string>
@@ -122,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{ଡିଭାଇସ 1 ଦିନରେ ରିସେଟ ହେବ}other{ଡିଭାଇସ # ଦିନରେ ରିସେଟ ହେବ}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"ଡିଭାଇସ <xliff:g id="TIMER">%s</xliff:g>ରେ ରିସେଟ ହେବ"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"ସମସ୍ତ ଡିଭାଇସ ଡାଟା ଡିଲିଟ ହୋଇଯିବ। ଆପଣଙ୍କ ଡିଭାଇସକୁ ପଞ୍ଜିକରଣ କରିବାରେ ସହାୟତା ପାଇଁ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ସହ କଣ୍ଟାକ୍ଟ କରନ୍ତୁ"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"ଡିଭାଇସର ପଞ୍ଜିକରଣ ବିଳମ୍ବ କରିବା ଜାରି ରଖିବା ପାଇଁ ଦୟାକରି DeviceLockରୁ ବିଜ୍ଞପ୍ତିକୁ ଅନୁମତି ଦିଅନ୍ତୁ।"</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"ଫାଇନାନ୍ସିଂ ବ୍ୟବସ୍ଥା ବିଫଳ ହୋଇଛି"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"ଆପଣଙ୍କ ଫାଇନାନ୍ସର ସହ କଣ୍ଟାକ୍ଟ କରିବାକୁ ଉପାୟଗୁଡ଼ିକ ପାଇଁ ଦୟାକରି ଏଠାରେ କ୍ଲିକ କରନ୍ତୁ। <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>ଅଧିକ ଜାଣନ୍ତୁ<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"ବାହାରି ଯାଆନ୍ତୁ"</string>

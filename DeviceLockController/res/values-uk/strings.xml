@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Усі запити на блокування й розблокування з додатка <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Інформація про відсутність додатка <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Ліцензії відкритого коду"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"Інші можливості керування в розділі "<b>"Налаштування &gt; Безпека &gt; Інформація про керований пристрій"</b>" не застосовуються до цього пристрою"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"До цього пристрою не застосовуються функції керування, описані в розділі налаштування безпеки для пристроїв, придбаних у кредит."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"Цей пристрій надала організація <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Додаток-термінал буде завантажено й установлено автоматично"</string>
@@ -122,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{Налаштування пристрою буде скинуто через 1 день}one{Налаштування пристрою буде скинуто через # день}few{Налаштування пристрою буде скинуто через # дні}many{Налаштування пристрою буде скинуто через # днів}other{Налаштування пристрою буде скинуто через # дня}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"Налаштування пристрою буде скинуто за <xliff:g id="TIMER">%s</xliff:g>"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Усі дані пристрою буде видалено. Щоб отримати допомогу з реєстрацією пристрою, зв’яжіться з організацією <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Дозвольте сповіщення від DeviceLock, щоб продовжити відкладення реєстрації пристрою."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Фінансування не надано"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"Натисніть тут, щоб дізнатися, як зв’язатися зі своїм кредитором. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Докладніше<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Закрити"</string>

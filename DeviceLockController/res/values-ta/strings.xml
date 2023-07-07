@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ஆப்ஸிடமிருந்து பெறப்பட்ட லாக்/அன்லாக் கோரிக்கைகள்"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"சாதனத்தில் <xliff:g id="CREDITOR_APP">%1$s</xliff:g> ஆப்ஸ் இல்லாமல் இருப்பது"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"ஓப்பன் சோர்ஸ் உரிமங்கள்"</string>
-    <string name="footer_notice" msgid="7606898520964750584"><b>"அமைப்புகள் &gt; பாதுகாப்பு &gt; நிர்வகிக்கப்படும் சாதனத் தகவல்கள்"</b>" என்பதிலுள்ள பிற மேலாண்மைத் திறன்கள் இந்தச் சாதனத்திற்குப் பொருந்தாது"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"பாதுகாப்பு அமைப்புகளில் \'கடன் மூலம் பெற்ற சாதனம்\' பிரிவிலுள்ள நிர்வாகத் திறன்கள் இந்தச் சாதனத்திற்குப் பொருந்தாது."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"இந்தச் சாதனம் <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> நிறுவனத்தால் வழங்கப்பட்டது"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Kiosk ஆப்ஸ் தானாகவே பதிவிறக்கப்பட்டு நிறுவப்படும்"</string>
@@ -122,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{சாதனம் 1 நாளில் மீட்டமைக்கப்படும்}other{சாதனம் # நாட்களில் மீட்டமைக்கப்படும்}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"<xliff:g id="TIMER">%s</xliff:g>ல் சாதனம் மீட்டமைக்கப்படும்"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"சாதனத்திலுள்ள அனைத்துத் தரவும் நீக்கப்படும். சாதனத்தைப் பதிவுசெய்வதற்கான உதவிக்கு, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ஐத் தொடர்புகொள்ளவும்"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"சாதனத்தின் பதிவைத் தொடர்ந்து ஒத்திவைக்க DeviceLock அனுப்பும் அறிவிப்பை அனுமதியுங்கள்."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"கடன் வழங்கல் தோல்வியடைந்தது"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"கடன் வழங்குநரைத் தொடர்புகொள்வதற்கான வழிகளை அறிந்துகொள்ள இங்கே கிளிக் செய்யுங்கள். <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>மேலும் அறிக<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"வெளியேறு"</string>

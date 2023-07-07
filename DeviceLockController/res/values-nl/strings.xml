@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Alle vergrendelings- of ontgrendelingsverzoeken van <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Als de <xliff:g id="CREDITOR_APP">%1$s</xliff:g>-app niet beschikbaar is"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Opensource-licenties"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"De andere beheermogelijkheden in "<b>"Instellingen &gt; Beveiliging &gt; Informatie over beheerd apparaat"</b>" zijn niet van toepassing op dit apparaat"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"De beheermogelijkheden in het gedeelte voor gefinancierde apparaten van de beveiligingsinstellingen zijn niet van toepassing op dit apparaat."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"Dit apparaat wordt geleverd door <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"De Kiosk-app wordt automatisch gedownload en geïnstalleerd"</string>
@@ -122,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{Apparaat wordt over 1 dag gereset}other{Apparaat wordt over # dagen gereset}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"Apparaat wordt gereset over <xliff:g id="TIMER">%s</xliff:g>"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Alle apparaatgegevens worden verwijderd. Neem contact op met <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> voor hulp bij de inschrijving van je apparaat."</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Sta meldingen van DeviceLock toe om de inschrijving van het apparaat te kunnen uitstellen."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Financieringsregistratie is mislukt"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"Klik hier voor manieren om contact op te nemen met de financierder. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Meer informatie<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Sluiten"</string>

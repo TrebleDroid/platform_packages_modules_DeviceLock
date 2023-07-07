@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> aplikazioak blokeatzeko edo desblokeatzeko eskaerarik egin duen."</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> aplikazioa erabilgarri dagoen ala ez."</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Kode irekiko lizentziak"</string>
-    <string name="footer_notice" msgid="7606898520964750584"><b>"Ezarpenak &gt; Segurtasuna &gt; Kudeatutako gailuari buruzko informazioa"</b>" ataleko gainerako kudeaketa-gaitasunak ez dira gailu honetan aplikagarriak"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"Segurtasun-ezarpenetako gailu finantzatuaren ataleko kudeaketa-gaitasunak ez dira gailu honetan aplikagarriak."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> hornitzaileak eman du gailu hau"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Kiosko-aplikazioa automatikoki deskargatu eta instalatuko da"</string>
@@ -122,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{Bihar berrezarriko da gailua}other{# egun barru berrezarriko da gailua}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"<xliff:g id="TIMER">%s</xliff:g> barru berrezarriko da gailua"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Gailuko datu guztiak ezabatuko dira. Gailua erregistratzearen inguruko laguntza jasotzeko, jarri <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> hornitzailearekin harremanetan"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Eman gailuaren erregistroa atzeratzen jarraitzeko baimena DeviceLock-en jakinarazpenari."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Finantzaketaren hornikuntzak huts egin du"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"Sakatu hau zure finantzariarekin harremanetan jartzeko zer modu dituzun ikusteko. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Lortu informazio gehiago<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Irten"</string>

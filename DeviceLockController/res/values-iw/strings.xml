@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"כל הבקשות לנעילה או לביטול נעילה מהאפליקציה <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"אם האפליקציה <xliff:g id="CREDITOR_APP">%1$s</xliff:g> לא זמינה"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"רישיונות קוד פתוח"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"שאר יכולות הניהול שמופיעות ב"<b>"\'הגדרות\' &gt; \'אבטחה\' &gt; \'פרטי המכשיר המנוהל\'"</b>" לא חלות על המכשיר הזה"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"יכולות הניהול שמופיעות בקטע \'פרטי המכשיר הממומן\' בהגדרות האבטחה לא חלות על המכשיר הזה."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"המכשיר הזה סופק על ידי <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"יתבצעו הורדה והתקנה אוטומטיות של אפליקציית \"קיוסק\""</string>
@@ -122,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{המכשיר יתאפס בעוד יום אחד}one{המכשיר יתאפס בעוד # ימים}two{המכשיר יתאפס בעוד יומיים (#)}other{המכשיר יתאפס בעוד # ימים}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"המכשיר יתאפס בעוד <xliff:g id="TIMER">%s</xliff:g>"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"כל הנתונים במכשיר יימחקו. כדי לקבל עזרה בצירוף המכשיר לתוכנית, יש ליצור קשר עם <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"יש לאפשר קבלת התראות מ-DeviceLock כדי להמשיך לדחות את הצירוף של המכשיר לתוכנית."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"הקצאת המימון נכשלה"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"אפשר ללחוץ כאן לקבלת דרכים ליצירת קשר עם נותני המימון. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>מידע נוסף<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"יציאה"</string>

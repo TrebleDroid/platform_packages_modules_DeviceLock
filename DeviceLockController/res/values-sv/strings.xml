@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Begäranden om att låsa eller låsa upp från <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Om <xliff:g id="CREDITOR_APP">%1$s</xliff:g>-appen inte är tillgänglig"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Licenser för öppen källkod"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"Övriga hanteringsfunktioner i "<b>"Inställningar &gt; Säkerhet &gt; Information om hanterad enhet"</b>" gäller inte för den här enheten"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"Hanteringsfunktionerna i avsnittet om den finansierade enheten under säkerhetsinställningarna gäller inte för den här enheten."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"Enheten tillhandahålls av <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Kioskappen laddas ned och installeras automatiskt"</string>
@@ -122,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{Enheten återställs om 1 dag}other{Enheten återställs om # dagar}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"Enheten återställs om <xliff:g id="TIMER">%s</xliff:g>"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"All enhetsdata raderas. Kontakta <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> om du behöver hjälp att registrera enheten"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Tillåt aviseringar från DeviceLock för att fortsätta att skjuta upp registreringen av enheten."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Tillhandahållande av finansiering misslyckades"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"Klicka här för att visa hur du kontaktar finansiären. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Läs mer<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Stäng"</string>

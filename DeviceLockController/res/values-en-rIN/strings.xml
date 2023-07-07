@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Any lock or unlock requests from <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"If the <xliff:g id="CREDITOR_APP">%1$s</xliff:g> app isn\'t available"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Open-source licences"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"The other management capabilities in "<b>"Settings &gt; Security &gt; Managed device info"</b>" don\'t apply to this device"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"The management capabilities in the financed device section of security settings don\'t apply to this device."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"This device is provided by <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"The kiosk app will be downloaded and installed automatically"</string>
@@ -122,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{Device will reset in 1 day}other{Device will reset in # days}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"Device will reset in <xliff:g id="TIMER">%s</xliff:g>"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"All device data will be deleted. For help enrolling your device, contact <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Please allow notification from DeviceLock to continue deferring the enrolment of the device."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Financing provisioning has failed"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"Please click here for ways to contact your financier. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Learn more<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Exit"</string>

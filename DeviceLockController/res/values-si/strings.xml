@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> වෙතින් වන කිනම් හෝ අගුළු දැමීමේ හෝ අගුළු හැරීමේ ඉල්ලීම්"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> යෙදුම ලබා ගත නොහැකි නම්"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"විවෘත මූලාශ්‍ර බලපත්‍ර"</string>
-    <string name="footer_notice" msgid="7606898520964750584"><b>"සැකසීම් &gt; ආරක්ෂාව &gt; කළමනාකරණය කළ උපාංග තතු"</b>" තුළ වෙනත් කළමනාකරණ හැකියා මෙම උපාංගයට නොයෙදෙයි"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"ආරක්ෂක සැකසීම්වල මූල්‍යමය උපාංග අංශයේ කළමනාකරණ හැකියා මෙම උපාංගයට අදාළ නොවේ."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"මෙම උපාංගය <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> මගින් සපයනු ලබයි"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Kiosk යෙදුම ස්වයංක්‍රීයව බාගත කර ස්ථාපනය කරනු ලැබේ"</string>
@@ -122,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{උපාංගය 1 දිනකින් යළි සකසනු ඇත}one{උපාංගය දින #කින් යළි සකසනු ඇත}other{උපාංගය දින #කින් යළි සකසනු ඇත}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"උපාංගය <xliff:g id="TIMER">%s</xliff:g>කින් යළි සකසනු ඇත"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"සියලු උපාංග දත්ත මකා දැමෙනු ඇත. ඔබේ උපාංගය ලියාපදිංචි කිරීමට උදවු සඳහා, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> සම්බන්ධ කර ගන්න"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"උපාංගය ලියාපදිංචි කිරීම කල් දැමීම දිගටම කරගෙන යාමට DeviceLock වෙතින් දැනුම්දීමට ඉඩ දෙන්න."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"මූල්‍ය ප්‍රතිපාදන අසමත් වී ඇත"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"ඔබේ මූල්‍යකරු සම්බන්ධ කර ගැනීමට ක්‍රම සඳහා මෙතැන ක්ලික් කරන්න. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>තව දැන ගන්න<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"පිටවන්න"</string>

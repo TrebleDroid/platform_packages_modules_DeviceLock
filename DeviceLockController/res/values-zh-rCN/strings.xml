@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"来自“<xliff:g id="CREDITOR_APP">%1$s</xliff:g>”的所有锁定或解锁请求"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"“<xliff:g id="CREDITOR_APP">%1$s</xliff:g>”应用是否不可用"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"开源许可"</string>
-    <string name="footer_notice" msgid="7606898520964750584"><b>"设置 &gt; 安全 &gt; 受管理设备的信息"</b>"中的其他管理功能不适用于此设备"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"在安全设置中，分期付款设备部分中的管理功能不适用于此设备。"</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"此设备由<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>提供"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"系统会自动下载并安装自助服务终端应用"</string>
@@ -122,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{设备将在 1 天后重置}other{设备将在 # 天后重置}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"设备将在 <xliff:g id="TIMER">%s</xliff:g>后重置"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"系统将删除所有设备数据。如需注册设备方面的帮助，请与<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>联系。"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"请允许 DeviceLock 发送通知，以继续推迟设备注册。"</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"分期付款设备配置失败"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"请点击此处查看分期付款提供商的联系方式。<xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>了解详情<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"退出"</string>

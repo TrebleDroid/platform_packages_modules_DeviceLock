@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Alle Sperren-/Entsperren-Anfragen von <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Wenn die <xliff:g id="CREDITOR_APP">%1$s</xliff:g> App nicht verfügbar ist"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Open-Source-Lizenzen"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"Die anderen Verwaltungsfunktionen unter "<b>"Einstellungen &gt; Sicherheit &gt; Info zu verwalteten Geräten"</b>" gelten nicht für dieses Gerät"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"Die Verwaltungsfunktionen im Abschnitt zu finanzierten Geräten in den Sicherheitseinstellungen gelten nicht für dieses Gerät."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"Dieses Gerät wird von <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> zur Verfügung gestellt"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Die Kiosk-App wird automatisch heruntergeladen und installiert"</string>
@@ -122,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{Gerät wird in einem Tag zurückgesetzt}other{Gerät wird in # Tagen zurückgesetzt}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"Das Gerät wird in <xliff:g id="TIMER">%s</xliff:g> zurückgesetzt"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Alle Gerätedaten werden gelöscht. Wenn du Hilfe bei der Registrierung deines Geräts benötigst, wende dich an <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>."</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Bitte lass Benachrichtigungen von DeviceLock zu, um die Registrierung des Geräts weiter aufzuschieben."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Finanzierungsbereitstellung fehlgeschlagen"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"Wenn du wissen möchtest, wie du deinen Finanzierungsanbieter kontaktieren kannst, klicke hier. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Weitere Informationen<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Beenden"</string>

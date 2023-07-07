@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Сви захтеви за закључавање и откључавање које шаље <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Ако апликација <xliff:g id="CREDITOR_APP">%1$s</xliff:g> није доступна"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Лиценце отвореног кода"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"Остале могућности управљања у одељку "<b>"Подешавања &gt; Безбедност &gt; Информације о уређају којим се управља"</b>" нису примењиве на овај уређај"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"Могућности управљања у одељку финансираног уређаја у подешавањима безбедности не примењују се на овај уређај."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"Овај уређај пружа <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Киоск апликација ће се аутоматски преузети и инсталирати"</string>
@@ -122,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{Уређај ће се ресетовати за 1 дан}one{Уређај ће се ресетовати за # дан}few{Уређај ће се ресетовати за # дана}other{Уређај ће се ресетовати за # дана}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"Уређај ће се ресетовати за <xliff:g id="TIMER">%s</xliff:g>"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Сви подаци са уређаја ће бити избрисани. За помоћ при регистровању уређаја, обратите се: <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Дозволите обавештења Закључавања уређаја да бисте наставили са одлагањем регистрације уређаја."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Додељивање финансирања није успело"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"Кликните овде да бисте видели начине за ступање у контакт са финансијером. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Сазнајте више<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Изађи"</string>

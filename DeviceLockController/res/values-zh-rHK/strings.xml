@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"任何來自「<xliff:g id="CREDITOR_APP">%1$s</xliff:g>」的鎖定或解鎖要求"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"「<xliff:g id="CREDITOR_APP">%1$s</xliff:g>」應用程式是否無法使用"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"開放原始碼授權"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"「設定」&gt; [安全性] &gt; [受管理的裝置資料] "<b></b>"中的其他管理功能不適用於此裝置"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"喺安全性設定入面，分期付款裝置部分嘅管理功能套用唔到去呢部裝置"</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"此裝置由「<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>」提供"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"系統將自動下載及安裝 Kiosk 應用程式"</string>
@@ -122,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{裝置將在 1 天後重設}other{裝置將在 # 天後重設}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"裝置將在 <xliff:g id="TIMER">%s</xliff:g>後重設"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"系統將會刪除所有裝置資料。如需有關註冊裝置的協助，請聯絡「<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>」"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"如要繼續延後註冊裝置，請允許 DeviceLock 傳送通知。"</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"無法佈建分期付款計劃"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"按一下即可查看分期付款提供者的聯絡方法。<xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>瞭解詳情<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"離開"</string>
