@@ -16,6 +16,9 @@
 
 package com.android.devicelockcontroller.activities;
 
+import android.annotation.NonNull;
+import android.app.Application;
+
 import com.android.devicelockcontroller.R;
 
 import java.util.ArrayList;
@@ -38,8 +41,8 @@ public class DeviceFinancingProvisionInfoViewModel extends ProvisionInfoViewMode
             R.string.download_kiosk_app, R.string.restrict_device_if_missing_payment,
     };
 
-    public DeviceFinancingProvisionInfoViewModel() {
-        super();
+    public DeviceFinancingProvisionInfoViewModel(@NonNull Application application) {
+        super(application);
 
         mHeaderDrawableIdLiveData.setValue(HEADER_DRAWABLE_ID);
         mHeaderTextIdLiveData.setValue(HEADER_TEXT_ID);
