@@ -75,7 +75,7 @@
     <string name="restrictions_lifted" msgid="5785586265984319396">"Semua pengehadan pada peranti anda telah dibatalkan"</string>
     <string name="uninstall_kiosk_app" msgid="3459557395024053988">"Anda boleh menyahpasang apl Kios daripada peranti anda"</string>
     <string name="getting_device_ready" msgid="2829009584599871699">"Sedang menyediakan peranti anda…"</string>
-    <string name="this_may_take_a_few_minutes" msgid="2482876246874429351">"Proses ini mungkin mengambil masa beberapa minit"</string>
+    <string name="this_may_take_a_few_minutes" msgid="2482876246874429351">"Ini boleh mengambil masa beberapa minit"</string>
     <string name="installing_kiosk_app" msgid="324208168205545860">"Memasang apl <xliff:g id="CREDITOR_APP">%1$s</xliff:g>…"</string>
     <string name="opening_kiosk_app" msgid="2021888641430165654">"Membuka apl <xliff:g id="CREDITOR_APP">%1$s</xliff:g>…"</string>
     <string name="settings_banner_title" msgid="527041021011279252">"Peranti disediakan oleh <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
