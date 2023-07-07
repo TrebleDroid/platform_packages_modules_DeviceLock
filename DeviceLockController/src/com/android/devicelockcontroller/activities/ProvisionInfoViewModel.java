@@ -16,13 +16,17 @@
 
 package com.android.devicelockcontroller.activities;
 
+import android.annotation.NonNull;
+import android.app.Application;
 import android.text.TextUtils;
 import android.util.Pair;
 
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
+import com.android.devicelockcontroller.DeviceLockControllerApplication;
+import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.storage.SetupParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
@@ -37,7 +41,7 @@ import java.util.List;
  * This class provides the resources and {@link ProvisionInfo} to render the
  * {@link ProvisionInfoFragment}.
  */
-public abstract class ProvisionInfoViewModel extends ViewModel {
+public abstract class ProvisionInfoViewModel extends AndroidViewModel {
 
     public static final String TAG = "ProvisionInfoViewModel";
     public static final String PROVIDER_NAME_PLACEHOLDER = "";
@@ -52,7 +56,18 @@ public abstract class ProvisionInfoViewModel extends ViewModel {
     final MediatorLiveData<Pair<Integer, String>> mHeaderTextLiveData;
     final MediatorLiveData<Pair<Integer, String>> mSubHeaderTextLiveData;
 
-    public ProvisionInfoViewModel() {
+
+    final MutableLiveData<@DeviceStateController.DeviceState Integer> mDeviceState =
+            new MutableLiveData<>();
+
+    private final DeviceStateController.StateListener mStateListener = newState -> {
+        mDeviceState.postValue(newState);
+        LogUtil.d("ProvisionInfoViewModel", "deviceStateListener, newState: " + newState);
+        return Futures.immediateVoidFuture();
+    };
+
+    public ProvisionInfoViewModel(@NonNull Application application) {
+        super(application);
         mProvisionInfoListLiveData = new MutableLiveData<>();
         mHeaderDrawableIdLiveData = new MutableLiveData<>();
         mHeaderTextIdLiveData = new MutableLiveData<>();
@@ -90,6 +105,10 @@ public abstract class ProvisionInfoViewModel extends ViewModel {
                             ? new Pair<>(TEXT_ID_PLACEHOLDER, providerName)
                             : new Pair<>(oldValue.first, providerName));
                 });
+        DeviceStateController stateController =
+                ((DeviceLockControllerApplication) application).getStateController();
+        mDeviceState.setValue(stateController.getState());
+        stateController.addCallback(mStateListener);
 
         Futures.addCallback(
                 SetupParametersClient.getInstance().getKioskAppProviderName(),
@@ -140,5 +159,12 @@ public abstract class ProvisionInfoViewModel extends ViewModel {
                         LogUtil.e(TAG, "Failed to get if provision should be forced", t);
                     }
                 }, MoreExecutors.directExecutor());
+    }
+
+    @Override
+    public void onCleared() {
+        LogUtil.d(TAG, "onCleared");
+        ((DeviceLockControllerApplication) getApplication()).getStateController()
+                .removeCallback(mStateListener);
     }
 }
