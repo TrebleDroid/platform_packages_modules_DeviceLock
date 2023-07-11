@@ -18,6 +18,7 @@ package com.android.devicelockcontroller.storage;
 
 import static com.android.devicelockcontroller.storage.IGlobalParametersService.Stub.asInterface;
 
+import android.annotation.CurrentTimeMillisLong;
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
@@ -230,4 +231,100 @@ public final class GlobalParametersClient extends DlcClient {
             return null;
         });
     }
+
+    /**
+     * Get the time when device boots.
+     *
+     * @return the difference, measured in milliseconds, between device boots and midnight,
+     * January 1, 1970 UTC.
+     */
+    public ListenableFuture<Long> getBootTimeMillis() {
+        return call(() -> asInterface(getService()).getBootTimeMillis());
+    }
+
+    /**
+     * Set the time when device boots.
+     *
+     * @param bootTime the difference, measured in milliseconds, between device boots and
+     *                 midnight, January 1, 1970 UTC.
+     */
+    public ListenableFuture<Void> setBootTimeMillis(@CurrentTimeMillisLong long bootTime) {
+        return call(() -> {
+            asInterface(getService()).setBootTimeMillis(bootTime);
+            return null;
+        });
+    }
+
+    /**
+     * Get the next check-in time.
+     *
+     * @return the difference, measured in milliseconds, between next check-in and midnight, January
+     * 1, 1970 UTC.
+     */
+    public ListenableFuture<Long> getNextCheckInTimeMillis() {
+        return call(() -> asInterface(getService()).getNextCheckInTimeMillis());
+    }
+
+    /**
+     * Set the next check-in time.
+     *
+     * @param nextCheckInTime the difference, measured in milliseconds, between next check-in and
+     *                        midnight, January 1, 1970 UTC.
+     */
+    public ListenableFuture<Void> setNextCheckInTimeMillis(
+            @CurrentTimeMillisLong long nextCheckInTime) {
+        return call(() -> {
+            asInterface(getService()).setNextCheckInTimeMillis(nextCheckInTime);
+            return null;
+        });
+    }
+
+    /**
+     * Get the time when provision should be resumed.
+     *
+     * @return the difference, measured in milliseconds, between provision should be resumed and
+     * midnight, January 1, 1970 UTC.
+     */
+    public ListenableFuture<Long> getResumeProvisionTimeMillis() {
+        return call(() -> asInterface(getService()).getResumeProvisionTimeMillis());
+    }
+
+    /**
+     * Set the time when provision should be resumed.
+     *
+     * @param resumeProvisionTime the difference, measured in milliseconds, between provision should
+     *                            be resumed and midnight, January 1, 1970 UTC.
+     */
+    public ListenableFuture<Void> setResumeProvisionTimeMillis(
+            @CurrentTimeMillisLong long resumeProvisionTime) {
+        return call(() -> {
+            asInterface(getService()).setResumeProvisionTimeMillis(resumeProvisionTime);
+            return null;
+        });
+    }
+
+    /**
+     * Get the time when next step in the provision failure flow should happen.
+     *
+     * @return the difference, measured in milliseconds, between next step in failure flow
+     * happens and midnight, January 1, 1970 UTC.
+     */
+    public ListenableFuture<Long> getNextProvisionFailedStepTimeMills() {
+        return call(() -> asInterface(getService()).getNextProvisionFailedStepTimeMills());
+    }
+
+    /**
+     * Set the time when next step in the provision failure flow should happen.
+     *
+     * @param nextProvisionFailedStep the difference, measured in milliseconds, between next step in
+     *                                failure flow happens and midnight, January 1, 1970 UTC.
+     */
+    public ListenableFuture<Void> setNextProvisionFailedStepTimeMills(
+            @CurrentTimeMillisLong long nextProvisionFailedStep) {
+        return call(() -> {
+            asInterface(getService()).setNextProvisionFailedStepTimeMills(nextProvisionFailedStep);
+            return null;
+        });
+    }
+
 }

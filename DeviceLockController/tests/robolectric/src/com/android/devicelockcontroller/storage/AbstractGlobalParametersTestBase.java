@@ -24,6 +24,8 @@ abstract class AbstractGlobalParametersTestBase {
     static final boolean FORCED_PROVISION = true;
     static final String ENROLLMENT_TOKEN = "test_enrollment_token";
 
+    static final long TEST_TIMESTAMP = 10000L;
+
     @DeviceProvisionState
     static final int LAST_RECEIVED_PROVISION_STATE = DeviceProvisionState.PROVISION_STATE_RETRY;
 }
