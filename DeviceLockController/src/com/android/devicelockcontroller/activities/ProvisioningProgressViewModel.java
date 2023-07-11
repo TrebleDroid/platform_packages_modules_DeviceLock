@@ -149,7 +149,20 @@ public final class ProvisioningProgressViewModel extends ViewModel {
                         setProvisioningProgress(ProvisioningProgress.PROVISIONING_FAILED);
                     }
                 }, MoreExecutors.directExecutor());
-        // TODO(b/286246218): update the ProvisioningProgress status should installing kiosk app
-        //  succeed
+        setupController.addListener(new SetupController.SetupUpdatesCallbacks() {
+            @Override
+            public void setupFailed(int reason) {
+                LogUtil.e(TAG, "Failed to finish setup flow!");
+                setProvisioningProgress(ProvisioningProgress.PROVISIONING_FAILED);
+                setupController.removeListener(this);
+            }
+
+            @Override
+            public void setupCompleted() {
+                LogUtil.i(TAG, "Retry setup succeeded");
+                setProvisioningProgress(ProvisioningProgress.OPENING_KIOSK_APP);
+                setupController.removeListener(this);
+            }
+        });
     }
 }
