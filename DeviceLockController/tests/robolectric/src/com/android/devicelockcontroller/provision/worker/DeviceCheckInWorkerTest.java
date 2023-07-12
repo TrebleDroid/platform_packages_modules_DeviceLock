@@ -20,6 +20,7 @@ import static com.android.devicelockcontroller.common.DeviceLockConstants.Device
 
 import static com.google.common.truth.Truth.assertThat;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
@@ -198,7 +199,8 @@ public class DeviceCheckInWorkerTest {
     private void setUpSuccessfulCheckInResponse(boolean isHandleable) {
         when(mResponse.hasRecoverableError()).thenReturn(false);
         when(mResponse.isSuccessful()).thenReturn(true);
-        when(mHelper.handleGetDeviceCheckInStatusResponse(mResponse)).thenReturn(isHandleable);
+        when(mHelper.handleGetDeviceCheckInStatusResponse(eq(mResponse), any())).thenReturn(
+                isHandleable);
     }
 
     private void setUpFailedCheckInResponse(boolean isRecoverable) {

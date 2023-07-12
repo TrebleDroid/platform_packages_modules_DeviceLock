@@ -26,25 +26,31 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.SystemClock;
 import android.os.UserManager;
 
 import androidx.annotation.VisibleForTesting;
 
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
+import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.MoreExecutors;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.util.Objects;
 
 /**
  * Handle {@link  Intent#ACTION_LOCKED_BOOT_COMPLETED}. This receiver runs for any user
  * (singleUser="false").
- *
- * This receiver starts lock task mode if applicable.
+ * <p>
+ * This receiver does the following:
+ * 1. Enforce policies for the current device state;
+ * 2. Record device boot timestamp
  */
 public final class LockedBootCompletedReceiver extends BroadcastReceiver {
     private static final String TAG = "LockedBootCompletedReceiver";
@@ -63,15 +69,15 @@ public final class LockedBootCompletedReceiver extends BroadcastReceiver {
             return;
         }
         final PackageManager pm = context.getPackageManager();
-        final ComponentName lockTaskBootCompletedReceiver = new ComponentName(context,
-                LockTaskBootCompletedReceiver.class);
+        final ComponentName bootCompletedReceiver = new ComponentName(context,
+                BootCompletedReceiver.class);
         if (getDeviceStateController(context).isInProvisioningState()) {
             // b/172281939: WorkManager is not available at this moment, and we may not launch
-            // lock task mode successfully. Therefore, defer it to LockTaskBootCompletedReceiver.
+            // lock task mode successfully. Therefore, defer it to BootCompletedReceiver.
             LogUtil.i(TAG,
                     "Setup has not completed yet when ACTION_LOCKED_BOOT_COMPLETED is received. "
                             + "We can not start lock task mode here.");
-            pm.setComponentEnabledSetting(lockTaskBootCompletedReceiver,
+            pm.setComponentEnabledSetting(bootCompletedReceiver,
                     COMPONENT_ENABLED_STATE_DEFAULT, DONT_KILL_APP);
             return;
         }
@@ -90,8 +96,14 @@ public final class LockedBootCompletedReceiver extends BroadcastReceiver {
                 },
                 MoreExecutors.directExecutor());
         pm.setComponentEnabledSetting(
-                new ComponentName(context, LockTaskBootCompletedReceiver.class),
+                new ComponentName(context, BootCompletedReceiver.class),
                 COMPONENT_ENABLED_STATE_DISABLED, DONT_KILL_APP);
+    }
+
+    private static void recordBootTimeStamp() {
+        Instant bootTimeStamp = Instant.now(Clock.systemUTC()).minusMillis(
+                SystemClock.elapsedRealtime());
+        GlobalParametersClient.getInstance().setBootTimeMillis(bootTimeStamp.toEpochMilli());
     }
 
     @Override
@@ -107,6 +119,7 @@ public final class LockedBootCompletedReceiver extends BroadcastReceiver {
             return;
         }
         enforceLockTaskMode(context);
+        recordBootTimeStamp();
     }
 
 }
