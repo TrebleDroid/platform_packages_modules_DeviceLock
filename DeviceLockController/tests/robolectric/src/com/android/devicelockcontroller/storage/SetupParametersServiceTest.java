@@ -52,7 +52,6 @@ public final class SetupParametersServiceTest extends AbstractSetupParametersTes
         mISetupParametersService.createPrefs(bundle);
 
         assertThat(mISetupParametersService.getKioskPackage()).isEqualTo(KIOSK_PACKAGE);
-        assertThat(mISetupParametersService.getKioskSetupActivity()).isEqualTo(SETUP_ACTIVITY);
         assertThat(mISetupParametersService.getOutgoingCallsDisabled()).isTrue();
         assertThat(mISetupParametersService.isNotificationsInLockTaskModeEnabled()).isTrue();
 

@@ -97,7 +97,6 @@ public final class DeviceCheckInHelperTest {
     static final ProvisioningConfiguration TEST_CONFIGURATION = new ProvisioningConfiguration(
             /* kioskAppProviderName= */ "test_provider",
             /* kioskAppPackageName= */ "test_package",
-            /* kioskAppMainActivity= */ "test_activity",
             /* kioskAppAllowlistPackages= */ List.of("test_allowed_app1", "test_allowed_app2"),
             /* kioskAppEnableOutgoingCalls= */ false,
             /* kioskAppEnableEnableNotifications= */ true,

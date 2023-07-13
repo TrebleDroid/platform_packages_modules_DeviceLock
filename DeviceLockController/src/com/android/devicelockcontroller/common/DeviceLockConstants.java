@@ -92,8 +92,6 @@ public final class DeviceLockConstants {
 
     public static final String EXTRA_KIOSK_PACKAGE =
             "com.android.devicelockcontroller.KIOSK_PACKAGE";
-    public static final String EXTRA_KIOSK_SETUP_ACTIVITY =
-            "com.android.devicelockcontroller.KIOSK_SETUP_ACTIVITY";
     public static final String EXTRA_KIOSK_DISABLE_OUTGOING_CALLS =
             "com.android.devicelockcontroller.KIOSK_DISABLE_OUTGOING_CALLS";
     /**
