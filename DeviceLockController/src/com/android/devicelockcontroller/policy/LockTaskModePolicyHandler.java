@@ -29,7 +29,6 @@ import static com.android.devicelockcontroller.policy.DeviceStateController.Devi
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PSEUDO_UNLOCKED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNLOCKED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNPROVISIONED;
-import static com.android.devicelockcontroller.policy.StartLockTaskModeWorker.START_LOCK_TASK_MODE_WORK_NAME;
 
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
@@ -44,7 +43,6 @@ import android.telecom.TelecomManager;
 import android.util.ArraySet;
 
 import androidx.annotation.VisibleForTesting;
-import androidx.work.WorkManager;
 
 import com.android.devicelockcontroller.R;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
@@ -182,20 +180,7 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
     }
 
     private @ResultType ListenableFuture<@ResultType Integer> disableLockTaskMode() {
-        WorkManager.getInstance(mContext).cancelUniqueWork(START_LOCK_TASK_MODE_WORK_NAME);
-
-        final String currentPackage = UserParameters.getPackageOverridingHome(mContext);
-        // Device Policy Engine treats lock task features and packages as one policy and
-        // therefore we need to set both lock task features (to LOCK_TASK_FEATURE_NONE) and
-        // lock task packages (to an empty string array).
-        mDpm.setLockTaskFeatures(null /* admin */, DevicePolicyManager.LOCK_TASK_FEATURE_NONE);
-        // This will stop the lock task mode
-        mDpm.setLockTaskPackages(null /* admin */, new String[0]);
-        LogUtil.i(TAG, "Clear Lock task allowlist");
-        if (currentPackage != null) {
-            mDpm.clearPackagePersistentPreferredActivities(null /* admin */, currentPackage);
-            UserParameters.setPackageOverridingHome(mContext, null /* packageName */);
-        }
+        LockTaskModeHelper.disableLockTaskMode(mContext, mDpm);
         return Futures.immediateFuture(SUCCESS);
     }
 
