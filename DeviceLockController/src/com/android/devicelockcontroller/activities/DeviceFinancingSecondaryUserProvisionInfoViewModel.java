@@ -16,6 +16,9 @@
 
 package com.android.devicelockcontroller.activities;
 
+import android.annotation.NonNull;
+import android.app.Application;
+
 import com.android.devicelockcontroller.R;
 
 import java.util.ArrayList;
@@ -27,6 +30,7 @@ import java.util.List;
  */
 public final class DeviceFinancingSecondaryUserProvisionInfoViewModel extends
         ProvisionInfoViewModel {
+
     private static final int HEADER_DRAWABLE_ID = R.drawable.ic_info_24px;
 
     private static final int HEADER_TEXT_ID = R.string.device_provided_by_provider;
@@ -40,8 +44,8 @@ public final class DeviceFinancingSecondaryUserProvisionInfoViewModel extends
             R.string.restrict_device_if_owner_doesnt_make_payment,
     };
 
-    public DeviceFinancingSecondaryUserProvisionInfoViewModel() {
-        super();
+    public DeviceFinancingSecondaryUserProvisionInfoViewModel(@NonNull Application application) {
+        super(application);
 
         mHeaderDrawableIdLiveData.setValue(HEADER_DRAWABLE_ID);
         mHeaderTextIdLiveData.setValue(HEADER_TEXT_ID);

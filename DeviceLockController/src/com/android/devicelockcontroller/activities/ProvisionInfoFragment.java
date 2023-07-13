@@ -36,7 +36,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -48,6 +47,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.devicelockcontroller.R;
+import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
 import com.android.devicelockcontroller.util.LogUtil;
 
@@ -158,6 +158,21 @@ public final class ProvisionInfoFragment extends Fragment {
         checkNotNull(next);
         if (isDeferredProvisioning) {
             next.setText(R.string.start);
+            viewModel.mDeviceState.observe(getViewLifecycleOwner(),
+                    deviceState -> {
+                        LogUtil.d(TAG, "DeviceState observer, deviceState:" + deviceState);
+                        if(DeviceState.PROVISION_PAUSED == deviceState) {
+                            int notificationPermission =
+                                    ContextCompat.checkSelfPermission(requireContext(),
+                                            Manifest.permission.POST_NOTIFICATIONS);
+                            if (PackageManager.PERMISSION_GRANTED == notificationPermission) {
+                                createNotificationAndCloseActivity();
+                            } else {
+                                requestPermissionLauncher.launch(
+                                        Manifest.permission.POST_NOTIFICATIONS);
+                            }
+                        }
+                    });
         }
         next.setOnClickListener(
                 v -> {
@@ -187,21 +202,12 @@ public final class ProvisionInfoFragment extends Fragment {
     }
 
     private View.OnClickListener getOnClickListener() {
-        return v -> {
-            int notificationPermission =
-                    ContextCompat.checkSelfPermission(requireContext(),
-                            Manifest.permission.POST_NOTIFICATIONS);
-            if (PackageManager.PERMISSION_GRANTED == notificationPermission) {
-                createNotificationAndCloseActivity();
-            } else {
-                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
-            }
-            ((PolicyObjectsInterface) requireContext().getApplicationContext())
+        return v -> ((PolicyObjectsInterface) requireContext().getApplicationContext())
                     .getSetupController().delaySetup();
-        };
     }
 
     private void createNotificationAndCloseActivity() {
+        LogUtil.d(TAG, "createNotificationAndCloseActivity");
         PendingIntent intent = PendingIntent.getActivity(
                 requireContext(),
                 /* requestCode= */ 0,

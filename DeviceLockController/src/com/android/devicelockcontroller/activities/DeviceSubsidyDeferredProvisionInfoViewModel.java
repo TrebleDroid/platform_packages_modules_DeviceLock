@@ -16,6 +16,9 @@
 
 package com.android.devicelockcontroller.activities;
 
+import android.annotation.NonNull;
+import android.app.Application;
+
 import com.android.devicelockcontroller.R;
 
 import java.util.ArrayList;
@@ -41,8 +44,8 @@ public final class DeviceSubsidyDeferredProvisionInfoViewModel extends Provision
             R.string.download_kiosk_app, R.string.restrict_device_if_dont_make_payment,
     };
 
-    public DeviceSubsidyDeferredProvisionInfoViewModel() {
-        super();
+    public DeviceSubsidyDeferredProvisionInfoViewModel(@NonNull Application application) {
+        super(application);
 
         mHeaderDrawableIdLiveData.setValue(HEADER_DRAWABLE_ID);
         mHeaderTextIdLiveData.setValue(HEADER_TEXT_ID);
