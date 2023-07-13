@@ -62,11 +62,6 @@ public final class SetupParametersService extends Service {
                 }
 
                 @Override
-                public String getKioskSetupActivity() {
-                    return SetupParameters.getKioskSetupActivity(mContext);
-                }
-
-                @Override
                 public boolean getOutgoingCallsDisabled() {
                     return SetupParameters.getOutgoingCallsDisabled(mContext);
                 }

@@ -46,7 +46,6 @@ public final class SetupParametersTest extends AbstractSetupParametersTestBase {
         SetupParameters.createPrefs(mContext, bundle);
 
         assertThat(SetupParameters.getKioskPackage(mContext)).isEqualTo(KIOSK_PACKAGE);
-        assertThat(SetupParameters.getKioskSetupActivity(mContext)).isEqualTo(SETUP_ACTIVITY);
         assertThat(SetupParameters.getOutgoingCallsDisabled(mContext)).isTrue();
         assertThat(SetupParameters.isNotificationsInLockTaskModeEnabled(mContext)).isTrue();
 

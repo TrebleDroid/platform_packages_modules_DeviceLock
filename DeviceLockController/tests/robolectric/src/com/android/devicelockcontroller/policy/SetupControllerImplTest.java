@@ -17,7 +17,6 @@
 package com.android.devicelockcontroller.policy;
 
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_PACKAGE;
-import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_SETUP_ACTIVITY;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_MANDATORY_PROVISION;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -85,7 +84,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Config(shadows = {ShadowBuild.class})
 public final class SetupControllerImplTest {
 
-    private static final String TEST_SETUP_ACTIVITY = "packagename/.activity";
     private static final String TEST_PACKAGE_NAME = "test.package.name";
     public static final int ASYNC_TIMEOUT_MILLIS = 500;
 
@@ -125,7 +123,6 @@ public final class SetupControllerImplTest {
     @Test
     public void testInitialState_SetupFinished() {
         Bundle b = new Bundle();
-        b.putString(EXTRA_KIOSK_SETUP_ACTIVITY, TEST_SETUP_ACTIVITY);
         createParameters(b);
         when(mMockStateController.getState()).thenReturn(DeviceState.KIOSK_PROVISIONED);
         when(mMockStateController.setNextStateForEvent(DeviceEvent.PROVISION_KIOSK)).thenReturn(

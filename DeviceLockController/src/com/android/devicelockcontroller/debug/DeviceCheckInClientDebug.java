@@ -89,7 +89,6 @@ public final class DeviceCheckInClientDebug extends DeviceCheckInClient {
                 return new ProvisioningConfiguration(
                         /* kioskAppProviderName= */ "",
                         /* kioskAppPackageName= */ "",
-                        /* kioskAppMainActivity= */ "",
                         /* kioskAppAllowlistPackages= */ List.of(""),
                         /* kioskAppEnableOutgoingCalls= */ false,
                         /* kioskAppEnableEnableNotifications= */ false,
