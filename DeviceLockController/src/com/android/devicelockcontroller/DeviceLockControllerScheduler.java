@@ -16,15 +16,12 @@
 
 package com.android.devicelockcontroller;
 
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.PROVISION_RESUME;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PROVISION_IN_PROGRESS;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PROVISION_PAUSED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNPROVISIONED;
 import static com.android.devicelockcontroller.storage.GlobalParametersClient.getInstance;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -43,6 +40,7 @@ import androidx.work.WorkManager;
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
 import com.android.devicelockcontroller.provision.worker.DeviceCheckInWorker;
+import com.android.devicelockcontroller.receivers.ResumeProvisionReceiver;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
 
@@ -241,31 +239,4 @@ public final class DeviceLockControllerScheduler extends AbstractDeviceLockContr
                 resumeProvisionIntent);
     }
 
-    @VisibleForTesting
-    static final class ResumeProvisionReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (!ResumeProvisionReceiver.class.getName().equals(
-                    intent.getComponent().getClassName())) {
-                throw new IllegalArgumentException("Can not handle implicit intent!");
-            }
-            DeviceStateController stateController =
-                    ((PolicyObjectsInterface) context.getApplicationContext()).getStateController();
-            Futures.addCallback(stateController.setNextStateForEvent(PROVISION_RESUME),
-                    new FutureCallback<>() {
-                        @Override
-                        public void onSuccess(Integer newState) {
-                            LogUtil.v(TAG, "DeviceState is: " + newState);
-                            if (PROVISION_IN_PROGRESS != newState) {
-                                onFailure(new IllegalStateException());
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Throwable t) {
-                            LogUtil.e(TAG, "Failed to resume provision", t);
-                        }
-                    }, MoreExecutors.directExecutor());
-        }
-    }
 }

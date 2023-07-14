@@ -165,6 +165,11 @@
             </intent-filter>
         </receiver>
 
+        <receiver
+            android:name="com.android.devicelockcontroller.receivers.ResumeProvisionReceiver"
+            android:exported="false"
+            android:singleUser="false" />
+
         <service
             android:name="com.android.devicelockcontroller.DeviceLockControllerService"
             android:directBootAware="true"
