@@ -16,19 +16,7 @@
 
 package com.android.devicelockcontroller.provision.worker;
 
-import static com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState.PROVISION_STATE_DISMISSIBLE_UI;
-import static com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState.PROVISION_STATE_FACTORY_RESET;
-import static com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState.PROVISION_STATE_PERSISTENT_UI;
-import static com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState.PROVISION_STATE_RETRY;
-import static com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState.PROVISION_STATE_SUCCESS;
-import static com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState.PROVISION_STATE_UNSPECIFIED;
-
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.os.SystemClock;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
@@ -41,11 +29,8 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.WorkerParameters;
 
-import com.android.devicelockcontroller.activities.DeviceLockNotificationManager;
+import com.android.devicelockcontroller.AbstractDeviceLockControllerScheduler;
 import com.android.devicelockcontroller.common.DeviceLockConstants.SetupFailureReason;
-import com.android.devicelockcontroller.policy.DevicePolicyController;
-import com.android.devicelockcontroller.policy.DeviceStateController;
-import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
 import com.android.devicelockcontroller.policy.SetupController;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.ReportDeviceProvisionStateGrpcResponse;
@@ -54,10 +39,6 @@ import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
-import com.google.common.util.concurrent.MoreExecutors;
-
-import java.time.Duration;
-import java.util.Objects;
 
 /**
  * A worker class dedicated to report state of provision for the device lock program.
@@ -67,12 +48,7 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
     public static final String KEY_DEVICE_PROVISION_FAILURE_REASON =
             "device-provision-failure-reason";
     public static final String KEY_IS_PROVISION_SUCCESSFUL = "is-provision-successful";
-    @VisibleForTesting
-    static final String UNEXPECTED_PROVISION_STATE_ERROR_MESSAGE = "Unexpected provision state!";
-
     public static final String REPORT_PROVISION_STATE_WORK_NAME = "report-provision-state";
-    private static final int NOTIFICATION_REPORT_INTERVAL_DAY = 1;
-    public static final int RESET_COUNT_DOWN_MINUTES = 30;
 
     /**
      * Get a {@link SetupController.SetupUpdatesCallbacks} which will enqueue this worker to report
@@ -80,11 +56,13 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
      */
     @NonNull
     public static SetupController.SetupUpdatesCallbacks getSetupUpdatesCallbacks(
+            AbstractDeviceLockControllerScheduler scheduler,
             WorkManager workManager) {
         return new SetupController.SetupUpdatesCallbacks() {
             @Override
             public void setupFailed(@SetupFailureReason int reason) {
                 reportSetupFailed(reason, workManager);
+                scheduler.scheduleNextProvisionFailedStepAlarm();
             }
 
             @Override
@@ -95,29 +73,28 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
     }
 
     private static void reportSetupFailed(@SetupFailureReason int reason, WorkManager workManager) {
-        enqueueReportWork(false, reason, workManager, Duration.ZERO);
+        Data inputData = new Data.Builder()
+                .putBoolean(KEY_IS_PROVISION_SUCCESSFUL, false)
+                .putInt(KEY_DEVICE_PROVISION_FAILURE_REASON, reason)
+                .build();
+        enqueueReportWork(inputData, workManager);
     }
 
     private static void reportSetupCompleted(WorkManager workManager) {
-        enqueueReportWork(true, /* ignored */ SetupFailureReason.SETUP_FAILED, workManager,
-                Duration.ZERO);
-    }
-
-    private static void reportStateInOneDay(WorkManager workManager) {
-        // Report that we have shown a failure notification to the user for one day and we did
-        // not retry setup between this and the last report. The failure reason and setup result
-        // have been reported in previous report.
-        enqueueReportWork(/* ignored */ false, /* ignored */ SetupFailureReason.SETUP_FAILED,
-                workManager,
-                Duration.ofDays(NOTIFICATION_REPORT_INTERVAL_DAY));
-    }
-
-    private static void enqueueReportWork(boolean isSuccessful, int reason,
-            WorkManager workManager, Duration delay) {
         Data inputData = new Data.Builder()
-                .putBoolean(KEY_IS_PROVISION_SUCCESSFUL, isSuccessful)
-                .putInt(KEY_DEVICE_PROVISION_FAILURE_REASON, reason)
+                .putBoolean(KEY_IS_PROVISION_SUCCESSFUL, true)
                 .build();
+        enqueueReportWork(inputData, workManager);
+    }
+
+    /**
+     * Schedule a work to report the current provision failed step to server.
+     */
+    public static void reportCurrentFailedStep(WorkManager workManager) {
+        enqueueReportWork(new Data.Builder().build(), workManager);
+    }
+
+    private static void enqueueReportWork(Data inputData, WorkManager workManager) {
         Constraints constraints = new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build();
@@ -125,7 +102,6 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
                 new OneTimeWorkRequest.Builder(ReportDeviceProvisionStateWorker.class)
                         .setConstraints(constraints)
                         .setInputData(inputData)
-                        .setInitialDelay(delay)
                         .build();
         workManager.enqueueUniqueWork(
                 REPORT_PROVISION_STATE_WORK_NAME,
@@ -165,72 +141,15 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
             if (!TextUtils.isEmpty(enrollmentToken)) {
                 Futures.getUnchecked(globalParametersClient.setEnrollmentToken(enrollmentToken));
             }
-            int nextState = response.getNextClientProvisionState();
-            Futures.getUnchecked(globalParametersClient.setLastReceivedProvisionState(nextState));
-
-            PolicyObjectsInterface policyObjects =
-                    (PolicyObjectsInterface) mContext.getApplicationContext();
-            DevicePolicyController devicePolicyController = policyObjects.getPolicyController();
-            DeviceStateController deviceStateController = policyObjects.getStateController();
-            switch (nextState) {
-                case PROVISION_STATE_RETRY:
-                    DeviceCheckInHelper.setProvisionReady(deviceStateController, mContext);
-                    break;
-                case PROVISION_STATE_DISMISSIBLE_UI:
-                    DeviceLockNotificationManager.sendDeviceResetNotification(mContext,
-                            response.getDaysLeftUntilReset());
-                    reportStateInOneDay(WorkManager.getInstance(mContext));
-                    break;
-                case PROVISION_STATE_PERSISTENT_UI:
-                    DeviceLockNotificationManager.sendDeviceResetInOneDayOngoingNotification(
-                            mContext);
-                    reportStateInOneDay(WorkManager.getInstance(mContext));
-                    break;
-                case PROVISION_STATE_FACTORY_RESET:
-                    long countDownBase = SystemClock.elapsedRealtime()
-                            + Duration.ofMinutes(RESET_COUNT_DOWN_MINUTES).toMillis();
-                    DeviceLockNotificationManager.sendDeviceResetTimerNotification(mContext,
-                            countDownBase);
-                    PendingIntent resetDeviceBroadcast = getResetDevicePendingIntent(mContext);
-                    AlarmManager alarmManager = mContext.getSystemService(AlarmManager.class);
-                    Objects.requireNonNull(alarmManager).setExactAndAllowWhileIdle(
-                            AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                            countDownBase,
-                            resetDeviceBroadcast);
-                    break;
-                case PROVISION_STATE_SUCCESS:
-                case PROVISION_STATE_UNSPECIFIED:
-                    // no-op
-                    break;
-                default:
-                    throw new IllegalStateException(UNEXPECTED_PROVISION_STATE_ERROR_MESSAGE);
+            int daysLeftUntilReset = response.getDaysLeftUntilReset();
+            if (daysLeftUntilReset > 0) {
+                Futures.getUnchecked(
+                        globalParametersClient.setDaysLeftUntilReset(daysLeftUntilReset));
             }
+            Futures.getUnchecked(globalParametersClient.setLastReceivedProvisionState(
+                    response.getNextClientProvisionState()));
             return Result.success();
-        }, MoreExecutors.directExecutor());
+        }, mExecutorService);
     }
 
-    /**
-     * Get a {@link PendingIntent} for resetting the device.
-     */
-    public static PendingIntent getResetDevicePendingIntent(Context context) {
-        return PendingIntent.getBroadcast(
-                context, /* ignored */ 0,
-                new Intent(context, ResetDeviceReceiver.class),
-                PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
-    }
-
-    /**
-     * A receiver that will reset the device when it receive a broadcast.
-     */
-    private static final class ResetDeviceReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (!ResetDeviceReceiver.class.getName().equals(intent.getComponent().getClassName())) {
-                throw new IllegalArgumentException("Can not handle implicit intent!");
-            }
-            ((PolicyObjectsInterface) context.getApplicationContext())
-                    .getPolicyController().wipeDevice();
-        }
-    }
 }

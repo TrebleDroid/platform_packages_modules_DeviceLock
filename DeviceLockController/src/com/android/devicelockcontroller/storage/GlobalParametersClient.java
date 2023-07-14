@@ -139,7 +139,7 @@ public final class GlobalParametersClient extends DlcClient {
     }
 
     /**
-     * Gets the unique identifier that is regisered to DeviceLock backend server.
+     * Gets the unique identifier that is registered to DeviceLock backend server.
      *
      * @return The registered device unique identifier; null if device has never checked in with
      * backed server.
@@ -228,6 +228,26 @@ public final class GlobalParametersClient extends DlcClient {
             @DeviceProvisionState int provisionState) {
         return call(() -> {
             asInterface(getService()).setLastReceivedProvisionState(provisionState);
+            return null;
+        });
+    }
+
+    /**
+     * Get the number of days until device reset due to provision failure. The default value is
+     * {@link Integer#MAX_VALUE} when device is not expected to reset.
+     */
+    public ListenableFuture<Integer> getDaysLeftUntilReset() {
+        return call(() -> asInterface(getService()).getDaysLeftUntilReset());
+    }
+
+    /**
+     * Set the number of days until device reset due to provision failure.
+     *
+     * @param days the number of days.
+     */
+    public ListenableFuture<Void> setDaysLeftUntilReset(int days) {
+        return call(() -> {
+            asInterface(getService()).setDaysLeftUntilReset(days);
             return null;
         });
     }

@@ -52,7 +52,17 @@ public abstract class AbstractDeviceLockControllerScheduler {
     public abstract void scheduleRetryCheckInWork(Duration delay);
 
     /**
-     * Reschedule retry check-in work bassed on the stored expected to run time.
+     * Reschedule retry check-in work based on the stored expected to run time.
      */
     public abstract void rescheduleRetryCheckInWork();
+
+    /**
+     * Schedule an alarm to perform next provision failed step with the default delay.
+     */
+    public abstract void scheduleNextProvisionFailedStepAlarm();
+
+    /**
+     * Reschedule the alarm to perform next provision failed step based on the stored time.
+     */
+    public abstract void rescheduleNextProvisionFailedStepAlarm();
 }
