@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Любыя запыты блакіроўкі і разблакіроўкі ад праграмы \"<xliff:g id="CREDITOR_APP">%1$s</xliff:g>\""</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Калі праграма \"<xliff:g id="CREDITOR_APP">%1$s</xliff:g>\" недаступная"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Ліцэнзіі на ПЗ з адкрытым зыходным кодам"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"Іншыя функцыі кіравання, пералічаныя ў раздзеле "<b>"Налады &gt; Бяспека &gt; Інфармацыя пра прыладу пад кіраваннем"</b>", не працуюць на гэтай прыладзе"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"На гэтай прыладзе не працуюць функцыі кіравання, пералічаныя ў раздзеле налад бяспекі для прылады, купленай у крэдыт."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"Гэта прылада належыць кампаніі \"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>\""</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Праграма-кіёск будзе спампавана і ўсталявана аўтаматычна"</string>

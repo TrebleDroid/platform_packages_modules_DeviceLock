@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"来自“<xliff:g id="CREDITOR_APP">%1$s</xliff:g>”的所有锁定或解锁请求"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"“<xliff:g id="CREDITOR_APP">%1$s</xliff:g>”应用是否不可用"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"开源许可"</string>
-    <string name="footer_notice" msgid="7606898520964750584"><b>"设置 &gt; 安全 &gt; 受管理设备的信息"</b>"中的其他管理功能不适用于此设备"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"在安全设置中，分期付款设备部分中的管理功能不适用于此设备。"</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"此设备由<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>提供"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"系统会自动下载并安装自助服务终端应用"</string>

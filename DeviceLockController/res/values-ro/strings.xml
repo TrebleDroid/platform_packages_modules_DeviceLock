@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Toate solicitările de blocare sau deblocare de la <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Dacă aplicația <xliff:g id="CREDITOR_APP">%1$s</xliff:g> nu este disponibilă"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Licențe open source"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"Celelalte capacități de gestionare din "<b>"Setări &gt; Securitate &gt; Informații privind dispozitivul gestionat"</b>" nu se aplică pentru acest dispozitiv"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"Capacitățile de gestionare din secțiunea privind dispozitivele finanțate din Setări de securitate nu se aplică pentru acest dispozitiv."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"Acest dispozitiv este oferit de <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Aplicația chioșc va fi descărcată și instalată automat"</string>

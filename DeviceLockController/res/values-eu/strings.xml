@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> aplikazioak blokeatzeko edo desblokeatzeko eskaerarik egin duen."</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> aplikazioa erabilgarri dagoen ala ez."</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Kode irekiko lizentziak"</string>
-    <string name="footer_notice" msgid="7606898520964750584"><b>"Ezarpenak &gt; Segurtasuna &gt; Kudeatutako gailuari buruzko informazioa"</b>" ataleko gainerako kudeaketa-gaitasunak ez dira gailu honetan aplikagarriak"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"Segurtasun-ezarpenetako gailu finantzatuaren ataleko kudeaketa-gaitasunak ez dira gailu honetan aplikagarriak."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> hornitzaileak eman du gailu hau"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Kiosko-aplikazioa automatikoki deskargatu eta instalatuko da"</string>

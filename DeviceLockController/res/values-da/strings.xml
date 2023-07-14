@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Anmodninger om låsning og oplåsning fra <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Hvis <xliff:g id="CREDITOR_APP">%1$s</xliff:g>-appen ikke er tilgængelig"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Open source-licenser"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"De øvrige funktioner til administration under "<b>"Indstillinger &gt; Sikkerhed &gt; Oplysninger om administrerede enheder"</b>" gælder ikke for denne enhed"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"Funktionerne til administration i sektionen om finansierede enheder i sikkerhedsindstillingerne gælder ikke for denne enhed."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"Denne enhed er leveret af <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Terminalappen downloades og installeres automatisk"</string>

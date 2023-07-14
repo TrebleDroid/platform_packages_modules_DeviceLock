@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> からのロック / ロック解除のリクエスト"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> アプリが利用できない場合"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"オープンソース ライセンス"</string>
-    <string name="footer_notice" msgid="7606898520964750584"><b>"[設定] &gt; [セキュリティ] &gt; [管理対象デバイスの情報]"</b>" のその他の管理機能は、このデバイスに適用されません"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"セキュリティ設定の [ローンで購入したデバイスの情報] に記載されている管理機能は、このデバイスには適用されません。"</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"このデバイスは <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> から提供されています"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"キオスクアプリは自動的にダウンロード、インストールされます"</string>

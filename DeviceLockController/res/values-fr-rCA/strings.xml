@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Toute demande de verrouillage ou de déverrouillage effectuée par <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Si l\'application <xliff:g id="CREDITOR_APP">%1$s</xliff:g> n\'est pas accessible"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Licences de logiciels libres"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"Les autres fonctionnalités de gestion sous "<b>"Paramètres &gt; Sécurité &gt; Renseignements sur l\'appareil géré"</b>" ne s\'appliquent pas à cet appareil"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"Les capacités de gestion indiquées dans la section relative aux appareils financés dans les paramètres de sécurité ne s\'appliquent pas à cet appareil."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"Cet appareil est fourni par <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"L\'application Kiosk sera téléchargée et installée automatiquement"</string>

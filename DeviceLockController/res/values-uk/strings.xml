@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Усі запити на блокування й розблокування з додатка <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Інформація про відсутність додатка <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Ліцензії відкритого коду"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"Інші можливості керування в розділі "<b>"Налаштування &gt; Безпека &gt; Інформація про керований пристрій"</b>" не застосовуються до цього пристрою"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"До цього пристрою не застосовуються функції керування, описані в розділі налаштування безпеки для пристроїв, придбаних у кредит."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"Цей пристрій надала організація <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Додаток-термінал буде завантажено й установлено автоматично"</string>

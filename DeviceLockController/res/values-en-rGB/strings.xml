@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Any lock or unlock requests from <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"If the <xliff:g id="CREDITOR_APP">%1$s</xliff:g> app isn\'t available"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Open-source licences"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"The other management capabilities in "<b>"Settings &gt; Security &gt; Managed device info"</b>" don\'t apply to this device"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"The management capabilities in the financed device section of security settings don\'t apply to this device."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"This device is provided by <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"The kiosk app will be downloaded and installed automatically"</string>

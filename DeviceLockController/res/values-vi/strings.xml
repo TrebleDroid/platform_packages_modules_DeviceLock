@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Mọi yêu cầu khoá hoặc mở khoá của <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Nếu ứng dụng <xliff:g id="CREDITOR_APP">%1$s</xliff:g> không có sẵn"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Giấy phép nguồn mở"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"Các tính năng quản lý khác trong phần "<b>"Cài đặt &gt; Bảo mật &gt; Thông tin thiết bị được quản lý"</b>" không áp dụng cho thiết bị này"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"Các tính năng quản lý trong mục Thông tin về thiết bị trả góp của phần cài đặt Bảo mật không áp dụng cho thiết bị này."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"Thiết bị này do <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> cung cấp"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Ứng dụng Kiosk sẽ tự động được tải xuống và cài đặt"</string>

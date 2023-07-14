@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Wszystkie prośby o zablokowanie i odblokowanie z aplikacji <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Jeśli aplikacja <xliff:g id="CREDITOR_APP">%1$s</xliff:g> nie jest dostępna"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Licencje typu open source"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"Inne możliwości zarządzania w sekcji "<b>"Ustawienia &gt; Bezpieczeństwo &gt; Informacje o urządzeniu zarządzanym"</b>" nie dotyczą tego urządzenia"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"Możliwości zarządzania w sekcji finansowanego urządzenia w ustawieniach Bezpieczeństwa nie dotyczą tego urządzenia"</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"To urządzenie dostarcza organizacja <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Aplikacja Kiosk zostanie pobrana i zainstalowana automatycznie"</string>

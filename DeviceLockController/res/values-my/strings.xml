@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> မှ လော့ခ်ချခြင်း (သို့) လော့ခ်ဖွင့်ခြင်းဆိုင်ရာ တောင်းဆိုချက်များ"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> အက်ပ်ကို မရနိုင်ပါက"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"အခမဲ့ရင်းမြစ် လိုင်စင်များ"</string>
-    <string name="footer_notice" msgid="7606898520964750584"><b>"ဆက်တင်များ &gt; လုံခြုံရေး &gt; စီမံထားသော စက်ပစ္စည်း အချက်အလက်"</b>" ရှိ အခြားသော စီမံခန့်ခွဲမှုဆိုင်ရာ စွမ်းဆောင်ရည်များသည် ဤစက်အတွက် အကျုံးမဝင်ပါ"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"‘လုံခြုံရေး ဆက်တင်များ’ ၏ အရစ်ကျပေးချေဆဲ စက်အပိုင်းရှိ စီမံခန့်ခွဲမှုဆိုင်ရာ စွမ်းဆောင်ရည်များသည် ဤစက်အတွက် အကျုံးမဝင်ပါ။"</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"ဤစက်ပစ္စည်းကို <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> က ပံ့ပိုးထားသည်"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Kiosk app ကို ဒေါင်းလုဒ်လုပ်ပြီး အလိုအလျောက် ထည့်သွင်းပါမည်"</string>

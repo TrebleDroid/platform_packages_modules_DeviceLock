@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g>-এর করা যেকোনও লক বা আনলকের অনুরোধ"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> অ্যাপ উপলভ্য না থাকলে"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"ওপেন-সোর্স লাইসেন্স"</string>
-    <string name="footer_notice" msgid="7606898520964750584"><b>"সেটিংস &gt; সুরক্ষা &gt; ম্যানেজ করা ডিভাইস তথ্য"</b>" বিভাগের অন্যান্য ম্যানেজমেন্ট সুবিধা এই ডিভাইসের ক্ষেত্রে প্রযোজ্য নয়"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"\'সুরক্ষা\' সেটিংসের \'ফাইন্যান্স করা ডিভাইস\' বিভাগের ম্যানেজমেন্ট সংক্রান্ত সুবিধা এই ডিভাইসের ক্ষেত্রে প্রযোজ্য নয়।"</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"এই ডিভাইস <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> দিয়েছে"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Kiosk app অটোমেটিক ডাউনলোড ও ইনস্টল হবে"</string>
@@ -75,7 +74,7 @@
     <string name="restrictions_lifted" msgid="5785586265984319396">"আপনার ডিভাইসের উপরে থাকা সব বিধিনিষেধ তুলে নেওয়া হয়েছে"</string>
     <string name="uninstall_kiosk_app" msgid="3459557395024053988">"আপনার ডিভাইস থেকে Kiosk অ্যাপ আনইনস্টল করুন"</string>
     <string name="getting_device_ready" msgid="2829009584599871699">"আপনার ডিভাইস রেডি করা হচ্ছে…"</string>
-    <string name="this_may_take_a_few_minutes" msgid="2482876246874429351">"এতে কয়েক মিনিট সময় লাগতে পারে"</string>
+    <string name="this_may_take_a_few_minutes" msgid="2482876246874429351">"এজন্য কয়েক মিনিট সময় লাগতে পারে"</string>
     <string name="installing_kiosk_app" msgid="324208168205545860">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> অ্যাপ ইনস্টল করা হচ্ছে…"</string>
     <string name="opening_kiosk_app" msgid="2021888641430165654">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> অ্যাপ চালু হচ্ছে…"</string>
     <string name="settings_banner_title" msgid="527041021011279252">"ডিভাইসটি <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> দিয়েছে"</string>

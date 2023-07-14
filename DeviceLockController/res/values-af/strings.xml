@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Enige sluit- of ontsluitversoeke deur <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"As die <xliff:g id="CREDITOR_APP">%1$s</xliff:g>-app nie beskikbaar is nie"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Oopbronlisensies"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"Die ander bestuurvermoëns in "<b>"Instellings &gt; Sekuriteit &gt; Inligting oor bestuurde toestel"</b>" is nie op hierdie toestel van toepassing nie"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"Die bestuurvermoëns in Sekuriteitinstellings se afdeling oor gefinansierde toestel is nie op hierdie toestel van toepassing nie"</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"Hierdie toestel word verskaf deur <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Die Kiosk-app sal afgelaai en outomaties geïnstalleer word"</string>

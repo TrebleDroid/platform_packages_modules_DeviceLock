@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Ombi lolote la kufunga au kufungua kifaa linalotumwa na <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Ikiwa programu ya <xliff:g id="CREDITOR_APP">%1$s</xliff:g> haipatikani"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Leseni za programu huria"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"Vipengele vingine vya udhibiti katika "<b>"Mipangilio &gt; Usalama &gt; Maelezo kuhusu vifaa vinavyodhibitiwa"</b>" havitumiki kwenye kifaa hiki"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"Vipengele vya udhibiti kwenye sehemu ya vifaa vinavyotolewa kwa mkopo katika mipangilio ya Usalama havitumiki kwenye kifaa hiki."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"Kifaa hiki kimetolewa na <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Programu ya Kiosk itapakuliwa na kusakinishwa kiotomatiki"</string>
@@ -75,7 +74,7 @@
     <string name="restrictions_lifted" msgid="5785586265984319396">"Kifaa chako kimeondolewa vizuizi vyote"</string>
     <string name="uninstall_kiosk_app" msgid="3459557395024053988">"Unaweza kuondoa programu ya Kiosk kwenye kifaa chako"</string>
     <string name="getting_device_ready" msgid="2829009584599871699">"Inatayarisha kifaa chako…"</string>
-    <string name="this_may_take_a_few_minutes" msgid="2482876246874429351">"Huenda hii ikachukua dakika kadhaa"</string>
+    <string name="this_may_take_a_few_minutes" msgid="2482876246874429351">"Huenda ikachukua dakika kadhaa"</string>
     <string name="installing_kiosk_app" msgid="324208168205545860">"Inasakinisha programu ya <xliff:g id="CREDITOR_APP">%1$s</xliff:g>…"</string>
     <string name="opening_kiosk_app" msgid="2021888641430165654">"Inafungua programu ya <xliff:g id="CREDITOR_APP">%1$s</xliff:g>…"</string>
     <string name="settings_banner_title" msgid="527041021011279252">"Kifaa kimetolewa na <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>

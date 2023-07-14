@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Qualquer pedido para bloquear ou desbloquear da app <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Se a app <xliff:g id="CREDITOR_APP">%1$s</xliff:g> não estiver disponível"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Licenças de código aberto"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"As outras capacidades de gestão em "<b>"Definições &gt; Segurança &gt; Informações do dispositivo gerido"</b>" não se aplicam a este dispositivo"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"As capacidades de gestão na secção de dispositivos financiados das Definições de segurança não se aplicam a este dispositivo."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"Este dispositivo foi fornecido pelo fornecedor <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>."</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"A app de quiosque vai ser transferida e instalada automaticamente"</string>

@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"همه درخواست‌های قفل کردن یا باز کردن قفل ازطرف <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"اگر برنامه <xliff:g id="CREDITOR_APP">%1$s</xliff:g> دردسترس نباشد"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"پروانه‌های متن‌باز"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"دیگر قابلیت‌های مدیریتی موجود در "<b>"«تنظیمات &gt; امنیت &gt; اطلاعات دستگاه مدیریت‌شده»"</b>" شامل این دستگاه نمی‌شود"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"قابلیت‌های مدیریتی موجود در بخش دستگاه دارای پشتیبانی مالی از «تنظیمات امنیتی» شامل این دستگاه نمی‌شود."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"این دستگاه را <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ارائه کرده است"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"«برنامه کیوسکی» به‌طور خودکار بارگیری و نصب خواهد شد"</string>

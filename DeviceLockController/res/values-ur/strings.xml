@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> سے مقفل یا غیر مقفل کرنے کی کوئی بھی درخواست"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"اگر <xliff:g id="CREDITOR_APP">%1$s</xliff:g> ایپ دستیاب نہیں ہے"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"اوپن سورس لائسنسز"</string>
-    <string name="footer_notice" msgid="7606898520964750584"><b>"ترتیبات &gt; سیکیورٹی &gt; نظم کردہ آلے کی معلومات"</b>" میں مینیجمنٹ کی دیگر صلاحیتیں اس آلہ پر لاگو نہیں ہوتی ہیں"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"سیکیورٹی کی ترتیبات کے مالی تعاون یافتہ آلے کے سیکشن میں موجود نظم و نسق کی صلاحیتیں اس آلے پر لاگو نہیں ہوتی ہیں۔"</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"یہ آلہ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> نے فراہم کیا ہے"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Kiosk ایپ خودکار طور پر ڈاؤن لوڈ اور انسٹال ہو جائے گی"</string>
