@@ -49,6 +49,7 @@ final class GlobalParameters {
             "resume-provision-time-millis";
     public static final String KEY_NEXT_PROVISION_FAILED_STEP_TIME_MILLIS =
             "next-provision-failed-step-time-millis";
+    public static final String KEY_DAYS_LEFT_UNTIL_RESET = "days-left-until-reset";
 
 
     private GlobalParameters() {
@@ -168,6 +169,14 @@ final class GlobalParameters {
                 .edit()
                 .putInt(KEY_LAST_RECEIVED_PROVISION_STATE, provisionState)
                 .apply();
+    }
+
+    static int getDaysLeftUntilReset(Context context) {
+        return getSharedPreferences(context).getInt(KEY_DAYS_LEFT_UNTIL_RESET, Integer.MAX_VALUE);
+    }
+
+    static void setDaysLeftUntilReset(Context context, int days) {
+        getSharedPreferences(context).edit().putInt(KEY_DAYS_LEFT_UNTIL_RESET, days).apply();
     }
 
     @CurrentTimeMillisLong

@@ -97,6 +97,16 @@ public final class GlobalParametersService extends Service {
                 }
 
                 @Override
+                public int getDaysLeftUntilReset() {
+                    return GlobalParameters.getDaysLeftUntilReset(mContext);
+                }
+
+                @Override
+                public void setDaysLeftUntilReset(int days) {
+                    GlobalParameters.setDaysLeftUntilReset(mContext, days);
+                }
+
+                @Override
                 public long getBootTimeMillis() {
                     return GlobalParameters.getBootTimeMillis(mContext);
                 }
