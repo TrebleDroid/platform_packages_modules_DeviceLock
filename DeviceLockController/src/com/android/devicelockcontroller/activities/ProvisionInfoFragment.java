@@ -26,6 +26,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import android.Manifest;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -49,6 +50,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.devicelockcontroller.R;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
+import com.android.devicelockcontroller.receivers.ResumeProvisionReceiver;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import java.time.LocalDateTime;
@@ -208,14 +210,16 @@ public final class ProvisionInfoFragment extends Fragment {
 
     private void createNotificationAndCloseActivity() {
         LogUtil.d(TAG, "createNotificationAndCloseActivity");
-        PendingIntent intent = PendingIntent.getActivity(
-                requireContext(),
+        Context context = requireContext();
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                context,
                 /* requestCode= */ 0,
-                getActivity().getIntent(),
-                PendingIntent.FLAG_IMMUTABLE);
+                new Intent(context, ResumeProvisionReceiver.class),
+                PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
         LocalDateTime resumeDateTime = LocalDateTime.now().plusHours(1);
-        DeviceLockNotificationManager.sendDeferredEnrollmentNotification(requireContext(),
-                resumeDateTime, intent);
+        DeviceLockNotificationManager.sendDeferredEnrollmentNotification(context, resumeDateTime,
+                pendingIntent);
         getActivity().finish();
     }
 }
