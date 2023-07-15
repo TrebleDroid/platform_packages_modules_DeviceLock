@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ஆப்ஸிடமிருந்து பெறப்பட்ட லாக்/அன்லாக் கோரிக்கைகள்"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"சாதனத்தில் <xliff:g id="CREDITOR_APP">%1$s</xliff:g> ஆப்ஸ் இல்லாமல் இருப்பது"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"ஓப்பன் சோர்ஸ் உரிமங்கள்"</string>
-    <string name="footer_notice" msgid="7606898520964750584"><b>"அமைப்புகள் &gt; பாதுகாப்பு &gt; நிர்வகிக்கப்படும் சாதனத் தகவல்கள்"</b>" என்பதிலுள்ள பிற மேலாண்மைத் திறன்கள் இந்தச் சாதனத்திற்குப் பொருந்தாது"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"பாதுகாப்பு அமைப்புகளில் \'கடன் மூலம் பெற்ற சாதனம்\' பிரிவிலுள்ள நிர்வாகத் திறன்கள் இந்தச் சாதனத்திற்குப் பொருந்தாது."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"இந்தச் சாதனம் <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> நிறுவனத்தால் வழங்கப்பட்டது"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Kiosk ஆப்ஸ் தானாகவே பதிவிறக்கப்பட்டு நிறுவப்படும்"</string>

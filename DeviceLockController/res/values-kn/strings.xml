@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ನಿಂದ ಎಲ್ಲಾ ಲಾಕ್ ಅಥವಾ ಅನ್‌ಲಾಕ್ ವಿನಂತಿಗಳು"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ಆ್ಯಪ್ ಲಭ್ಯವಿಲ್ಲದಿದ್ದರೆ"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"ಓಪನ್ ಸೋರ್ಸ್ ಲೈಸೆನ್ಸ್‌ಗಳು"</string>
-    <string name="footer_notice" msgid="7606898520964750584"><b>"ಸೆಟ್ಟಿಂಗ್‌ಗಳು &gt; ಭದ್ರತೆ &gt; ನಿರ್ವಹಿತ ಸಾಧನ ಮಾಹಿತಿ"</b>" ಎಂಬುದರಲ್ಲಿರುವ ಇತರ ನಿರ್ವಹಣೆ ಸಾಮರ್ಥ್ಯಗಳು ಈ ಸಾಧನಕ್ಕೆ ಅನ್ವಯಿಸುವುದಿಲ್ಲ"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"ಈ ಸಾಧನಕ್ಕೆ ಸುರಕ್ಷತಾ ಸೆಟ್ಟಿಂಗ್‌ಗಳ ಹಣಕಾಸು ಸಾಧನ ವಿಭಾಗದಲ್ಲಿರುವ ನಿರ್ವಹಣಾ ಸಾಮರ್ಥ್ಯಗಳು ಅನ್ವಯಿಸುವುದಿಲ್ಲ."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"ಈ ಸಾಧನವನ್ನು <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ಒದಗಿಸಿದ್ದಾರೆ"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"kiosk ಆ್ಯಪ್ ಅನ್ನು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಡೌನ್‌ಲೋಡ್ ಹಾಗೂ ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಲಾಗುತ್ತದೆ"</string>

@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Visos „<xliff:g id="CREDITOR_APP">%1$s</xliff:g>“ pateiktos užrakinimo ar atrakinimo užklausos"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Jei programa „<xliff:g id="CREDITOR_APP">%1$s</xliff:g>“ nepasiekiama"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Atvirojo šaltinio licencijos"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"Kitos skiltyje "<b>"„Nustatymai“ &amp;gt „Sauga“ &amp;gt „Tvarkomo įrenginio informacija“"</b>" esančios tvarkymo funkcijos netaikomos šiam įrenginiui"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"Tvarkymo funkcijos, esančios finansuojamo įrenginio skiltyje „Saugos nustatymai“, netaikomos šiam įrenginiui."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"Šį įrenginį teikia „<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>“"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Viešojo terminalo programa bus atsiųsta ir įdiegta automatiškai"</string>

@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Minden zárolási és feloldási kérelem a következőtől: <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Ha a következő alkalmazás nem áll rendelkezésre: <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Nyílt forráskódú licencek"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"A "<b>"Beállítások &gt; Biztonság &gt; Felügyelt eszköz adatai"</b>" részben található további kezelési lehetőségek nem vonatkoznak erre az eszközre."</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"A Biztonsági beállítások Finanszírozott eszközök adatai részében található kezelési lehetőségek nem vonatkoznak erre az eszközre."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"Ezt az eszközt a(z) <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> biztosítja"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"A kioszkalkalmazás automatikusan letöltődik és települ"</string>

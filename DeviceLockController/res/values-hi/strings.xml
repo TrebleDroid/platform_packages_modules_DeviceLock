@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"लॉक या अनलॉक करने के लिए, <xliff:g id="CREDITOR_APP">%1$s</xliff:g> से किए गए अनुरोध"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"जब उपयोगकर्ता के डिवाइस में, <xliff:g id="CREDITOR_APP">%1$s</xliff:g> ऐप्लिकेशन मौजूद न हो"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"ओपन सोर्स लाइसेंस"</string>
-    <string name="footer_notice" msgid="7606898520964750584"><b>"सेटिंग &gt; सुरक्षा &gt; मैनेज किए जा रहे डिवाइस की जानकारी"</b>" में मौजूद मैनेज करने से जुड़ी दूसरी अनुमतियां, इस डिवाइस पर लागू नहीं होंगी"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"सुरक्षा सेटिंग के फ़ाइनेंस किए गए डिवाइस वाले सेक्शन में मौजूद, मैनेज करने से जुड़ी अनुमतियां, इस डिवाइस पर लागू नहीं होंगी."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"यह डिवाइस <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ने दिया है"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"कीऑस्क ऐप्लिकेशन, अपने-आप डाउनलोड और इंस्टॉल हो जाएगा"</string>

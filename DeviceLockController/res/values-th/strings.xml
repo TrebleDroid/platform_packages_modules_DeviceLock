@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"คำขอล็อกหรือปลดล็อกจาก <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"หากแอป <xliff:g id="CREDITOR_APP">%1$s</xliff:g> ไม่พร้อมใช้งาน"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"ใบอนุญาตโอเพนซอร์ส"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"ความสามารถอื่นๆ สำหรับการจัดการใน"<b>"การตั้งค่า &gt; ความปลอดภัย &gt; ข้อมูลอุปกรณ์ที่มีการจัดการ"</b>"จะไม่ได้นำมาใช้กับอุปกรณ์นี้"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"ความสามารถในการจัดการในส่วนอุปกรณ์ที่ได้รับการสนับสนุนทางการเงินของการตั้งค่าความปลอดภัยจะไม่นำมาใช้กับอุปกรณ์นี้"</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"อุปกรณ์นี้ให้บริการโดย <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"ระบบจะดาวน์โหลดและติดตั้งแอปคีออสก์โดยอัตโนมัติ"</string>

@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Begäranden om att låsa eller låsa upp från <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Om <xliff:g id="CREDITOR_APP">%1$s</xliff:g>-appen inte är tillgänglig"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Licenser för öppen källkod"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"Övriga hanteringsfunktioner i "<b>"Inställningar &gt; Säkerhet &gt; Information om hanterad enhet"</b>" gäller inte för den här enheten"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"Hanteringsfunktionerna i avsnittet om den finansierade enheten under säkerhetsinställningarna gäller inte för den här enheten."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"Enheten tillhandahålls av <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Kioskappen laddas ned och installeras automatiskt"</string>

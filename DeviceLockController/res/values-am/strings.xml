@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"ማናቸውም ከ<xliff:g id="CREDITOR_APP">%1$s</xliff:g> የሚመጡ የመቆለፍ ወይም የመክፈት ጥያቄዎች"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> መተግበሪያው የማይገኝ ከሆነ"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"የክፍት ምንጭ ፈቃዶች"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"ሌላው የአስተዳደር ችሎታዎች በ"<b>"ቅንብሮች &gt; ደህንነት &gt; የሚተዳደር የመሣሪያ መረጃ"</b>" በዚህ መሣሪያ ላይ አይተገበሩም"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"በደህንነት ቅንብሮች ፋይናንስ መሣሪያ ክፍል ውስጥ ያሉት የማስተዳደር ችሎታዎች በዚህ መሣሪያ ላይ አይተገበሩም።"</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"ይህ መሣሪያ በ<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> የሚቀርብ ነው"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"የKiosk መተግበሪያ በራስ ሰር ይወርዳል እና ይጫናል"</string>
@@ -124,8 +123,7 @@
     <string name="device_reset_notification_content" msgid="7642367488663440437">"ሁሉም የመሣሪያ ውሂብ ይሰረዛል። መሣሪያዎን መመዝገብ ላይ እገዛ ለማግኘት <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>ን ያግኙ"</string>
     <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"የመሣሪያውን ምዝገባ መላክ ለመቀጠል እባክዎ ከDeviceLock ማሳወቂያ ይፍቀዱ።"</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"የፋይናንስ አቅርቦት አልተሳካም"</string>
-    <!-- no translation found for click_to_contact_financier (9107827438262930445) -->
-    <skip />
+    <string name="click_to_contact_financier" msgid="9107827438262930445">"የፋይናንስ አስተዳዳሪዎን የሚያገኙባቸውን መንገዶች ለማግኘት እባክዎ እዚህ ጠቅ ያድርጉ። <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>የበለጠ ለመረዳት<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"ውጣ"</string>
     <string name="retry" msgid="7497287909193345356">"እንደገና ሞክር"</string>
 </resources>

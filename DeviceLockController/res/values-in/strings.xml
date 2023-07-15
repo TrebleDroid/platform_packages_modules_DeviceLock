@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Permintaan kunci atau buka kunci apa pun dari <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Jika aplikasi <xliff:g id="CREDITOR_APP">%1$s</xliff:g> tidak tersedia"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Lisensi open source"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"Kemampuan pengelolaan lain di "<b>"Setelan &gt; Keamanan &gt; Info perangkat terkelola"</b>" tidak berlaku untuk perangkat ini"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"Kemampuan pengelolaan di bagian perangkat yang dibiayai di setelan Keamanan tidak berlaku untuk perangkat ini."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"Perangkat ini disediakan oleh <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Aplikasi Kios akan otomatis didownload dan diinstal"</string>

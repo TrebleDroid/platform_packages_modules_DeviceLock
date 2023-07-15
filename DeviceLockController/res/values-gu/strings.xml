@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g>ની કોઈપણ લૉક કે અનલૉક કરવાની વિનંતીઓ"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"જો <xliff:g id="CREDITOR_APP">%1$s</xliff:g> ઍપ ઉપલબ્ધ ન હોય, તો"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"ઓપન સૉર્સ લાઇસન્સ"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"મેનેજમેન્ટની "<b>"સેટિંગ &gt; સુરક્ષા &gt; મેનેજ કરવામાં આવતા ડિવાઇસની માહિતી"</b>"માંની અન્ય ક્ષમતાઓ આ ડિવાઇસ પર લાગુ થતી નથી"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"સુરક્ષા સેટિંગના ફાઇનાન્સ ડિવાઇસ વિભાગમાં મેનેજમેન્ટની ક્ષમતાઓ આ ડિવાઇસ પર લાગુ થતી નથી."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"આ ડિવાઇસ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> દ્વારા પ્રદાન કરવામાં આવેલું છે"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Kiosk ઍપ ઑટોમૅટિક રીતે ડાઉનલોડ અને ઇન્સ્ટૉલ થશે"</string>

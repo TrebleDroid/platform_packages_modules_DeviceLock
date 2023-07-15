@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Qualsiasi richiesta di blocco o sblocco da <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Se l\'app <xliff:g id="CREDITOR_APP">%1$s</xliff:g> non è disponibile"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Licenze open source"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"Le altre funzionalità di gestione in "<b>"Impostazioni &gt; Sicurezza &gt; Informazioni sul dispositivo gestito"</b>" non si applicano a questo dispositivo"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"Le funzionalità di gestione nella sezione relativa al dispositivo finanziato delle impostazioni Sicurezza non si applicano a questo dispositivo."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"Questo dispositivo è fornito da <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"L\'app kiosk verrà scaricata e installata automaticamente"</string>

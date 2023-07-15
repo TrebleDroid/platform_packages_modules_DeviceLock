@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Vse zahteve aplikacije <xliff:g id="CREDITOR_APP">%1$s</xliff:g> za zaklepanje ali odklepanje"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Podatek, da aplikacija <xliff:g id="CREDITOR_APP">%1$s</xliff:g> ni na voljo"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Odprtokodne licence"</string>
-    <string name="footer_notice" msgid="7606898520964750584">"Druge zmožnosti upravljanja, ki so navedene v "<b>"Nastavitve &gt; Varnost &gt; Podatki o upravljani napravi"</b>", ne veljajo za to napravo"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"Zmožnosti upravljanja, ki so v varnostnih nastavitvah navedene za napravo na obroke, ne veljajo za to napravo."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"To napravo zagotavlja <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Aplikacija Kiosk bo samodejno prenesena in nameščena"</string>

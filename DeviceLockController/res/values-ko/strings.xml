@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g>의 잠금 또는 잠금 해제 요청"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> 앱을 사용할 수 없는 경우"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"오픈소스 라이선스"</string>
-    <string name="footer_notice" msgid="7606898520964750584"><b>"설정 &gt; 보안 &gt; 관리 기기 정보"</b>"의 기타 관리 기능은 이 기기에 적용되지 않습니다."</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"보안 설정의 할부 기기 정보 섹션에 있는 관리 기능은 이 기기에 적용되지 않습니다."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>에서 제공하는 기기"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"키오스크 앱이 자동으로 다운로드 및 설치됩니다."</string>

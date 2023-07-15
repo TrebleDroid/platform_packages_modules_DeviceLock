@@ -44,7 +44,6 @@
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ले गर्ने लक वा अनलकसम्बन्धी सबै अनुरोधहरू"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> एप उपलब्ध छ कि छैन भन्ने कुरा"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"खुला स्रोतका लाइसेन्सहरू"</string>
-    <string name="footer_notice" msgid="7606898520964750584"><b>"सेटिङ &gt; सुरक्षा &gt; व्यवस्थापन गरिएको डिभाइससम्बन्धी जानकारी"</b>" मा भएका व्यवस्थापनसम्बन्धी अन्य सुविधाहरू यो डिभाइसमा लागू हुँदैनन्"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"सुरक्षासम्बन्धी सेटिङअन्तर्गतको \"किस्तामा खरिद गरिएको डिभाइस\" नामक खण्डमा भएका व्यवस्थापनसम्बन्धी सुविधाहरू यो डिभाइसमा लागू हुँदैनन्।"</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ले यो डिभाइस उपलब्ध गराएको हो"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"किअस्क एप स्वतः डाउनलोड र इन्स्टल गरिने छ"</string>
