@@ -50,6 +50,7 @@ final class GlobalParameters {
     public static final String KEY_NEXT_PROVISION_FAILED_STEP_TIME_MILLIS =
             "next-provision-failed-step-time-millis";
     public static final String KEY_DAYS_LEFT_UNTIL_RESET = "days-left-until-reset";
+    public static final String KEY_RESET_DEVICE_TIME_MILLIS = "reset-device-time-millis";
 
 
     private GlobalParameters() {
@@ -220,6 +221,17 @@ final class GlobalParameters {
             @CurrentTimeMillisLong long nextProvisionFailedStep) {
         getSharedPreferences(context).edit().putLong(KEY_NEXT_PROVISION_FAILED_STEP_TIME_MILLIS,
                 nextProvisionFailedStep).apply();
+    }
+
+    @CurrentTimeMillisLong
+    static long getResetDeviceTimeMillis(Context context) {
+        return getSharedPreferences(context).getLong(KEY_RESET_DEVICE_TIME_MILLIS, 0L);
+    }
+
+    static void setResetDeviceTImeMillis(Context context,
+            @CurrentTimeMillisLong long resetDeviceTime) {
+        getSharedPreferences(context).edit().putLong(KEY_RESET_DEVICE_TIME_MILLIS,
+                resetDeviceTime).apply();
     }
 
     static void clear(Context context) {

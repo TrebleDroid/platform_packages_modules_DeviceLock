@@ -44,6 +44,7 @@ import com.android.devicelockcontroller.provision.worker.PauseProvisioningWorker
 import com.android.devicelockcontroller.provision.worker.ReportDeviceLockProgramCompleteWorker;
 import com.android.devicelockcontroller.provision.worker.ReportDeviceProvisionStateWorker;
 import com.android.devicelockcontroller.receivers.NextProvisionFailedStepReceiver;
+import com.android.devicelockcontroller.receivers.ResetDeviceReceiver;
 import com.android.devicelockcontroller.receivers.ResumeProvisionReceiver;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.storage.SetupParametersClient;
@@ -203,7 +204,7 @@ public final class DeviceLockCommandReceiver extends BroadcastReceiver {
         AlarmManager alarmManager = Objects.requireNonNull(
                 context.getSystemService(AlarmManager.class));
         alarmManager.cancel(
-                NextProvisionFailedStepReceiver.getResetDevicePendingIntent(context));
+                ResetDeviceReceiver.getResetDevicePendingIntent(context));
         alarmManager.cancel(PendingIntent.getBroadcast(
                 context, /* ignored */ 0,
                 new Intent(context, NextProvisionFailedStepReceiver.class),

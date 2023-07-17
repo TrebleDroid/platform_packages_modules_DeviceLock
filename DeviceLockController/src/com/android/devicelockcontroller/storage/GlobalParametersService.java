@@ -148,6 +148,15 @@ public final class GlobalParametersService extends Service {
                     GlobalParameters.setNextProvisionFailedStepTimeMills(mContext,
                             nextProvisionFailedStepTimeMills);
                 }
+
+                @Override
+                public long getResetDeviceTimeMillis() {
+                    return GlobalParameters.getResetDeviceTimeMillis(mContext);
+                }
+
+                public void setResetDeviceTImeMillis(long resetDeviceTime) {
+                    GlobalParameters.setResetDeviceTImeMillis(mContext, resetDeviceTime);
+                }
             };
 
     @Override

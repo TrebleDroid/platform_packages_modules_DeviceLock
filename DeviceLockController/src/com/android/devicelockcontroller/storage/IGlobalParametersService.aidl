@@ -43,4 +43,6 @@ interface IGlobalParametersService {
     void setResumeProvisionTimeMillis(long resumeProvisionTime);
     long getNextProvisionFailedStepTimeMills();
     void setNextProvisionFailedStepTimeMills(long nextProvisionFailedStep);
+    long getResetDeviceTimeMillis();
+    void setResetDeviceTImeMillis(long resetDeviceTime);
 }

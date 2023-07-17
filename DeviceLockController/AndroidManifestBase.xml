@@ -170,6 +170,16 @@
             android:exported="false"
             android:singleUser="false" />
 
+        <receiver
+            android:name="com.android.devicelockcontroller.receivers.NextProvisionFailedStepReceiver"
+            android:exported="false"
+            android:singleUser="false" />
+
+        <receiver
+            android:name="com.android.devicelockcontroller.receivers.ResetDeviceReceiver"
+            android:exported="false"
+            android:singleUser="false" />
+
         <service
             android:name="com.android.devicelockcontroller.DeviceLockControllerService"
             android:directBootAware="true"

@@ -65,4 +65,14 @@ public abstract class AbstractDeviceLockControllerScheduler {
      * Reschedule the alarm to perform next provision failed step based on the stored time.
      */
     public abstract void rescheduleNextProvisionFailedStepAlarm();
+
+    /**
+     * Schedule an alarm to factory reset the device in case of provision is failed.
+     */
+    public abstract void scheduleResetDeviceAlarm();
+
+    /**
+     * Reschedule the alarm to factory reset device based on stored timestamp.
+     */
+    public abstract void rescheduleResetDeviceAlarm();
 }

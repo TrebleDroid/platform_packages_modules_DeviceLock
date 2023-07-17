@@ -38,10 +38,12 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.OutOfQuotaPolicy;
 import androidx.work.WorkManager;
 
+import com.android.devicelockcontroller.activities.DeviceLockNotificationManager;
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
 import com.android.devicelockcontroller.provision.worker.DeviceCheckInWorker;
 import com.android.devicelockcontroller.receivers.NextProvisionFailedStepReceiver;
+import com.android.devicelockcontroller.receivers.ResetDeviceReceiver;
 import com.android.devicelockcontroller.receivers.ResumeProvisionReceiver;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
@@ -68,6 +70,7 @@ public final class DeviceLockControllerScheduler extends AbstractDeviceLockContr
     static final long PROVISION_STATE_REPORT_INTERVAL_DEFAULT_MINUTES = TimeUnit.DAYS.toMinutes(1);
     public static final String KEY_PROVISION_REPORT_INTERVAL_MINUTES =
             "devicelock.provision.report-interval-minutes";
+    public static final int RESET_DEVICE_DEFAULT_MINUTES = 30;
     private final Context mContext;
     private static final int CHECK_IN_INTERVAL_MINUTE = 60;
     private final Clock mClock;
@@ -267,6 +270,55 @@ public final class DeviceLockControllerScheduler extends AbstractDeviceLockContr
                 }, MoreExecutors.directExecutor());
     }
 
+    @Override
+    public void scheduleResetDeviceAlarm() {
+        Duration delay = Duration.ofMinutes(RESET_DEVICE_DEFAULT_MINUTES);
+        if (Build.isDebuggable()) {
+            delay = Duration.ofMinutes(
+                    SystemProperties.getInt("devicelock.provision.reset-device-minutes",
+                            RESET_DEVICE_DEFAULT_MINUTES));
+        }
+        scheduleResetDeviceAlarm(delay);
+        Instant whenExpectedToRun = Instant.now(mClock).plus(delay);
+        DeviceLockNotificationManager.sendDeviceResetTimerNotification(mContext,
+                whenExpectedToRun.toEpochMilli());
+        Futures.addCallback(
+                getInstance().setResetDeviceTImeMillis(whenExpectedToRun.toEpochMilli()),
+                new FutureCallback<>() {
+                    @Override
+                    public void onSuccess(Void result) {
+                        LogUtil.v(TAG, "Successfully stored reset device time");
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+                        LogUtil.w(TAG, "Failed to store reset device time", t);
+                    }
+                }, MoreExecutors.directExecutor());
+    }
+
+    @Override
+    public void rescheduleResetDeviceAlarm() {
+        Futures.addCallback(getInstance().getResetDeviceTimeMillis(),
+                new FutureCallback<>() {
+                    @Override
+                    public void onSuccess(Long timestamp) {
+                        Duration delay = Duration.between(
+                                Instant.now(mClock),
+                                Instant.ofEpochMilli(timestamp));
+                        scheduleResetDeviceAlarm(delay);
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+                        LogUtil.w(TAG,
+                                "Failed to retrieve reset device time. Reset immediately!",
+                                t);
+                        scheduleResetDeviceAlarm(Duration.ZERO);
+                    }
+                }, MoreExecutors.directExecutor());
+    }
+
     private void enqueueCheckInWorkRequest(boolean isExpedited, Duration delay) {
         OneTimeWorkRequest.Builder builder =
                 new OneTimeWorkRequest.Builder(DeviceCheckInWorker.class)
@@ -287,6 +339,10 @@ public final class DeviceLockControllerScheduler extends AbstractDeviceLockContr
 
     private void scheduleNextProvisionFailedStepAlarm(Duration delay) {
         scheduleAlarmWithPendingIntentAndDelay(NextProvisionFailedStepReceiver.class, delay);
+    }
+
+    private void scheduleResetDeviceAlarm(Duration delay) {
+        scheduleAlarmWithPendingIntentAndDelay(ResetDeviceReceiver.class, delay);
     }
 
     private void scheduleAlarmWithPendingIntentAndDelay(
