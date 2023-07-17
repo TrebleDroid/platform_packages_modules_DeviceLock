@@ -18,6 +18,7 @@ package com.android.devicelockcontroller.activities;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import android.app.admin.DevicePolicyManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +34,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.android.devicelockcontroller.R;
 import com.android.devicelockcontroller.activities.util.UrlUtils;
+import com.android.devicelockcontroller.policy.LockTaskModeHelper;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
 
 /**
@@ -100,6 +102,14 @@ public final class ProgressFragment extends Fragment {
                                         policyObjects.getSetupController(),
                                         policyObjects.getStateController(),
                                         getActivity()));
+
+                        Button exitButton = bottomView.findViewById(R.id.button_exit);
+                        checkNotNull(exitButton);
+                        exitButton.setOnClickListener(view -> {
+                            DevicePolicyManager dpm = getContext().getSystemService(
+                                    DevicePolicyManager.class);
+                            LockTaskModeHelper.disableLockTaskMode(getContext(), dpm);
+                        });
                     } else {
                         bottomView.setVisibility(View.GONE);
                     }
