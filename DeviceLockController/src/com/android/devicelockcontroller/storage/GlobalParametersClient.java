@@ -347,4 +347,28 @@ public final class GlobalParametersClient extends DlcClient {
         });
     }
 
+    /**
+     * Get the time when factory reset device should happen.
+     *
+     * @return the difference, measured in milliseconds, between device factory reset happens and
+     * midnight, January 1, 1970 UTC.
+     */
+    public ListenableFuture<Long> getResetDeviceTimeMillis() {
+        return call(() -> asInterface(getService()).getResetDeviceTimeMillis());
+    }
+
+    /**
+     * Set the time when factory reset device should happen.
+     *
+     * @param resetDeviceTime the difference, measured in milliseconds, between device factory reset
+     *                        happens and midnight, January 1, 1970 UTC.
+     */
+    public ListenableFuture<Void> setResetDeviceTImeMillis(
+            @CurrentTimeMillisLong long resetDeviceTime) {
+        return call(() -> {
+            asInterface(getService()).setResetDeviceTImeMillis(resetDeviceTime);
+            return null;
+        });
+    }
+
 }

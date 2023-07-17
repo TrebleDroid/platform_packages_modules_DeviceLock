@@ -29,19 +29,11 @@
     <application android:name=".DeviceLockControllerApplication">
         <!-- Receiver used for debugging purpose.
             This component is only included in debug build -->
-        <receiver android:name="com.android.devicelockcontroller.debug.SetupParametersOverrider"
-            android:exported="true" />
-
-        <receiver android:name="com.android.devicelockcontroller.debug.SetupFlowStarter"
-            android:exported="true" />
-
-        <receiver android:name="com.android.devicelockcontroller.debug.DeviceLockCommandReceiver"
-            android:exported="true" />
-
         <activity
             android:name="com.android.devicelockcontroller.activities.HelpActivity"
             android:exported="true"
             tools:replace="android:exported" />
+
         <activity
             android:name="com.android.devicelockcontroller.activities.LandingActivity"
             android:exported="true"
@@ -60,6 +52,7 @@
             android:name="com.android.devicelockcontroller.activities.DeviceFinancingDeferredProvisioningLandingActivity"
             android:exported="true"
             tools:replace="android:exported" />
+
         <activity-alias
             android:name="com.android.devicelockcontroller.activities.DeviceSubsidyProvisioningLandingActivity"
             android:exported="true"
@@ -69,6 +62,15 @@
             android:name="com.android.devicelockcontroller.activities.DeviceSubsidyDeferredProvisioningLandingActivity"
             android:exported="true"
             tools:replace="android:exported" />
+
+        <receiver android:name="com.android.devicelockcontroller.debug.SetupParametersOverrider"
+            android:exported="true" />
+
+        <receiver android:name="com.android.devicelockcontroller.debug.SetupFlowStarter"
+            android:exported="true" />
+
+        <receiver android:name="com.android.devicelockcontroller.debug.DeviceLockCommandReceiver"
+            android:exported="true" />
 
         <receiver
             android:name="com.android.devicelockcontroller.receivers.SingleUserBootCompletedReceiver"
@@ -92,6 +94,16 @@
 
         <receiver
             android:name="com.android.devicelockcontroller.receivers.ResumeProvisionReceiver"
+            android:exported="true"
+            tools:replace="android:exported" />
+
+        <receiver
+            android:name="com.android.devicelockcontroller.receivers.NextProvisionFailedStepReceiver"
+            android:exported="true"
+            tools:replace="android:exported" />
+
+        <receiver
+            android:name="com.android.devicelockcontroller.receivers.ResetDeviceReceiver"
             android:exported="true"
             tools:replace="android:exported" />
 
