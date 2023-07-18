@@ -78,8 +78,10 @@ public final class SingleUserBootCompletedReceiver extends BroadcastReceiver {
             return;
         }
 
+        DeviceLockControllerScheduler scheduler = new DeviceLockControllerScheduler(context);
         checkInIfNeeded(
                 ((PolicyObjectsInterface) context.getApplicationContext()).getStateController(),
-                new DeviceLockControllerScheduler(context));
+                scheduler);
+        scheduler.rescheduleIfNeeded();
     }
 }

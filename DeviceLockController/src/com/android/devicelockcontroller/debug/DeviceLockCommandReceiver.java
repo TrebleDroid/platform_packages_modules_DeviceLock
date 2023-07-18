@@ -204,7 +204,10 @@ public final class DeviceLockCommandReceiver extends BroadcastReceiver {
         AlarmManager alarmManager = Objects.requireNonNull(
                 context.getSystemService(AlarmManager.class));
         alarmManager.cancel(
-                ResetDeviceReceiver.getResetDevicePendingIntent(context));
+                PendingIntent.getBroadcast(
+                        context, /* ignored */ 0,
+                        new Intent(context, ResetDeviceReceiver.class),
+                        PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE));
         alarmManager.cancel(PendingIntent.getBroadcast(
                 context, /* ignored */ 0,
                 new Intent(context, NextProvisionFailedStepReceiver.class),

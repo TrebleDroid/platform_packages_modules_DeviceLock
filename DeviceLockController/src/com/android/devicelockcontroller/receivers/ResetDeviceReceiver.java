@@ -16,7 +16,6 @@
 
 package com.android.devicelockcontroller.receivers;
 
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -27,16 +26,6 @@ import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
  * A broadcast receiver that will factory reset the device when it receive a broadcast.
  */
 public final class ResetDeviceReceiver extends BroadcastReceiver {
-
-    /**
-     * Get a {@link PendingIntent} for resetting the device.
-     */
-    public static PendingIntent getResetDevicePendingIntent(Context context) {
-        return PendingIntent.getBroadcast(
-                context, /* ignored */ 0,
-                new Intent(context, ResetDeviceReceiver.class),
-                PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
-    }
 
     @Override
     public void onReceive(Context context, Intent intent) {

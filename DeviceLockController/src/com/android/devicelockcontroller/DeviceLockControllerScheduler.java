@@ -16,6 +16,7 @@
 
 package com.android.devicelockcontroller;
 
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PROVISION_FAILED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PROVISION_PAUSED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNPROVISIONED;
 import static com.android.devicelockcontroller.storage.GlobalParametersClient.getInstance;
@@ -123,6 +124,30 @@ public final class DeviceLockControllerScheduler extends AbstractDeviceLockContr
     }
 
     @Override
+    public void rescheduleIfNeeded() {
+        DeviceStateController stateController =
+                ((PolicyObjectsInterface) mContext.getApplicationContext()).getStateController();
+
+        switch (stateController.getState()) {
+            case UNPROVISIONED:
+                rescheduleRetryCheckInWork();
+                break;
+            case PROVISION_PAUSED:
+                rescheduleResumeProvisionAlarm();
+                break;
+            case PROVISION_FAILED:
+                rescheduleNextProvisionFailedStepAlarm();
+                // Reset device is the last step in provision failed flow. We call this API
+                // regardless, because the alarm will only be rescheduled if it has been
+                // scheduled previously.
+                rescheduleResetDeviceAlarm();
+                break;
+            default:
+                // no-op for other states.
+        }
+    }
+
+    @Override
     public void scheduleResumeProvisionAlarm() {
         Duration delay = Duration.ofMinutes(PROVISION_PAUSED_MINUTES_DEFAULT);
         if (Build.isDebuggable()) {
@@ -148,13 +173,14 @@ public final class DeviceLockControllerScheduler extends AbstractDeviceLockContr
                 }, MoreExecutors.directExecutor());
     }
 
-    @Override
-    public void rescheduleResumeProvisionAlarm() {
+    @VisibleForTesting
+    void rescheduleResumeProvisionAlarm() {
         Futures.addCallback(
                 getInstance().getResumeProvisionTimeMillis(),
                 new FutureCallback<>() {
                     @Override
                     public void onSuccess(Long resumeProvisionTimeMillis) {
+                        if (resumeProvisionTimeMillis <= 0) return;
                         Duration delay = Duration.between(
                                 Instant.now(mClock),
                                 Instant.ofEpochMilli(resumeProvisionTimeMillis));
@@ -198,13 +224,14 @@ public final class DeviceLockControllerScheduler extends AbstractDeviceLockContr
                 }, MoreExecutors.directExecutor());
     }
 
-    @Override
-    public void rescheduleRetryCheckInWork() {
+    @VisibleForTesting
+    void rescheduleRetryCheckInWork() {
         Futures.addCallback(
                 getInstance().getNextCheckInTimeMillis(),
                 new FutureCallback<>() {
                     @Override
                     public void onSuccess(Long nextCheckInTimeMillis) {
+                        if (nextCheckInTimeMillis <= 0) return;
                         Duration delay = Duration.between(
                                 Instant.now(mClock),
                                 Instant.ofEpochMilli(nextCheckInTimeMillis));
@@ -247,12 +274,13 @@ public final class DeviceLockControllerScheduler extends AbstractDeviceLockContr
                 }, MoreExecutors.directExecutor());
     }
 
-    @Override
-    public void rescheduleNextProvisionFailedStepAlarm() {
+    @VisibleForTesting
+    void rescheduleNextProvisionFailedStepAlarm() {
         Futures.addCallback(getInstance().getNextProvisionFailedStepTimeMills(),
                 new FutureCallback<>() {
                     @Override
                     public void onSuccess(Long timestamp) {
+                        if (timestamp <= 0) return;
                         Duration delay = Duration.between(
                                 Instant.now(mClock),
                                 Instant.ofEpochMilli(timestamp));
@@ -297,12 +325,13 @@ public final class DeviceLockControllerScheduler extends AbstractDeviceLockContr
                 }, MoreExecutors.directExecutor());
     }
 
-    @Override
-    public void rescheduleResetDeviceAlarm() {
+    @VisibleForTesting
+    void rescheduleResetDeviceAlarm() {
         Futures.addCallback(getInstance().getResetDeviceTimeMillis(),
                 new FutureCallback<>() {
                     @Override
                     public void onSuccess(Long timestamp) {
+                        if (timestamp <= 0) return;
                         Duration delay = Duration.between(
                                 Instant.now(mClock),
                                 Instant.ofEpochMilli(timestamp));
