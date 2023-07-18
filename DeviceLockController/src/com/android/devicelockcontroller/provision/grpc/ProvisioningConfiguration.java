@@ -22,7 +22,6 @@ import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_DISABLE_OUTGOING_CALLS;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_ENABLE_NOTIFICATIONS_IN_LOCK_TASK_MODE;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_PACKAGE;
-import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_SETUP_ACTIVITY;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_SUPPORT_URL;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_TERMS_AND_CONDITIONS_URL;
 
@@ -42,10 +41,6 @@ public final class ProvisioningConfiguration {
     // The name of the provider of the kiosk app, e.g. "Foo Bar Inc".
 
     private final String mKioskAppPackageName;
-    // The package component of the activity of the kiosk app that the user
-    // would interact when the device is locked (i.e. this activity allows the
-    // user to make a payment), e.g. "com.foo.bar/com.foo.bar.MainActivity".
-    private final String mKioskAppMainActivity;
     // The list of apps that a user can use when the device is locked.
     private final List<String> mKioskAppAllowlistPackages;
     // Whether the user can make phone calls when the device is locked.
@@ -68,13 +63,12 @@ public final class ProvisioningConfiguration {
     public ProvisioningConfiguration(
             String kioskAppProviderName,
             String kioskAppPackageName,
-            String kioskAppMainActivity, List<String> kioskAppAllowlistPackages,
+            List<String> kioskAppAllowlistPackages,
             boolean kioskAppEnableOutgoingCalls, boolean kioskAppEnableEnableNotifications,
             boolean disallowInstallingFromUnknownSources, String termsAndConditionsUrl,
             String supportUrl) {
         mKioskAppProviderName = kioskAppProviderName;
         mKioskAppPackageName = kioskAppPackageName;
-        mKioskAppMainActivity = kioskAppMainActivity;
         mKioskAppAllowlistPackages = kioskAppAllowlistPackages;
         mKioskAppEnableOutgoingCalls = kioskAppEnableOutgoingCalls;
         mKioskAppEnableEnableNotifications = kioskAppEnableEnableNotifications;
@@ -89,7 +83,6 @@ public final class ProvisioningConfiguration {
     public Bundle toBundle() {
         final Bundle bundle = new Bundle();
         bundle.putString(EXTRA_KIOSK_PACKAGE, mKioskAppPackageName);
-        bundle.putString(EXTRA_KIOSK_SETUP_ACTIVITY, mKioskAppMainActivity);
         bundle.putBoolean(EXTRA_KIOSK_DISABLE_OUTGOING_CALLS, mKioskAppEnableOutgoingCalls);
         bundle.putBoolean(EXTRA_KIOSK_ENABLE_NOTIFICATIONS_IN_LOCK_TASK_MODE,
                 mKioskAppEnableEnableNotifications);

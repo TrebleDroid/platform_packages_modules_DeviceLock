@@ -155,16 +155,6 @@ public final class SetupParametersClient extends DlcClient
     }
 
     /**
-     * Get the setup activity for the kiosk app.
-     *
-     * @return Setup activity.
-     */
-    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
-    public ListenableFuture<String> getKioskSetupActivity() {
-        return call(() -> asInterface(getService()).getKioskSetupActivity());
-    }
-
-    /**
      * Check if the configuration disables outgoing calls.
      *
      * @return True if outgoign calls are disabled.

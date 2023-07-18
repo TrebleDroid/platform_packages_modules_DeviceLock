@@ -108,7 +108,6 @@ final class GetDeviceCheckInStatusGrpcResponseWrapper extends GetDeviceCheckInSt
         return new ProvisioningConfiguration(
                 info.getKioskAppProviderName(),
                 info.getKioskAppPackage(),
-                info.getKioskAppMainActivity(),
                 info.getKioskAppAllowlistPackagesList(),
                 info.getKioskAppEnableOutgoingCalls(),
                 info.getKioskAppEnableNotifications(),

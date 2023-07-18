@@ -72,6 +72,8 @@ public final class DevicePolicyControllerImpl
     private final Context mContext;
     private final DevicePolicyManager mDpm;
     private final DeviceStateController mStateController;
+    private static final String ACTION_DEVICE_LOCK_KIOSK_SETUP =
+            "com.android.devicelock.action.KIOSK_SETUP";
 
     /**
      * Create a new policy controller.
@@ -256,27 +258,16 @@ public final class DevicePolicyControllerImpl
     }
 
     private ListenableFuture<Intent> getKioskSetupActivityIntent() {
-        ListenableFuture<String> kioskPackageTask =
+        final ListenableFuture<String> kioskPackageTask =
                 SetupParametersClient.getInstance().getKioskPackage();
-        ListenableFuture<String> setupActivityTask =
-                SetupParametersClient.getInstance().getKioskSetupActivity();
-        return Futures.whenAllSucceed(kioskPackageTask, setupActivityTask)
-                .call(
-                        () -> {
-                            String kioskPackage = Futures.getDone(kioskPackageTask);
-                            if (kioskPackage == null) {
-                                LogUtil.e(TAG, "Missing kiosk package parameter");
-                                return null;
-                            }
-
-                            String setupActivity = Futures.getDone(setupActivityTask);
-                            if (setupActivity == null) {
-                                LogUtil.e(TAG, "Failed to get setup Activity");
-                                return null;
-                            }
-                            return new Intent()
-                                    .setComponent(new ComponentName(kioskPackage, setupActivity));
-                        },
-                        MoreExecutors.directExecutor());
+        return Futures.transform(kioskPackageTask, kioskPackageName -> {
+            if (kioskPackageName == null) {
+                LogUtil.e(TAG, "Kiosk package name is null");
+                return null;
+            }
+            final Intent kioskSetupIntent = new Intent(ACTION_DEVICE_LOCK_KIOSK_SETUP);
+            kioskSetupIntent.setPackage(kioskPackageName);
+            return kioskSetupIntent;
+        }, mContext.getMainExecutor());
     }
 }
