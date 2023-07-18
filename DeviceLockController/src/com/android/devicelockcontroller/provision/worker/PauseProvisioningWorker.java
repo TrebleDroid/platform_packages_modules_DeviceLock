@@ -41,7 +41,8 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 
 /**
- * A worker class dedicated to request pause of provisioning for device lock program.
+ * Despite the naming, this worker class is only to report provision has been paused by user to
+ * backend server.
  */
 public final class PauseProvisioningWorker extends AbstractCheckInWorker {
     private static final String KEY_PAUSE_DEVICE_PROVISIONING_REASON =
