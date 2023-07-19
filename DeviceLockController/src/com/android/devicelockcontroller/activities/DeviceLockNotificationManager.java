@@ -16,6 +16,8 @@
 
 package com.android.devicelockcontroller.activities;
 
+import static com.android.devicelockcontroller.activities.ProvisioningActivity.EXTRA_SHOW_PROVISION_FAILED_UI_ON_START;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import android.annotation.SuppressLint;
@@ -24,6 +26,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.SystemClock;
 import android.widget.RemoteViews;
 
@@ -178,7 +181,7 @@ public final class DeviceLockNotificationManager {
             int days, boolean ongoing) {
         return Futures.transform(SetupParametersClient.getInstance().getKioskAppProviderName(),
                 providerName ->
-                        // TODO: update the icon
+                        // TODO(b/291951742): update the icon
                         new NotificationCompat.Builder(context, PROVISION_NOTIFICATION_CHANNEL_ID)
                                 .setSmallIcon(R.drawable.ic_action_lock)
                                 .setOngoing(ongoing)
@@ -186,7 +189,14 @@ public final class DeviceLockNotificationManager {
                                         R.string.device_reset_in_days_notification_title))
                                 .setContentText(context.getString(
                                         R.string.device_reset_notification_content,
-                                        providerName)).build(),
+                                        providerName))
+                                .setContentIntent(
+                                        PendingIntent.getActivity(context, /* requestCode= */0,
+                                                new Intent(context,
+                                                        ProvisioningActivity.class).putExtra(
+                                                        EXTRA_SHOW_PROVISION_FAILED_UI_ON_START,
+                                                        true),
+                                                PendingIntent.FLAG_IMMUTABLE)).build(),
                 context.getMainExecutor());
     }
 
