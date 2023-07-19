@@ -97,6 +97,16 @@ public final class GlobalParametersService extends Service {
                 }
 
                 @Override
+                public int getDaysLeftUntilReset() {
+                    return GlobalParameters.getDaysLeftUntilReset(mContext);
+                }
+
+                @Override
+                public void setDaysLeftUntilReset(int days) {
+                    GlobalParameters.setDaysLeftUntilReset(mContext, days);
+                }
+
+                @Override
                 public long getBootTimeMillis() {
                     return GlobalParameters.getBootTimeMillis(mContext);
                 }
@@ -137,6 +147,15 @@ public final class GlobalParametersService extends Service {
                         long nextProvisionFailedStepTimeMills) {
                     GlobalParameters.setNextProvisionFailedStepTimeMills(mContext,
                             nextProvisionFailedStepTimeMills);
+                }
+
+                @Override
+                public long getResetDeviceTimeMillis() {
+                    return GlobalParameters.getResetDeviceTimeMillis(mContext);
+                }
+
+                public void setResetDeviceTImeMillis(long resetDeviceTime) {
+                    GlobalParameters.setResetDeviceTImeMillis(mContext, resetDeviceTime);
                 }
             };
 

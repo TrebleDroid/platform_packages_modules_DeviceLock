@@ -24,6 +24,7 @@ import static com.android.devicelockcontroller.policy.DeviceStateController.Devi
 import static java.lang.annotation.RetentionPolicy.SOURCE;
 
 import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -42,6 +43,9 @@ import com.android.devicelockcontroller.provision.worker.DeviceCheckInWorker;
 import com.android.devicelockcontroller.provision.worker.PauseProvisioningWorker;
 import com.android.devicelockcontroller.provision.worker.ReportDeviceLockProgramCompleteWorker;
 import com.android.devicelockcontroller.provision.worker.ReportDeviceProvisionStateWorker;
+import com.android.devicelockcontroller.receivers.NextProvisionFailedStepReceiver;
+import com.android.devicelockcontroller.receivers.ResetDeviceReceiver;
+import com.android.devicelockcontroller.receivers.ResumeProvisionReceiver;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.storage.SetupParametersClient;
 import com.android.devicelockcontroller.storage.UserParameters;
@@ -196,10 +200,22 @@ public final class DeviceLockCommandReceiver extends BroadcastReceiver {
         workManager.cancelAllWorkByTag(
                 ReportDeviceLockProgramCompleteWorker.class.getName());
 
-        // Cancel reset device alarm
-        AlarmManager alarmManager = context.getSystemService(AlarmManager.class);
-        Objects.requireNonNull(alarmManager).cancel(
-                ReportDeviceProvisionStateWorker.getResetDevicePendingIntent(context));
+        // Cancel All alarms
+        AlarmManager alarmManager = Objects.requireNonNull(
+                context.getSystemService(AlarmManager.class));
+        alarmManager.cancel(
+                PendingIntent.getBroadcast(
+                        context, /* ignored */ 0,
+                        new Intent(context, ResetDeviceReceiver.class),
+                        PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE));
+        alarmManager.cancel(PendingIntent.getBroadcast(
+                context, /* ignored */ 0,
+                new Intent(context, NextProvisionFailedStepReceiver.class),
+                PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE));
+        alarmManager.cancel(PendingIntent.getBroadcast(
+                context, /* ignored */ 0,
+                new Intent(context, ResumeProvisionReceiver.class),
+                PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE));
 
         DeviceStateController stateController =
                 ((PolicyObjectsInterface) context.getApplicationContext()).getStateController();

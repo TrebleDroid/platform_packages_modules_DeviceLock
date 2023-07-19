@@ -33,6 +33,8 @@ interface IGlobalParametersService {
     void setEnrollmentToken(String token);
     int getLastReceivedProvisionState();
     void setLastReceivedProvisionState(int provisionState);
+    int getDaysLeftUntilReset();
+    void setDaysLeftUntilReset(int days);
     long getBootTimeMillis();
     void setBootTimeMillis(long bootTime);
     long getNextCheckInTimeMillis();
@@ -41,4 +43,6 @@ interface IGlobalParametersService {
     void setResumeProvisionTimeMillis(long resumeProvisionTime);
     long getNextProvisionFailedStepTimeMills();
     void setNextProvisionFailedStepTimeMills(long nextProvisionFailedStep);
+    long getResetDeviceTimeMillis();
+    void setResetDeviceTImeMillis(long resetDeviceTime);
 }
