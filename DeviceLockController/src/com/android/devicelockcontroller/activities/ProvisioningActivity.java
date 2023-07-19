@@ -25,11 +25,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.android.devicelockcontroller.R;
+import com.android.devicelockcontroller.util.LogUtil;
 
 /**
  * The activity displayed when provisioning is in progress.
  */
 public final class ProvisioningActivity extends AppCompatActivity {
+
+    private static final String TAG = "ProvisioningActivity";
+    static final String EXTRA_SHOW_PROVISION_FAILED_UI_ON_START =
+            "com.android.devicelockcontroller.activities.extra.SHOW_PROVISION_FAILED_UI_ON_START";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,7 +54,10 @@ public final class ProvisioningActivity extends AppCompatActivity {
                     .replace(R.id.fragment_container, progressFragment)
                     .commit();
         });
-
+        if (getIntent().getBooleanExtra(EXTRA_SHOW_PROVISION_FAILED_UI_ON_START, false)) {
+            LogUtil.d(TAG, "showing provision failed ui");
+            viewModel.setProvisioningProgress(ProvisioningProgress.PROVISIONING_FAILED);
+        }
         getSupportFragmentManager()
                 .beginTransaction()
                 .add(R.id.fragment_container, new DevicePoliciesFragment())
