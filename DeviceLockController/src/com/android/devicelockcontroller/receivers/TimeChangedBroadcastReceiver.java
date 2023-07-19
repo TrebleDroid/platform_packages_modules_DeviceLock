@@ -37,7 +37,6 @@ import com.google.common.util.concurrent.MoreExecutors;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.concurrent.Executors;
 
 /**
  * Handle {@link Intent#ACTION_TIME_CHANGED}. This receiver runs for every user.
@@ -80,12 +79,9 @@ public final class TimeChangedBroadcastReceiver extends BroadcastReceiver {
                 bootTimestamp -> {
                     Instant bootInstant = Instant.ofEpochMilli(bootTimestamp);
 
-                    Duration delta = Duration.between(bootInstant.plusMillis(
+                    return Duration.between(bootInstant.plusMillis(
                             SystemClock.elapsedRealtime()), Instant.now(mClock));
-                    Futures.getUnchecked(
-                            client.setBootTimeMillis(bootInstant.plus(delta).toEpochMilli()));
-                    return delta;
-                }, Executors.newSingleThreadExecutor());
+                }, MoreExecutors.directExecutor());
 
         if (mScheduler == null) mScheduler = new DeviceLockControllerScheduler(context);
         Futures.addCallback(deltaFuture, new FutureCallback<>() {

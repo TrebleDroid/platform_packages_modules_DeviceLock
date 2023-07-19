@@ -57,6 +57,8 @@ import com.google.common.util.concurrent.MoreExecutors;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -93,34 +95,52 @@ public final class DeviceLockControllerScheduler extends AbstractDeviceLockContr
                 ((PolicyObjectsInterface) mContext.getApplicationContext()).getStateController();
         GlobalParametersClient client = getInstance();
         int currentState = stateController.getState();
-        ListenableFuture<Void> updateTimestampFuture = null;
+        List<ListenableFuture<Void>> updateTimestampFutures = new ArrayList<>();
+        updateTimestampFutures.add(Futures.transformAsync(client.getBootTimeMillis(),
+                before -> client.setBootTimeMillis(before + delta.toMillis()),
+                MoreExecutors.directExecutor()));
         if (currentState == UNPROVISIONED) {
-            updateTimestampFuture = Futures.transformAsync(client.getNextCheckInTimeMillis(),
+            updateTimestampFutures.add(Futures.transformAsync(client.getNextCheckInTimeMillis(),
                     before -> {
                         if (before == 0) return Futures.immediateVoidFuture();
                         return client.setNextCheckInTimeMillis(before + delta.toMillis());
-                    }, MoreExecutors.directExecutor());
+                    }, MoreExecutors.directExecutor()));
         } else if (currentState == PROVISION_PAUSED) {
-            updateTimestampFuture = Futures.transformAsync(client.getResumeProvisionTimeMillis(),
+            updateTimestampFutures.add(Futures.transformAsync(client.getResumeProvisionTimeMillis(),
                     before -> {
                         if (before == 0) return Futures.immediateVoidFuture();
                         return client.setResumeProvisionTimeMillis(before + delta.toMillis());
-                    }, MoreExecutors.directExecutor());
+                    }, MoreExecutors.directExecutor()));
+        } else if (currentState == PROVISION_FAILED) {
+            updateTimestampFutures.add(
+                    Futures.transformAsync(client.getNextProvisionFailedStepTimeMills(),
+                            before -> {
+                                if (before == 0) return Futures.immediateVoidFuture();
+                                return client.setNextProvisionFailedStepTimeMills(
+                                        before + delta.toMillis());
+                            }, MoreExecutors.directExecutor()));
+            updateTimestampFutures.add(
+                    Futures.transformAsync(client.getResetDeviceTimeMillis(),
+                            before -> {
+                                if (before == 0) return Futures.immediateVoidFuture();
+                                return client.setResetDeviceTImeMillis(before + delta.toMillis());
+                            }, MoreExecutors.directExecutor()));
         }
 
-        if (updateTimestampFuture != null) {
-            Futures.addCallback(updateTimestampFuture, new FutureCallback<>() {
-                @Override
-                public void onSuccess(Void result) {
-                    LogUtil.i(TAG, "Successfully corrected expected to run time");
-                }
+        Futures.addCallback(
+                Futures.whenAllSucceed(updateTimestampFutures)
+                        .call(() -> null, MoreExecutors.directExecutor()),
+                new FutureCallback<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        LogUtil.i(TAG, "Successfully corrected expected to run time");
+                    }
 
-                @Override
-                public void onFailure(Throwable t) {
-                    LogUtil.e(TAG, "Failed to correct expected to run time", t);
-                }
-            }, MoreExecutors.directExecutor());
-        }
+                    @Override
+                    public void onFailure(Throwable t) {
+                        LogUtil.e(TAG, "Failed to correct expected to run time", t);
+                    }
+                }, MoreExecutors.directExecutor());
     }
 
     @Override
