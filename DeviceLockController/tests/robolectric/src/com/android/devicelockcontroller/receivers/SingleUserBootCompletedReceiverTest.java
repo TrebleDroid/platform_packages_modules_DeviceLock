@@ -20,6 +20,10 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import android.content.Intent;
+
+import androidx.test.core.app.ApplicationProvider;
+
 import com.android.devicelockcontroller.AbstractDeviceLockControllerScheduler;
 import com.android.devicelockcontroller.policy.DeviceStateController;
 
@@ -59,5 +63,15 @@ public final class SingleUserBootCompletedReceiverTest {
         SingleUserBootCompletedReceiver.checkInIfNeeded(mDeviceStateController, mScheduler);
 
         verify(mScheduler, never()).scheduleInitialCheckInWork();
+    }
+
+    @Test
+    public void onReceive_rescheduleAlarOrWorksIfNeeded() {
+        SingleUserBootCompletedReceiver receiver = new SingleUserBootCompletedReceiver(mScheduler);
+
+        receiver.onReceive(ApplicationProvider.getApplicationContext(),
+                new Intent(Intent.ACTION_BOOT_COMPLETED));
+
+        verify(mScheduler).rescheduleIfNeeded();
     }
 }

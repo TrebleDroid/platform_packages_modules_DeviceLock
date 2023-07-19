@@ -122,7 +122,6 @@ public final class NextProvisionFailedStepReceiver extends BroadcastReceiver {
                 if (needToReport) {
                     ReportDeviceProvisionStateWorker.reportCurrentFailedStep(
                             WorkManager.getInstance(context));
-                    mScheduler.scheduleNextProvisionFailedStepAlarm();
                 }
             }
 

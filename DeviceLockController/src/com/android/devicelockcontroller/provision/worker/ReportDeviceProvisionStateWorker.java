@@ -30,6 +30,7 @@ import androidx.work.WorkManager;
 import androidx.work.WorkerParameters;
 
 import com.android.devicelockcontroller.AbstractDeviceLockControllerScheduler;
+import com.android.devicelockcontroller.DeviceLockControllerScheduler;
 import com.android.devicelockcontroller.common.DeviceLockConstants.SetupFailureReason;
 import com.android.devicelockcontroller.policy.SetupController;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
@@ -49,6 +50,7 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
             "device-provision-failure-reason";
     public static final String KEY_IS_PROVISION_SUCCESSFUL = "is-provision-successful";
     public static final String REPORT_PROVISION_STATE_WORK_NAME = "report-provision-state";
+    private AbstractDeviceLockControllerScheduler mDeviceLockControllerScheduler;
 
     /**
      * Get a {@link SetupController.SetupUpdatesCallbacks} which will enqueue this worker to report
@@ -56,13 +58,11 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
      */
     @NonNull
     public static SetupController.SetupUpdatesCallbacks getSetupUpdatesCallbacks(
-            AbstractDeviceLockControllerScheduler scheduler,
             WorkManager workManager) {
         return new SetupController.SetupUpdatesCallbacks() {
             @Override
             public void setupFailed(@SetupFailureReason int reason) {
                 reportSetupFailed(reason, workManager);
-                scheduler.scheduleNextProvisionFailedStepAlarm();
             }
 
             @Override
@@ -110,14 +110,17 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
 
     public ReportDeviceProvisionStateWorker(@NonNull Context context,
             @NonNull WorkerParameters workerParams, ListeningExecutorService executorService) {
-        super(context, workerParams, null, executorService);
+        this(context, workerParams, null, executorService,
+                new DeviceLockControllerScheduler(context));
     }
 
     @VisibleForTesting
     ReportDeviceProvisionStateWorker(@NonNull Context context,
             @NonNull WorkerParameters workerParams, DeviceCheckInClient client,
-            ListeningExecutorService executorService) {
+            ListeningExecutorService executorService,
+            AbstractDeviceLockControllerScheduler deviceLockControllerScheduler) {
         super(context, workerParams, client, executorService);
+        mDeviceLockControllerScheduler = deviceLockControllerScheduler;
     }
 
     @NonNull
@@ -148,6 +151,7 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
             }
             Futures.getUnchecked(globalParametersClient.setLastReceivedProvisionState(
                     response.getNextClientProvisionState()));
+            mDeviceLockControllerScheduler.scheduleNextProvisionFailedStepAlarm();
             return Result.success();
         }, mExecutorService);
     }
