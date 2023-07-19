@@ -107,7 +107,7 @@
     <!-- Screen header text explaining that the user can now enroll this device into device financing program. [CHAR_LIMIT=40] -->
     <string name="enroll_your_device_header">Enroll your device</string>
     <!-- Screen subheader text explaining that the user can now enroll this device into device provider's device financing program. [CHAR_LIMIT=80] -->
-    <string name="enroll_your_device_financing_subheader">You can now enroll your device in <xliff:g id="provider name">%1$s</xliff:g>\'s financing program</string>
+    <string name="enroll_your_device_financing_subheader">You can now enroll your device in <xliff:g id="provider name">%1$s</xliff:g>\'s finance program</string>
     <!-- Screen subheader text explaining that the user can now enroll this device into device provider's device subsidy program. [CHAR_LIMIT=80]-->
     <string name="enroll_your_device_subsidy_subheader">You can now enroll your device in <xliff:g id="provider name">%1$s</xliff:g>\'s subsidy program</string>
     <!-- Screen header text explaining that the user is on a device subsidy program. [CHAR_LIMIT=40] -->
