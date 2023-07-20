@@ -19,6 +19,7 @@ package com.android.devicelockcontroller.debug;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState.PROVISION_STATE_UNSPECIFIED;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.READY_FOR_PROVISION;
 
+import android.os.SystemClock;
 import android.os.SystemProperties;
 import android.util.ArraySet;
 
@@ -77,7 +78,8 @@ public final class DeviceCheckInClientDebug extends DeviceCheckInClient {
                 Duration delay = Duration.ofMinutes(
                         SystemProperties.getInt(
                                 "debug.devicelock.checkin.retry-delay", /* def= */ 1));
-                return DebugLogUtil.logAndReturn(TAG, Instant.now().plusSeconds(delay.toSeconds()));
+                return DebugLogUtil.logAndReturn(TAG,
+                        SystemClock.currentNetworkTimeClock().instant().plus(delay));
             }
 
             @Nullable
