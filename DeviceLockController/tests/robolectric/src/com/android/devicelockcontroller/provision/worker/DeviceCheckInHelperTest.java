@@ -38,7 +38,6 @@ import android.util.ArraySet;
 import androidx.annotation.Nullable;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.work.Configuration;
-import androidx.work.WorkManager;
 import androidx.work.testing.SynchronousExecutor;
 import androidx.work.testing.WorkManagerTestInitHelper;
 
@@ -77,7 +76,6 @@ public final class DeviceCheckInHelperTest {
     static final Duration TEST_NEGATIVE_CHECK_RETRY_DURATION =
             Duration.ZERO.minus(TEST_CHECK_RETRY_DURATION);
     public static final boolean IS_PROVISIONING_MANDATORY = false;
-    private static final int GET_WORK_INFO_TIMEOUT_MILLIS = 500;
     private TestDeviceLockControllerApplication mTestApplication;
     static final int TOTAL_SLOT_COUNT = 2;
     static final int TOTAL_ID_COUNT = 4;
@@ -192,8 +190,6 @@ public final class DeviceCheckInHelperTest {
                         TEST_NEGATIVE_CHECK_RETRY_DURATION));
 
         assertThat(mHelper.handleGetDeviceCheckInStatusResponse(response, mScheduler)).isTrue();
-
-        WorkManager workManager = WorkManager.getInstance(mTestApplication);
 
         verify(mScheduler).scheduleRetryCheckInWork(eq(Duration.ZERO));
 
