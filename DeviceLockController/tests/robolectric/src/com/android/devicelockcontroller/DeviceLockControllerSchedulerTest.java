@@ -241,7 +241,7 @@ public final class DeviceLockControllerSchedulerTest {
         // GIVEN check-in work is not scheduled
         WorkManager workManager = WorkManager.getInstance(mTestApp);
         assertThat(workManager.getWorkInfosForUniqueWork(
-                DEVICE_CHECK_IN_WORK_NAME).get().isEmpty());
+                DEVICE_CHECK_IN_WORK_NAME).get()).isEmpty();
 
         // WHEN schedule retry check-in work
         mScheduler.scheduleRetryCheckInWork(TEST_RETRY_CHECK_IN_DELAY);
