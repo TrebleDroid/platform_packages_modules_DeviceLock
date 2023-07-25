@@ -16,25 +16,15 @@
 
 package com.android.devicelockcontroller.provision.worker;
 
-import static com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState.PROVISION_STATE_DISMISSIBLE_UI;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState.PROVISION_STATE_FACTORY_RESET;
-import static com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState.PROVISION_STATE_PERSISTENT_UI;
-import static com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState.PROVISION_STATE_RETRY;
-import static com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState.PROVISION_STATE_SUCCESS;
-import static com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState.PROVISION_STATE_UNSPECIFIED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.PROVISION_READY;
-import static com.android.devicelockcontroller.provision.worker.ReportDeviceProvisionStateWorker.UNEXPECTED_PROVISION_STATE_ERROR_MESSAGE;
 
 import static com.google.common.truth.Truth.assertThat;
 
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.content.Context;
-import android.os.Looper;
 
 import androidx.annotation.NonNull;
 import androidx.test.core.app.ApplicationProvider;
@@ -48,18 +38,14 @@ import androidx.work.testing.TestListenableWorkerBuilder;
 import androidx.work.testing.WorkManagerTestInitHelper;
 
 import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
-import com.android.devicelockcontroller.policy.DevicePolicyController;
-import com.android.devicelockcontroller.policy.DeviceStateController;
-import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.ReportDeviceProvisionStateGrpcResponse;
+import com.android.devicelockcontroller.storage.GlobalParametersClient;
 
 import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.google.common.util.concurrent.testing.TestingExecutors;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -67,11 +53,11 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.Shadows;
 
 @RunWith(RobolectricTestRunner.class)
 public final class ReportDeviceProvisionStateWorkerTest {
-    public static final int UNEXPECTED_VALUE = -1;
+    private static final int TEST_DAYS_LEFT_UNTIL_RESET = 3;
+    private static final String TEST_ENROLLMENT_TOKEN = "1234567890";
     @Rule
     public final MockitoRule mMocks = MockitoJUnit.rule();
     @Mock
@@ -125,77 +111,20 @@ public final class ReportDeviceProvisionStateWorkerTest {
     }
 
     @Test
-    public void doWork_nextProvisionStateUnExpected_shouldThrowException() {
-        when(mResponse.isSuccessful()).thenReturn(true);
-        when(mResponse.getNextClientProvisionState()).thenReturn(UNEXPECTED_VALUE);
-        try {
-            Futures.getUnchecked(mWorker.startWork());
-        } catch (UncheckedExecutionException actualException) {
-            assertThat(actualException.getCause()).hasMessageThat().isEqualTo(
-                    UNEXPECTED_PROVISION_STATE_ERROR_MESSAGE);
-            return;
-        }
-        throw new AssertionError("Expected exception is not thrown!");
-    }
-
-    @Test
-    public void doWork_nextProvisionStateUnspecified_shouldReturnSuccess() {
-        when(mResponse.isSuccessful()).thenReturn(true);
-        when(mResponse.getNextClientProvisionState()).thenReturn(PROVISION_STATE_UNSPECIFIED);
-
-        assertThat(Futures.getUnchecked(mWorker.startWork())).isEqualTo(Result.success());
-    }
-
-    @Test
-    public void doWork_nextProvisionStateSuccess_shouldReturnSuccess() {
-        when(mResponse.isSuccessful()).thenReturn(true);
-        when(mResponse.getNextClientProvisionState()).thenReturn(PROVISION_STATE_SUCCESS);
-
-        assertThat(Futures.getUnchecked(mWorker.startWork())).isEqualTo(Result.success());
-    }
-
-    @Test
-    public void doWork_nextProvisionStateRetry_shouldRetrySetup() {
-        when(mResponse.isSuccessful()).thenReturn(true);
-        when(mResponse.getNextClientProvisionState()).thenReturn(PROVISION_STATE_RETRY);
-        DevicePolicyController devicePolicyController = mTestApp.getPolicyController();
-        DeviceStateController deviceStateController = mTestApp.getStateController();
-        when(deviceStateController.setNextStateForEvent(PROVISION_READY)).thenReturn(
-                Futures.immediateFuture(DeviceState.PROVISION_SUCCEEDED));
-
-        assertThat(Futures.getUnchecked(mWorker.startWork())).isEqualTo(Result.success());
-
-        Shadows.shadowOf(Looper.getMainLooper()).idle();
-        verify(deviceStateController).setNextStateForEvent(eq(PROVISION_READY));
-    }
-
-    @Test
-    public void doWork_nextProvisionStateDissmissableUI_shouldReturnSuccess() {
-        when(mResponse.isSuccessful()).thenReturn(true);
-        when(mResponse.getNextClientProvisionState()).thenReturn(PROVISION_STATE_DISMISSIBLE_UI);
-
-        // TODO(b/284003841): add test content
-
-        assertThat(Futures.getUnchecked(mWorker.startWork())).isEqualTo(Result.success());
-    }
-
-    @Test
-    public void doWork_nextProvisionStatePersistentUI_shouldReturnSuccess() {
-        when(mResponse.isSuccessful()).thenReturn(true);
-        when(mResponse.getNextClientProvisionState()).thenReturn(PROVISION_STATE_PERSISTENT_UI);
-
-        // TODO(b/284003841): add test content
-
-        assertThat(Futures.getUnchecked(mWorker.startWork())).isEqualTo(Result.success());
-    }
-
-    @Ignore //TODO(b/284003841): Figure out how to verify the expectation
-    @Test
-    public void doWork_nextProvisionStateFactoryReset_shouldResetDevice() {
+    public void doWork_responseIsSuccessful_globalParametersShouldBeSet_returnSuccess()
+            throws Exception {
         when(mResponse.isSuccessful()).thenReturn(true);
         when(mResponse.getNextClientProvisionState()).thenReturn(PROVISION_STATE_FACTORY_RESET);
-        DevicePolicyController devicePolicyController = mTestApp.getPolicyController();
+        when(mResponse.getDaysLeftUntilReset()).thenReturn(TEST_DAYS_LEFT_UNTIL_RESET);
+        when(mResponse.getEnrollmentToken()).thenReturn(TEST_ENROLLMENT_TOKEN);
 
         assertThat(Futures.getUnchecked(mWorker.startWork())).isEqualTo(Result.success());
+
+        GlobalParametersClient globalParameters = GlobalParametersClient.getInstance();
+        assertThat(globalParameters.getLastReceivedProvisionState().get()).isEqualTo(
+                PROVISION_STATE_FACTORY_RESET);
+        assertThat(globalParameters.getDaysLeftUntilReset().get()).isEqualTo(
+                TEST_DAYS_LEFT_UNTIL_RESET);
+        assertThat(globalParameters.getEnrollmentToken().get()).isEqualTo(TEST_ENROLLMENT_TOKEN);
     }
 }

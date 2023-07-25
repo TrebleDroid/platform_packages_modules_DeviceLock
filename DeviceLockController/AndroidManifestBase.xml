@@ -126,7 +126,7 @@
 
         <!-- System user only boot completed broadcast receiver -->
         <receiver
-            android:name="com.android.devicelockcontroller.receivers.CheckInBootCompletedReceiver"
+            android:name="com.android.devicelockcontroller.receivers.SingleUserBootCompletedReceiver"
             android:exported="false"
             androidprv:systemUserOnly="true">
             <intent-filter>
@@ -136,7 +136,7 @@
 
         <!-- Multi users boot completed broadcast receiver -->
         <receiver
-            android:name="com.android.devicelockcontroller.receivers.LockTaskBootCompletedReceiver"
+            android:name="com.android.devicelockcontroller.receivers.BootCompletedReceiver"
             android:exported="false"
             android:singleUser="false">
             <intent-filter>
@@ -154,6 +154,31 @@
                 <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
+        <!-- Multi users time changed broadcast receiver -->
+        <receiver
+            android:name="com.android.devicelockcontroller.receivers.TimeChangedBroadcastReceiver"
+            android:exported="false"
+            android:singleUser="false">
+            <intent-filter>
+                <action android:name="android.intent.action.TIME_SET" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name="com.android.devicelockcontroller.receivers.ResumeProvisionReceiver"
+            android:exported="false"
+            android:singleUser="false" />
+
+        <receiver
+            android:name="com.android.devicelockcontroller.receivers.NextProvisionFailedStepReceiver"
+            android:exported="false"
+            android:singleUser="false" />
+
+        <receiver
+            android:name="com.android.devicelockcontroller.receivers.ResetDeviceReceiver"
+            android:exported="false"
+            android:singleUser="false" />
 
         <service
             android:name="com.android.devicelockcontroller.DeviceLockControllerService"

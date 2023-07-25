@@ -43,6 +43,7 @@ import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
 import com.android.devicelockcontroller.DeviceLockControllerApplication;
+import com.android.devicelockcontroller.DeviceLockControllerScheduler;
 import com.android.devicelockcontroller.common.DeviceLockConstants.SetupFailureReason;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
@@ -114,7 +115,8 @@ public final class SetupControllerImpl implements SetupController {
                         if (newState == DeviceState.PROVISION_PAUSED) {
                             WorkManager workManager = WorkManager.getInstance(mContext);
                             PauseProvisioningWorker.reportProvisionPausedByUser(workManager);
-                            ResumeProvisioningWorker.scheduleResumeProvisioningWorker(workManager);
+                            new DeviceLockControllerScheduler(
+                                    mContext).scheduleResumeProvisionAlarm();
                         } else {
                             onFailure(new IllegalArgumentException(
                                     "New state should not be: " + newState));
@@ -154,7 +156,8 @@ public final class SetupControllerImpl implements SetupController {
         LogUtil.v(TAG, "Trigger setup flow");
         WorkManager workManager = WorkManager.getInstance(mContext);
         mReportStateCallbacks =
-                ReportDeviceProvisionStateWorker.getSetupUpdatesCallbacks(workManager);
+                ReportDeviceProvisionStateWorker.getSetupUpdatesCallbacks(
+                        new DeviceLockControllerScheduler(mContext), workManager);
         mCallbacks.add(mReportStateCallbacks);
         return Futures.transformAsync(isKioskAppPreInstalled(),
                 isPreinstalled -> {
@@ -215,18 +218,18 @@ public final class SetupControllerImpl implements SetupController {
                     final LiveData status =
                             workManager.getWorkInfoByIdLiveData(playInstallPackageTask.getId());
                     status.observe(owner, new Observer<WorkInfo>() {
-                                @Override
-                                public void onChanged(@Nullable WorkInfo workInfo) {
-                                    if (workInfo != null) {
-                                        final WorkInfo.State state = workInfo.getState();
-                                        if (state == SUCCEEDED) {
-                                            setupFlowTaskSuccessCallbackHandler();
-                                        } else if (state == FAILED || state == CANCELLED) {
-                                            setupFlowTaskFailureCallbackHandler(
-                                                    SetupFailureReason.INSTALL_FAILED);
-                                        }
-                                    }
+                        @Override
+                        public void onChanged(@Nullable WorkInfo workInfo) {
+                            if (workInfo != null) {
+                                final WorkInfo.State state = workInfo.getState();
+                                if (state == SUCCEEDED) {
+                                    setupFlowTaskSuccessCallbackHandler();
+                                } else if (state == FAILED || state == CANCELLED) {
+                                    setupFlowTaskFailureCallbackHandler(
+                                            SetupFailureReason.INSTALL_FAILED);
                                 }
+                            }
+                        }
                     });
 
                     return null;

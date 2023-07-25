@@ -25,6 +25,7 @@ import static com.android.devicelockcontroller.common.DeviceLockConstants.STOP_C
 import static com.google.common.truth.Truth.assertThat;
 
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -37,15 +38,14 @@ import android.util.ArraySet;
 import androidx.annotation.Nullable;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.work.Configuration;
-import androidx.work.WorkInfo;
-import androidx.work.WorkManager;
 import androidx.work.testing.SynchronousExecutor;
 import androidx.work.testing.WorkManagerTestInitHelper;
 
+import com.android.devicelockcontroller.AbstractDeviceLockControllerScheduler;
+import com.android.devicelockcontroller.DeviceLockControllerScheduler;
 import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
 import com.android.devicelockcontroller.common.DeviceId;
 import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceCheckInStatus;
-import com.android.devicelockcontroller.policy.DevicePolicyController;
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
@@ -68,9 +68,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 @LooperMode(LEGACY)
 @RunWith(RobolectricTestRunner.class)
@@ -79,7 +76,6 @@ public final class DeviceCheckInHelperTest {
     static final Duration TEST_NEGATIVE_CHECK_RETRY_DURATION =
             Duration.ZERO.minus(TEST_CHECK_RETRY_DURATION);
     public static final boolean IS_PROVISIONING_MANDATORY = false;
-    private static final int GET_WORK_INFO_TIMEOUT_MILLIS = 500;
     private TestDeviceLockControllerApplication mTestApplication;
     static final int TOTAL_SLOT_COUNT = 2;
     static final int TOTAL_ID_COUNT = 4;
@@ -110,10 +106,12 @@ public final class DeviceCheckInHelperTest {
 
     private ShadowTelephonyManager mTelephonyManager;
     private GlobalParametersClient mGlobalParametersClient;
+    private AbstractDeviceLockControllerScheduler mScheduler;
 
     @Before
     public void setUp() {
         mTestApplication = ApplicationProvider.getApplicationContext();
+        mScheduler = mock(AbstractDeviceLockControllerScheduler.class);
 
         mTelephonyManager = Shadows.shadowOf(
                 mTestApplication.getSystemService(TelephonyManager.class));
@@ -143,7 +141,8 @@ public final class DeviceCheckInHelperTest {
     public void testHandleGetDeviceCheckInStatusResponse_stopCheckIn_shouldSetNeedCheckInFalse() {
         final GetDeviceCheckInStatusGrpcResponse response = createStopResponse();
 
-        assertThat(mHelper.handleGetDeviceCheckInStatusResponse(response)).isTrue();
+        assertThat(mHelper.handleGetDeviceCheckInStatusResponse(response,
+                new DeviceLockControllerScheduler(mTestApplication))).isTrue();
         assertThat(Futures.getUnchecked(mGlobalParametersClient.needCheckIn())).isFalse();
     }
 
@@ -152,7 +151,6 @@ public final class DeviceCheckInHelperTest {
             handleProvisionReadyResponse_validConfiguration_shouldSetStateAndStartLockTaskMode() {
         GetDeviceCheckInStatusGrpcResponse response = createReadyResponse(TEST_CONFIGURATION);
         DeviceStateController stateController = mTestApplication.getStateController();
-        DevicePolicyController policyController = mTestApplication.getPolicyController();
         when(stateController.setNextStateForEvent(DeviceEvent.PROVISION_READY)).thenReturn(
                 Futures.immediateFuture(DeviceState.PROVISION_SUCCEEDED));
 
@@ -167,7 +165,6 @@ public final class DeviceCheckInHelperTest {
         GetDeviceCheckInStatusGrpcResponse response = createReadyResponse(
                 /* configuration= */ null);
         DeviceStateController stateController = mTestApplication.getStateController();
-        DevicePolicyController policyController = mTestApplication.getPolicyController();
 
         assertThat(mHelper.handleProvisionReadyResponse(
                 response, stateController)).isFalse();
@@ -176,36 +173,25 @@ public final class DeviceCheckInHelperTest {
     }
 
     @Test
-    public void testHandleGetDeviceCheckInStatusResponse_retryCheckIn_shouldEnqueueNewCheckInWork()
-            throws ExecutionException, InterruptedException, TimeoutException {
+    public void testHandleGetDeviceCheckInStatusResponse_retryCheckIn_shouldScheduleRetryWork() {
         final GetDeviceCheckInStatusGrpcResponse response = createRetryResponse(
                 SystemClock.currentNetworkTimeClock().instant().plus(TEST_CHECK_RETRY_DURATION));
 
-        assertThat(mHelper.handleGetDeviceCheckInStatusResponse(response)).isTrue();
+        assertThat(mHelper.handleGetDeviceCheckInStatusResponse(response, mScheduler)).isTrue();
 
-        WorkManager workManager = WorkManager.getInstance(mTestApplication);
-
-        List<WorkInfo> workInfo = workManager.getWorkInfosForUniqueWork(
-                DeviceCheckInHelper.DEVICE_CHECK_IN_WORK_NAME).get(GET_WORK_INFO_TIMEOUT_MILLIS,
-                TimeUnit.MILLISECONDS);
-        assertThat(workInfo.size()).isEqualTo(1);
+        verify(mScheduler).scheduleRetryCheckInWork(eq(TEST_CHECK_RETRY_DURATION));
     }
 
     @Test
-    public void handleGetDeviceCheckInStatusResponse_retryCheckIn_durationIsNegative_shouldRetry()
-            throws ExecutionException, InterruptedException, TimeoutException {
+    public void handleGetDeviceCheckInStatusResponse_retryCheckIn_durationIsNegative_shouldRetry() {
         final GetDeviceCheckInStatusGrpcResponse response = createRetryResponse(
                 SystemClock.currentNetworkTimeClock().instant().plus(
                         TEST_NEGATIVE_CHECK_RETRY_DURATION));
 
-        assertThat(mHelper.handleGetDeviceCheckInStatusResponse(response)).isTrue();
+        assertThat(mHelper.handleGetDeviceCheckInStatusResponse(response, mScheduler)).isTrue();
 
-        WorkManager workManager = WorkManager.getInstance(mTestApplication);
+        verify(mScheduler).scheduleRetryCheckInWork(eq(Duration.ZERO));
 
-        List<WorkInfo> workInfo = workManager.getWorkInfosForUniqueWork(
-                DeviceCheckInHelper.DEVICE_CHECK_IN_WORK_NAME).get(GET_WORK_INFO_TIMEOUT_MILLIS,
-                TimeUnit.MILLISECONDS);
-        assertThat(workInfo.size()).isEqualTo(1);
     }
 
     private static GetDeviceCheckInStatusGrpcResponse createStopResponse() {
