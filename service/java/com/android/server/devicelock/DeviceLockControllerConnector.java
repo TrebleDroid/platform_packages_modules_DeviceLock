@@ -57,9 +57,8 @@ final class DeviceLockControllerConnector {
 
     private final Context mContext;
     private final ComponentName mComponentName;
+    private final UserHandle mUserHandle;
     private final Handler mHandler;
-
-    private static final UserHandle USER_HANDLE_SYSTEM = UserHandle.of(0);
 
     private final ExecutorService mExecutorService = Executors.newCachedThreadPool();
 
@@ -213,9 +212,10 @@ final class DeviceLockControllerConnector {
      * @param componentName Device Lock Controller service component name.
      */
     DeviceLockControllerConnector(@NonNull Context context,
-            @NonNull ComponentName componentName) {
+            @NonNull ComponentName componentName, @NonNull UserHandle userHandle) {
         mContext = context;
         mComponentName = componentName;
+        mUserHandle = userHandle;
 
         HandlerThread handlerThread =
                 new HandlerThread("DeviceLockControllerConnectorHandlerThread");
@@ -234,7 +234,7 @@ final class DeviceLockControllerConnector {
 
         final Intent service = new Intent().setComponent(mComponentName);
         final boolean bound = mContext.bindServiceAsUser(service, mServiceConnection,
-                Context.BIND_AUTO_CREATE, USER_HANDLE_SYSTEM);
+                Context.BIND_AUTO_CREATE, mUserHandle);
 
         if (bound) {
             Slog.i(TAG, "Binding " + mComponentName.flattenToShortString());

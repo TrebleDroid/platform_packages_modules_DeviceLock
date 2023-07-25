@@ -183,8 +183,7 @@
         <service
             android:name="com.android.devicelockcontroller.DeviceLockControllerService"
             android:directBootAware="true"
-            android:exported="false"
-            androidprv:systemUserOnly="true">
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.app.action.DEVICE_LOCK_CONTROLLER_SERVICE" />
             </intent-filter>
