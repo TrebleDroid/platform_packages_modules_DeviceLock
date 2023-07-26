@@ -60,7 +60,7 @@
     <string name="header_icon_content_description" msgid="6069602031334473195">"Informace"</string>
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"Informace o zajištění"</string>
     <string name="enroll_your_device_header" msgid="2226305405591945098">"Zaregistrujte své zařízení"</string>
-    <string name="enroll_your_device_financing_subheader" msgid="7378414469334757425">"Nyní můžete zařízení zaregistrovat do programu financování <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
+    <string name="enroll_your_device_financing_subheader" msgid="8810608106273097451">"Teď můžete zařízení zaregistrovat do programu financování <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"Nyní můžete zařízení zaregistrovat do podpůrného programu <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="subsidy_program_header" msgid="2321508488856303554">"Využíváte podpůrný program <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"Registrace zařízení"</string>
