@@ -74,7 +74,8 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
 
     private final Context mContext;
 
-    private final DeviceLockControllerConnector mDeviceLockControllerConnector;
+    // Map user id -> DeviceLockControllerConnector
+    private final ArrayMap<Integer, DeviceLockControllerConnector> mDeviceLockControllerConnectors;
 
     private final DeviceLockControllerPackageUtils mPackageUtils;
 
@@ -102,30 +103,33 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
             // The result will still be sent to the 'resultReceiver' of 'sendOrderedBroadcast'.
             abortBroadcast();
 
+            final UserHandle userHandle = getSendingUser();
+
             final PendingResult pendingResult = goAsync();
 
-            mDeviceLockControllerConnector.clearDeviceRestrictions(new OutcomeReceiver<>() {
+            getDeviceLockControllerConnector(userHandle)
+                    .clearDeviceRestrictions(new OutcomeReceiver<>() {
 
-                private void setResult(int resultCode) {
-                    pendingResult.setResultCode(resultCode);
+                        private void setResult(int resultCode) {
+                            pendingResult.setResultCode(resultCode);
 
-                    pendingResult.finish();
-                }
+                            pendingResult.finish();
+                        }
 
-                @Override
-                public void onResult(Void ignored) {
-                    Slog.i(TAG, "Device cleared ");
+                        @Override
+                        public void onResult(Void ignored) {
+                            Slog.i(TAG, "Device cleared ");
 
-                    setResult(DeviceLockClearReceiver.CLEAR_SUCCEEDED);
-                }
+                            setResult(DeviceLockClearReceiver.CLEAR_SUCCEEDED);
+                        }
 
-                @Override
-                public void onError(Exception ex) {
-                    Slog.e(TAG, "Exception clearing device: ", ex);
+                        @Override
+                        public void onError(Exception ex) {
+                            Slog.e(TAG, "Exception clearing device: ", ex);
 
-                    setResult(DeviceLockClearReceiver.CLEAR_FAILED);
-                }
-            });
+                            setResult(DeviceLockClearReceiver.CLEAR_FAILED);
+                        }
+                    });
         }
     }
 
@@ -136,8 +140,35 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
             "com.android.devicelockcontroller.permission."
                     + "MANAGE_DEVICE_LOCK_SERVICE_FROM_CONTROLLER";
 
+    @NonNull
+    private DeviceLockControllerConnector getDeviceLockControllerConnector(UserHandle userHandle) {
+        final int userId = userHandle.getIdentifier();
+
+        synchronized (this) {
+            DeviceLockControllerConnector deviceLockControllerConnector =
+                    mDeviceLockControllerConnectors.get(userId);
+            if (deviceLockControllerConnector == null) {
+                final ComponentName componentName = new ComponentName(mServiceInfo.packageName,
+                        mServiceInfo.name);
+                deviceLockControllerConnector = new DeviceLockControllerConnector(mContext,
+                        componentName, userHandle);
+                mDeviceLockControllerConnectors.put(userId, deviceLockControllerConnector);
+            }
+
+            return deviceLockControllerConnector;
+        }
+    }
+
+    @NonNull
+    private DeviceLockControllerConnector getDeviceLockControllerConnector() {
+        final UserHandle userHandle = Binder.getCallingUserHandle();
+        return getDeviceLockControllerConnector(userHandle);
+    }
+
     DeviceLockServiceImpl(@NonNull Context context) {
         mContext = context;
+
+        mDeviceLockControllerConnectors = new ArrayMap<>();
 
         mKioskKeepaliveServiceConnections = new ArrayMap<>();
 
@@ -147,8 +178,6 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
         mServiceInfo = mPackageUtils.findService(errorMessage);
 
         if (mServiceInfo == null) {
-            mDeviceLockControllerConnector = null;
-
             throw new RuntimeException(errorMessage.toString());
         }
 
@@ -160,12 +189,10 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
         final ComponentName componentName = new ComponentName(mServiceInfo.packageName,
                 mServiceInfo.name);
 
-        mDeviceLockControllerConnector = new DeviceLockControllerConnector(context, componentName);
-
         final IntentFilter intentFilter = new IntentFilter(DeviceLockClearReceiver.ACTION_CLEAR);
         // Run before any eventual app receiver (there should be none).
         intentFilter.setPriority(SYSTEM_HIGH_PRIORITY);
-        context.registerReceiver(new DeviceLockClearReceiver(), intentFilter,
+        context.registerReceiverForAllUsers(new DeviceLockClearReceiver(), intentFilter,
                 Manifest.permission.MANAGE_DEVICE_LOCK_STATE, null /* scheduler */,
                 Context.RECEIVER_EXPORTED);
     }
@@ -247,7 +274,7 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
             return;
         }
 
-        mDeviceLockControllerConnector.lockDevice(
+        getDeviceLockControllerConnector().lockDevice(
                 getLockUnlockOutcomeReceiver(callback, "Device locked"));
     }
 
@@ -262,7 +289,7 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
             return;
         }
 
-        mDeviceLockControllerConnector.unlockDevice(
+        getDeviceLockControllerConnector().unlockDevice(
                 getLockUnlockOutcomeReceiver(callback, "Device unlocked"));
     }
 
@@ -277,7 +304,7 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
             return;
         }
 
-        mDeviceLockControllerConnector.isDeviceLocked(new OutcomeReceiver<>() {
+        getDeviceLockControllerConnector().isDeviceLocked(new OutcomeReceiver<>() {
             @Override
             public void onResult(Boolean isLocked) {
                 Slog.i(TAG, isLocked ? "Device is locked" : "Device is not locked");
@@ -334,7 +361,7 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
             }
         }
 
-        mDeviceLockControllerConnector.getDeviceId(new OutcomeReceiver<>() {
+        getDeviceLockControllerConnector().getDeviceId(new OutcomeReceiver<>() {
             @Override
             public void onResult(String deviceId) {
                 Slog.i(TAG, "Get Device ID ");
@@ -559,7 +586,7 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
             boolean bound = bind();
 
             if (bound) {
-                mDeviceLockControllerConnector.lockDevice(new OutcomeReceiver<>() {
+                getDeviceLockControllerConnector(mUserHandle).lockDevice(new OutcomeReceiver<>() {
                     @Override
                     public void onResult(Void result) {
                         Slog.i(TAG, "Lock task mode started");
