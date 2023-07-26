@@ -125,6 +125,7 @@ public final class DevicePoliciesFragment extends Fragment {
                 LogUtil.e(TAG, "Failed to finish setup flow!");
                 provisioningProgressViewModel.setProvisioningProgress(
                         ProvisioningProgress.PROVISIONING_FAILED);
+                setupController.removeListener(this);
             }
 
             @Override
@@ -132,6 +133,7 @@ public final class DevicePoliciesFragment extends Fragment {
                 LogUtil.i(TAG, "Successfully finished setup flow!");
                 provisioningProgressViewModel.setProvisioningProgress(
                         ProvisioningProgress.OPENING_KIOSK_APP);
+                setupController.removeListener(this);
             }
         });
     }
