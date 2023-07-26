@@ -63,7 +63,7 @@ public final class ProvisionInfoFragment extends Fragment {
 
     private static final String TAG = "ProvisionInfoFragment";
 
-    private ActivityResultLauncher<String> requestPermissionLauncher =
+    private ActivityResultLauncher<String> mRequestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(),
                     isGranted -> {
                         // According to b/289520962#comment3, we just let the scheduled work resume
@@ -163,14 +163,14 @@ public final class ProvisionInfoFragment extends Fragment {
             viewModel.mDeviceState.observe(getViewLifecycleOwner(),
                     deviceState -> {
                         LogUtil.d(TAG, "DeviceState observer, deviceState:" + deviceState);
-                        if(DeviceState.PROVISION_PAUSED == deviceState) {
+                        if (DeviceState.PROVISION_PAUSED == deviceState) {
                             int notificationPermission =
                                     ContextCompat.checkSelfPermission(requireContext(),
                                             Manifest.permission.POST_NOTIFICATIONS);
                             if (PackageManager.PERMISSION_GRANTED == notificationPermission) {
                                 createNotificationAndCloseActivity();
                             } else {
-                                requestPermissionLauncher.launch(
+                                mRequestPermissionLauncher.launch(
                                         Manifest.permission.POST_NOTIFICATIONS);
                             }
                         }
