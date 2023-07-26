@@ -43,6 +43,7 @@ import com.google.common.util.concurrent.MoreExecutors;
 public final class SingleUserBootCompletedReceiver extends BroadcastReceiver {
 
     private static final String TAG = "SingleUserBootCompletedReceiver";
+    private AbstractDeviceLockControllerScheduler mScheduler;
 
     @VisibleForTesting
     static void checkInIfNeeded(DeviceStateController stateController,
@@ -65,6 +66,14 @@ public final class SingleUserBootCompletedReceiver extends BroadcastReceiver {
         }
     }
 
+    public SingleUserBootCompletedReceiver() {
+
+    }
+
+    SingleUserBootCompletedReceiver(AbstractDeviceLockControllerScheduler scheduler) {
+        mScheduler = scheduler;
+    }
+
     @Override
     public void onReceive(Context context, Intent intent) {
         if (!intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) return;
@@ -78,10 +87,10 @@ public final class SingleUserBootCompletedReceiver extends BroadcastReceiver {
             return;
         }
 
-        DeviceLockControllerScheduler scheduler = new DeviceLockControllerScheduler(context);
+        if (mScheduler == null) mScheduler = new DeviceLockControllerScheduler(context);
         checkInIfNeeded(
                 ((PolicyObjectsInterface) context.getApplicationContext()).getStateController(),
-                scheduler);
-        scheduler.rescheduleIfNeeded();
+                mScheduler);
+        mScheduler.rescheduleIfNeeded();
     }
 }

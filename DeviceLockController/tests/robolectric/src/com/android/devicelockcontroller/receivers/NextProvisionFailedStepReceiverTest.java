@@ -26,8 +26,6 @@ import static com.android.devicelockcontroller.provision.worker.ReportDeviceProv
 import static com.google.common.truth.Truth.assertThat;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 import static org.robolectric.annotation.LooperMode.Mode.LEGACY;
 
 import android.content.Intent;
@@ -90,7 +88,6 @@ public class NextProvisionFailedStepReceiverTest {
         mReceiver.onReceive(mTestApp, mIntent);
 
         verifyReportProvisionStateWorkScheduled(WorkManager.getInstance(mTestApp));
-        verify(mScheduler).scheduleNextProvisionFailedStepAlarm();
     }
 
     @Test
@@ -101,7 +98,6 @@ public class NextProvisionFailedStepReceiverTest {
         mReceiver.onReceive(mTestApp, mIntent);
 
         verifyReportProvisionStateWorkScheduled(WorkManager.getInstance(mTestApp));
-        verify(mScheduler).scheduleNextProvisionFailedStepAlarm();
     }
 
     @Ignore //TODO(b/288937639): Figure out how to verify the expectation
@@ -117,7 +113,6 @@ public class NextProvisionFailedStepReceiverTest {
         mReceiver.onReceive(mTestApp, mIntent);
 
         verifyReportProvisionStateWorkNotScheduled(WorkManager.getInstance(mTestApp));
-        verify(mScheduler, never()).scheduleNextProvisionFailedStepAlarm();
     }
 
     @Test
@@ -128,7 +123,6 @@ public class NextProvisionFailedStepReceiverTest {
         mReceiver.onReceive(mTestApp, mIntent);
 
         verifyReportProvisionStateWorkNotScheduled(WorkManager.getInstance(mTestApp));
-        verify(mScheduler, never()).scheduleNextProvisionFailedStepAlarm();
     }
 
     @Test
@@ -139,7 +133,6 @@ public class NextProvisionFailedStepReceiverTest {
         mReceiver.onReceive(mTestApp, mIntent);
 
         verifyReportProvisionStateWorkNotScheduled(WorkManager.getInstance(mTestApp));
-        verify(mScheduler, never()).scheduleNextProvisionFailedStepAlarm();
     }
 
     private static void verifyReportProvisionStateWorkScheduled(WorkManager workManager)

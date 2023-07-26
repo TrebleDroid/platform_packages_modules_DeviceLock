@@ -22,6 +22,7 @@ import static com.google.common.truth.Truth.assertThat;
 
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.content.Context;
@@ -37,6 +38,7 @@ import androidx.work.testing.SynchronousExecutor;
 import androidx.work.testing.TestListenableWorkerBuilder;
 import androidx.work.testing.WorkManagerTestInitHelper;
 
+import com.android.devicelockcontroller.AbstractDeviceLockControllerScheduler;
 import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.ReportDeviceProvisionStateGrpcResponse;
@@ -64,6 +66,8 @@ public final class ReportDeviceProvisionStateWorkerTest {
     private DeviceCheckInClient mClient;
     @Mock
     private ReportDeviceProvisionStateGrpcResponse mResponse;
+    @Mock
+    private AbstractDeviceLockControllerScheduler mScheduler;
     private ReportDeviceProvisionStateWorker mWorker;
     private TestDeviceLockControllerApplication mTestApp;
 
@@ -90,7 +94,7 @@ public final class ReportDeviceProvisionStateWorkerTest {
                                         ReportDeviceProvisionStateWorker.class.getName())
                                         ? new ReportDeviceProvisionStateWorker(context,
                                         workerParameters, mClient,
-                                        TestingExecutors.sameThreadScheduledExecutor())
+                                        TestingExecutors.sameThreadScheduledExecutor(), mScheduler)
                                         : null;
                             }
                         }).build();
@@ -126,5 +130,6 @@ public final class ReportDeviceProvisionStateWorkerTest {
         assertThat(globalParameters.getDaysLeftUntilReset().get()).isEqualTo(
                 TEST_DAYS_LEFT_UNTIL_RESET);
         assertThat(globalParameters.getEnrollmentToken().get()).isEqualTo(TEST_ENROLLMENT_TOKEN);
+        verify(mScheduler).scheduleNextProvisionFailedStepAlarm();
     }
 }

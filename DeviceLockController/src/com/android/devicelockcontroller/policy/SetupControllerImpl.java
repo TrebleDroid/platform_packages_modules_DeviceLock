@@ -156,8 +156,7 @@ public final class SetupControllerImpl implements SetupController {
         LogUtil.v(TAG, "Trigger setup flow");
         WorkManager workManager = WorkManager.getInstance(mContext);
         mReportStateCallbacks =
-                ReportDeviceProvisionStateWorker.getSetupUpdatesCallbacks(
-                        new DeviceLockControllerScheduler(mContext), workManager);
+                ReportDeviceProvisionStateWorker.getSetupUpdatesCallbacks(workManager);
         mCallbacks.add(mReportStateCallbacks);
         return Futures.transformAsync(isKioskAppPreInstalled(),
                 isPreinstalled -> {
