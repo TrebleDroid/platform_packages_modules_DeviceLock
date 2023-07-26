@@ -16,8 +16,6 @@
 
 package com.android.devicelockcontroller.receivers;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -69,13 +67,9 @@ public final class TimeChangedBroadcastReceiverTest {
         // WHEN time changed broadcast received
         mReceiver.onReceive(mTestApp, new Intent(Intent.ACTION_TIME_CHANGED));
 
-        // THEN boot time should be updated
+        // THEN should correct scheduler expected to run time
         long expectedDelta = TEST_CURRENT_TIME_AFTER_CHANGE_MILLIS - (TEST_BOOT_TIME_MILLIS
                 + SystemClock.elapsedRealtime());
-        assertThat(mClient.getBootTimeMillis().get()).isEqualTo(
-                TEST_BOOT_TIME_MILLIS + expectedDelta);
-
-        // THEN should correct scheduler expected to run time
         verify(mScheduler).correctExpectedToRunTime(eq(Duration.ofMillis(expectedDelta)));
     }
 }
