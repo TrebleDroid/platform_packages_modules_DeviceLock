@@ -53,6 +53,7 @@ import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.storage.SetupParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -291,16 +292,20 @@ public final class SetupControllerImpl implements SetupController {
                                 LogUtil.i(TAG, "Handling successful setup");
                                 mCurrentSetupState = SetupStatus.SETUP_FINISHED;
                                 synchronized (mCallbacks) {
-                                    for (int i = 0, cbSize = mCallbacks.size(); i < cbSize; i++) {
-                                        mCallbacks.get(i).setupCompleted();
+                                    ImmutableList<SetupUpdatesCallbacks> callbacks =
+                                            ImmutableList.copyOf(mCallbacks);
+                                    for (int i = 0, cbSize = callbacks.size(); i < cbSize; i++) {
+                                        callbacks.get(i).setupCompleted();
                                     }
                                 }
                             } else {
                                 LogUtil.i(TAG, "Handling failed setup");
                                 mCurrentSetupState = SetupStatus.SETUP_FAILED;
                                 synchronized (mCallbacks) {
-                                    for (int i = 0, cbSize = mCallbacks.size(); i < cbSize; i++) {
-                                        mCallbacks.get(i).setupFailed(failReason);
+                                    ImmutableList<SetupUpdatesCallbacks> callbacks =
+                                            ImmutableList.copyOf(mCallbacks);
+                                    for (int i = 0, cbSize = callbacks.size(); i < cbSize; i++) {
+                                        callbacks.get(i).setupFailed(failReason);
                                     }
                                 }
                             }
