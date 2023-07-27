@@ -267,7 +267,14 @@ public final class DevicePolicyControllerImpl
             }
             final Intent kioskSetupIntent = new Intent(ACTION_DEVICE_LOCK_KIOSK_SETUP);
             kioskSetupIntent.setPackage(kioskPackageName);
-            return kioskSetupIntent;
+            final ResolveInfo resolveInfo = mContext.getPackageManager()
+                    .resolveActivity(kioskSetupIntent, PackageManager.MATCH_DEFAULT_ONLY);
+            if (resolveInfo == null || resolveInfo.activityInfo == null) {
+                LogUtil.e(TAG, "Cannot find kiosk setup activity");
+                return null;
+            }
+            return kioskSetupIntent.setComponent(new ComponentName(kioskPackageName,
+                    resolveInfo.activityInfo.name));
         }, mContext.getMainExecutor());
     }
 }
