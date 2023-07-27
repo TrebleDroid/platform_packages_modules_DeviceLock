@@ -149,7 +149,6 @@ public final class SetupControllerImplTest {
         Futures.getUnchecked(setupController.finishSetup());
         assertThat(setupController.getSetupState()).isEqualTo(
                 SetupController.SetupStatus.SETUP_FAILED);
-        verify(mMockPolicyController).wipeDevice();
     }
 
     @Test

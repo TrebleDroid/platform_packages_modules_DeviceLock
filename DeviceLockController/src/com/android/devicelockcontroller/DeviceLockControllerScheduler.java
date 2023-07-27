@@ -79,6 +79,7 @@ public final class DeviceLockControllerScheduler extends AbstractDeviceLockContr
     // The default minute value of the count down when device is about to reset.
     @VisibleForTesting
     static final int RESET_DEVICE_DEFAULT_MINUTES = 30;
+    public static final int RESET_DEVICE_IN_TWO_MINUTES = 2;
     private final Context mContext;
     private static final int CHECK_IN_INTERVAL_MINUTE = 60;
     private final Clock mClock;
@@ -352,9 +353,14 @@ public final class DeviceLockControllerScheduler extends AbstractDeviceLockContr
                             RESET_DEVICE_DEFAULT_MINUTES));
         }
         scheduleResetDeviceAlarm(delay);
+    }
+
+    @Override
+    public void scheduleResetDeviceAlarm(Duration delay) {
+        scheduleResetDeviceAlarmInternal(delay);
         Instant whenExpectedToRun = Instant.now(mClock).plus(delay);
         DeviceLockNotificationManager.sendDeviceResetTimerNotification(mContext,
-                whenExpectedToRun.toEpochMilli());
+                SystemClock.elapsedRealtime() + delay.toMillis());
         Futures.addCallback(
                 getInstance().setResetDeviceTImeMillis(whenExpectedToRun.toEpochMilli()),
                 new FutureCallback<>() {
@@ -380,7 +386,7 @@ public final class DeviceLockControllerScheduler extends AbstractDeviceLockContr
                         Duration delay = Duration.between(
                                 Instant.now(mClock),
                                 Instant.ofEpochMilli(timestamp));
-                        scheduleResetDeviceAlarm(delay);
+                        scheduleResetDeviceAlarmInternal(delay);
                     }
 
                     @Override
@@ -388,7 +394,7 @@ public final class DeviceLockControllerScheduler extends AbstractDeviceLockContr
                         LogUtil.w(TAG,
                                 "Failed to retrieve reset device time. Reset immediately!",
                                 t);
-                        scheduleResetDeviceAlarm(Duration.ZERO);
+                        scheduleResetDeviceAlarmInternal(Duration.ZERO);
                     }
                 }, MoreExecutors.directExecutor());
     }
@@ -415,7 +421,7 @@ public final class DeviceLockControllerScheduler extends AbstractDeviceLockContr
         scheduleAlarmWithPendingIntentAndDelay(NextProvisionFailedStepReceiver.class, delay);
     }
 
-    private void scheduleResetDeviceAlarm(Duration delay) {
+    private void scheduleResetDeviceAlarmInternal(Duration delay) {
         scheduleAlarmWithPendingIntentAndDelay(ResetDeviceReceiver.class, delay);
     }
 
