@@ -46,7 +46,7 @@
     <string name="open_source_licenses" msgid="6464389386262455443">"ઓપન સૉર્સ લાઇસન્સ"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"સુરક્ષા સેટિંગના ફાઇનાન્સ ડિવાઇસ વિભાગમાં મેનેજમેન્ટની ક્ષમતાઓ આ ડિવાઇસ પર લાગુ થતી નથી."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"આ ડિવાઇસ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> દ્વારા પ્રદાન કરવામાં આવેલું છે"</string>
-    <string name="download_kiosk_app" msgid="1845089944897502656">"Kiosk ઍપ ઑટોમૅટિક રીતે ડાઉનલોડ અને ઇન્સ્ટૉલ થશે"</string>
+    <string name="download_kiosk_app" msgid="1845089944897502656">"કિઓસ્ક ઍપ ઑટોમૅટિક રીતે ડાઉનલોડ અને ઇન્સ્ટૉલ થશે"</string>
     <string name="install_kiosk_app_secondary_user" msgid="49911908012320834">"આ વપરાશકર્તા માટે Kiosk ઍપ ઇન્સ્ટૉલ કરવામાં આવશે"</string>
     <string name="restrict_device_if_missing_payment" msgid="5721216628714899148">"જો તમે કોઈ ચુકવણી ચૂકો, તો <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> આ ડિવાઇસને પ્રતિબંધિત કરી શકે છે"</string>
     <string name="restrict_device_if_dont_make_payment" msgid="1619095674945507015">"જો તમે જરૂરી ચુકવણીઓ ન કરો, તો <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> આ ડિવાઇસને પ્રતિબંધિત કરી શકે છે. વિગતો માટે, <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>નિયમો અને શરતો<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g> જુઓ."</string>
@@ -60,7 +60,8 @@
     <string name="header_icon_content_description" msgid="6069602031334473195">"માહિતી"</string>
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"જોગવાઈની માહિતી"</string>
     <string name="enroll_your_device_header" msgid="2226305405591945098">"તમારા ડિવાઇસની નોંધણી કરો"</string>
-    <string name="enroll_your_device_financing_subheader" msgid="7378414469334757425">"તમે હવે તમારા ડિવાઇસની નોંધણી <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>ના ફાઇનાન્સ પ્રોગ્રામમાં કરી શકશો"</string>
+    <!-- no translation found for enroll_your_device_financing_subheader (8810608106273097451) -->
+    <skip />
     <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"તમે હવે તમારા ડિવાઇસની નોંધણી <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>ના સબસિડી પ્રોગ્રામમાં કરી શકશો"</string>
     <string name="subsidy_program_header" msgid="2321508488856303554">"તમે <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>ના સબસિડી પ્રોગ્રામનો ભાગ છો"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"ડિવાઇસની નોંધણી"</string>

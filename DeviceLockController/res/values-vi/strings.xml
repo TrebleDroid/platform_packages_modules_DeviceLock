@@ -60,7 +60,8 @@
     <string name="header_icon_content_description" msgid="6069602031334473195">"Thông tin"</string>
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"Thông tin cấp vốn"</string>
     <string name="enroll_your_device_header" msgid="2226305405591945098">"Đăng ký thiết bị của bạn"</string>
-    <string name="enroll_your_device_financing_subheader" msgid="7378414469334757425">"Bây giờ, bạn có thể đăng ký thiết bị này vào chương trình hỗ trợ tài chính của <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
+    <!-- no translation found for enroll_your_device_financing_subheader (8810608106273097451) -->
+    <skip />
     <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"Bây giờ, bạn có thể đăng ký thiết bị này vào chương trình trợ cấp của <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="subsidy_program_header" msgid="2321508488856303554">"Bạn đang tham gia chương trình trợ cấp của <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"Đăng ký thiết bị"</string>

@@ -60,7 +60,7 @@
     <string name="header_icon_content_description" msgid="6069602031334473195">"Inligting"</string>
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"Opstelinginligting"</string>
     <string name="enroll_your_device_header" msgid="2226305405591945098">"Skryf jou toestel in"</string>
-    <string name="enroll_your_device_financing_subheader" msgid="7378414469334757425">"Jy kan jou toestel nou vir <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> se finansieringprogram inskryf"</string>
+    <string name="enroll_your_device_financing_subheader" msgid="8810608106273097451">"Jy kan jou toestel nou vir <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> se finansiesprogram inskryf"</string>
     <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"Jy kan jou toestel nou vir <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> se subsidieprogram inskryf"</string>
     <string name="subsidy_program_header" msgid="2321508488856303554">"Jy is in <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> se subsidieprogram"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"Toestelinskrywing"</string>
