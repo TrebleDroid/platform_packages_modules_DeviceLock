@@ -20,6 +20,7 @@ import static androidx.work.WorkInfo.State.CANCELLED;
 import static androidx.work.WorkInfo.State.FAILED;
 import static androidx.work.WorkInfo.State.SUCCEEDED;
 
+import static com.android.devicelockcontroller.DeviceLockControllerScheduler.RESET_DEVICE_IN_TWO_MINUTES;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_PACKAGE;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.SetupFailureReason.INSTALL_FAILED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.PROVISION_PAUSE;
@@ -59,6 +60,7 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -257,7 +259,10 @@ public final class SetupControllerImpl implements SetupController {
             return Futures.transform(
                     SetupParametersClient.getInstance().isProvisionMandatory(),
                     isMandatory -> {
-                        if (isMandatory) mPolicyController.wipeDevice();
+                        if (isMandatory) {
+                            new DeviceLockControllerScheduler(mContext).scheduleResetDeviceAlarm(
+                                    Duration.ofMinutes(RESET_DEVICE_IN_TWO_MINUTES));
+                        }
                         return null;
                     }, MoreExecutors.directExecutor());
         } else {
