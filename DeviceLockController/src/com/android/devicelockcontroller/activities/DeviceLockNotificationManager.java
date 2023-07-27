@@ -158,7 +158,7 @@ public final class DeviceLockNotificationManager {
 
     // Already requested POST_NOTIFICATION permission in ProvisionInfoFragment
     @SuppressLint("MissingPermission")
-    public static void sendDeferredEnrollmentNotification(Context context,
+    static void sendDeferredEnrollmentNotification(Context context,
             LocalDateTime resumeDateTime, PendingIntent pendingIntent) {
         createNotificationChannel(context);
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT);

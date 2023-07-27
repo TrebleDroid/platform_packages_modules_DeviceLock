@@ -16,14 +16,13 @@
 
 package com.android.devicelockcontroller.activities;
 
+import android.annotation.NonNull;
+import android.app.Application;
+
 import com.android.devicelockcontroller.R;
 
 import java.util.ArrayList;
 import java.util.List;
-
-
-import android.annotation.NonNull;
-import android.app.Application;
 
 
 /**
