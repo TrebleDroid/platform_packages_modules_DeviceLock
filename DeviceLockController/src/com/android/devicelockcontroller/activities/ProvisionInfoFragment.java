@@ -160,6 +160,7 @@ public final class ProvisionInfoFragment extends Fragment {
         checkNotNull(next);
         if (isDeferredProvisioning) {
             next.setText(R.string.start);
+            DeviceLockNotificationManager.cancelDeferredProvisioningNotification(requireContext());
             viewModel.mDeviceState.observe(getViewLifecycleOwner(),
                     deviceState -> {
                         LogUtil.d(TAG, "DeviceState observer, deviceState:" + deviceState);
@@ -218,7 +219,7 @@ public final class ProvisionInfoFragment extends Fragment {
                 new Intent(context, ResumeProvisionReceiver.class),
                 PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
         LocalDateTime resumeDateTime = LocalDateTime.now().plusHours(1);
-        DeviceLockNotificationManager.sendDeferredEnrollmentNotification(context, resumeDateTime,
+        DeviceLockNotificationManager.sendDeferredProvisioningNotification(context, resumeDateTime,
                 pendingIntent);
         getActivity().finish();
     }
