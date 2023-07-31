@@ -16,6 +16,9 @@
 
 package com.android.devicelockcontroller.activities;
 
+import static com.android.devicelockcontroller.activities.DevicePoliciesViewModel.HEADER_DRAWABLE_ID;
+import static com.android.devicelockcontroller.activities.DevicePoliciesViewModel.HEADER_TEXT_ID;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import android.os.Bundle;
@@ -76,17 +79,13 @@ public final class DevicePoliciesFragment extends Fragment {
 
         ImageView imageView = view.findViewById(R.id.header_icon);
         checkNotNull(imageView);
-        viewModel.mHeaderDrawableIdLiveData.observe(getViewLifecycleOwner(),
-                imageView::setImageResource);
+        imageView.setImageResource(HEADER_DRAWABLE_ID);
 
         TextView headerTextView = view.findViewById(R.id.header_text);
         checkNotNull(headerTextView);
         viewModel.mProviderNameLiveData.observe(getViewLifecycleOwner(),
                 providerName -> headerTextView.setText(
-                        getString(viewModel.mHeaderTextIdLiveData.getValue(), providerName)));
-        viewModel.mHeaderTextIdLiveData.observe(getViewLifecycleOwner(),
-                textId -> headerTextView.setText(
-                        getString(textId, viewModel.mProviderNameLiveData.getValue())));
+                        getString(HEADER_TEXT_ID, providerName)));
 
         SetupController setupController =
                 ((PolicyObjectsInterface) getActivity().getApplicationContext())

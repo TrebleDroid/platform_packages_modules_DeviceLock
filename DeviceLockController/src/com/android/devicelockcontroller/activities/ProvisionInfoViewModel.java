@@ -44,12 +44,10 @@ import java.util.List;
 public abstract class ProvisionInfoViewModel extends AndroidViewModel {
 
     public static final String TAG = "ProvisionInfoViewModel";
-    public static final String PROVIDER_NAME_PLACEHOLDER = "";
-    public static final int TEXT_ID_PLACEHOLDER = -1;
-    final MutableLiveData<Integer> mHeaderDrawableIdLiveData;
-    final MutableLiveData<Integer> mHeaderTextIdLiveData;
-    final MutableLiveData<Integer> mSubheaderTextIdLiveData;
-    final MutableLiveData<List<ProvisionInfo>> mProvisionInfoListLiveData;
+    int mHeaderDrawableId;
+    int mHeaderTextId;
+    int mSubheaderTextId;
+    List<ProvisionInfo> mProvisionInfoList;
     final MutableLiveData<String> mProviderNameLiveData;
     final MutableLiveData<String> mTermsAndConditionsUrlLiveData;
     final MutableLiveData<Boolean> mIsProvisionForcedLiveData;
@@ -68,43 +66,17 @@ public abstract class ProvisionInfoViewModel extends AndroidViewModel {
 
     public ProvisionInfoViewModel(@NonNull Application application) {
         super(application);
-        mProvisionInfoListLiveData = new MutableLiveData<>();
-        mHeaderDrawableIdLiveData = new MutableLiveData<>();
-        mHeaderTextIdLiveData = new MutableLiveData<>();
-        mSubheaderTextIdLiveData = new MutableLiveData<>();
         mProviderNameLiveData = new MutableLiveData<>();
         mTermsAndConditionsUrlLiveData = new MutableLiveData<>();
         mIsProvisionForcedLiveData = new MutableLiveData<>();
         mHeaderTextLiveData = new MediatorLiveData<>();
-        mHeaderTextLiveData.addSource(mHeaderTextIdLiveData,
-                id -> {
-                    Pair<Integer, String> oldValue = mHeaderTextLiveData.getValue();
-                    mHeaderTextLiveData.setValue(oldValue == null
-                            ? new Pair<>(id, PROVIDER_NAME_PLACEHOLDER)
-                            : new Pair<>(id, oldValue.second));
-                });
         mHeaderTextLiveData.addSource(mProviderNameLiveData,
-                providerName -> {
-                    Pair<Integer, String> oldValue = mHeaderTextLiveData.getValue();
-                    mHeaderTextLiveData.setValue(oldValue == null
-                            ? new Pair<>(TEXT_ID_PLACEHOLDER, providerName)
-                            : new Pair<>(oldValue.first, providerName));
-                });
+                providerName -> mHeaderTextLiveData.setValue(
+                        new Pair<>(mHeaderTextId, providerName)));
         mSubHeaderTextLiveData = new MediatorLiveData<>();
-        mSubHeaderTextLiveData.addSource(mSubheaderTextIdLiveData,
-                id -> {
-                    Pair<Integer, String> oldValue = mSubHeaderTextLiveData.getValue();
-                    mSubHeaderTextLiveData.setValue(oldValue == null
-                            ? new Pair<>(id, PROVIDER_NAME_PLACEHOLDER)
-                            : new Pair<>(id, oldValue.second));
-                });
         mSubHeaderTextLiveData.addSource(mProviderNameLiveData,
-                providerName -> {
-                    Pair<Integer, String> oldValue = mSubHeaderTextLiveData.getValue();
-                    mSubHeaderTextLiveData.setValue(oldValue == null
-                            ? new Pair<>(TEXT_ID_PLACEHOLDER, providerName)
-                            : new Pair<>(oldValue.first, providerName));
-                });
+                providerName -> mSubHeaderTextLiveData.setValue(
+                        new Pair<>(mSubheaderTextId, providerName)));
         DeviceStateController stateController =
                 ((DeviceLockControllerApplication) application).getStateController();
         mDeviceState.setValue(stateController.getState());
