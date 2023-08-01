@@ -37,9 +37,9 @@ import java.util.List;
  */
 public final class DevicePoliciesViewModel extends ViewModel {
 
-    private static final int HEADER_DRAWABLE_ID = R.drawable.ic_info_24px;
+    static final int HEADER_DRAWABLE_ID = R.drawable.ic_info_24px;
 
-    private static final int HEADER_TEXT_ID = R.string.setup_info_title_text;
+    static final int HEADER_TEXT_ID = R.string.setup_info_title_text;
 
     private static final DevicePolicyGroup CONTROL_POLICY_GROUP =
             new DevicePolicyGroup.Builder()
@@ -81,8 +81,6 @@ public final class DevicePoliciesViewModel extends ViewModel {
     public static final String TAG = "DevicePoliciesViewModel";
 
     final MutableLiveData<String> mProviderNameLiveData;
-    final MutableLiveData<Integer> mHeaderDrawableIdLiveData;
-    final MutableLiveData<Integer> mHeaderTextIdLiveData;
     final MediatorLiveData<List<DevicePolicyGroup>> mDevicePolicyGroupListLiveData;
 
     public DevicePoliciesViewModel() {
@@ -99,8 +97,6 @@ public final class DevicePoliciesViewModel extends ViewModel {
                         LogUtil.e(TAG, "Failed to get Device Provider name!", t);
                     }
                 }, MoreExecutors.directExecutor());
-        mHeaderDrawableIdLiveData = new MutableLiveData<>(HEADER_DRAWABLE_ID);
-        mHeaderTextIdLiveData = new MutableLiveData<>(HEADER_TEXT_ID);
         mDevicePolicyGroupListLiveData = new MediatorLiveData<>();
         mDevicePolicyGroupListLiveData.addSource(mProviderNameLiveData,
                 unused -> mDevicePolicyGroupListLiveData.setValue(DEVICE_POLICY_GROUPS));

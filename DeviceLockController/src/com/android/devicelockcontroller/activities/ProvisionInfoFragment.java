@@ -122,16 +122,14 @@ public final class ProvisionInfoFragment extends Fragment {
         }
         ProvisionInfoListAdapter adapter = new ProvisionInfoListAdapter(viewModel,
                 getViewLifecycleOwner());
-        viewModel.mProvisionInfoListLiveData.observe(getViewLifecycleOwner(),
-                adapter::submitList);
+        adapter.submitList(viewModel.mProvisionInfoList);
         recyclerView.setAdapter(adapter);
         ImageView imageView = view.findViewById(R.id.header_icon);
         if (imageView == null) {
             LogUtil.e(TAG, "Could not find header ImageView, should not reach here.");
             return;
         }
-        viewModel.mHeaderDrawableIdLiveData.observe(getViewLifecycleOwner(),
-                imageView::setImageResource);
+        imageView.setImageResource(viewModel.mHeaderDrawableId);
 
         TextView headerTextView = view.findViewById(R.id.header_text);
         if (headerTextView == null) {
@@ -206,7 +204,7 @@ public final class ProvisionInfoFragment extends Fragment {
 
     private View.OnClickListener getOnClickListener() {
         return v -> ((PolicyObjectsInterface) requireContext().getApplicationContext())
-                    .getSetupController().delaySetup();
+                .getSetupController().delaySetup();
     }
 
     private void createNotificationAndCloseActivity() {
