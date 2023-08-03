@@ -75,7 +75,9 @@ public final class DeviceLockService extends SystemService {
     public void onUserSwitching(@NonNull TargetUser from, @NonNull TargetUser to) {
         Objects.requireNonNull(to);
         Slog.d(TAG, "onUserSwitching from: " + from + " to: " + to);
-        mImpl.setDeviceLockControllerPackageDefaultEnabledState(to.getUserHandle());
+        final UserHandle userHandle = to.getUserHandle();
+        mImpl.setDeviceLockControllerPackageDefaultEnabledState(userHandle);
+        mImpl.onUserSwitching(userHandle);
     }
 
     @Override

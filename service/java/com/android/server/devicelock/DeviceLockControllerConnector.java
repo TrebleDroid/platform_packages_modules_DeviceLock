@@ -383,4 +383,26 @@ final class DeviceLockControllerConnector {
             }
         }, callback);
     }
+
+    public void onUserSwitching(OutcomeReceiver<Void, Exception> callback) {
+        RemoteCallback remoteCallback = new RemoteCallback(checkTimeout(callback, result -> {
+            final boolean success =
+                    result.getBoolean(IDeviceLockControllerService.KEY_ON_USER_SWITCHING_RESULT);
+            if (success) {
+                mHandler.post(() -> callback.onResult(null));
+            } else {
+                mHandler.post(() -> callback.onError(new Exception("Failed to report "
+                        + "user switching")));
+            }
+        }));
+
+        callControllerApi(new Callable<Void>() {
+            @Override
+            @SuppressWarnings("GuardedBy") // mLock already held in callControllerApi (error prone).
+            public Void call() throws Exception {
+                mDeviceLockControllerService.onUserSwitching(remoteCallback);
+                return null;
+            }
+        }, callback);
+    }
 }

@@ -20,6 +20,7 @@ import static com.android.devicelockcontroller.policy.DeviceStateController.Devi
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.LOCK_DEVICE;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.UNLOCK_DEVICE;
 
+import android.app.ActivityManager;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Bundle;
@@ -98,6 +99,20 @@ public final class DeviceLockControllerService extends Service {
                             remoteCallbackWrapper(remoteCallback, KEY_CLEAR_DEVICE_RESULT),
                             MoreExecutors.directExecutor());
 
+                }
+
+                @Override
+                public void onUserSwitching(RemoteCallback remoteCallback) {
+                    final ActivityManager am = getSystemService(ActivityManager.class);
+                    if (mStateController.isLockedInternal() != (am.getLockTaskModeState()
+                            == ActivityManager.LOCK_TASK_MODE_LOCKED)) {
+                        Futures.addCallback(mStateController.enforcePoliciesForCurrentState(),
+                                remoteCallbackWrapper(remoteCallback, KEY_ON_USER_SWITCHING_RESULT),
+                                MoreExecutors.directExecutor());
+                    } else {
+                        sendResult(KEY_ON_USER_SWITCHING_RESULT, remoteCallback,
+                                true /* succeeded */);
+                    }
                 }
             };
 

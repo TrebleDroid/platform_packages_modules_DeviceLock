@@ -228,6 +228,21 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
         }
     }
 
+    void onUserSwitching(@NonNull UserHandle userHandle) {
+        getDeviceLockControllerConnector(userHandle).onUserSwitching(
+                new OutcomeReceiver<>() {
+                    @Override
+                    public void onResult(Void ignored) {
+                        Slog.i(TAG, "User switching reported for: " + userHandle);
+                    }
+
+                    @Override
+                    public void onError(Exception ex) {
+                        Slog.e(TAG, "Exception reporting user switching for: " + userHandle, ex);
+                    }
+                });
+    }
+
     private boolean checkCallerPermission() {
         return mContext.checkCallingOrSelfPermission(Manifest.permission.MANAGE_DEVICE_LOCK_STATE)
                 == PERMISSION_GRANTED;

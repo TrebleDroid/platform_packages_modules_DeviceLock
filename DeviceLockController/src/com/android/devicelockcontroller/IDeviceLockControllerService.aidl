@@ -37,4 +37,7 @@ oneway interface IDeviceLockControllerService {
 
     const String KEY_CLEAR_DEVICE_RESULT = "KEY_CLEAR_DEVICE_RESULT";
     void clearDeviceRestrictions(in RemoteCallback callback);
+
+    const String KEY_ON_USER_SWITCHING_RESULT = "KEY_ON_USER_SWITCHING_RESULT";
+    void onUserSwitching(in RemoteCallback callback);
 }
