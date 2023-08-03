@@ -19,7 +19,7 @@ package com.android.devicelockcontroller.debug;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.CLEARED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.LOCKED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNLOCKED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNPROVISIONED;
+import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState.PROVISION_SUCCEEDED;
 
 import static java.lang.annotation.RetentionPolicy.SOURCE;
 
@@ -36,6 +36,7 @@ import androidx.annotation.StringDef;
 import androidx.work.WorkManager;
 
 import com.android.devicelockcontroller.DeviceLockControllerScheduler;
+import com.android.devicelockcontroller.policy.DevicePolicyController;
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
@@ -108,6 +109,9 @@ public final class DeviceLockCommandReceiver extends BroadcastReceiver {
 
         Context appContext = context.getApplicationContext();
 
+        DeviceStateController deviceStateController =
+                ((PolicyObjectsInterface) appContext).getDeviceStateController();
+
         @Commands
         String command = String.valueOf(intent.getStringExtra(EXTRA_COMMAND));
         switch (command) {
@@ -115,15 +119,15 @@ public final class DeviceLockCommandReceiver extends BroadcastReceiver {
                 forceReset(appContext);
                 break;
             case Commands.LOCK:
-                Futures.addCallback(forceSetState(appContext, LOCKED),
+                Futures.addCallback(deviceStateController.lockDevice(),
                         getSetStateCallBack(LOCKED), MoreExecutors.directExecutor());
                 break;
             case Commands.UNLOCK:
-                Futures.addCallback(forceSetState(appContext, UNLOCKED),
+                Futures.addCallback(deviceStateController.unlockDevice(),
                         getSetStateCallBack(UNLOCKED), MoreExecutors.directExecutor());
                 break;
             case Commands.CLEAR:
-                Futures.addCallback(forceSetState(appContext, CLEARED),
+                Futures.addCallback(deviceStateController.clearDevice(),
                         getSetStateCallBack(CLEARED), MoreExecutors.directExecutor());
                 break;
             case Commands.CHECK_IN:
@@ -159,40 +163,29 @@ public final class DeviceLockCommandReceiver extends BroadcastReceiver {
     private static void tryCheckIn(Context appContext) {
         if (!appContext.getSystemService(UserManager.class).isSystemUser()) {
             LogUtil.e(TAG, "Only system user can perform a check-in");
-
             return;
         }
 
-        if (((PolicyObjectsInterface) appContext).getStateController().isCheckInNeeded()) {
-            Futures.addCallback(GlobalParametersClient.getInstance().needCheckIn(),
-                    new FutureCallback<>() {
-                        @Override
-                        public void onSuccess(Boolean needCheckIn) {
-                            if (needCheckIn) {
-                                new DeviceLockControllerScheduler(
-                                        appContext).scheduleInitialCheckInWork();
-                            } else {
-                                LogUtil.e(TAG,
-                                        "Can not check in at current state!\n"
-                                                + "Use reset command to reset DLC first.");
-                            }
+        Futures.addCallback(GlobalParametersClient.getInstance().needCheckIn(),
+                new FutureCallback<>() {
+                    @Override
+                    public void onSuccess(Boolean needCheckIn) {
+                        if (needCheckIn) {
+                            new DeviceLockControllerScheduler(
+                                    appContext).scheduleInitialCheckInWork();
+                        } else {
+                            LogUtil.e(TAG,
+                                    "Can not check in at current state!\n"
+                                            + "Use reset command to reset DLC first.");
                         }
+                    }
 
-                        @Override
-                        public void onFailure(Throwable t) {
-                            LogUtil.e(TAG, "Failed to know if we need to perform check-in!",
-                                    t);
-                        }
-                    }, MoreExecutors.directExecutor());
-        }
-    }
-
-    private static ListenableFuture<Void> forceSetState(Context context, @DeviceState int state) {
-        PolicyObjectsInterface policyObjectsInterface =
-                (PolicyObjectsInterface) context.getApplicationContext();
-        policyObjectsInterface.destroyObjects();
-        UserParameters.setDeviceStateSync(context, state);
-        return policyObjectsInterface.getStateController().enforcePoliciesForCurrentState();
+                    @Override
+                    public void onFailure(Throwable t) {
+                        LogUtil.e(TAG, "Failed to know if we need to perform check-in!",
+                                t);
+                    }
+                }, MoreExecutors.directExecutor());
     }
 
     private static void forceReset(Context context) {
@@ -223,25 +216,29 @@ public final class DeviceLockCommandReceiver extends BroadcastReceiver {
                 new Intent(context, ResumeProvisionReceiver.class),
                 PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE));
 
-        DeviceStateController stateController =
-                ((PolicyObjectsInterface) context.getApplicationContext()).getStateController();
-        ListenableFuture<Void> resetFuture = Futures.transformAsync(
-                // First clear restrictions
-                stateController.isUnrestrictedState()
-                        ? Futures.immediateVoidFuture()
-                        : Futures.catching(forceSetState(context, CLEARED), RuntimeException.class,
-                                e -> {
-                                    LogUtil.w(TAG, "Failure encountered when force clear.", e);
-                                    return null;
-                                }, MoreExecutors.directExecutor()),
-                // Then clear storage, this will reset state to the default state which is
-                // UNPROVISIONED.
-                unused -> clearStorage(context),
+        PolicyObjectsInterface policyObjectsInterface =
+                (PolicyObjectsInterface) context.getApplicationContext();
+        policyObjectsInterface.destroyObjects();
+        UserParameters.setProvisionState(context, PROVISION_SUCCEEDED);
+        GlobalParametersClient.getInstance().setDeviceState(CLEARED);
+        DevicePolicyController policyController = policyObjectsInterface.getPolicyController();
+        ListenableFuture<Void> clearPolicies = Futures.catching(
+                policyController.enforceCurrentPolicies(),
+                RuntimeException.class, unused -> null,
                 MoreExecutors.directExecutor());
-        Futures.addCallback(
-                resetFuture,
-                getSetStateCallBack(UNPROVISIONED),
-                MoreExecutors.directExecutor());
+        Futures.addCallback(Futures.transformAsync(clearPolicies, unused -> clearStorage(context),
+                        MoreExecutors.directExecutor()),
+                new FutureCallback<>() {
+                    @Override
+                    public void onSuccess(Void result) {
+                        LogUtil.i(TAG, "Reset device state.");
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+                        throw new RuntimeException(t);
+                    }
+                }, MoreExecutors.directExecutor());
     }
 
     private static FutureCallback<Void> getSetStateCallBack(@DeviceState int state) {
@@ -249,16 +246,13 @@ public final class DeviceLockCommandReceiver extends BroadcastReceiver {
         return new FutureCallback<>() {
 
             @Override
-            public void onSuccess(Void v) {
-                LogUtil.i(TAG,
-                        "Successfully set state to: " + DeviceStateController.stateToString(state));
+            public void onSuccess(Void unused) {
+                LogUtil.i(TAG, "Successfully set state to: " + state);
             }
 
             @Override
             public void onFailure(Throwable t) {
-                LogUtil.e(TAG,
-                        "Unsuccessfully set state to: "
-                                + DeviceStateController.stateToString(state), t);
+                LogUtil.e(TAG, "Unsuccessfully set state to: " + state, t);
             }
         };
     }
@@ -271,6 +265,6 @@ public final class DeviceLockCommandReceiver extends BroadcastReceiver {
                 .call(() -> {
                     ((PolicyObjectsInterface) context.getApplicationContext()).destroyObjects();
                     return null;
-                }, MoreExecutors.directExecutor());
+                }, context.getMainExecutor());
     }
 }

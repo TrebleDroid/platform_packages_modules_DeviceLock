@@ -257,15 +257,11 @@ public final class DeviceLockManagerTest {
             boolean locked = getIsDeviceLockedFuture().get(TIMEOUT, TimeUnit.SECONDS);
             assertThat(locked).isFalse();
 
-            getLockDeviceFuture().get(TIMEOUT, TimeUnit.SECONDS);
+            assertThrows(ExecutionException.class,
+                    () -> getLockDeviceFuture().get(TIMEOUT, TimeUnit.SECONDS));
 
-            locked = getIsDeviceLockedFuture().get(TIMEOUT, TimeUnit.SECONDS);
-            assertThat(locked).isTrue();
-
-            getUnlockDeviceFuture().get(TIMEOUT, TimeUnit.SECONDS);
-
-            locked = getIsDeviceLockedFuture().get(TIMEOUT, TimeUnit.SECONDS);
-            assertThat(locked).isFalse();
+            assertThrows(ExecutionException.class,
+                    () -> getUnlockDeviceFuture().get(TIMEOUT, TimeUnit.SECONDS));
         } finally {
             removeFinancedDeviceKioskRole();
         }

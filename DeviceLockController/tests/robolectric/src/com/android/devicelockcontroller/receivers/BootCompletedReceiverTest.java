@@ -16,29 +16,23 @@
 
 package com.android.devicelockcontroller.receivers;
 
-import static android.app.ActivityManager.LOCK_TASK_MODE_LOCKED;
-import static android.app.ActivityManager.LOCK_TASK_MODE_NONE;
-
 import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static com.google.common.truth.Truth.assertThat;
 
-import android.app.ActivityManager;
+import static org.mockito.Mockito.verify;
+
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 
 import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
-import com.android.devicelockcontroller.policy.DeviceStateController;
-
-import com.google.common.util.concurrent.Futures;
+import com.android.devicelockcontroller.policy.ProvisionStateController;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.Shadows;
-import org.robolectric.shadows.ShadowActivityManager;
 
 @RunWith(RobolectricTestRunner.class)
 public final class BootCompletedReceiverTest {
@@ -47,54 +41,23 @@ public final class BootCompletedReceiverTest {
             Intent.ACTION_BOOT_COMPLETED);
 
     private BootCompletedReceiver mBootCompletedReceiver;
-    private DeviceStateController mStateController;
+    private ProvisionStateController mStateController;
     private TestDeviceLockControllerApplication mTestApplication;
-    private ShadowActivityManager mActivityManager;
 
     @Before
     public void setUp() {
         mTestApplication = getApplicationContext();
-        mStateController = mTestApplication.getStateController();
-        when(mStateController.enforcePoliciesForCurrentState()).thenReturn(
-                Futures.immediateVoidFuture());
+        mStateController = mTestApplication.getProvisionStateController();
         mBootCompletedReceiver = new BootCompletedReceiver();
-        mActivityManager = Shadows.shadowOf(
-                mTestApplication.getSystemService(ActivityManager.class));
     }
 
     @Test
-    public void onReceive_inLockedState_inLockTaskMode_doNotEnforcePolicies() {
-        when(mStateController.isLockedInternal()).thenReturn(true);
-        mActivityManager.setLockTaskModeState(LOCK_TASK_MODE_LOCKED);
+    public void onReceive_shouldInitStateAndDisableSelf() {
         mBootCompletedReceiver.onReceive(mTestApplication, BOOT_COMPLETED_INTENT);
 
-        verify(mStateController, never()).enforcePoliciesForCurrentState();
-    }
-
-    @Test
-    public void onReceive_inLockedState_notInLockTaskMode_enforcePolicies() {
-        when(mStateController.isLockedInternal()).thenReturn(true);
-        mActivityManager.setLockTaskModeState(LOCK_TASK_MODE_NONE);
-        mBootCompletedReceiver.onReceive(mTestApplication, BOOT_COMPLETED_INTENT);
-
-        verify(mStateController).enforcePoliciesForCurrentState();
-    }
-
-    @Test
-    public void onReceive_notInLockedState_inLockTaskMode_enforcePolicies() {
-        when(mStateController.isLockedInternal()).thenReturn(false);
-        mActivityManager.setLockTaskModeState(LOCK_TASK_MODE_LOCKED);
-        mBootCompletedReceiver.onReceive(mTestApplication, BOOT_COMPLETED_INTENT);
-
-        verify(mStateController).enforcePoliciesForCurrentState();
-    }
-
-    @Test
-    public void onReceive_notInLockedState_notInLockTaskMode_doNotEnforcePolicies() {
-        when(mStateController.isLockedInternal()).thenReturn(false);
-        mActivityManager.setLockTaskModeState(LOCK_TASK_MODE_NONE);
-        mBootCompletedReceiver.onReceive(mTestApplication, BOOT_COMPLETED_INTENT);
-
-        verify(mStateController, never()).enforcePoliciesForCurrentState();
+        verify(mStateController).initState();
+        assertThat(mTestApplication.getPackageManager().getComponentEnabledSetting(
+                new ComponentName(mTestApplication, BootCompletedReceiver.class))).isEqualTo(
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED);
     }
 }

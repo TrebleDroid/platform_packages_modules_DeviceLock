@@ -30,14 +30,17 @@ public abstract class AbstractDeviceLockControllerScheduler {
     public abstract void correctExpectedToRunTime(Duration delta);
 
     /**
-     * Reschedule any works / alarms that were scheduled previously but got pushed back or canceled.
+     * Reschedule the retry check-in work if needed.
      */
-    public abstract void rescheduleIfNeeded();
+    public abstract void rescheduleRetryCheckInWorkIfNeeded();
 
     /**
      * Schedule an alarm to resume the provision flow.
      */
     public abstract void scheduleResumeProvisionAlarm();
+
+    /** Reschedule the resume provision alarm if needed */
+    public abstract void rescheduleResumeProvisionAlarmIfNeeded();
 
     /**
      * Schedule the initial check-in work when device first boot.
@@ -56,6 +59,9 @@ public abstract class AbstractDeviceLockControllerScheduler {
      */
     public abstract void scheduleNextProvisionFailedStepAlarm();
 
+    /** Reschedule the next provision failed step alarm if needed */
+    public abstract void rescheduleNextProvisionFailedStepAlarmIfNeeded();
+
     /**
      * Schedule an alarm to factory reset the device in case of provision is failed.
      */
@@ -65,4 +71,7 @@ public abstract class AbstractDeviceLockControllerScheduler {
      * Schedule an alarm to factory reset the device with a given delay.
      */
     public abstract void scheduleResetDeviceAlarm(Duration delay);
+
+    /** Reschedule the reset device alarm if needed */
+    public abstract void rescheduleResetDeviceAlarmIfNeeded();
 }

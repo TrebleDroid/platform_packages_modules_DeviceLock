@@ -16,13 +16,15 @@
 
 package com.android.devicelockcontroller.storage;
 
+import android.annotation.CurrentTimeMillisLong;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
 
-import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
+import com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import java.util.Locale;
@@ -33,9 +35,18 @@ import java.util.Locale;
  */
 public final class UserParameters {
     private static final String FILENAME = "user-params";
-    private static final String KEY_DEVICE_STATE = "device_state";
     private static final String KEY_HOME_PACKAGE_OVERRIDE = "home_override_package";
     private static final String TAG = "UserParameters";
+    private static final String KEY_PROVISION_STATE = "provision-state";
+    private static final String KEY_BOOT_TIME_MILLS = "boot-time-mills";
+    private static final String KEY_NEXT_CHECK_IN_TIME_MILLIS = "next-check-in-time-millis";
+    private static final String KEY_RESUME_PROVISION_TIME_MILLIS =
+            "resume-provision-time-millis";
+    private static final String KEY_NEXT_PROVISION_FAILED_STEP_TIME_MILLIS =
+            "next-provision-failed-step-time-millis";
+    private static final String KEY_RESET_DEVICE_TIME_MILLIS = "reset-device-time-millis";
+    private static final String KEY_DAYS_LEFT_UNTIL_RESET = "days-left-until-reset";
+    public static final String KEY_NEED_INITIAL_CHECK_IN = "need-initial-check-in";
 
     private UserParameters() {
     }
@@ -46,37 +57,32 @@ public final class UserParameters {
         return deviceContext.getSharedPreferences(FILENAME, Context.MODE_PRIVATE);
     }
 
-
     /**
-     * Gets the current device state.
-     *
-     * @param context Context used to get the shared preferences.
-     * @return the current device state.
+     * Gets the current user state.
      */
-    @DeviceState
-    public static int getDeviceState(Context context) {
-        return getSharedPreferences(context).getInt(KEY_DEVICE_STATE, DeviceState.UNPROVISIONED);
+    @WorkerThread
+    @ProvisionState
+    public static int getProvisionState(Context context) {
+        return getSharedPreferences(context).getInt(KEY_PROVISION_STATE,
+                ProvisionState.UNPROVISIONED);
     }
 
     /**
-     * Sets the current device state.
-     *
-     * @param context Context used to get the shared preferences.
-     * @param state   New state.
+     * Sets the current user state.
      */
-    public static void setDeviceState(Context context, @DeviceState int state) {
-        getSharedPreferences(context).edit().putInt(KEY_DEVICE_STATE, state).apply();
+    public static void setProvisionState(Context context, @ProvisionState int state) {
+        getSharedPreferences(context).edit().putInt(KEY_PROVISION_STATE, state).apply();
     }
 
-    /**
-     * Sets the current device state and synchronously write to storage. This call will block until
-     * write is complete.
-     *
-     * @param state new {@link DeviceState}
-     * @return true if state is set successfully; otherwise, false.
-     */
-    public static boolean setDeviceStateSync(Context context, @DeviceState int state) {
-        return getSharedPreferences(context).edit().putInt(KEY_DEVICE_STATE, state).commit();
+    /** Check if initial check-in is required. */
+    @WorkerThread
+    public static boolean needInitialCheckIn(Context context) {
+        return getSharedPreferences(context).getBoolean(KEY_NEED_INITIAL_CHECK_IN, true);
+    }
+
+    /** Mark initial check-in has been scheduled. */
+    public static void initialCheckInScheduled(Context context) {
+        getSharedPreferences(context).edit().putBoolean(KEY_NEED_INITIAL_CHECK_IN, false).apply();
     }
 
     /**
@@ -85,6 +91,7 @@ public final class UserParameters {
      * @param context Context used to get the shared preferences.
      * @return Package overriding home.
      */
+    @WorkerThread
     @Nullable
     public static String getPackageOverridingHome(Context context) {
         return getSharedPreferences(context).getString(KEY_HOME_PACKAGE_OVERRIDE, null);
@@ -101,9 +108,90 @@ public final class UserParameters {
                 .putString(KEY_HOME_PACKAGE_OVERRIDE, packageName).apply();
     }
 
+    /** Get the device boot time */
+    @WorkerThread
+    @CurrentTimeMillisLong
+    public static long getBootTimeMillis(Context context) {
+        return getSharedPreferences(context).getLong(KEY_BOOT_TIME_MILLS, 0L);
+    }
+
+    /** Set the time when device boot */
+    public static void setBootTimeMillis(Context context, @CurrentTimeMillisLong long bootTime) {
+        getSharedPreferences(context).edit().putLong(KEY_BOOT_TIME_MILLS, bootTime).apply();
+    }
+
+    /** Get the time when next check in should happen */
+    @WorkerThread
+    @CurrentTimeMillisLong
+    public static long getNextCheckInTimeMillis(Context context) {
+        return getSharedPreferences(context).getLong(KEY_NEXT_CHECK_IN_TIME_MILLIS, 0L);
+    }
+
+    /** Set the time when next check in should happen */
+    public static void setNextCheckInTimeMillis(Context context,
+            @CurrentTimeMillisLong long nextCheckInTime) {
+        getSharedPreferences(context).edit().putLong(KEY_NEXT_CHECK_IN_TIME_MILLIS,
+                nextCheckInTime).apply();
+    }
+
+    /** Get the time when provision should resume */
+    @WorkerThread
+    @CurrentTimeMillisLong
+    public static long getResumeProvisionTimeMillis(Context context) {
+        return getSharedPreferences(context).getLong(KEY_RESUME_PROVISION_TIME_MILLIS, 0L);
+    }
+
+    /** Set the time when provision should resume */
+    public static void setResumeProvisionTimeMillis(Context context,
+            @CurrentTimeMillisLong long resumeProvisionTime) {
+        getSharedPreferences(context).edit().putLong(KEY_RESUME_PROVISION_TIME_MILLIS,
+                resumeProvisionTime).apply();
+    }
+
+    /** Get the time when next provision failed step should happen */
+    @WorkerThread
+    @CurrentTimeMillisLong
+    public static long getNextProvisionFailedStepTimeMills(Context context) {
+        return getSharedPreferences(context).getLong(KEY_NEXT_PROVISION_FAILED_STEP_TIME_MILLIS,
+                0L);
+    }
+
+    /** Set the time when next provision failed step should happen */
+    public static void setNextProvisionFailedStepTimeMills(Context context,
+            @CurrentTimeMillisLong long nextProvisionFailedStep) {
+        getSharedPreferences(context).edit().putLong(KEY_NEXT_PROVISION_FAILED_STEP_TIME_MILLIS,
+                nextProvisionFailedStep).apply();
+    }
+
+    /** Get the time when device should factory reset */
+    @WorkerThread
+    @CurrentTimeMillisLong
+    public static long getResetDeviceTimeMillis(Context context) {
+        return getSharedPreferences(context).getLong(KEY_RESET_DEVICE_TIME_MILLIS, 0L);
+    }
+
+    /** Set the time when device should factory reset */
+    public static void setResetDeviceTImeMillis(Context context,
+            @CurrentTimeMillisLong long resetDeviceTime) {
+        getSharedPreferences(context).edit().putLong(KEY_RESET_DEVICE_TIME_MILLIS,
+                resetDeviceTime).apply();
+    }
+
+    /** Get the number of days before device should factory reset */
+    @WorkerThread
+    public static int getDaysLeftUntilReset(Context context) {
+        return getSharedPreferences(context).getInt(KEY_DAYS_LEFT_UNTIL_RESET, Integer.MAX_VALUE);
+    }
+
+    /** Set the number of days before device should factory reset */
+    public static void setDaysLeftUntilReset(Context context, int days) {
+        getSharedPreferences(context).edit().putInt(KEY_DAYS_LEFT_UNTIL_RESET, days).apply();
+    }
+
     /**
      * Clear all user parameters.
      */
+    @WorkerThread
     public static void clear(Context context) {
         if (!Build.isDebuggable()) {
             throw new SecurityException("Clear is not allowed in non-debuggable build!");
@@ -117,11 +205,24 @@ public final class UserParameters {
     public static void dump(Context context) {
         LogUtil.d(TAG, String.format(Locale.US,
                 "Dumping UserParameters for user: %s ...\n"
-                        + "%s: %s\n"    // device_state:
-                        + "%s: %s\n",    // home_override_package:
+                        + "%s: %s\n"    // user_state:
+                        + "%s: %s\n"    // home_override_package:
+                        + "%s: %s\n"    // boot-time-mills:
+                        + "%s: %s\n"    // next-check-in-time-millis:
+                        + "%s: %s\n"    // resume-provision-time-millis:
+                        + "%s: %s\n"    // next-provision-failed-step-time-millis:
+                        + "%s: %s\n"    // reset-device-time-millis:
+                        + "%s: %s\n",    // days-left-until-reset:
                 context.getUser(),
-                KEY_DEVICE_STATE, getDeviceState(context),
-                KEY_HOME_PACKAGE_OVERRIDE, getPackageOverridingHome(context)
+                KEY_PROVISION_STATE, getProvisionState(context),
+                KEY_HOME_PACKAGE_OVERRIDE, getPackageOverridingHome(context),
+                KEY_BOOT_TIME_MILLS, getBootTimeMillis(context),
+                KEY_NEXT_CHECK_IN_TIME_MILLIS, getNextCheckInTimeMillis(context),
+                KEY_RESUME_PROVISION_TIME_MILLIS, getResumeProvisionTimeMillis(context),
+                KEY_NEXT_PROVISION_FAILED_STEP_TIME_MILLIS,
+                getNextProvisionFailedStepTimeMills(context),
+                KEY_RESET_DEVICE_TIME_MILLIS, getResetDeviceTimeMillis(context),
+                KEY_DAYS_LEFT_UNTIL_RESET, getDaysLeftUntilReset(context)
         ));
     }
 }

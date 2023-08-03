@@ -26,13 +26,8 @@ import androidx.annotation.VisibleForTesting;
 
 import com.android.devicelockcontroller.AbstractDeviceLockControllerScheduler;
 import com.android.devicelockcontroller.DeviceLockControllerScheduler;
-import com.android.devicelockcontroller.storage.GlobalParametersClient;
+import com.android.devicelockcontroller.storage.UserParameters;
 import com.android.devicelockcontroller.util.LogUtil;
-
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.MoreExecutors;
 
 import java.time.Clock;
 import java.time.Duration;
@@ -73,27 +68,13 @@ public final class TimeChangedBroadcastReceiver extends BroadcastReceiver {
         if (isUserProfile) {
             return;
         }
-
-        GlobalParametersClient client = GlobalParametersClient.getInstance();
-        ListenableFuture<Duration> deltaFuture = Futures.transform(client.getBootTimeMillis(),
-                bootTimestamp -> {
-                    Instant bootInstant = Instant.ofEpochMilli(bootTimestamp);
-
-                    return Duration.between(bootInstant.plusMillis(
-                            SystemClock.elapsedRealtime()), Instant.now(mClock));
-                }, MoreExecutors.directExecutor());
-
         if (mScheduler == null) mScheduler = new DeviceLockControllerScheduler(context);
-        Futures.addCallback(deltaFuture, new FutureCallback<>() {
-            @Override
-            public void onSuccess(Duration delta) {
-                mScheduler.correctExpectedToRunTime(delta);
-            }
 
-            @Override
-            public void onFailure(Throwable t) {
-                LogUtil.e(TAG, "Failed to calculate time change delta!", t);
-            }
-        }, MoreExecutors.directExecutor());
+        long bootTimestamp = UserParameters.getBootTimeMillis(context);
+        Instant bootInstant = Instant.ofEpochMilli(bootTimestamp);
+
+        mScheduler.correctExpectedToRunTime(
+                Duration.between(bootInstant.plusMillis(
+                        SystemClock.elapsedRealtime()), Instant.now(mClock)));
     }
 }

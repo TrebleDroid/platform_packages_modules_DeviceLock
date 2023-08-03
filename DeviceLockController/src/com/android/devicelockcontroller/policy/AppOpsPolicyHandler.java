@@ -16,54 +16,46 @@
 
 package com.android.devicelockcontroller.policy;
 
-import android.content.Context;
 import android.os.OutcomeReceiver;
 
 import androidx.concurrent.futures.CallbackToFutureAdapter;
 
 import com.android.devicelockcontroller.SystemDeviceLockManager;
-import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
 import com.android.devicelockcontroller.storage.SetupParametersClient;
-import com.android.devicelockcontroller.storage.SetupParametersClientInterface;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 
+import java.util.concurrent.Executor;
+
 final class AppOpsPolicyHandler implements PolicyHandler {
     private static final String TAG = "AppOpsPolicyHandler";
-    private final Context mContext;
     private final SystemDeviceLockManager mSystemDeviceLockManager;
-    private final SetupParametersClientInterface mSetupParametersClient;
+    private final Executor mBgExecutor;
 
-    AppOpsPolicyHandler(Context context, SystemDeviceLockManager systemDeviceLockManager) {
-        this(context, systemDeviceLockManager, SetupParametersClient.getInstance());
-    }
-
-    AppOpsPolicyHandler(Context context, SystemDeviceLockManager systemDeviceLockManager,
-            SetupParametersClientInterface setupParametersClient) {
-        mContext = context;
+    AppOpsPolicyHandler(SystemDeviceLockManager systemDeviceLockManager, Executor bgExecutor) {
         mSystemDeviceLockManager = systemDeviceLockManager;
-        mSetupParametersClient = setupParametersClient;
+        mBgExecutor = bgExecutor;
     }
 
-    private ListenableFuture<@ResultType Integer>
-            getExemptFromBackgroundStartRestrictionsFuture(boolean exempt) {
+    private ListenableFuture<Boolean> getExemptFromBackgroundStartRestrictionsFuture(
+            boolean exempt) {
         return CallbackToFutureAdapter.getFuture(
                 completer -> {
                     mSystemDeviceLockManager.setExemptFromActivityBackgroundStartRestriction(exempt,
-                            mContext.getMainExecutor(),
-                            new OutcomeReceiver<Void, Exception>() {
+                            mBgExecutor,
+                            new OutcomeReceiver<>() {
                                 @Override
                                 public void onResult(Void unused) {
-                                    completer.set(SUCCESS);
+                                    completer.set(true);
                                 }
 
                                 @Override
                                 public void onError(Exception error) {
                                     LogUtil.e(TAG, "Cannot set background start exemption", error);
-                                    completer.set(FAILURE);
+                                    completer.set(false);
                                 }
                             });
                     // Used only for debugging.
@@ -71,67 +63,77 @@ final class AppOpsPolicyHandler implements PolicyHandler {
                 });
     }
 
-    private ListenableFuture<@ResultType Integer> getExemptFromHibernationFuture(boolean exempt) {
-        return Futures.transformAsync(mSetupParametersClient.getKioskPackage(),
+    private ListenableFuture<Boolean> getExemptFromHibernationFuture(boolean exempt) {
+        return Futures.transformAsync(SetupParametersClient.getInstance().getKioskPackage(),
                 kioskPackageName -> kioskPackageName == null
-                        ? Futures.immediateFuture(SUCCESS)
+                        ? Futures.immediateFuture(true)
                         : CallbackToFutureAdapter.getFuture(
-                            completer -> {
-                                mSystemDeviceLockManager.setExemptFromHibernation(
-                                        kioskPackageName, exempt,
-                                        mContext.getMainExecutor(),
-                                        new OutcomeReceiver<Void, Exception>() {
-                                            @Override
-                                            public void onResult(Void unused) {
-                                                completer.set(SUCCESS);
-                                            }
+                                completer -> {
+                                    mSystemDeviceLockManager.setExemptFromHibernation(
+                                            kioskPackageName, exempt,
+                                            mBgExecutor,
+                                            new OutcomeReceiver<>() {
+                                                @Override
+                                                public void onResult(Void unused) {
+                                                    completer.set(true);
+                                                }
 
-                                            @Override
-                                            public void onError(Exception error) {
-                                                LogUtil.e(TAG, "Cannot set exempt from hibernation",
-                                                        error);
-                                                completer.set(FAILURE);
-                                            }
-                                        });
-                                // Used only for debugging.
-                                return "setExemptFromHibernationFuture";
-                            }), MoreExecutors.directExecutor());
+                                                @Override
+                                                public void onError(Exception error) {
+                                                    LogUtil.e(TAG,
+                                                            "Cannot set exempt from hibernation",
+                                                            error);
+                                                    completer.set(false);
+                                                }
+                                            });
+                                    // Used only for debugging.
+                                    return "setExemptFromHibernationFuture";
+                                }), MoreExecutors.directExecutor());
     }
 
-    private ListenableFuture<@ResultType Integer>
-            getExemptFromBackgroundStartAndHibernationFuture(boolean exempt) {
-        final ListenableFuture<@ResultType Integer> backgroundFuture =
+    private ListenableFuture<Boolean> getExemptFromBackgroundStartAndHibernationFuture(
+            boolean exempt) {
+        final ListenableFuture<Boolean> backgroundFuture =
                 getExemptFromBackgroundStartRestrictionsFuture(exempt /* exempt */);
-        final ListenableFuture<@ResultType Integer> hibernationFuture =
+        final ListenableFuture<Boolean> hibernationFuture =
                 getExemptFromHibernationFuture(exempt /* exempt */);
         return Futures.whenAllSucceed(backgroundFuture, hibernationFuture)
-                .call(() -> (Futures.getDone(backgroundFuture) == SUCCESS
-                                && Futures.getDone(hibernationFuture) == SUCCESS)
-                                ? SUCCESS : FAILURE,
+                .call(() -> Futures.getDone(backgroundFuture)
+                                && Futures.getDone(hibernationFuture),
                         MoreExecutors.directExecutor());
     }
 
     @Override
-    public ListenableFuture<@ResultType Integer> setPolicyForState(@DeviceState int state) {
-        switch (state) {
-            case DeviceState.PSEUDO_LOCKED:
-            case DeviceState.PSEUDO_UNLOCKED:
-                return Futures.immediateFuture(SUCCESS);
-            case DeviceState.PROVISION_IN_PROGRESS:
-            case DeviceState.PROVISION_PAUSED:
-            case DeviceState.PROVISION_SUCCEEDED:
-            case DeviceState.PROVISION_FAILED:
-            case DeviceState.KIOSK_PROVISIONED:
-                return getExemptFromBackgroundStartRestrictionsFuture(true /* exempt */);
-            case DeviceState.UNLOCKED:
-            case DeviceState.LOCKED:
-                return getExemptFromBackgroundStartAndHibernationFuture(true /* exempt */);
-            case DeviceState.UNPROVISIONED:
-            case DeviceState.CLEARED:
-                return getExemptFromBackgroundStartAndHibernationFuture(false /* exempt */);
-            default:
-                return Futures.immediateFailedFuture(
-                        new IllegalStateException(String.valueOf(state)));
-        }
+    public ListenableFuture<Boolean> onProvisioned() {
+        return getExemptFromBackgroundStartAndHibernationFuture(/* exempt= */ true);
+    }
+
+    @Override
+    public ListenableFuture<Boolean> onProvisionInProgress() {
+        return getExemptFromBackgroundStartRestrictionsFuture(/* exempt= */ true);
+    }
+
+    @Override
+    public ListenableFuture<Boolean> onProvisionFailed() {
+        return getExemptFromBackgroundStartRestrictionsFuture(/* exempt= */ false);
+    }
+
+    @Override
+    public ListenableFuture<Boolean> onCleared() {
+        return getExemptFromBackgroundStartAndHibernationFuture(/* exempt= */ false);
+    }
+
+    // Due to some reason, AppOpsManager does not persist exemption after reboot. Therefore we
+    // need to always set them from our end.
+    @Override
+    public ListenableFuture<Boolean> onLocked() {
+        return getExemptFromBackgroundStartAndHibernationFuture(/* exempt= */ true);
+    }
+
+    // Due to some reason, AppOpsManager does not persist exemption after reboot. Therefore we
+    // need to always set them from our end.
+    @Override
+    public ListenableFuture<Boolean> onUnlocked() {
+        return getExemptFromHibernationFuture(/* exempt= */ true);
     }
 }

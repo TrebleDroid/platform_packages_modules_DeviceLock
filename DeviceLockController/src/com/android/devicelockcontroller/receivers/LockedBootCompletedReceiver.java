@@ -16,33 +16,35 @@
 
 package com.android.devicelockcontroller.receivers;
 
-import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DEFAULT;
-import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
-import static android.content.pm.PackageManager.DONT_KILL_APP;
+import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState.PROVISION_FAILED;
+import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState.PROVISION_PAUSED;
 
-import android.app.ActivityManager;
+import android.app.admin.DevicePolicyManager;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.SystemClock;
 import android.os.UserManager;
 
 import androidx.annotation.VisibleForTesting;
 
-import com.android.devicelockcontroller.policy.DeviceStateController;
+import com.android.devicelockcontroller.AbstractDeviceLockControllerScheduler;
+import com.android.devicelockcontroller.DeviceLockControllerScheduler;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
-import com.android.devicelockcontroller.storage.GlobalParametersClient;
+import com.android.devicelockcontroller.policy.ProvisionStateController;
+import com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState;
+import com.android.devicelockcontroller.storage.UserParameters;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.MoreExecutors;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 /**
  * Handle {@link  Intent#ACTION_LOCKED_BOOT_COMPLETED}. This receiver runs for any user
@@ -51,59 +53,22 @@ import java.util.Objects;
  * This receiver does the following:
  * 1. Enforce policies for the current device state;
  * 2. Record device boot timestamp
+ * 3. Reschedule alarms if needed.
  */
 public final class LockedBootCompletedReceiver extends BroadcastReceiver {
     private static final String TAG = "LockedBootCompletedReceiver";
+    private AbstractDeviceLockControllerScheduler mScheduler;
+    private final Executor mExecutor;
 
-    private static DeviceStateController getDeviceStateController(Context context) {
-        return ((PolicyObjectsInterface) context.getApplicationContext())
-                .getStateController();
+    public LockedBootCompletedReceiver() {
+        mExecutor = Executors.newSingleThreadExecutor();
     }
 
     @VisibleForTesting
-    static void enforceLockTaskMode(Context context) {
-        final ActivityManager am =
-                Objects.requireNonNull(context.getSystemService(ActivityManager.class));
-        if (getDeviceStateController(context).isLockedInternal()
-                == (am.getLockTaskModeState() == ActivityManager.LOCK_TASK_MODE_LOCKED)) {
-            return;
-        }
-        final PackageManager pm = context.getPackageManager();
-        final ComponentName bootCompletedReceiver = new ComponentName(context,
-                BootCompletedReceiver.class);
-        if (getDeviceStateController(context).isInProvisioningState()) {
-            // b/172281939: WorkManager is not available at this moment, and we may not launch
-            // lock task mode successfully. Therefore, defer it to BootCompletedReceiver.
-            LogUtil.i(TAG,
-                    "Setup has not completed yet when ACTION_LOCKED_BOOT_COMPLETED is received. "
-                            + "We can not start lock task mode here.");
-            pm.setComponentEnabledSetting(bootCompletedReceiver,
-                    COMPONENT_ENABLED_STATE_DEFAULT, DONT_KILL_APP);
-            return;
-        }
-
-        Futures.addCallback(getDeviceStateController(context).enforcePoliciesForCurrentState(),
-                new FutureCallback<>() {
-                    @Override
-                    public void onSuccess(Void result) {
-                        LogUtil.i(TAG, "Successfully called enforcePoliciesForCurrentState()");
-                    }
-
-                    @Override
-                    public void onFailure(Throwable t) {
-                        LogUtil.e(TAG, "Failed to call enforcePoliciesForCurrentState()", t);
-                    }
-                },
-                MoreExecutors.directExecutor());
-        pm.setComponentEnabledSetting(
-                new ComponentName(context, BootCompletedReceiver.class),
-                COMPONENT_ENABLED_STATE_DISABLED, DONT_KILL_APP);
-    }
-
-    private static void recordBootTimeStamp() {
-        Instant bootTimeStamp = Instant.now(Clock.systemUTC()).minusMillis(
-                SystemClock.elapsedRealtime());
-        GlobalParametersClient.getInstance().setBootTimeMillis(bootTimeStamp.toEpochMilli());
+    LockedBootCompletedReceiver(AbstractDeviceLockControllerScheduler scheduler,
+            Executor executor) {
+        mScheduler = scheduler;
+        mExecutor = executor;
     }
 
     @Override
@@ -118,8 +83,39 @@ public final class LockedBootCompletedReceiver extends BroadcastReceiver {
         if (isUserProfile) {
             return;
         }
-        enforceLockTaskMode(context);
-        recordBootTimeStamp();
+
+        Instant bootTimeStamp = Instant.now(Clock.systemUTC()).minusMillis(
+                SystemClock.elapsedRealtime());
+        UserParameters.setBootTimeMillis(context, bootTimeStamp.toEpochMilli());
+
+        ProvisionStateController stateController =
+                ((PolicyObjectsInterface) context.getApplicationContext())
+                        .getProvisionStateController();
+        stateController.getDevicePolicyController().enforceCurrentPolicies();
+        if (mScheduler == null) {
+            mScheduler = new DeviceLockControllerScheduler(context);
+        }
+        Futures.addCallback(stateController.getState(),
+                new FutureCallback<>() {
+                    @Override
+                    public void onSuccess(@ProvisionState Integer state) {
+                        if (state == PROVISION_PAUSED) {
+                            mScheduler.rescheduleResumeProvisionAlarmIfNeeded();
+                        } else if (state == PROVISION_FAILED) {
+                            mScheduler.rescheduleNextProvisionFailedStepAlarmIfNeeded();
+                            mScheduler.rescheduleResetDeviceAlarmIfNeeded();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+                        throw new RuntimeException(t);
+                    }
+                }, mExecutor);
+
+        DevicePolicyManager dpm = context.getSystemService(DevicePolicyManager.class);
+        Objects.requireNonNull(dpm).setUserControlDisabledPackages(/* admin= */ null,
+                List.of(context.getPackageName()));
     }
 
 }

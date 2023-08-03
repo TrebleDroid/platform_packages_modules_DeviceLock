@@ -27,11 +27,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface DevicePolicyController {
 
     /**
-     * Get the intent to launch the locked activity for the current device state asynchronously.
-     */
-    ListenableFuture<Intent> getLaunchIntentForCurrentLockedActivity();
-
-    /**
      * Factory resets the device when the setup has failed and cannot continue.
      * Returns true if action was successful.
      * <p>
@@ -42,7 +37,12 @@ public interface DevicePolicyController {
     boolean wipeDevice();
 
     /**
-     * Get the State Controller associated with this Policy Controller.
+     * Enforce current policies.
      */
-    DeviceStateController getStateController();
+    ListenableFuture<Void> enforceCurrentPolicies();
+
+    /**
+     * Get the launch intent for current enforced state.
+     */
+    ListenableFuture<Intent> getLaunchIntentForCurrentState();
 }

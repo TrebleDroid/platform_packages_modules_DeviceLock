@@ -50,7 +50,7 @@ public final class DeviceFinancingDeferredProvisionInfoViewModel extends Provisi
 
         mHeaderDrawableId = HEADER_DRAWABLE_ID;
         mHeaderTextId = HEADER_TEXT_ID;
-        mSubheaderTextId = SUBHEADER_TEXT_ID;
+        mSubHeaderTextId = SUBHEADER_TEXT_ID;
         List<ProvisionInfo> provisionInfoList = new ArrayList<>();
         for (int i = 0, size = DRAWABLE_IDS.length; i < size; ++i) {
             provisionInfoList.add(new ProvisionInfo(DRAWABLE_IDS[i], TEXT_IDS[i]));

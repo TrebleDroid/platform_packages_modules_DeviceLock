@@ -16,13 +16,11 @@
 
 package com.android.devicelockcontroller;
 
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.CLEAR;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.LOCK_DEVICE;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.UNLOCK_DEVICE;
-
-import android.app.ActivityManager;
 import android.app.Service;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteCallback;
@@ -30,9 +28,11 @@ import android.os.RemoteCallback;
 import androidx.annotation.NonNull;
 import androidx.work.WorkManager;
 
+import com.android.devicelockcontroller.policy.DevicePolicyController;
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
 import com.android.devicelockcontroller.provision.worker.ReportDeviceLockProgramCompleteWorker;
+import com.android.devicelockcontroller.receivers.LockedBootCompletedReceiver;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
 
@@ -47,34 +47,29 @@ import com.google.common.util.concurrent.MoreExecutors;
 public final class DeviceLockControllerService extends Service {
     private static final String TAG = "DeviceLockControllerService";
     private DeviceStateController mStateController;
+    private DevicePolicyController mPolicyController;
 
     private final IDeviceLockControllerService.Stub mBinder =
             new IDeviceLockControllerService.Stub() {
                 @Override
                 public void lockDevice(RemoteCallback remoteCallback) {
-                    Futures.addCallback(
-                            Futures.transform(mStateController.setNextStateForEvent(LOCK_DEVICE),
-                                    unused -> true, MoreExecutors.directExecutor()),
+                    Futures.addCallback(mStateController.lockDevice(),
                             remoteCallbackWrapper(remoteCallback, KEY_LOCK_DEVICE_RESULT),
                             MoreExecutors.directExecutor());
                 }
 
                 @Override
                 public void unlockDevice(RemoteCallback remoteCallback) {
-                    Futures.addCallback(
-                            Futures.transform(
-                                    mStateController.setNextStateForEvent(UNLOCK_DEVICE),
-                                    (Integer unused) -> true, MoreExecutors.directExecutor()),
+                    Futures.addCallback(mStateController.unlockDevice(),
                             remoteCallbackWrapper(remoteCallback, KEY_UNLOCK_DEVICE_RESULT),
                             MoreExecutors.directExecutor());
-
                 }
 
                 @Override
                 public void isDeviceLocked(RemoteCallback remoteCallback) {
-                    final boolean isLocked = mStateController.isLocked();
-                    sendResult(IDeviceLockControllerService.KEY_IS_DEVICE_LOCKED_RESULT,
-                            remoteCallback, isLocked);
+                    Futures.addCallback(mStateController.isLocked(),
+                            remoteCallbackWrapper(remoteCallback, KEY_IS_DEVICE_LOCKED_RESULT),
+                            MoreExecutors.directExecutor());
                 }
 
                 @Override
@@ -88,12 +83,18 @@ public final class DeviceLockControllerService extends Service {
                 @Override
                 public void clearDeviceRestrictions(RemoteCallback remoteCallback) {
                     Futures.addCallback(
-                            Futures.transform(mStateController.setNextStateForEvent(CLEAR),
-                                    (Integer unused) -> {
+                            Futures.transform(mStateController.clearDevice(),
+                                    unused -> {
+                                        Context context = getApplicationContext();
                                         WorkManager workManager =
-                                                WorkManager.getInstance(getApplicationContext());
+                                                WorkManager.getInstance(context);
                                         ReportDeviceLockProgramCompleteWorker
                                                 .reportDeviceLockProgramComplete(workManager);
+                                        getPackageManager().setComponentEnabledSetting(
+                                                new ComponentName(context,
+                                                        LockedBootCompletedReceiver.class),
+                                                PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                                                PackageManager.DONT_KILL_APP);
                                         return true;
                                     }, MoreExecutors.directExecutor()),
                             remoteCallbackWrapper(remoteCallback, KEY_CLEAR_DEVICE_RESULT),
@@ -103,16 +104,9 @@ public final class DeviceLockControllerService extends Service {
 
                 @Override
                 public void onUserSwitching(RemoteCallback remoteCallback) {
-                    final ActivityManager am = getSystemService(ActivityManager.class);
-                    if (mStateController.isLockedInternal() != (am.getLockTaskModeState()
-                            == ActivityManager.LOCK_TASK_MODE_LOCKED)) {
-                        Futures.addCallback(mStateController.enforcePoliciesForCurrentState(),
-                                remoteCallbackWrapper(remoteCallback, KEY_ON_USER_SWITCHING_RESULT),
-                                MoreExecutors.directExecutor());
-                    } else {
-                        sendResult(KEY_ON_USER_SWITCHING_RESULT, remoteCallback,
-                                true /* succeeded */);
-                    }
+                    Futures.addCallback(mPolicyController.enforceCurrentPolicies(),
+                            remoteCallbackWrapper(remoteCallback, KEY_ON_USER_SWITCHING_RESULT),
+                            MoreExecutors.directExecutor());
                 }
             };
 
@@ -122,6 +116,11 @@ public final class DeviceLockControllerService extends Service {
         return new FutureCallback<>() {
             @Override
             public void onSuccess(Object result) {
+                if (result == null) {
+                    // The caller can not tell if the call is successful if the result bundle is
+                    // empty, therefore sending a true value to indicate the call is successful.
+                    result = true;
+                }
                 sendResult(key, remoteCallback, result);
             }
 
@@ -148,7 +147,8 @@ public final class DeviceLockControllerService extends Service {
         LogUtil.d(TAG, "onCreate");
 
         final PolicyObjectsInterface policyObjects = (PolicyObjectsInterface) getApplication();
-        mStateController = policyObjects.getStateController();
+        mStateController = policyObjects.getDeviceStateController();
+        mPolicyController = policyObjects.getPolicyController();
     }
 
     @Override

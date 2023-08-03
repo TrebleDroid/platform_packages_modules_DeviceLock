@@ -22,8 +22,6 @@ import android.content.Context;
 
 import androidx.test.core.app.ApplicationProvider;
 
-import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,13 +38,6 @@ public final class UserParametersTest {
         mContext = ApplicationProvider.getApplicationContext();
     }
 
-    @Test
-    public void getDeviceState_shouldReturnExpectedCurrentDeviceState() {
-        assertThat(UserParameters.getDeviceState(mContext)).isEqualTo(DeviceState.UNPROVISIONED);
-        UserParameters.setDeviceState(mContext, DeviceState.PROVISION_SUCCEEDED);
-        assertThat(UserParameters.getDeviceState(mContext))
-                .isEqualTo(DeviceState.PROVISION_SUCCEEDED);
-    }
 
     @Test
     public void getPackageOverridingHome_shouldReturnExpectedOverridingHomePackage() {

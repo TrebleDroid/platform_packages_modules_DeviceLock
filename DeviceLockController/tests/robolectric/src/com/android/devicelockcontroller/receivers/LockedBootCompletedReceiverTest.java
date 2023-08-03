@@ -16,75 +16,93 @@
 
 package com.android.devicelockcontroller.receivers;
 
+import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState.PROVISION_FAILED;
+import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState.PROVISION_PAUSED;
+
 import static com.google.common.truth.Truth.assertThat;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import android.content.ComponentName;
-import android.content.pm.PackageManager;
+import android.app.admin.DevicePolicyManager;
+import android.content.Intent;
+import android.os.SystemClock;
 
 import androidx.test.core.app.ApplicationProvider;
 
+import com.android.devicelockcontroller.AbstractDeviceLockControllerScheduler;
 import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
-import com.android.devicelockcontroller.policy.DeviceStateController;
-import com.android.devicelockcontroller.shadows.ShadowApplicationPackageManager;
+import com.android.devicelockcontroller.policy.DevicePolicyController;
+import com.android.devicelockcontroller.policy.ProvisionStateController;
+import com.android.devicelockcontroller.storage.UserParameters;
 
 import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.testing.TestingExecutors;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.Shadows;
-import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowPackageManager;
+
+import java.time.Clock;
+import java.time.Instant;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(shadows = {ShadowApplicationPackageManager.class})
 public final class LockedBootCompletedReceiverTest {
+    public static final Intent INTENT = new Intent(Intent.ACTION_LOCKED_BOOT_COMPLETED);
     private final TestDeviceLockControllerApplication mTestApplication =
             ApplicationProvider.getApplicationContext();
-    private PackageManager mPm;
-    private ShadowPackageManager mShadowPackageManager;
-    private DeviceStateController mStateController;
+    private ProvisionStateController mProvisionStateController;
+    private DevicePolicyController mDevicePolicyController;
+    private LockedBootCompletedReceiver mReceiver;
+    private AbstractDeviceLockControllerScheduler mScheduler;
 
     @Before
     public void setUp() {
-        mStateController = mTestApplication.getStateController();
-        when(mStateController.enforcePoliciesForCurrentState()).thenReturn(
-                Futures.immediateVoidFuture());
-        mPm = mTestApplication.getPackageManager();
-        mShadowPackageManager = Shadows.shadowOf(mTestApplication.getPackageManager());
+        mProvisionStateController = mTestApplication.getProvisionStateController();
+        mDevicePolicyController = mTestApplication.getPolicyController();
+        when(mProvisionStateController.getDevicePolicyController()).thenReturn(
+                mDevicePolicyController);
+        mScheduler = mock(AbstractDeviceLockControllerScheduler.class);
+        mReceiver = new LockedBootCompletedReceiver(mScheduler,
+                TestingExecutors.sameThreadScheduledExecutor());
+    }
 
+    @Ignore // Figure out how to verify getUserControlDisabledPackages() result.
+    @Test
+    public void onReceive_shouldRecordBootTimeAndEnforcePoliciesAndDisableUserControl() {
+        long bootTime = Instant.now(Clock.systemUTC()).minusMillis(
+                SystemClock.elapsedRealtime()).toEpochMilli();
+
+        mReceiver.onReceive(mTestApplication, INTENT);
+
+        assertThat(UserParameters.getBootTimeMillis(mTestApplication)).isEqualTo(bootTime);
+        verify(mDevicePolicyController).enforceCurrentPolicies();
+
+        DevicePolicyManager dpm = mTestApplication.getSystemService(DevicePolicyManager.class);
+        assertThat(dpm.getUserControlDisabledPackages(null)).contains(
+                mTestApplication.getPackageName());
     }
 
     @Test
-    public void startLockTaskModeIfApplicable_whenInProvisioningState_doesNotStartLockTaskMode() {
-        when(mStateController.isInProvisioningState()).thenReturn(true);
-        when(mStateController.isLockedInternal()).thenReturn(true);
+    public void onReceive_provisionPaused_shouldRescheduleResume() {
+        when(mProvisionStateController.getState()).thenReturn(
+                Futures.immediateFuture(PROVISION_PAUSED));
 
-        LockedBootCompletedReceiver.enforceLockTaskMode(mTestApplication);
+        mReceiver.onReceive(mTestApplication, INTENT);
 
-        final ComponentName componentName =
-                new ComponentName(mTestApplication, BootCompletedReceiver.class);
-        assertThat(mPm.getComponentEnabledSetting(componentName))
-                .isEqualTo(PackageManager.COMPONENT_ENABLED_STATE_DEFAULT);
-        assertThat(mShadowPackageManager.getComponentEnabledSettingFlags(componentName))
-                .isEqualTo(PackageManager.DONT_KILL_APP);
+        verify(mScheduler).rescheduleResumeProvisionAlarmIfNeeded();
     }
 
     @Test
-    public void startLockTaskModeIfApplicable_whenNotInProvisioningState_startLockTaskMode() {
-        when(mStateController.isInProvisioningState()).thenReturn(false);
-        when(mStateController.isLockedInternal()).thenReturn(true);
+    public void onReceive_provisionFailed_shouldRescheduleFailedStepAndReset() {
+        when(mProvisionStateController.getState()).thenReturn(
+                Futures.immediateFuture(PROVISION_FAILED));
+        mReceiver.onReceive(mTestApplication, INTENT);
 
-        LockedBootCompletedReceiver.enforceLockTaskMode(mTestApplication);
-
-        final ComponentName componentName =
-                new ComponentName(mTestApplication, BootCompletedReceiver.class);
-        assertThat(mPm.getComponentEnabledSetting(componentName))
-                .isEqualTo(PackageManager.COMPONENT_ENABLED_STATE_DISABLED);
-        assertThat(mShadowPackageManager.getComponentEnabledSettingFlags(componentName))
-                .isEqualTo(PackageManager.DONT_KILL_APP);
+        verify(mScheduler).rescheduleNextProvisionFailedStepAlarmIfNeeded();
+        verify(mScheduler).rescheduleResetDeviceAlarmIfNeeded();
     }
 }

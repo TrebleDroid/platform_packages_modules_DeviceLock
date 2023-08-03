@@ -16,36 +16,21 @@
 
 package com.android.devicelockcontroller.policy;
 
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.CLEARED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.KIOSK_PROVISIONED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.LOCKED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PROVISION_FAILED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PROVISION_IN_PROGRESS;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PROVISION_PAUSED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PROVISION_SUCCEEDED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PSEUDO_LOCKED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PSEUDO_UNLOCKED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNLOCKED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNPROVISIONED;
-
 import android.app.admin.DevicePolicyManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.os.UserManager;
 import android.util.ArraySet;
 
-import androidx.annotation.MainThread;
-
-import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
 import com.android.devicelockcontroller.storage.SetupParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.MoreExecutors;
 
 import java.util.Collections;
 import java.util.Locale;
+import java.util.concurrent.Executor;
 
 /**
  * Enforces UserRestriction policies.
@@ -55,6 +40,7 @@ final class UserRestrictionsPolicyHandler implements PolicyHandler {
     private static final String TAG = "UserRestrictionsPolicyHandler";
 
     private final ArraySet<String> mAlwaysOnRestrictions = new ArraySet<>();
+    private final Executor mBgExecutor;
 
     /**
      * A list of restrictions that will be always active, it is optional, partners can config the
@@ -69,10 +55,11 @@ final class UserRestrictionsPolicyHandler implements PolicyHandler {
     private final boolean mIsDebug;
 
     UserRestrictionsPolicyHandler(DevicePolicyManager dpm, UserManager userManager,
-            boolean isDebug) {
+            boolean isDebug, Executor bgExecutor) {
         mDpm = dpm;
         mUserManager = userManager;
         mIsDebug = isDebug;
+        mBgExecutor = bgExecutor;
 
         LogUtil.i(TAG, String.format(Locale.US, "Build type DEBUG = %s", isDebug));
 
@@ -83,53 +70,33 @@ final class UserRestrictionsPolicyHandler implements PolicyHandler {
     }
 
     @Override
-    @ResultType
-    public ListenableFuture<@ResultType Integer> setPolicyForState(@DeviceState int state) {
-        final Handler mainHandler = new Handler(Looper.getMainLooper());
-        LogUtil.v(TAG, String.format(Locale.US, "Setting restrictions for %d", state));
-        switch (state) {
-            case PROVISION_IN_PROGRESS:
-            case PROVISION_PAUSED:
-            case PROVISION_SUCCEEDED:
-            case UNLOCKED:
-            case KIOSK_PROVISIONED:
-                setupRestrictions(mAlwaysOnRestrictions, true);
-                return Futures.whenAllSucceed(
-                                setupRestrictions(retrieveOptionalAlwaysOnRestrictions(), true),
-                                setupRestrictions(retrieveLockModeRestrictions(), false))
-                        .call(
-                                () -> SUCCESS, mainHandler::post);
-            case LOCKED:
-                setupRestrictions(mAlwaysOnRestrictions, true);
-                return Futures.whenAllSucceed(
-                                setupRestrictions(retrieveOptionalAlwaysOnRestrictions(), true),
-                                setupRestrictions(retrieveLockModeRestrictions(), true))
-                        .call(
-                                () -> SUCCESS, mainHandler::post);
-            case UNPROVISIONED:
-                setupRestrictions(mAlwaysOnRestrictions, false);
-                return Futures.immediateFuture(SUCCESS);
-            case PROVISION_FAILED:
-            case CLEARED:
-                setupRestrictions(mAlwaysOnRestrictions, false);
-                return Futures.whenAllSucceed(
-                                setupRestrictions(retrieveOptionalAlwaysOnRestrictions(), false),
-                                setupRestrictions(retrieveLockModeRestrictions(), false))
-                        .call(
-                                () -> SUCCESS, mainHandler::post);
-            case PSEUDO_LOCKED:
-            case PSEUDO_UNLOCKED:
-                return Futures.immediateFuture(SUCCESS);
-            default:
-                return Futures.immediateFailedFuture(
-                        new IllegalStateException(String.valueOf(state)));
-        }
-
-
+    public ListenableFuture<Boolean> onProvisionInProgress() {
+        setupRestrictions(mAlwaysOnRestrictions, true);
+        return Futures.whenAllSucceed(
+                        setupRestrictions(retrieveOptionalAlwaysOnRestrictions(), true),
+                        setupRestrictions(retrieveLockModeRestrictions(), false))
+                .call(() -> true, MoreExecutors.directExecutor());
     }
 
-    @MainThread
-    public ListenableFuture<ArraySet<String>> retrieveLockModeRestrictions() {
+    @Override
+    public ListenableFuture<Boolean> onLocked() {
+        setupRestrictions(mAlwaysOnRestrictions, true);
+        return Futures.whenAllSucceed(
+                        setupRestrictions(retrieveOptionalAlwaysOnRestrictions(), true),
+                        setupRestrictions(retrieveLockModeRestrictions(), true))
+                .call(() -> true, MoreExecutors.directExecutor());
+    }
+
+    @Override
+    public ListenableFuture<Boolean> onCleared() {
+        setupRestrictions(mAlwaysOnRestrictions, false);
+        return Futures.whenAllSucceed(
+                        setupRestrictions(retrieveOptionalAlwaysOnRestrictions(), false),
+                        setupRestrictions(retrieveLockModeRestrictions(), false))
+                .call(() -> true, MoreExecutors.directExecutor());
+    }
+
+    private ListenableFuture<ArraySet<String>> retrieveLockModeRestrictions() {
         if (mLockModeRestrictions != null) return Futures.immediateFuture(mLockModeRestrictions);
         final SetupParametersClient parameters = SetupParametersClient.getInstance();
         final ListenableFuture<String> kioskPackageTask = parameters.getKioskPackage();
@@ -148,7 +115,7 @@ final class UserRestrictionsPolicyHandler implements PolicyHandler {
                         }
                     }
                     return mLockModeRestrictions;
-                }, new Handler(Looper.getMainLooper())::post);
+                }, mBgExecutor);
     }
 
     private ListenableFuture<ArraySet<String>> retrieveOptionalAlwaysOnRestrictions() {
@@ -175,11 +142,10 @@ final class UserRestrictionsPolicyHandler implements PolicyHandler {
                         }
                     }
                     return mOptionalAlwaysOnRestrictions;
-                }, new Handler(Looper.getMainLooper())::post);
+                }, mBgExecutor);
     }
 
-    @ResultType
-    private int setupRestrictions(ArraySet<String> restrictions, boolean enable) {
+    private boolean setupRestrictions(ArraySet<String> restrictions, boolean enable) {
         Bundle userRestrictionBundle = mUserManager.getUserRestrictions();
 
         for (int i = 0, size = restrictions.size(); i < size; i++) {
@@ -202,36 +168,13 @@ final class UserRestrictionsPolicyHandler implements PolicyHandler {
             LogUtil.v(TAG, String.format(Locale.US, "clear %s restriction",
                     UserManager.DISALLOW_DEBUGGING_FEATURES));
         }
-        return SUCCESS;
-    }
-
-    @ResultType
-    private ListenableFuture<@ResultType Integer> setupRestrictions(
-            ListenableFuture<ArraySet<String>> restrictionsFuture, boolean enable) {
-        return Futures.transform(restrictionsFuture,
-                restrictions -> setupRestrictions(restrictions, enable),
-                new Handler(Looper.getMainLooper())::post);
-    }
-
-    private boolean checkRestrictions(ArraySet<String> restrictions, boolean value) {
-        Bundle userRestrictionBundle = mUserManager.getUserRestrictions();
-
-        for (int i = 0, size = restrictions.size(); i < size; i++) {
-            String restriction = restrictions.valueAt(i);
-            if (value != userRestrictionBundle.getBoolean(restriction, false)) {
-                LogUtil.i(TAG, String.format(Locale.US, "%s restriction is not %b",
-                        restriction, value));
-                return false;
-            }
-        }
-
         return true;
     }
 
-    private ListenableFuture<Boolean> checkRestrictions(
-            ListenableFuture<ArraySet<String>> restrictionsFuture, boolean value) {
+    private ListenableFuture<Boolean> setupRestrictions(
+            ListenableFuture<ArraySet<String>> restrictionsFuture, boolean enable) {
         return Futures.transform(restrictionsFuture,
-                restrictions -> checkRestrictions(restrictions, value),
-                new Handler(Looper.getMainLooper())::post);
+                restrictions -> setupRestrictions(restrictions, enable),
+                mBgExecutor);
     }
 }

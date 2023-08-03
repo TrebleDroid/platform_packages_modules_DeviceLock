@@ -16,31 +16,18 @@
 
 package com.android.devicelockcontroller.policy;
 
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.CLEARED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.KIOSK_PROVISIONED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.LOCKED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PROVISION_FAILED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PROVISION_IN_PROGRESS;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PROVISION_PAUSED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PROVISION_SUCCEEDED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PSEUDO_LOCKED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PSEUDO_UNLOCKED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNLOCKED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNPROVISIONED;
-
 import android.app.admin.DevicePolicyManager;
 import android.content.Context;
 
-import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
 import com.android.devicelockcontroller.storage.SetupParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.MoreExecutors;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
 
 /** Enforces restrictions on Kiosk app and controller. */
 final class PackagePolicyHandler implements PolicyHandler {
@@ -48,48 +35,36 @@ final class PackagePolicyHandler implements PolicyHandler {
 
     private final Context mContext;
     private final DevicePolicyManager mDpm;
+    private final Executor mBgExecutor;
 
-    PackagePolicyHandler(Context context, DevicePolicyManager dpm) {
+    PackagePolicyHandler(Context context, DevicePolicyManager dpm, Executor bgExecutor) {
         mContext = context;
         mDpm = dpm;
+        mBgExecutor = bgExecutor;
     }
 
     @Override
-    public ListenableFuture<@ResultType Integer> setPolicyForState(@DeviceState int state) {
-        switch (state) {
-            case KIOSK_PROVISIONED:
-            case UNLOCKED:
-            case LOCKED:
-                return enablePackageProtection(true /* enableForKiosk */, state);
-            case CLEARED:
-            case UNPROVISIONED:
-                return enablePackageProtection(false /* enableForKiosk */, state);
-            case PROVISION_IN_PROGRESS:
-            case PROVISION_PAUSED:
-            case PROVISION_SUCCEEDED:
-            case PROVISION_FAILED:
-            case PSEUDO_LOCKED:
-            case PSEUDO_UNLOCKED:
-                return Futures.immediateFuture(SUCCESS);
-            default:
-                return Futures.immediateFailedFuture(
-                        new IllegalStateException(String.valueOf(state)));
-        }
+    public ListenableFuture<Boolean> onProvisioned() {
+        return enablePackageProtection(/* enableForKiosk= */ true);
     }
 
-    private ListenableFuture<@ResultType Integer> enablePackageProtection(boolean enableForKiosk,
-            @DeviceState int state) {
+    @Override
+    public ListenableFuture<Boolean> onCleared() {
+        return enablePackageProtection(/* enableForKiosk= */ false);
+    }
+
+    private ListenableFuture<Boolean> enablePackageProtection(boolean enableForKiosk) {
         return Futures.transform(SetupParametersClient.getInstance().getKioskPackage(),
                 kioskPackageName -> {
                     if (kioskPackageName == null) {
-                        LogUtil.d(TAG, "Kiosk package is not set for state: " + state);
+                        LogUtil.d(TAG, "Kiosk package is not set");
                     } else {
                         try {
                             mDpm.setUninstallBlocked(null /* admin */, kioskPackageName,
                                     enableForKiosk);
                         } catch (SecurityException e) {
                             LogUtil.e(TAG, "Unable to set device policy", e);
-                            return FAILURE;
+                            return false;
                         }
                     }
 
@@ -106,10 +81,10 @@ final class PackagePolicyHandler implements PolicyHandler {
                         mDpm.setUserControlDisabledPackages(null /* admin */, pkgList);
                     } catch (SecurityException e) {
                         LogUtil.e(TAG, "Failed to setUserControlDisabledPackages", e);
-                        return FAILURE;
+                        return false;
                     }
 
-                    return SUCCESS;
-                }, MoreExecutors.directExecutor());
+                    return true;
+                }, mBgExecutor);
     }
 }
