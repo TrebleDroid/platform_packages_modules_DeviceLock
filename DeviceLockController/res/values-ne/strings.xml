@@ -60,8 +60,7 @@
     <string name="header_icon_content_description" msgid="6069602031334473195">"जानकारी"</string>
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"प्रावधानसम्बन्धी जानकारी"</string>
     <string name="enroll_your_device_header" msgid="2226305405591945098">"आफ्नो डिभाइस दर्ता गर्नुहोस्"</string>
-    <!-- no translation found for enroll_your_device_financing_subheader (8810608106273097451) -->
-    <skip />
+    <string name="enroll_your_device_financing_subheader" msgid="8810608106273097451">"तपाईं अब आफ्नो डिभाइस <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> को किस्ताबन्दी कार्यक्रममा दर्ता गर्न सक्नुहुन्छ"</string>
     <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"तपाईं अब आफ्नो डिभाइस <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> को सहुलियत कार्यक्रममा दर्ता गर्न सक्नुहुन्छ"</string>
     <string name="subsidy_program_header" msgid="2321508488856303554">"तपाईं <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> को सहुलियत कार्यक्रममा सामेल हुनुभएको छ"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"डिभाइस दर्ता गर्ने प्रक्रिया"</string>

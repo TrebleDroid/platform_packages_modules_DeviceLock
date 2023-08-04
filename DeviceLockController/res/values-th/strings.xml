@@ -42,7 +42,7 @@
     <string name="exposure_section_title" msgid="2329122144337528752">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> จะมองเห็นอะไรบ้าง"</string>
     <string name="exposure_install_text" msgid="2631074166447765453">"เวลาที่มีการติดตั้งหรือถอนการติดตั้งแอป <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"คำขอล็อกหรือปลดล็อกจาก <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
-    <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"หากแอป <xliff:g id="CREDITOR_APP">%1$s</xliff:g> ไม่พร้อมใช้งาน"</string>
+    <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"เห็นว่าแอป <xliff:g id="CREDITOR_APP">%1$s</xliff:g> พร้อมใช้งานหรือไม่"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"ใบอนุญาตโอเพนซอร์ส"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"ความสามารถในการจัดการในส่วนอุปกรณ์ที่ได้รับการสนับสนุนทางการเงินของการตั้งค่าความปลอดภัยจะไม่นำมาใช้กับอุปกรณ์นี้"</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"อุปกรณ์นี้ให้บริการโดย <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
@@ -60,8 +60,7 @@
     <string name="header_icon_content_description" msgid="6069602031334473195">"ข้อมูล"</string>
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"ข้อมูลการจัดเตรียม"</string>
     <string name="enroll_your_device_header" msgid="2226305405591945098">"ลงทะเบียนอุปกรณ์ของคุณ"</string>
-    <!-- no translation found for enroll_your_device_financing_subheader (8810608106273097451) -->
-    <skip />
+    <string name="enroll_your_device_financing_subheader" msgid="8810608106273097451">"ตอนนี้คุณลงทะเบียนอุปกรณ์ในโปรแกรมสนับสนุนทางการเงินของ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ได้แล้ว"</string>
     <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"ตอนนี้คุณลงทะเบียนอุปกรณ์ในโปรแกรมสนับสนุนทางการเงินของ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ได้แล้ว"</string>
     <string name="subsidy_program_header" msgid="2321508488856303554">"คุณอยู่ในโปรแกรมสนับสนุนทางการเงินของ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"การลงทะเบียนอุปกรณ์"</string>

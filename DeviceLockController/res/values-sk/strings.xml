@@ -60,10 +60,9 @@
     <string name="header_icon_content_description" msgid="6069602031334473195">"Informácie"</string>
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"Info o poskytovaní"</string>
     <string name="enroll_your_device_header" msgid="2226305405591945098">"Zaregistrujte svoje zariadenie"</string>
-    <!-- no translation found for enroll_your_device_financing_subheader (8810608106273097451) -->
-    <skip />
+    <string name="enroll_your_device_financing_subheader" msgid="8810608106273097451">"Teraz môžete zariadenie zaregistrovať do programu financovania od poskytovateľa <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"Zariadenie môžete zaregistrovať do programu finančnej pomoci od poskytovateľa <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
-    <string name="subsidy_program_header" msgid="2321508488856303554">"Ste v programe finančnej pomoci poskyt. <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
+    <string name="subsidy_program_header" msgid="2321508488856303554">"Ste v programe finančnej pomoci poskytovateľa <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"Registrácia zariadenia"</string>
     <string name="device_financing_enrollment_body_text" msgid="5506086383249511498">"Vaše zariadenie bude zaregistrované do finančného programu poskytovateľa <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> do 30 dní"</string>
     <string name="device_subsidy_enrollment_body_text" msgid="3971584929178719388">"Vaše zariadenie bude zaregistrované do programu finančnej pomoci poskytovateľa <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> do 30 dní"</string>

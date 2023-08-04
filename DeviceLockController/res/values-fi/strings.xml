@@ -60,8 +60,7 @@
     <string name="header_icon_content_description" msgid="6069602031334473195">"Tiedot"</string>
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"Tiedot tarjoamisesta"</string>
     <string name="enroll_your_device_header" msgid="2226305405591945098">"Rekisteröi laite"</string>
-    <!-- no translation found for enroll_your_device_financing_subheader (8810608106273097451) -->
-    <skip />
+    <string name="enroll_your_device_financing_subheader" msgid="8810608106273097451">"Voit nyt rekisteröidä laitteen rahoitusohjelmaan (<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>)"</string>
     <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"Voit nyt rekisteröidä laitteen tukiohjelmaan (<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>)"</string>
     <string name="subsidy_program_header" msgid="2321508488856303554">"Olet liittynyt tukiohjelmaan (<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>)"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"Laitteen rekisteröinti"</string>

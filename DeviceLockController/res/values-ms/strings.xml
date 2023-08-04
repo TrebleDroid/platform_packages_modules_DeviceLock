@@ -38,9 +38,9 @@
     <string name="locked_emergency_text" msgid="3509216445555779286">"Perkhidmatan panggilan kecemasan"</string>
     <string name="locked_phone_usage_text" msgid="1913605870324552847">"Panggilan masuk dan beberapa panggilan keluar"</string>
     <string name="locked_settings_usage_text" msgid="8336476063187737700">"Tetapan"</string>
-    <string name="locked_backup_and_restore_text" msgid="104616318625243429">"&lt;a href=https://support.google.com/android/answer/2819582&gt;Sandarkan &amp; pulihkan&lt;/a&gt; data anda"</string>
+    <string name="locked_backup_and_restore_text" msgid="104616318625243429">"&lt;a href=https://support.google.com/android/answer/2819582&gt;Penyandaran &amp; pemulihan&lt;/a&gt; data anda"</string>
     <string name="exposure_section_title" msgid="2329122144337528752">"Apakah yang dapat dilihat oleh <xliff:g id="CREDITOR_APP">%1$s</xliff:g>?"</string>
-    <string name="exposure_install_text" msgid="2631074166447765453">"Apabila apl <xliff:g id="CREDITOR_APP">%1$s</xliff:g> dipasang atau dinyahpasang"</string>
+    <string name="exposure_install_text" msgid="2631074166447765453">"Masa apl <xliff:g id="CREDITOR_APP">%1$s</xliff:g> dipasang atau dinyahpasang"</string>
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Sebarang permintaan kunci atau buka kunci daripada <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Jika apl <xliff:g id="CREDITOR_APP">%1$s</xliff:g> tidak tersedia"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Lesen sumber terbuka"</string>

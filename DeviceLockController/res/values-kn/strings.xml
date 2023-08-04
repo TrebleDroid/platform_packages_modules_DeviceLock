@@ -32,8 +32,8 @@
     <string name="reset_phone" msgid="1161657350311160627">"ಫೋನ್‌ ರೀಸೆಟ್ ಮಾಡಿ"</string>
     <string name="control_section_title" msgid="2213476068991045785">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ಆ್ಯಪ್ ಏನನ್ನು ಮಾಡಬಹುದು?"</string>
     <string name="control_lock_device_text" msgid="8253302484073757764">"ನೀವು ಪಾವತಿ ಮಾಡದಿದ್ದರೆ, ಸಾಧನವನ್ನು ನಿರ್ಬಂಧಿಸಲಾಗುತ್ತದೆ"</string>
-    <string name="control_download_text" msgid="8514650561843088172">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ಆ್ಯಪ್ ಅನ್ನು ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ, ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿ ಮತ್ತು ಅಪ್‌ಡೇಟ್‌ ಮಾಡಿ"</string>
-    <string name="control_disable_debug_text" msgid="8112443250013094442">"ಡೀಬಗ್ ಮಾಡುವ ಫೀಚರ್‌ಗಳನ್ನು ಆಫ್ ಮಾಡಿ"</string>
+    <string name="control_download_text" msgid="8514650561843088172">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ಆ್ಯಪ್ ಅನ್ನು ಡೌನ್‌ಲೋಡ್, ಇನ್‌ಸ್ಟಾಲ್ ಮತ್ತು ಅಪ್‌ಡೇಟ್‌ ಮಾಡುವುದು"</string>
+    <string name="control_disable_debug_text" msgid="8112443250013094442">"ಡೀಬಗ್ ಮಾಡುವ ಫೀಚರ್‌ಗಳನ್ನು ಆಫ್ ಮಾಡುವುದು"</string>
     <string name="locked_section_title" msgid="2748725389334076510">"ಈ ಸಾಧನವು ಲಾಕ್ ಆದರೆ ಏನು ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತದೆ?"</string>
     <string name="locked_emergency_text" msgid="3509216445555779286">"ತುರ್ತು ಕರೆ ಮಾಡುವಿಕೆ ಸೌಲಭ್ಯಗಳು"</string>
     <string name="locked_phone_usage_text" msgid="1913605870324552847">"ಒಳಬರುವ ಮತ್ತು ಕೆಲವು ಹೊರಹೋಗುವ ಕರೆಗಳು"</string>
