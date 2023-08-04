@@ -41,7 +41,7 @@
     <string name="locked_backup_and_restore_text" msgid="104616318625243429">"&lt;a href=https://support.google.com/android/answer/2819582&gt;Sauvegarde et restauration&lt;/a&gt; de vos données"</string>
     <string name="exposure_section_title" msgid="2329122144337528752">"Qu\'est-ce qui est visible pour <xliff:g id="CREDITOR_APP">%1$s</xliff:g>?"</string>
     <string name="exposure_install_text" msgid="2631074166447765453">"Quand l\'application <xliff:g id="CREDITOR_APP">%1$s</xliff:g> est installée ou désinstallée"</string>
-    <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Toute demande de verrouillage ou de déverrouillage effectuée par <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
+    <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Toute demande de verrouillage ou de déverrouillage de <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Si l\'application <xliff:g id="CREDITOR_APP">%1$s</xliff:g> n\'est pas accessible"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Licences de logiciels libres"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"Les capacités de gestion indiquées dans la section relative aux appareils financés dans les paramètres de sécurité ne s\'appliquent pas à cet appareil."</string>

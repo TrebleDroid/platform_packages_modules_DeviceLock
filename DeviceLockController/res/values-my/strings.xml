@@ -61,8 +61,8 @@
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"ပံ့ပိုးမှု အချက်အလက်"</string>
     <string name="enroll_your_device_header" msgid="2226305405591945098">"သင့်စက်ကို စာရင်းသွင်းခြင်း"</string>
     <string name="enroll_your_device_financing_subheader" msgid="8810608106273097451">"သင့်စက်ကို <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ၏ ငွေကြေးဆိုင်ရာ အစီအစဉ်တွင် ယခု စာရင်းသွင်းနိုင်ပါပြီ"</string>
-    <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"သင့်စက်ကို <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ၏ ထောက်ပံ့ကြေး ပရိုဂရမ်တွင် စာရင်းသွင်းနိုင်ပါပြီ"</string>
-    <string name="subsidy_program_header" msgid="2321508488856303554">"သင်သည် <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ၏ ထောက်ပံ့ကြေး ပရိုဂရမ်သုံးနေသည်"</string>
+    <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"သင့်စက်ကို <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ထောက်ပံ့အစီအစဉ်တွင် စာရင်းသွင်းနိုင်ပါပြီ"</string>
+    <string name="subsidy_program_header" msgid="2321508488856303554">"သင်သည် <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ထောက်ပံ့အစီအစဉ်ကို သုံးနေသည်"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"စက်ပစ္စည်း စာရင်းသွင်းခြင်း"</string>
     <string name="device_financing_enrollment_body_text" msgid="5506086383249511498">"သင့်စက်ကို ရက် ၃၀ အကြာတွင် <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ၏ ငွေကြေးဆိုင်ရာ ပရိုဂရမ်တွင် စာရင်းသွင်းပါမည်"</string>
     <string name="device_subsidy_enrollment_body_text" msgid="3971584929178719388">"သင့်စက်ကို ရက် ၃၀ အကြာတွင် <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ၏ ထောက်ပံ့ကြေး ပရိုဂရမ်တွင် စာရင်းသွင်းပါမည်"</string>
