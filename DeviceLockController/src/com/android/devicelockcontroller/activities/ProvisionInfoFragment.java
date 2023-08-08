@@ -122,7 +122,8 @@ public final class ProvisionInfoFragment extends Fragment {
         }
         ProvisionInfoListAdapter adapter = new ProvisionInfoListAdapter(viewModel,
                 getViewLifecycleOwner());
-        adapter.submitList(viewModel.mProvisionInfoList);
+        viewModel.mProvisionInfoListLiveData.observe(getViewLifecycleOwner(),
+                adapter::submitList);
         recyclerView.setAdapter(adapter);
         ImageView imageView = view.findViewById(R.id.header_icon);
         if (imageView == null) {

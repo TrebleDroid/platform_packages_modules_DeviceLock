@@ -33,6 +33,7 @@ import com.android.devicelockcontroller.util.LogUtil;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 
 import java.util.List;
@@ -53,7 +54,7 @@ public abstract class ProvisionInfoViewModel extends AndroidViewModel {
     final MutableLiveData<Boolean> mIsProvisionForcedLiveData;
     final MediatorLiveData<Pair<Integer, String>> mHeaderTextLiveData;
     final MediatorLiveData<Pair<Integer, String>> mSubHeaderTextLiveData;
-
+    final MediatorLiveData<List<ProvisionInfo>> mProvisionInfoListLiveData;
 
     final MutableLiveData<@DeviceStateController.DeviceState Integer> mDeviceState =
             new MutableLiveData<>();
@@ -77,13 +78,21 @@ public abstract class ProvisionInfoViewModel extends AndroidViewModel {
         mSubHeaderTextLiveData.addSource(mProviderNameLiveData,
                 providerName -> mSubHeaderTextLiveData.setValue(
                         new Pair<>(mSubheaderTextId, providerName)));
+        mProvisionInfoListLiveData = new MediatorLiveData<>();
+
         DeviceStateController stateController =
                 ((DeviceLockControllerApplication) application).getStateController();
         mDeviceState.setValue(stateController.getState());
         stateController.addCallback(mStateListener);
 
+        SetupParametersClient setupParametersClient = SetupParametersClient.getInstance();
+        ListenableFuture<String> getKioskAppProviderNameFuture =
+                setupParametersClient.getKioskAppProviderName();
+        ListenableFuture<String> getTermsAndConditionsUrlFuture =
+                setupParametersClient.getTermsAndConditionsUrl();
+
         Futures.addCallback(
-                SetupParametersClient.getInstance().getKioskAppProviderName(),
+                getKioskAppProviderNameFuture,
                 new FutureCallback<>() {
                     @Override
                     public void onSuccess(String providerName) {
@@ -101,7 +110,7 @@ public abstract class ProvisionInfoViewModel extends AndroidViewModel {
                 }, MoreExecutors.directExecutor());
 
         Futures.addCallback(
-                SetupParametersClient.getInstance().getTermsAndConditionsUrl(),
+                getTermsAndConditionsUrlFuture,
                 new FutureCallback<>() {
                     @Override
                     public void onSuccess(String termsAndConditionsUrl) {
@@ -119,6 +128,9 @@ public abstract class ProvisionInfoViewModel extends AndroidViewModel {
                     }
                 }, MoreExecutors.directExecutor());
 
+        Futures.whenAllSucceed(getKioskAppProviderNameFuture, getTermsAndConditionsUrlFuture)
+                .run(() -> mProvisionInfoListLiveData.postValue(mProvisionInfoList),
+                        MoreExecutors.directExecutor());
         Futures.addCallback(GlobalParametersClient.getInstance().isProvisionForced(),
                 new FutureCallback<>() {
                     @Override
