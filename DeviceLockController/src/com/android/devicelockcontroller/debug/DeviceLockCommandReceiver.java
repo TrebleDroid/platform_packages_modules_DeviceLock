@@ -157,6 +157,12 @@ public final class DeviceLockCommandReceiver extends BroadcastReceiver {
     }
 
     private static void tryCheckIn(Context appContext) {
+        if (!appContext.getSystemService(UserManager.class).isSystemUser()) {
+            LogUtil.e(TAG, "Only system user can perform a check-in");
+
+            return;
+        }
+
         if (((PolicyObjectsInterface) appContext).getStateController().isCheckInNeeded()) {
             Futures.addCallback(GlobalParametersClient.getInstance().needCheckIn(),
                     new FutureCallback<>() {
