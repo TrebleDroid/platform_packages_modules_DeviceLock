@@ -39,6 +39,7 @@ import androidx.concurrent.futures.CallbackToFutureAdapter;
 import androidx.test.filters.SdkSuppress;
 import androidx.test.platform.app.InstrumentationRegistry;
 
+import com.android.compatibility.common.util.ApiTest;
 import com.android.compatibility.common.util.SystemUtil;
 import com.android.server.devicelock.DeviceLockControllerPackageUtils;
 
@@ -198,6 +199,7 @@ public final class DeviceLockManagerTest {
     }
 
     @Test
+    @ApiTest(apis = {"android.devicelock.DeviceLockManager#lockDevice"})
     public void lockDevicePermissionCheck() {
         ListenableFuture<Void> lockDeviceFuture = getLockDeviceFuture();
 
@@ -212,6 +214,7 @@ public final class DeviceLockManagerTest {
     }
 
     @Test
+    @ApiTest(apis = {"android.devicelock.DeviceLockManager#unlockDevice"})
     public void unlockDevicePermissionCheck() {
         ListenableFuture<Void> unlockDeviceFuture = getUnlockDeviceFuture();
 
@@ -226,6 +229,7 @@ public final class DeviceLockManagerTest {
     }
 
     @Test
+    @ApiTest(apis = {"android.devicelock.DeviceLockManager#isDeviceLocked"})
     public void isDeviceLockedPermissionCheck() {
         ListenableFuture<Boolean> isDeviceLockedFuture = getIsDeviceLockedFuture();
 
@@ -240,6 +244,7 @@ public final class DeviceLockManagerTest {
     }
 
     @Test
+    @ApiTest(apis = {"android.devicelock.DeviceLockManager#getDeviceId"})
     public void getDeviceIdPermissionCheck() {
         ListenableFuture<DeviceId> deviceIdFuture = getDeviceIdFuture();
 
@@ -254,6 +259,12 @@ public final class DeviceLockManagerTest {
     }
 
     @Test
+    @ApiTest(
+            apis = {
+                "android.devicelock.DeviceLockManager#isDeviceLocked",
+                "android.devicelock.DeviceLockManager#lockDevice",
+                "android.devicelock.DeviceLockManager#unlockDevice"
+            })
     public void deviceShouldLockAndUnlock() throws InterruptedException, ExecutionException,
             TimeoutException {
 
@@ -305,6 +316,7 @@ public final class DeviceLockManagerTest {
     }
 
     @Test
+    @ApiTest(apis = {"android.devicelock.DeviceLockManager#getDeviceId"})
     public void getDeviceIdShouldReturnAnId()
             throws ExecutionException, InterruptedException, TimeoutException {
         try {
@@ -326,6 +338,7 @@ public final class DeviceLockManagerTest {
     }
 
     @Test
+    @ApiTest(apis = {"android.devicelock.DeviceLockManager#getKioskApps"})
     public void getKioskApp_financedRoleHolderExists_returnsMapping()
             throws ExecutionException, InterruptedException, TimeoutException {
         final ArrayMap expectedKioskApps = new ArrayMap<Integer, String>();
@@ -344,6 +357,7 @@ public final class DeviceLockManagerTest {
     }
 
     @Test
+    @ApiTest(apis = {"android.devicelock.DeviceLockManager#getKioskApps"})
     public void getKioskApp_financedRoleHolderDoesNotExist_returnsEmptyMapping()
             throws ExecutionException, InterruptedException, TimeoutException {
         Map<Integer, String> kioskAppsMap = getKioskAppsFuture().get(TIMEOUT, TimeUnit.SECONDS);
