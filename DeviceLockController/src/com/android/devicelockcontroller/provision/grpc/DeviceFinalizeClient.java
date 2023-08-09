@@ -44,7 +44,7 @@ public abstract class DeviceFinalizeClient {
     private static volatile boolean sUseDebugClient;
 
     /**
-     * Get a instance of {@link DeviceFinalizeClient} object.
+     * Get an instance of {@link DeviceFinalizeClient} object.
      * Note that, the arguments will be ignored after first initialization.
      */
     public static DeviceFinalizeClient getInstance(
@@ -54,8 +54,8 @@ public abstract class DeviceFinalizeClient {
             Pair<String, String> apiKey,
             String registeredId,
             String enrollmentToken) {
-        boolean useDebugClient = SystemProperties.getBoolean(
-                "debug.devicelock.finalize", false);
+        boolean useDebugClient = Build.isDebuggable()
+                && SystemProperties.getBoolean("debug.devicelock.finalize", /* def= */ false);
         if (sClient == null || sUseDebugClient != useDebugClient) {
             synchronized (DeviceFinalizeClient.class) {
                 // In case the initialization is already done by other thread use existing
