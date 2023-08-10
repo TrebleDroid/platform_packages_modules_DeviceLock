@@ -35,6 +35,8 @@ import com.android.devicelockcontroller.policy.SetupController;
 import com.android.devicelockcontroller.policy.SetupControllerImpl;
 import com.android.devicelockcontroller.util.LogUtil;
 
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.MoreExecutors;
 
 /**
@@ -63,8 +65,18 @@ public class DeviceLockControllerApplication extends Application implements
         }
 
         // Make sure policies are enforced when the controller is started.
-        getStateController().enforcePoliciesForCurrentState().addListener(
-                () -> LogUtil.i(TAG, "Policies enforced"), MoreExecutors.directExecutor());
+        Futures.addCallback(getStateController().enforcePoliciesForCurrentState(),
+                new FutureCallback<>() {
+                    @Override
+                    public void onSuccess(Void result) {
+                        LogUtil.i(TAG, "Policies enforced");
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+                        LogUtil.w(TAG, "Failed to enforce policies for current state", t);
+                    }
+                }, MoreExecutors.directExecutor());
     }
 
     @Override
