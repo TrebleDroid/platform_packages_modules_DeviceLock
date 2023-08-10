@@ -31,13 +31,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import javax.annotation.concurrent.GuardedBy;
+
 /**
  * State machine for device lock controller.
  */
 public final class DeviceStateControllerImpl implements DeviceStateController {
     private static final String TAG = "DeviceStateControllerImpl";
     private final Context mContext;
+    @GuardedBy("mListeners")
     private final ArrayList<StateListener> mListeners = new ArrayList<>();
+    @GuardedBy("this")
     private int mState;
 
     /**
@@ -57,7 +61,7 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
      * Note that policies are also automatically enforced on state transitions.
      */
     @Override
-    public ListenableFuture<Void> enforcePoliciesForCurrentState() {
+    public synchronized ListenableFuture<Void> enforcePoliciesForCurrentState() {
         final List<ListenableFuture<Void>> onStateChangedTasks = new ArrayList<>();
         synchronized (mListeners) {
             for (StateListener listener : mListeners) {
@@ -69,30 +73,29 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
     }
 
     @Override
-    public ListenableFuture<Integer> setNextStateForEvent(@DeviceEvent int event) {
+    public synchronized ListenableFuture<Integer> setNextStateForEvent(@DeviceEvent int event) {
         try {
-            updateState(getNextState(event));
+            updateStateLocked(getNextState(event));
         } catch (StateTransitionException e) {
             return Futures.immediateFailedFuture(e);
         }
         LogUtil.i(TAG, String.format(Locale.US, "handleEvent %d, newState %d", event, mState));
-
         return Futures.transform(enforcePoliciesForCurrentState(), (Void v) -> mState,
                 MoreExecutors.directExecutor());
     }
 
     @Override
-    public int getState() {
+    public synchronized int getState() {
         return mState;
     }
 
     @Override
-    public boolean isLocked() {
+    public synchronized boolean isLocked() {
         return isLockedInternal() || mState == DeviceState.PSEUDO_LOCKED;
     }
 
     @Override
-    public boolean isUnrestrictedState() {
+    public synchronized boolean isUnrestrictedState() {
         return mState == DeviceState.UNPROVISIONED
                 || mState == DeviceState.CLEARED
                 || mState == DeviceState.PSEUDO_UNLOCKED
@@ -100,7 +103,7 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
     }
 
     @Override
-    public boolean isLockedInternal() {
+    public synchronized boolean isLockedInternal() {
         return mState == DeviceState.PROVISION_IN_PROGRESS
                 || mState == DeviceState.PROVISION_SUCCEEDED
                 || mState == DeviceState.KIOSK_PROVISIONED
@@ -108,13 +111,14 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
     }
 
     @Override
-    public boolean isCheckInNeeded() {
-        return mState == DeviceState.UNPROVISIONED || mState == DeviceState.PSEUDO_LOCKED
+    public synchronized boolean isCheckInNeeded() {
+        return mState == DeviceState.UNPROVISIONED
+                || mState == DeviceState.PSEUDO_LOCKED
                 || mState == DeviceState.PSEUDO_UNLOCKED;
     }
 
     @Override
-    public boolean isInProvisioningState() {
+    public synchronized boolean isInProvisioningState() {
         return mState == DeviceState.PROVISION_IN_PROGRESS
                 || mState == DeviceState.PROVISION_SUCCEEDED
                 || mState == DeviceState.PROVISION_FAILED;
@@ -136,10 +140,11 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
 
     @VisibleForTesting
     @DeviceState
-    int getNextState(@DeviceEvent int event) throws StateTransitionException {
+    synchronized int getNextState(@DeviceEvent int event) throws StateTransitionException {
         switch (event) {
             case DeviceEvent.PROVISION_READY:
-                if (mState == DeviceState.UNPROVISIONED || mState == DeviceState.PROVISION_FAILED
+                if (mState == DeviceState.UNPROVISIONED
+                        || mState == DeviceState.PROVISION_FAILED
                         || mState == DeviceState.PSEUDO_LOCKED
                         || mState == DeviceState.PSEUDO_UNLOCKED) {
                     return DeviceState.PROVISION_IN_PROGRESS;
@@ -168,7 +173,8 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
                 }
                 break;
             case DeviceEvent.LOCK_DEVICE:
-                if (mState == DeviceState.UNPROVISIONED || mState == DeviceState.PSEUDO_UNLOCKED
+                if (mState == DeviceState.UNPROVISIONED
+                        || mState == DeviceState.PSEUDO_UNLOCKED
                         || mState == DeviceState.PSEUDO_LOCKED) {
                     return DeviceState.PSEUDO_LOCKED;
                 }
@@ -177,10 +183,12 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
                 }
                 break;
             case DeviceEvent.UNLOCK_DEVICE:
-                if (mState == DeviceState.PSEUDO_LOCKED || mState == DeviceState.PSEUDO_UNLOCKED) {
+                if (mState == DeviceState.PSEUDO_LOCKED
+                        || mState == DeviceState.PSEUDO_UNLOCKED) {
                     return DeviceState.PSEUDO_UNLOCKED;
                 }
-                if (mState == DeviceState.LOCKED || mState == DeviceState.UNLOCKED
+                if (mState == DeviceState.LOCKED
+                        || mState == DeviceState.UNLOCKED
                         || mState == DeviceState.KIOSK_PROVISIONED) {
                     return DeviceState.UNLOCKED;
                 }
@@ -209,7 +217,8 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
         throw new StateTransitionException(mState, event);
     }
 
-    private void updateState(@DeviceState int newState) {
+    @GuardedBy("this")
+    private void updateStateLocked(@DeviceState int newState) {
         UserParameters.setDeviceState(mContext, newState);
         mState = newState;
     }
