@@ -17,4 +17,5 @@
 
 <resources>
     <color name="divider_color">#E4E4E4</color>
+    <color name="notification_background_color">#82ABFB</color>
 </resources>

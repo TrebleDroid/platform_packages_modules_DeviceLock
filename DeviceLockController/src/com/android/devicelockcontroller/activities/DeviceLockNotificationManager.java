@@ -97,6 +97,7 @@ public final class DeviceLockNotificationManager {
                                 new NotificationCompat.Builder(context,
                                         PROVISION_NOTIFICATION_CHANNEL_ID)
                                         .setSmallIcon(R.drawable.ic_action_lock)
+                                        .setColor(R.color.notification_background_color)
                                         .setOngoing(true)
                                         .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
                                         .setCustomContentView(
@@ -169,6 +170,7 @@ public final class DeviceLockNotificationManager {
                 .setContentText(context.getString(R.string.device_enrollment_notification_body_text,
                         enrollmentResumeTime))
                 .setSmallIcon(R.drawable.ic_action_lock)
+                .setColor(R.color.notification_background_color)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
                 .setOngoing(true);
@@ -186,9 +188,9 @@ public final class DeviceLockNotificationManager {
             int days, boolean ongoing) {
         return Futures.transform(SetupParametersClient.getInstance().getKioskAppProviderName(),
                 providerName ->
-                        // TODO(b/291951742): update the icon
                         new NotificationCompat.Builder(context, PROVISION_NOTIFICATION_CHANNEL_ID)
                                 .setSmallIcon(R.drawable.ic_action_lock)
+                                .setColor(R.color.notification_background_color)
                                 .setOngoing(ongoing)
                                 .setContentTitle(StringUtil.getPluralString(context, days,
                                         R.string.device_reset_in_days_notification_title))
