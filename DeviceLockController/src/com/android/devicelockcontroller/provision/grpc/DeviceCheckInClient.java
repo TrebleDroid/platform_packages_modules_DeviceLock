@@ -48,7 +48,7 @@ public abstract class DeviceCheckInClient {
     private static volatile boolean sUseDebugClient;
 
     /**
-     * Get a instance of DeviceCheckInClient object.
+     * Get an instance of DeviceCheckInClient object.
      */
     public static DeviceCheckInClient getInstance(
             String className,
@@ -56,7 +56,8 @@ public abstract class DeviceCheckInClient {
             int portNumber,
             Pair<String, String> apiKey,
             @Nullable String registeredId) {
-        boolean useDebugClient = SystemProperties.getBoolean("debug.devicelock.checkin", false);
+        boolean useDebugClient = Build.isDebuggable()
+                && SystemProperties.getBoolean("debug.devicelock.checkin", /* def= */ false);
         synchronized (DeviceCheckInClient.class) {
             try {
                 boolean createRequired =
