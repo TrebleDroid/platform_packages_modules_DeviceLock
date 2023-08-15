@@ -92,8 +92,13 @@ public final class DevicePoliciesFragment extends Fragment {
                 new ViewModelProvider(requireActivity()).get(ProvisioningProgressViewModel.class);
         Button button = view.findViewById(R.id.button_next);
         checkNotNull(button);
-        button.setOnClickListener(
-                v -> provisionHelper.scheduleKioskAppInstallation(requireActivity(),
-                        provisioningProgressViewModel));
+        viewModel.getIsMandatoryLiveData().observe(this,
+                isMandatory -> {
+                    button.setOnClickListener(
+                            v -> provisionHelper.scheduleKioskAppInstallation(requireActivity(),
+                                    provisioningProgressViewModel,
+                                    isMandatory));
+                    button.setVisibility(View.VISIBLE);
+                });
     }
 }

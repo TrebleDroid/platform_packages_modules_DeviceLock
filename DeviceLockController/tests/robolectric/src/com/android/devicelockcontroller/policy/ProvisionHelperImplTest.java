@@ -125,8 +125,8 @@ public final class ProvisionHelperImplTest {
         kioskPackageInfo.packageName = TEST_PACKAGE_NAME;
         pm.installPackage(kioskPackageInfo);
         setupLifecycle();
-
-        mProvisionHelper.scheduleKioskAppInstallation(mMockLifecycleOwner, mProgressController);
+        mProvisionHelper.scheduleKioskAppInstallation(mMockLifecycleOwner,
+                mProgressController, /* isProvisionMandatory= */ false);
 
         ArgumentCaptor<ProvisioningProgress> argumentCaptor = ArgumentCaptor.forClass(
                 ProvisioningProgress.class);

@@ -36,6 +36,11 @@ public final class ProvisioningProgress {
             R.string.click_to_contact_financier, /* progressBarVisible=*/ false,
             /* bottomViewVisible= */ true);
 
+    public static final ProvisioningProgress PROVISION_FAILED_MANDATORY = new ProvisioningProgress(
+            R.drawable.ic_warning_24px, R.string.provisioning_failed,
+            R.string.click_to_contact_financier, /* progressBarVisible=*/ false,
+            /* bottomViewVisible= */ false);
+
     final int mIconId;
     final int mHeaderId;
     final int mSubheaderId;

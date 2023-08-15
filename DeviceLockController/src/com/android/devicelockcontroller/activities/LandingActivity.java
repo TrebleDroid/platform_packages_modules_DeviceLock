@@ -22,7 +22,6 @@ import android.view.WindowInsetsController;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 
 import com.android.devicelockcontroller.R;
 
@@ -41,10 +40,9 @@ public final class LandingActivity extends AppCompatActivity {
             controller.hide(WindowInsets.Type.systemBars());
         }
         if (savedInstanceState == null) {
-            Fragment fragment = new ProvisionInfoFragment();
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.fragment_container, fragment)
+                    .add(R.id.fragment_container, new ProvisionInfoFragment())
                     .commit();
         }
     }

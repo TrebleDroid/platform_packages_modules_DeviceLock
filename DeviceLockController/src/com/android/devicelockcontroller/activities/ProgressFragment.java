@@ -109,7 +109,8 @@ public final class ProgressFragment extends Fragment {
                         retryButton.setOnClickListener(
                                 view -> provisionHelper.scheduleKioskAppInstallation(
                                         requireActivity(),
-                                        provisioningProgressViewModel));
+                                        provisioningProgressViewModel,
+                                        /* isProvisionMandatory= */ false));
 
                         Button exitButton = bottomView.findViewById(R.id.button_exit);
                         checkNotNull(exitButton);

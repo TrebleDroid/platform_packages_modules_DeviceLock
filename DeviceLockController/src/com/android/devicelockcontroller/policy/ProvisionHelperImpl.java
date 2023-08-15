@@ -101,7 +101,7 @@ public final class ProvisionHelperImpl implements ProvisionHelper {
 
     @Override
     public void scheduleKioskAppInstallation(LifecycleOwner owner,
-            ProvisioningProgressController progressController) {
+            ProvisioningProgressController progressController, boolean isMandatory) {
         LogUtil.v(TAG, "Trigger setup flow");
         progressController.setProvisioningProgress(ProvisioningProgress.GETTING_DEVICE_READY);
         Futures.addCallback(SetupParametersClient.getInstance().getKioskPackage(),
@@ -168,8 +168,15 @@ public final class ProvisionHelperImpl implements ProvisionHelper {
                     @Override
                     public void onFailure(Throwable t) {
                         LogUtil.w(TAG, "Failed to install kiosk app!", t);
-                        progressController.setProvisioningProgress(
-                                ProvisioningProgress.PROVISIONING_FAILED);
+                        if (isMandatory) {
+                            progressController.setProvisioningProgress(
+                                    ProvisioningProgress.PROVISION_FAILED_MANDATORY);
+                            new DeviceLockControllerScheduler(
+                                    mContext).scheduleMandatoryResetDeviceAlarm();
+                        } else {
+                            progressController.setProvisioningProgress(
+                                    ProvisioningProgress.PROVISIONING_FAILED);
+                        }
                     }
                 }, sExecutor);
     }

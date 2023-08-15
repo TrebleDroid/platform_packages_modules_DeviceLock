@@ -244,7 +244,17 @@ public final class DeviceLockControllerScheduler extends AbstractDeviceLockContr
     }
 
     @Override
-    public void scheduleResetDeviceAlarm(Duration delay) {
+    public void scheduleMandatoryResetDeviceAlarm() {
+        Duration delay = Duration.ofMinutes(RESET_DEVICE_IN_TWO_MINUTES);
+        if (Build.isDebuggable()) {
+            delay = Duration.ofMinutes(
+                    SystemProperties.getInt("devicelock.provision.reset-device-minutes",
+                            RESET_DEVICE_IN_TWO_MINUTES));
+        }
+        scheduleResetDeviceAlarm(delay);
+    }
+
+    private void scheduleResetDeviceAlarm(Duration delay) {
         scheduleResetDeviceAlarmInternal(delay);
         Instant whenExpectedToRun = Instant.now(mClock).plus(delay);
         DeviceLockNotificationManager.sendDeviceResetTimerNotification(mContext,

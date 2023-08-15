@@ -33,5 +33,6 @@ public interface ProvisionHelper {
      * Start installation and open kiosk when it finish.
      */
     void scheduleKioskAppInstallation(LifecycleOwner owner,
-            ProvisioningProgressController progressController);
+            ProvisioningProgressController progressController,
+            boolean isProvisionMandatory);
 }

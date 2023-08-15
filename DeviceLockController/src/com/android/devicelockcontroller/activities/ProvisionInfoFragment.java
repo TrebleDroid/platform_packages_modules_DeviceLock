@@ -16,10 +16,8 @@
 
 package com.android.devicelockcontroller.activities;
 
-import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_FINANCING_DEFERRED_PROVISIONING;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_FINANCING_PROVISIONING;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_FINANCING_SECONDARY_USER_PROVISIONING;
-import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_SUBSIDY_DEFERRED_PROVISIONING;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_SUBSIDY_PROVISIONING;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -75,29 +73,17 @@ public final class ProvisionInfoFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ProvisionInfoViewModel viewModel;
-        boolean isDeferredProvisioning = false;
+        ViewModelProvider viewModelProvider = new ViewModelProvider(this);
         switch (Objects.requireNonNull(getActivity()).getIntent().getAction()) {
             case ACTION_START_DEVICE_FINANCING_PROVISIONING:
-                viewModel = new ViewModelProvider(this).get(
-                        DeviceFinancingProvisionInfoViewModel.class);
-                break;
-            case ACTION_START_DEVICE_FINANCING_DEFERRED_PROVISIONING:
-                viewModel = new ViewModelProvider(this).get(
-                        DeviceFinancingDeferredProvisionInfoViewModel.class);
-                isDeferredProvisioning = true;
+                viewModel = viewModelProvider.get(DeviceFinancingProvisionInfoViewModel.class);
                 break;
             case ACTION_START_DEVICE_FINANCING_SECONDARY_USER_PROVISIONING:
-                viewModel = new ViewModelProvider(this).get(
+                viewModel = viewModelProvider.get(
                         DeviceFinancingSecondaryUserProvisionInfoViewModel.class);
                 break;
             case ACTION_START_DEVICE_SUBSIDY_PROVISIONING:
-                viewModel = new ViewModelProvider(this).get(
-                        DeviceSubsidyProvisionInfoViewModel.class);
-                break;
-            case ACTION_START_DEVICE_SUBSIDY_DEFERRED_PROVISIONING:
-                viewModel = new ViewModelProvider(this).get(
-                        DeviceSubsidyDeferredProvisionInfoViewModel.class);
-                isDeferredProvisioning = true;
+                viewModel = viewModelProvider.get(DeviceSubsidyProvisionInfoViewModel.class);
                 break;
             default:
                 LogUtil.e(TAG, "Unknown action is received, exiting");
@@ -147,10 +133,15 @@ public final class ProvisionInfoFragment extends Fragment {
         Button next = view.findViewById(R.id.button_next);
         checkNotNull(next);
         Context context = requireContext().getApplicationContext();
-        if (isDeferredProvisioning) {
-            next.setText(R.string.start);
-            DeviceLockNotificationManager.cancelDeferredProvisioningNotification(context);
-        }
+        viewModel.mIsMandatoryLiveData.observe(this,
+                isMandatory -> {
+                    if (!isMandatory) {
+                        next.setText(R.string.start);
+                        DeviceLockNotificationManager.cancelDeferredProvisioningNotification(
+                                context);
+                    }
+                    next.setVisibility(View.VISIBLE);
+                });
         next.setOnClickListener(
                 v -> startActivity(new Intent(context, ProvisioningActivity.class)));
 
@@ -159,17 +150,19 @@ public final class ProvisionInfoFragment extends Fragment {
         mResultLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(),
                 isGranted -> provisionHelper.pauseProvision());
         updatePreviousButton(checkNotNull(view.findViewById(R.id.button_previous)), viewModel,
-                isDeferredProvisioning, provisionHelper);
+                provisionHelper);
     }
 
     private void updatePreviousButton(Button previous, ProvisionInfoViewModel viewModel,
-            boolean isDeferredProvisioning, ProvisionHelper provisionHelper) {
-        if (!isDeferredProvisioning) {
-            previous.setVisibility(View.GONE);
-            return;
-        }
-        previous.setText(R.string.do_it_in_one_hour);
-        previous.setVisibility(View.VISIBLE);
+            ProvisionHelper provisionHelper) {
+        viewModel.mIsMandatoryLiveData.observe(this,
+                isMandatory -> {
+                    if (!isMandatory) {
+                        previous.setText(R.string.do_it_in_one_hour);
+                        previous.setVisibility(View.VISIBLE);
+                    }
+                });
+
 
         viewModel.mIsProvisionForcedLiveData.observe(getViewLifecycleOwner(),
                 isProvisionForced -> {

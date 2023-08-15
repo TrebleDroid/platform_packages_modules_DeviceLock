@@ -16,9 +16,7 @@
 
 package com.android.devicelockcontroller.policy;
 
-import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_FINANCING_DEFERRED_PROVISIONING;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_FINANCING_PROVISIONING;
-import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_SUBSIDY_DEFERRED_PROVISIONING;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_SUBSIDY_PROVISIONING;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.CLEARED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.LOCKED;
@@ -286,25 +284,19 @@ public final class DevicePolicyControllerImpl implements DevicePolicyController 
         SetupParametersClient client = SetupParametersClient.getInstance();
         ListenableFuture<@ProvisioningType Integer> provisioningType =
                 client.getProvisioningType();
-        ListenableFuture<Boolean> isMandatory = client.isProvisionMandatory();
-        return Futures.whenAllSucceed(provisioningType, isMandatory).call(
-                () -> {
+        return Futures.transform(provisioningType,
+                type -> {
                     Intent resultIntent = new Intent(mContext, LandingActivity.class);
-                    switch (Futures.getDone(provisioningType)) {
+                    switch (type) {
                         case ProvisioningType.TYPE_FINANCED:
                             // TODO(b/288923554) this used to return an intent with action
                             // ACTION_START_DEVICE_FINANCING_SECONDARY_USER_PROVISIONING
                             // for secondary users. Rework once a decision has been made about
                             // what to show to users.
                             return resultIntent.setAction(
-                                    Futures.getDone(isMandatory)
-                                            ? ACTION_START_DEVICE_FINANCING_PROVISIONING
-                                            : ACTION_START_DEVICE_FINANCING_DEFERRED_PROVISIONING);
+                                    ACTION_START_DEVICE_FINANCING_PROVISIONING);
                         case ProvisioningType.TYPE_SUBSIDY:
-                            return resultIntent.setAction(
-                                    Futures.getDone(isMandatory)
-                                            ? ACTION_START_DEVICE_SUBSIDY_PROVISIONING
-                                            : ACTION_START_DEVICE_SUBSIDY_DEFERRED_PROVISIONING);
+                            return resultIntent.setAction(ACTION_START_DEVICE_SUBSIDY_PROVISIONING);
                         case ProvisioningType.TYPE_UNDEFINED:
                         default:
                             throw new IllegalArgumentException("Provisioning type is unknown!");
