@@ -41,7 +41,7 @@ public final class DeviceFinancingSecondaryUserProvisionInfoViewModel extends
 
     private static final Integer[] TEXT_IDS = new Integer[]{
             R.string.install_kiosk_app_secondary_user,
-            R.string.restrict_device_if_owner_doesnt_make_payment,
+            R.string.restrict_device_if_missing_payment,
     };
 
     public DeviceFinancingSecondaryUserProvisionInfoViewModel(@NonNull Application application) {
