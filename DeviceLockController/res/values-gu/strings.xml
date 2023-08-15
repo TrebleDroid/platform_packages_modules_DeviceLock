@@ -31,14 +31,14 @@
     <string name="try_again" msgid="5964839819170927721">"ફરી પ્રયાસ કરો"</string>
     <string name="reset_phone" msgid="1161657350311160627">"ફોનને રીસેટ કરો"</string>
     <string name="control_section_title" msgid="2213476068991045785">"આ <xliff:g id="CREDITOR_APP">%1$s</xliff:g> શું કરી શકે?"</string>
-    <string name="control_lock_device_text" msgid="8253302484073757764">"જો તમે કોઈ ચુકવણી ન કરો, તો આ ડિવાઇસની ક્ષમતા મર્યાદિત કરો"</string>
-    <string name="control_download_text" msgid="8514650561843088172">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ઍપ ડાઉનલોડ કરો, ઇન્સ્ટૉલ કરો અને અપડેટ કરો"</string>
-    <string name="control_disable_debug_text" msgid="8112443250013094442">"ડિબગીંગની સુવિધા બંધ કરો"</string>
+    <string name="control_lock_device_text" msgid="8253302484073757764">"જો તમે કોઈ ચુકવણી ન કરો, તો આ ડિવાઇસને પ્રતિબંધિત કરી શકે છે"</string>
+    <string name="control_download_text" msgid="8514650561843088172">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ઍપને ડાઉનલોડ, ઇન્સ્ટૉલ અને અપડેટ કરી શકે છે"</string>
+    <string name="control_disable_debug_text" msgid="8112443250013094442">"ડિબગીંગની સુવિધા બંધ કરી શકે છે"</string>
     <string name="locked_section_title" msgid="2748725389334076510">"જો આ ડિવાઇસ લૉક થઈ જાય, તો શું કામ થઈ શકશે?"</string>
     <string name="locked_emergency_text" msgid="3509216445555779286">"ઇમર્જન્સી કૉલની સેવાઓ"</string>
     <string name="locked_phone_usage_text" msgid="1913605870324552847">"ઇનકમિંગ અને કેટલાક આઉટગોઇંગ કૉલ"</string>
     <string name="locked_settings_usage_text" msgid="8336476063187737700">"સેટિંગ"</string>
-    <string name="locked_backup_and_restore_text" msgid="104616318625243429">"&lt;a href=https://support.google.com/android/answer/2819582&gt;તમારા ડેટાનો બૅકઅપ અને રિસ્ટોર&lt;/a&gt; કરવાની પ્રક્રિયા કરી રહ્યાં છીએ"</string>
+    <string name="locked_backup_and_restore_text" msgid="104616318625243429">"&lt;a href=https://support.google.com/android/answer/2819582&gt;તમારા ડેટાનો બૅકઅપ અને રિસ્ટોર&lt;/a&gt; કરવાની પ્રક્રિયા"</string>
     <string name="exposure_section_title" msgid="2329122144337528752">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> શું જોઈ શકે છે?"</string>
     <string name="exposure_install_text" msgid="2631074166447765453">"જ્યારે <xliff:g id="CREDITOR_APP">%1$s</xliff:g> ઍપ ઇન્સ્ટૉલ કે અનઇન્સ્ટૉલ કરવામાં આવે"</string>
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g>ની કોઈપણ લૉક કે અનલૉક કરવાની વિનંતીઓ"</string>
@@ -47,7 +47,7 @@
     <string name="footer_notice" msgid="7606898520964750584">"મેનેજમેન્ટની "<b>"સેટિંગ &gt; સુરક્ષા &gt; મેનેજ કરવામાં આવતા ડિવાઇસની માહિતી"</b>"માંની અન્ય ક્ષમતાઓ આ ડિવાઇસ પર લાગુ થતી નથી"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"સુરક્ષા સેટિંગના ફાઇનાન્સ ડિવાઇસ વિભાગમાં મેનેજમેન્ટની ક્ષમતાઓ આ ડિવાઇસ પર લાગુ થતી નથી."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"આ ડિવાઇસ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> દ્વારા પ્રદાન કરવામાં આવેલું છે"</string>
-    <string name="download_kiosk_app" msgid="1845089944897502656">"Kiosk ઍપ ઑટોમૅટિક રીતે ડાઉનલોડ અને ઇન્સ્ટૉલ થશે"</string>
+    <string name="download_kiosk_app" msgid="1845089944897502656">"કિઓસ્ક ઍપ ઑટોમૅટિક રીતે ડાઉનલોડ અને ઇન્સ્ટૉલ થશે"</string>
     <string name="install_kiosk_app_secondary_user" msgid="49911908012320834">"આ વપરાશકર્તા માટે Kiosk ઍપ ઇન્સ્ટૉલ કરવામાં આવશે"</string>
     <string name="restrict_device_if_missing_payment" msgid="5721216628714899148">"જો તમે કોઈ ચુકવણી ચૂકો, તો <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> આ ડિવાઇસને પ્રતિબંધિત કરી શકે છે"</string>
     <string name="restrict_device_if_dont_make_payment" msgid="1619095674945507015">"જો તમે જરૂરી ચુકવણીઓ ન કરો, તો <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> આ ડિવાઇસને પ્રતિબંધિત કરી શકે છે. વિગતો માટે, <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>નિયમો અને શરતો<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g> જુઓ."</string>

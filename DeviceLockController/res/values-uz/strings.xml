@@ -31,7 +31,7 @@
     <string name="try_again" msgid="5964839819170927721">"Qayta urinish"</string>
     <string name="reset_phone" msgid="1161657350311160627">"Telefonni asliga qaytarish"</string>
     <string name="control_section_title" msgid="2213476068991045785">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> nimalar qila oladi?"</string>
-    <string name="control_lock_device_text" msgid="8253302484073757764">"Toʻlovni amalga oshirmagan boʻlsangiz, bu qurilmani cheklang"</string>
+    <string name="control_lock_device_text" msgid="8253302484073757764">"Toʻlov amalga oshirilmagan boʻlsa, bu qurilmani cheklash"</string>
     <string name="control_download_text" msgid="8514650561843088172">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ilovasini yuklab olish, oʻrnatish va yangilash"</string>
     <string name="control_disable_debug_text" msgid="8112443250013094442">"Debaglash funksiyalarini faolsizlantirish"</string>
     <string name="locked_section_title" msgid="2748725389334076510">"Bu qurilma qulflanganda nimalar ishlaydi?"</string>
@@ -46,7 +46,7 @@
     <string name="open_source_licenses" msgid="6464389386262455443">"Ochiq kodli dastur litsenziyalari"</string>
     <string name="footer_notice" msgid="7606898520964750584"><b>"Sozlamalar &gt; Xavfsizlik &gt; Boshqariluvchi qurilmaga oid axborot"</b>" ichidagi boshqa boshqaruv imkoniyatlaridan bu qurilmada foydalanmang"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"Xavfsizlik sozlamalarida moliyalashtirilgan qurilma boʻlimidagi boshqaruv imkoniyatlari bu qurilmaga tatbiq qilinmaydi."</string>
-    <string name="device_provided_by_provider" msgid="290593329676291991">"Bu qurilma <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> tomonidan berilgan."</string>
+    <string name="device_provided_by_provider" msgid="290593329676291991">"Bu qurilma <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> tomonidan taqdim etilgan"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Kiosk ilovasi avtomatik ravishda yuklab olinadi va oʻrnatiladi"</string>
     <string name="install_kiosk_app_secondary_user" msgid="49911908012320834">"Kiosk ilovasi bu foydalanuvchi uchun oʻrnatiladi"</string>
     <string name="restrict_device_if_missing_payment" msgid="5721216628714899148">"Agar toʻlov qilmasangiz, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> bu qurilmani cheklashi mumkin"</string>

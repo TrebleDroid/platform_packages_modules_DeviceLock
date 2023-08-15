@@ -31,30 +31,30 @@
     <string name="try_again" msgid="5964839819170927721">"మళ్లీ ట్రై చేయండి"</string>
     <string name="reset_phone" msgid="1161657350311160627">"ఫోన్‌ను రీసెట్ చేయండి"</string>
     <string name="control_section_title" msgid="2213476068991045785">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ఏమి చేయగలదు?"</string>
-    <string name="control_lock_device_text" msgid="8253302484073757764">"మీరు పేమెంట్ చేయకపోతే ఈ పరికరంపై పరిమితి విధించండి"</string>
-    <string name="control_download_text" msgid="8514650561843088172">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> యాప్‌ను డౌన్‌లోడ్ చేసి, ఇన్‌స్టాల్ చేయండి, అలాగే అప్‌డేట్ చేయండి"</string>
-    <string name="control_disable_debug_text" msgid="8112443250013094442">"డీబగ్గింగ్ ఫీచర్‌లను ఆఫ్ చేయండి"</string>
+    <string name="control_lock_device_text" msgid="8253302484073757764">"మీరు పేమెంట్ చేయకపోతే ఈ పరికరంపై పరిమితి విధించగలరు"</string>
+    <string name="control_download_text" msgid="8514650561843088172">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> యాప్‌ను డౌన్‌లోడ్ చేసి, ఇన్‌స్టాల్ చేయగలరు, అప్‌డేట్ చేయగలరు"</string>
+    <string name="control_disable_debug_text" msgid="8112443250013094442">"డీబగ్గింగ్ ఫీచర్‌లను ఆఫ్ చేయగలరు"</string>
     <string name="locked_section_title" msgid="2748725389334076510">"ఈ పరికరం ఒకవేళ లాక్ అయితే అందుబాటులో ఉండే సదుపాయాలు ఏవి?"</string>
-    <string name="locked_emergency_text" msgid="3509216445555779286">"అత్యవసర కాలింగ్ సేవలు"</string>
-    <string name="locked_phone_usage_text" msgid="1913605870324552847">"ఇన్‌కమింగ్ మరియు కొన్ని అవుట్‌గోయింగ్ కాల్స్"</string>
+    <string name="locked_emergency_text" msgid="3509216445555779286">"ఎమర్జెన్సీ కాలింగ్ సర్వీస్‌లు"</string>
+    <string name="locked_phone_usage_text" msgid="1913605870324552847">"ఇన్‌కమింగ్ కాల్స్, కొన్ని అవుట్‌గోయింగ్ కాల్స్"</string>
     <string name="locked_settings_usage_text" msgid="8336476063187737700">"సెట్టింగ్‌లు"</string>
-    <string name="locked_backup_and_restore_text" msgid="104616318625243429">"మీ డేటా &lt;a href=https://support.google.com/android/answer/2819582&gt;బ్యాకప్ మరియు రీస్టోర్&lt;/a&gt;"</string>
+    <string name="locked_backup_and_restore_text" msgid="104616318625243429">"మీ డేటాను &lt;a href=https://support.google.com/android/answer/2819582&gt;బ్యాకప్ చేయడం, రీస్టోర్ చేయడం&lt;/a&gt;"</string>
     <string name="exposure_section_title" msgid="2329122144337528752">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g>కు ఏది కనిపిస్తుంది?"</string>
-    <string name="exposure_install_text" msgid="2631074166447765453">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> యాప్ ఎప్పుడు ఇన్‌స్టాల్ లేదా అన్‌ఇన్‌స్టాల్ చేయబడింది అనేది"</string>
-    <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> నుండి ఏవైనా లాక్ చేయడానికి లేదా అన్‌లాక్ చేయడానికి వచ్చే రిక్వెస్ట్‌లు"</string>
-    <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> యాప్ అందుబాటులో లేకపోతే"</string>
+    <string name="exposure_install_text" msgid="2631074166447765453">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> యాప్ ఇన్‌స్టాల్ కావడం లేదా అన్‌ఇన్‌స్టాల్ కావడం"</string>
+    <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> నుండి లాక్ చేయడానికి లేదా అన్‌లాక్ చేయడానికి ఏవైనా రిక్వెస్ట్‌లు రావడం"</string>
+    <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> యాప్ అందుబాటులో లేకపోవడం"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"ఓపెన్ సోర్స్ లైసెన్స్‌లు"</string>
     <string name="footer_notice" msgid="7606898520964750584"><b>"సెట్టింగ్‌లు &gt; సెక్యూరిటీ &gt; నిర్వహించే పరికర సమాచారం"</b>"లోని ఇతర నిర్వహణ సామర్థ్యాలు ఈ పరికరానికి వర్తించవు"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"సెక్యూరిటీ సెట్టింగ్‌లకు సంబంధించిన ఫైనాన్స్ చేసిన పరికర విభాగంలో మేనేజ్‌మెంట్ సామర్థ్యాలు ఈ పరికరానికి వర్తించవు."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"ఈ పరికరం <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ద్వారా అందించబడింది"</string>
-    <string name="download_kiosk_app" msgid="1845089944897502656">"కియోస్క్ యాప్ ఆటోమేటిక్‌గా డౌన్‌లోడ్ అయి, ఇన్‌స్టాల్ అవుతుంది"</string>
+    <string name="download_kiosk_app" msgid="1845089944897502656">"Kiosk యాప్ ఆటోమేటిక్‌గా డౌన్‌లోడ్ అయి, ఇన్‌స్టాల్ అవుతుంది"</string>
     <string name="install_kiosk_app_secondary_user" msgid="49911908012320834">"ఈ యూజర్ కోసం కియోస్క్ యాప్ ఇన్‌స్టాల్ అవుతుంది"</string>
     <string name="restrict_device_if_missing_payment" msgid="5721216628714899148">"మీరు పేమెంట్‌ను మిస్ చేస్తే, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ఈ పరికరంపై పరిమితి విధించవచ్చు"</string>
-    <string name="restrict_device_if_dont_make_payment" msgid="1619095674945507015">"మీరు అవసరమైన పేమెంట్‌లు చేయకపోతే <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ఈ పరికరంపై పరిమితి విధించవచ్చు. వివరాల కోసం, <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>నిబంధనలు &amp; కండిషన్‌లను<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g> చూడండి."</string>
+    <string name="restrict_device_if_dont_make_payment" msgid="1619095674945507015">"మీరు అవసరమైన పేమెంట్‌లు చేయకపోతే <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ఈ పరికరంపై పరిమితి విధించవచ్చు. వివరాల కోసం, <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>నియమాలు &amp; షరతులు<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g> చూడండి."</string>
     <string name="restrict_device_if_owner_doesnt_make_payment" msgid="3841412765931627895">"ఓనర్ పేమెంట్‌లు చేయకపోతే <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ఈ పరికరంపై పరిమితి విధించవచ్చు"</string>
     <string name="previous" msgid="5241891780917802570">"మునుపటి"</string>
     <string name="next" msgid="8248291863254324326">"తర్వాత"</string>
-    <string name="start" msgid="2842214844667658537">"ప్రారంభించు"</string>
+    <string name="start" msgid="2842214844667658537">"ప్రారంభించండి"</string>
     <string name="ok" msgid="3568398726528719749">"సరే"</string>
     <string name="done" msgid="4507782734740410307">"పూర్తయింది"</string>
     <string name="do_it_in_one_hour" msgid="2727777340568739453">"ఇది 1 గంటలో చేయి"</string>

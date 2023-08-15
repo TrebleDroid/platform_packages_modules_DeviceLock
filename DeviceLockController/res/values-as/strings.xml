@@ -31,9 +31,9 @@
     <string name="try_again" msgid="5964839819170927721">"পুনৰ চেষ্টা কৰক"</string>
     <string name="reset_phone" msgid="1161657350311160627">"ফ’নটো ৰিছেট কৰক"</string>
     <string name="control_section_title" msgid="2213476068991045785">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g>এ কি কৰিব পাৰে?"</string>
-    <string name="control_lock_device_text" msgid="8253302484073757764">"আপুনি পৰিশোধ নকৰিলে এই ডিভাইচটো সীমাবদ্ধ কৰক"</string>
-    <string name="control_download_text" msgid="8514650561843088172">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> এপ্‌টো ডাউনল’ড, ইনষ্টল আৰু আপডে’ট কৰক"</string>
-    <string name="control_disable_debug_text" msgid="8112443250013094442">"সুবিধা ডিবাগ কৰাটো অফ কৰক"</string>
+    <string name="control_lock_device_text" msgid="8253302484073757764">"আপুনি পৰিশোধ নকৰিলে এই ডিভাইচটো সীমাবদ্ধ কৰিব"</string>
+    <string name="control_download_text" msgid="8514650561843088172">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> এপ্‌টো ডাউনল’ড, ইনষ্টল আৰু আপডে’ট কৰা"</string>
+    <string name="control_disable_debug_text" msgid="8112443250013094442">"ডিবাগ কৰাৰ সুবিধা অফ কৰা"</string>
     <string name="locked_section_title" msgid="2748725389334076510">"এই ডিভাইচটো লক হৈ থাকিলে কিহে কাম কৰে?"</string>
     <string name="locked_emergency_text" msgid="3509216445555779286">"জৰুৰীকালীন কল কৰা সম্পৰ্কীয় সেৱাসমূহ"</string>
     <string name="locked_phone_usage_text" msgid="1913605870324552847">"অন্তৰ্গামী আৰু কিছুমান বহিৰ্গামী কল"</string>
@@ -50,7 +50,7 @@
     <string name="download_kiosk_app" msgid="1845089944897502656">"Kiosk এপ্‌টো স্বয়ংক্ৰিয়ভাৱে ডাউনল’ড কৰি ইনষ্টল কৰা হ’ব"</string>
     <string name="install_kiosk_app_secondary_user" msgid="49911908012320834">"এই ব্যৱহাৰকাৰীগৰাকীৰ বাবে Kiosk এপ্‌টো ইনষ্টল কৰা হ’ব"</string>
     <string name="restrict_device_if_missing_payment" msgid="5721216628714899148">"আপুনি এবাৰ পৰিশোধ নকৰিলে <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>এ এই ডিভাইচটো সীমাবদ্ধ কৰিব পাৰে"</string>
-    <string name="restrict_device_if_dont_make_payment" msgid="1619095674945507015">"যদি আপুনি আৱশ্যকীয় পৰিশোধসমূহ নকৰে <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>এ এই ডিভাইচটো সীমাবদ্ধ কৰিব পাৰে। সবিশেষৰ বাবে, <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>নিয়ম আৰু চৰ্তাৱলী<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g> চাওক"</string>
+    <string name="restrict_device_if_dont_make_payment" msgid="1619095674945507015">"যদি আপুনি আৱশ্যকীয় পৰিশোধসমূহ নকৰে <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>এ এই ডিভাইচটো সীমাবদ্ধ কৰিব পাৰে। সবিশেষৰ বাবে, <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>নিয়ম আৰু চৰ্তাৱলী<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g> চাওক।"</string>
     <string name="restrict_device_if_owner_doesnt_make_payment" msgid="3841412765931627895">"গৰাকীয়ে পৰিশোধ নকৰিলে <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>এ এই ডিভাইচটো সীমাবদ্ধ কৰিব পাৰে"</string>
     <string name="previous" msgid="5241891780917802570">"পূৰ্বৱৰ্তী"</string>
     <string name="next" msgid="8248291863254324326">"পৰৱৰ্তী"</string>

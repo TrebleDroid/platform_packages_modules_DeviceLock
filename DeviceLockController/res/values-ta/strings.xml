@@ -21,7 +21,7 @@
     <string name="next_button" msgid="1856423430963548653">"அடுத்து"</string>
     <string name="reset_button" msgid="4649354411129240809">"மீட்டமை"</string>
     <string name="setup_more_button" msgid="4456370972302510109">"மேலும்"</string>
-    <string name="setup_info_title_text" msgid="299562193092219293">"இந்தச் சாதனத்தை <xliff:g id="CREDITOR_APP">%1$s</xliff:g> ஆப்ஸ் நிர்வகிக்கும் விதம்"</string>
+    <string name="setup_info_title_text" msgid="299562193092219293">"இந்தச் சாதனத்தை <xliff:g id="CREDITOR_APP">%1$s</xliff:g> நிர்வகிக்கும் விதம்"</string>
     <string name="setup_failed_title_text" msgid="9045111389981992536">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ஆப்ஸை நிறுவ முடியவில்லை"</string>
     <string name="setup_failed_reset_device_text" msgid="178419033440060908">"மீண்டும் முயல்வதற்குச் சாதனத்தை மீட்டமைக்கிறது."</string>
     <string name="setup_failed_reset_device_timer_text" msgid="5270970227714985986">"{count,plural, =1{இந்தச் சாதனத்தை மீட்டமைத்துவிட்டு இதை மீண்டும் அமைக்கவும். 1 வினாடியில் தானாகவே மீட்டமைக்கப்படும்.}other{இந்தச் சாதனத்தை மீட்டமைத்துவிட்டு இதை மீண்டும் அமைக்கவும். # வினாடிகளில் தானாகவே மீட்டமைக்கப்படும்.}}"</string>
@@ -30,7 +30,7 @@
     <string name="setup_error_title_text" msgid="1123742279081942535">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ஆப்ஸைத் திறக்க முடியவில்லை"</string>
     <string name="try_again" msgid="5964839819170927721">"மீண்டும் முயல்க"</string>
     <string name="reset_phone" msgid="1161657350311160627">"மொபைலை மீட்டமை"</string>
-    <string name="control_section_title" msgid="2213476068991045785">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ஆப்ஸ் என்ன செய்யும்?"</string>
+    <string name="control_section_title" msgid="2213476068991045785">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> என்ன செய்யு முடியும்?"</string>
     <string name="control_lock_device_text" msgid="8253302484073757764">"பேமெண்ட் எதையும் செய்யவில்லை எனில் இந்தச் சாதனத்தைக் கட்டுப்படுத்துதல்"</string>
     <string name="control_download_text" msgid="8514650561843088172">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ஆப்ஸைப் பதிவிறக்குதல், நிறுவுதல் மற்றும் புதுப்பித்தல்"</string>
     <string name="control_disable_debug_text" msgid="8112443250013094442">"பிழைதிருத்த அம்சங்களை முடக்குதல்"</string>
@@ -38,9 +38,9 @@
     <string name="locked_emergency_text" msgid="3509216445555779286">"அவசர அழைப்புச் சேவைகள்"</string>
     <string name="locked_phone_usage_text" msgid="1913605870324552847">"உள்வரும் அழைப்புகளும் சில வெளிச்செல்லும் அழைப்புகளும்"</string>
     <string name="locked_settings_usage_text" msgid="8336476063187737700">"அமைப்புகள்"</string>
-    <string name="locked_backup_and_restore_text" msgid="104616318625243429">"&lt;a href=https://support.google.com/android/answer/2819582&gt;தரவைக்&lt;/a&gt; காப்புப் பிரதி எடுக்கலாம் &amp; மீட்டெடுக்கலாம்"</string>
-    <string name="exposure_section_title" msgid="2329122144337528752">"எவையெல்லாம் <xliff:g id="CREDITOR_APP">%1$s</xliff:g> ஆப்ஸுக்குத் தெரியும்படி இருக்கும்?"</string>
-    <string name="exposure_install_text" msgid="2631074166447765453">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ஆப்ஸ் நிறுவப்படாமலோ நிறுவல் நீக்கப்பட்டோ இருப்பது"</string>
+    <string name="locked_backup_and_restore_text" msgid="104616318625243429">"&lt;a href=https://support.google.com/android/answer/2819582&gt;தரவைக்&lt;/a&gt; காப்புப் பிரதி எடுத்தல் &amp; மீட்டெடுத்தல்"</string>
+    <string name="exposure_section_title" msgid="2329122144337528752">"எவையெல்லாம் <xliff:g id="CREDITOR_APP">%1$s</xliff:g>க்குத் தெரியும்படி இருக்கும்?"</string>
+    <string name="exposure_install_text" msgid="2631074166447765453">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ஆப்ஸ் எப்போது நிறுவப்பட்டது/நிறுவல் நீக்கப்பட்டது என்பது"</string>
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ஆப்ஸிடமிருந்து பெறப்பட்ட லாக்/அன்லாக் கோரிக்கைகள்"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"சாதனத்தில் <xliff:g id="CREDITOR_APP">%1$s</xliff:g> ஆப்ஸ் இல்லாமல் இருப்பது"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"ஓப்பன் சோர்ஸ் உரிமங்கள்"</string>

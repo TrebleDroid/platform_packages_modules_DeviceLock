@@ -30,8 +30,8 @@
     <string name="setup_error_title_text" msgid="1123742279081942535">"無法開啟「<xliff:g id="CREDITOR_APP">%1$s</xliff:g>」應用程式"</string>
     <string name="try_again" msgid="5964839819170927721">"再試一次"</string>
     <string name="reset_phone" msgid="1161657350311160627">"重設手機"</string>
-    <string name="control_section_title" msgid="2213476068991045785">"「<xliff:g id="CREDITOR_APP">%1$s</xliff:g>」有什麼功能？"</string>
-    <string name="control_lock_device_text" msgid="8253302484073757764">"如未付款，此裝置會受限制"</string>
+    <string name="control_section_title" msgid="2213476068991045785">"「<xliff:g id="CREDITOR_APP">%1$s</xliff:g>」可以採取甚麼行動？"</string>
+    <string name="control_lock_device_text" msgid="8253302484073757764">"在你未有未付款時限制此裝置"</string>
     <string name="control_download_text" msgid="8514650561843088172">"下載、安裝及更新「<xliff:g id="CREDITOR_APP">%1$s</xliff:g>」應用程式"</string>
     <string name="control_disable_debug_text" msgid="8112443250013094442">"關閉偵錯功能"</string>
     <string name="locked_section_title" msgid="2748725389334076510">"裝置鎖定時可使用哪些功能？"</string>

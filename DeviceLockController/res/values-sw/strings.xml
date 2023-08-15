@@ -33,13 +33,13 @@
     <string name="control_section_title" msgid="2213476068991045785">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> inaweza kufanya nini?"</string>
     <string name="control_lock_device_text" msgid="8253302484073757764">"Kuweka vizuizi kwenye kifaa hiki usipolipa"</string>
     <string name="control_download_text" msgid="8514650561843088172">"Kupakua, kusakinisha na kusasisha programu ya <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
-    <string name="control_disable_debug_text" msgid="8112443250013094442">"Zima vipengele vya utatuzi"</string>
+    <string name="control_disable_debug_text" msgid="8112443250013094442">"Kuzima vipengele vya utatuzi"</string>
     <string name="locked_section_title" msgid="2748725389334076510">"Ni vipengele vipi vitaendelea kutumika kifaa hiki kikifungwa?"</string>
     <string name="locked_emergency_text" msgid="3509216445555779286">"Huduma za simu za dharura"</string>
     <string name="locked_phone_usage_text" msgid="1913605870324552847">"Simu zinazoingia na baadhi ya simu unazopiga"</string>
     <string name="locked_settings_usage_text" msgid="8336476063187737700">"Mipangilio"</string>
     <string name="locked_backup_and_restore_text" msgid="104616318625243429">"&lt;a href=https://support.google.com/android/answer/2819582&gt;Inahifadhi nakala na kurejesha&lt;/a&gt; data yako"</string>
-    <string name="exposure_section_title" msgid="2329122144337528752">"Ni data ipi inaonekana kwenye <xliff:g id="CREDITOR_APP">%1$s</xliff:g>?"</string>
+    <string name="exposure_section_title" msgid="2329122144337528752">"Ni data ipi inaonekana kwa <xliff:g id="CREDITOR_APP">%1$s</xliff:g>?"</string>
     <string name="exposure_install_text" msgid="2631074166447765453">"Wakati programu ya <xliff:g id="CREDITOR_APP">%1$s</xliff:g> imesakinishwa au kuondolewa"</string>
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Ombi lolote la kufunga au kufungua kifaa linalotumwa na <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Ikiwa programu ya <xliff:g id="CREDITOR_APP">%1$s</xliff:g> haipatikani"</string>

@@ -31,7 +31,7 @@
     <string name="try_again" msgid="5964839819170927721">"ລອງໃໝ່"</string>
     <string name="reset_phone" msgid="1161657350311160627">"ຣີເຊັດໂທລະສັບ"</string>
     <string name="control_section_title" msgid="2213476068991045785">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ສາມາດເຮັດຫຍັງໄດ້ແດ່?"</string>
-    <string name="control_lock_device_text" msgid="8253302484073757764">"ກະລຸນາຈຳກັດອຸປະກອນນີ້ຫາກທ່ານບໍ່ໄດ້ຈ່າຍເງິນ"</string>
+    <string name="control_lock_device_text" msgid="8253302484073757764">"ຈຳກັດອຸປະກອນນີ້ຫາກທ່ານບໍ່ໄດ້ຈ່າຍເງິນ"</string>
     <string name="control_download_text" msgid="8514650561843088172">"ດາວໂຫຼດ, ຕິດຕັ້ງ ແລະ ອັບເດດແອັບ <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="control_disable_debug_text" msgid="8112443250013094442">"ປິດຄຸນສົມບັດການດີບັກ"</string>
     <string name="locked_section_title" msgid="2748725389334076510">"ມີຫຍັງໃຊ້ໄດ້ຫາກອຸປະກອນນີ້ຖືກລັອກ?"</string>

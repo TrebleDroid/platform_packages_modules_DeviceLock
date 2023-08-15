@@ -32,8 +32,8 @@
     <string name="reset_phone" msgid="1161657350311160627">"Nollaa puhelin"</string>
     <string name="control_section_title" msgid="2213476068991045785">"Mitä <xliff:g id="CREDITOR_APP">%1$s</xliff:g> voi tehdä?"</string>
     <string name="control_lock_device_text" msgid="8253302484073757764">"Jos et suorita maksua, laitetta voidaan rajoittaa"</string>
-    <string name="control_download_text" msgid="8514650561843088172">"Lataa, asenna ja päivitä <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
-    <string name="control_disable_debug_text" msgid="8112443250013094442">"Laita virheenkorjausominaisuudet pois päältä"</string>
+    <string name="control_download_text" msgid="8514650561843088172">"Ladata, asentaa ja päivittää sovelluksen (<xliff:g id="CREDITOR_APP">%1$s</xliff:g>)"</string>
+    <string name="control_disable_debug_text" msgid="8112443250013094442">"Laittaa virheenkorjausominaisuudet pois päältä"</string>
     <string name="locked_section_title" msgid="2748725389334076510">"Mitkä ominaisuudet toimivat, jos laite lukitaan?"</string>
     <string name="locked_emergency_text" msgid="3509216445555779286">"Hätäpuhelupalvelut"</string>
     <string name="locked_phone_usage_text" msgid="1913605870324552847">"Saapuvat ja jotkin lähtevät puhelut"</string>
