@@ -60,7 +60,7 @@
     <string name="header_icon_content_description" msgid="6069602031334473195">"Информация"</string>
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"Инф. за обезпечаване"</string>
     <string name="enroll_your_device_header" msgid="2226305405591945098">"Регистрирайте устройството си"</string>
-    <string name="enroll_your_device_financing_subheader" msgid="7378414469334757425">"Вече можете да регистрирате устройството си във финансовата програма на <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
+    <string name="enroll_your_device_financing_subheader" msgid="8810608106273097451">"Вече можете да регистрирате устройството си във финансовата програма на <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"Вече можете да регистрирате устройството си в програмата на <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> за субсидии"</string>
     <string name="subsidy_program_header" msgid="2321508488856303554">"Участвате в програмата на <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> за субсидии"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"Регистриране на устройството"</string>
@@ -121,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{Устройството ще бъде нулирано след 1 ден}other{Устройството ще бъде нулирано след # дни}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"Устройството ще бъде нулирано след <xliff:g id="TIMER">%s</xliff:g>"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Всички данни на устройството ще бъдат изтрити. За помощ относно регистрирането му се свържете с(ъс) <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Моля, разрешете известие от DeviceLock, за да продължите отлагането на регистрирането на устройството."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Обезпечаването за финансиране не бе успешно"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"Моля, кликнете тук за начини да се свържете с финансиста си. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Научете повече<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Изход"</string>

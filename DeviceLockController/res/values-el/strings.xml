@@ -40,7 +40,7 @@
     <string name="locked_settings_usage_text" msgid="8336476063187737700">"Ρυθμίσεις"</string>
     <string name="locked_backup_and_restore_text" msgid="104616318625243429">"&lt;a href=https://support.google.com/android/answer/2819582&gt;Δημ. αντ. ασφ. και επαναφ.&lt;/a&gt; δεδομ."</string>
     <string name="exposure_section_title" msgid="2329122144337528752">"Τι είναι ορατό στην εφαρμογή <xliff:g id="CREDITOR_APP">%1$s</xliff:g>;"</string>
-    <string name="exposure_install_text" msgid="2631074166447765453">"Κατά την εγκατάσταση ή την απεγκατάσταση της εφαρμογής <xliff:g id="CREDITOR_APP">%1$s</xliff:g>."</string>
+    <string name="exposure_install_text" msgid="2631074166447765453">"Πότε έγινε η εγκατάσταση ή απεγκατάσταση της εφαρμογής <xliff:g id="CREDITOR_APP">%1$s</xliff:g>."</string>
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Τυχόν αιτήματα για κλείδωμα και ξεκλείδωμα από την εφαρμογή <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Εάν η εφαρμογή <xliff:g id="CREDITOR_APP">%1$s</xliff:g> δεν είναι διαθέσιμη"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Άδειες λογισμικού ανοικτού κώδικα"</string>
@@ -60,7 +60,7 @@
     <string name="header_icon_content_description" msgid="6069602031334473195">"Πληροφορίες"</string>
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"Πληροφορίες παροχής"</string>
     <string name="enroll_your_device_header" msgid="2226305405591945098">"Εγγραφή της συσκευής σας"</string>
-    <string name="enroll_your_device_financing_subheader" msgid="7378414469334757425">"Μπορείτε τώρα να εγγράψετε τη συσκευή σας στο πρόγραμμα χρηματοδότησης του <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
+    <string name="enroll_your_device_financing_subheader" msgid="8810608106273097451">"Μπορείτε τώρα να εγγράψετε τη συσκευή σας στο οικονομικό πρόγραμμα του παρόχου <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"Μπορείτε τώρα να εγγράψετε τη συσκευή σας στο επιδοτούμενο πρόγραμμα του <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="subsidy_program_header" msgid="2321508488856303554">"Είστε σε επιδοτούμενο πρόγραμμα <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"Εγγραφή συσκευής"</string>
@@ -121,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{Θα γίνει επαναφορά της συσκευής σε 1 ημέρα}other{Θα γίνει επαναφορά της συσκευής σε # ημέρες}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"Θα γίνει επαναφορά της συσκευής σε <xliff:g id="TIMER">%s</xliff:g>"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Θα διαγραφούν όλα τα δεδομένα της συσκευής. Για βοήθεια με την εγγραφή της συσκευής, επικοινωνήστε με τον πάροχο <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Επιτρέψτε την ειδοποίηση από το DeviceLock για συνέχιση της αναβολής της εγγραφής συσκευής."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Η χρηματοοικονομική παροχή απέτυχε"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"Κάντε κλικ εδώ για τρόπους επικοινωνίας με τον χρηματοοικονομικό σας σύμβουλο. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Μάθετε περισσότερα<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Έξοδος"</string>

@@ -30,10 +30,10 @@
     <string name="setup_error_title_text" msgid="1123742279081942535">"Rakendust <xliff:g id="CREDITOR_APP">%1$s</xliff:g> ei saa avada"</string>
     <string name="try_again" msgid="5964839819170927721">"Proovi uuesti"</string>
     <string name="reset_phone" msgid="1161657350311160627">"Lähtesta telefon"</string>
-    <string name="control_section_title" msgid="2213476068991045785">"Mida saab rakendusega <xliff:g id="CREDITOR_APP">%1$s</xliff:g> teha?"</string>
-    <string name="control_lock_device_text" msgid="8253302484073757764">"Seadme kasutust piiratakse, kui te makset ei tee"</string>
-    <string name="control_download_text" msgid="8514650561843088172">"Rakendus <xliff:g id="CREDITOR_APP">%1$s</xliff:g>: laadige alla, installige ja värskendage"</string>
-    <string name="control_disable_debug_text" msgid="8112443250013094442">"Lülitage silumisfunktsioonid välja"</string>
+    <string name="control_section_title" msgid="2213476068991045785">"Mida saab rakendus <xliff:g id="CREDITOR_APP">%1$s</xliff:g> teha?"</string>
+    <string name="control_lock_device_text" msgid="8253302484073757764">"Piirata seadmekasutust, kui te makset ei tee"</string>
+    <string name="control_download_text" msgid="8514650561843088172">"Laadida alla, installida ja värskendada rakendust <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
+    <string name="control_disable_debug_text" msgid="8112443250013094442">"Lülitada silumisfunktsioonid välja"</string>
     <string name="locked_section_title" msgid="2748725389334076510">"Mis töötab, kui seade on lukustatud?"</string>
     <string name="locked_emergency_text" msgid="3509216445555779286">"Hädaabikõneteenused"</string>
     <string name="locked_phone_usage_text" msgid="1913605870324552847">"Sissetulevad ja väljuvad kõned"</string>
@@ -60,9 +60,9 @@
     <string name="header_icon_content_description" msgid="6069602031334473195">"Teave"</string>
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"Pakkumise teave"</string>
     <string name="enroll_your_device_header" msgid="2226305405591945098">"Registreerige seade"</string>
-    <string name="enroll_your_device_financing_subheader" msgid="7378414469334757425">"Saate nüüd registreerida oma seadme pakkuja <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> järelmaksuprogrammi"</string>
-    <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"Saate nüüd registreerida oma seadme pakkuja <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> toetusprogrammi"</string>
-    <string name="subsidy_program_header" msgid="2321508488856303554">"Olete pakkuja <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> toetusprogrammis"</string>
+    <string name="enroll_your_device_financing_subheader" msgid="8810608106273097451">"Saate nüüd registreerida oma seadme teenusepakkuja <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> järelmaksuprogrammi"</string>
+    <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"Saate nüüd registreerida oma seadme teenusepakkuja <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> toetusprogrammi"</string>
+    <string name="subsidy_program_header" msgid="2321508488856303554">"Olete teenusepakkuja <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> toetusprogrammis"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"Seadme registreerimine"</string>
     <string name="device_financing_enrollment_body_text" msgid="5506086383249511498">"Teie seade registreeritakse pakkuja <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> järelmaksuprogrammi 30 päeva jooksul"</string>
     <string name="device_subsidy_enrollment_body_text" msgid="3971584929178719388">"Teie seade registreeritakse pakkuja <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> toetusprogrammi 30 päeva jooksul"</string>
@@ -121,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{Seade lähtestatakse 1 päeva pärast}other{Seade lähtestatakse # päeva pärast}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"Seade lähtestatakse <xliff:g id="TIMER">%s</xliff:g> pärast"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Kõik seadme andmed kustutatakse. Seadme registreerimisel abi saamiseks võtke ühendust pakkujaga <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Seadme registreerimise edasilükkamise jätkamiseks lubage märguanded rakenduselt DeviceLock."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Järelmaksu pakkumine ebaõnnestus"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"Klõpsake siin, et näha, kuidas oma järelmaksu pakkujaga ühendust võtta. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Lisateave<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Välju"</string>

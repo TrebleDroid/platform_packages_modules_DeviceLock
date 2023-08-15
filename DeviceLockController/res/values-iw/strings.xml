@@ -60,7 +60,7 @@
     <string name="header_icon_content_description" msgid="6069602031334473195">"מידע"</string>
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"מידע על ההקצאה"</string>
     <string name="enroll_your_device_header" msgid="2226305405591945098">"צירוף המכשיר לתוכנית"</string>
-    <string name="enroll_your_device_financing_subheader" msgid="7378414469334757425">"עכשיו אפשר לצרף את המכשיר לתוכנית המימון של <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
+    <string name="enroll_your_device_financing_subheader" msgid="8810608106273097451">"עכשיו אפשר לצרף את המכשיר לתוכנית המימון של <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"עכשיו אפשר לצרף את המכשיר לתוכנית הסובסידיה של <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="subsidy_program_header" msgid="2321508488856303554">"הצטרפת לתוכנית הסובסידיה של <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"צירוף מכשיר לתוכנית"</string>
@@ -121,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{המכשיר יתאפס בעוד יום אחד}one{המכשיר יתאפס בעוד # ימים}two{המכשיר יתאפס בעוד יומיים (#)}other{המכשיר יתאפס בעוד # ימים}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"המכשיר יתאפס בעוד <xliff:g id="TIMER">%s</xliff:g>"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"כל הנתונים במכשיר יימחקו. כדי לקבל עזרה בצירוף המכשיר לתוכנית, יש ליצור קשר עם <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"יש לאפשר קבלת התראות מ-DeviceLock כדי להמשיך לדחות את הצירוף של המכשיר לתוכנית."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"הקצאת המימון נכשלה"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"אפשר ללחוץ כאן לקבלת דרכים ליצירת קשר עם נותני המימון. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>מידע נוסף<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"יציאה"</string>

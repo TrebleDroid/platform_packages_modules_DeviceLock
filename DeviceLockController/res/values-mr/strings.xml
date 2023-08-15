@@ -31,16 +31,16 @@
     <string name="try_again" msgid="5964839819170927721">"पुन्हा प्रयत्न करा"</string>
     <string name="reset_phone" msgid="1161657350311160627">"फोन रीसेट करा"</string>
     <string name="control_section_title" msgid="2213476068991045785">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> काय करू शकते?"</string>
-    <string name="control_lock_device_text" msgid="8253302484073757764">"तुम्ही पेमेंट केले नसल्यास, हे डिव्हाइस प्रतिबंधित करा"</string>
-    <string name="control_download_text" msgid="8514650561843088172">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> अ‍ॅप डाउनलोड, इंस्टॉल आणि अपडेट करा"</string>
-    <string name="control_disable_debug_text" msgid="8112443250013094442">"डीबगिंग वैशिष्‍ट्ये बंद करा"</string>
+    <string name="control_lock_device_text" msgid="8253302484073757764">"तुम्ही पेमेंट करत नसल्यास, हे डिव्हाइस प्रतिबंधित करणे"</string>
+    <string name="control_download_text" msgid="8514650561843088172">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> अ‍ॅप डाउनलोड, इंस्टॉल आणि अपडेट करणे"</string>
+    <string name="control_disable_debug_text" msgid="8112443250013094442">"डीबगिंग वैशिष्‍ट्ये बंद करणे"</string>
     <string name="locked_section_title" msgid="2748725389334076510">"हे डिव्हाइस लॉक असल्यास, काय काम करेल?"</string>
     <string name="locked_emergency_text" msgid="3509216445555779286">"आणीबाणी कॉलिंग सेवा"</string>
     <string name="locked_phone_usage_text" msgid="1913605870324552847">"इनकमिंग आणि काही आउटगोइंग कॉल"</string>
     <string name="locked_settings_usage_text" msgid="8336476063187737700">"सेटिंग्ज"</string>
     <string name="locked_backup_and_restore_text" msgid="104616318625243429">"&lt;a href=https://support.google.com/android/answer/2819582 तुमच्या डेटाचा &gt;बॅक अप घेणे व रिस्टोअर करणे&lt;/a&gt;"</string>
     <string name="exposure_section_title" msgid="2329122144337528752">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ला काय दृश्यमान असेल?"</string>
-    <string name="exposure_install_text" msgid="2631074166447765453">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ॲप कधी इंस्टॉल आणि अनइंस्टॉल केले आहे"</string>
+    <string name="exposure_install_text" msgid="2631074166447765453">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ॲप कधी इंस्टॉल किंवा अनइंस्टॉल केले आहे"</string>
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> कडून आलेल्या कोणत्याही लॉक किंवा अनलॉक विनंत्या"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ॲप उपलब्ध नसल्यास"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"मुक्त स्रोत परवाने"</string>
@@ -49,7 +49,7 @@
     <string name="download_kiosk_app" msgid="1845089944897502656">"कियोस्क अ‍ॅप आपोआप डाउनलोड आणि इंस्टॉल केले जाईल"</string>
     <string name="install_kiosk_app_secondary_user" msgid="49911908012320834">"या वापरकर्त्यासाठी कियोस्क ॲप इंस्टॉल केले जाईल"</string>
     <string name="restrict_device_if_missing_payment" msgid="5721216628714899148">"तुम्ही पेमेंट चुकवल्यास <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> डिव्हाइस प्रतिबंधित करू शकतो"</string>
-    <string name="restrict_device_if_dont_make_payment" msgid="1619095674945507015">"तुम्ही आवश्यक पेमेंट न केल्यास <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> डिव्हाइस प्रतिबंधित करू शकतो. तपशिलांसाठी, <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>अटी आणि नियम<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g> पहा."</string>
+    <string name="restrict_device_if_dont_make_payment" msgid="1619095674945507015">"तुम्ही आवश्यक पेमेंट न केल्यास <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> डिव्हाइस प्रतिबंधित करू शकतो. तपशिलांसाठी <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>अटी आणि नियम<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g> पहा."</string>
     <string name="restrict_device_if_owner_doesnt_make_payment" msgid="3841412765931627895">"मालकाने पेमेंट न केल्यास, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> डिव्हाइस प्रतिबंधित करू शकतो"</string>
     <string name="previous" msgid="5241891780917802570">"मागील"</string>
     <string name="next" msgid="8248291863254324326">"पुढील"</string>
@@ -60,8 +60,8 @@
     <string name="header_icon_content_description" msgid="6069602031334473195">"माहिती"</string>
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"तरतुदीची माहिती"</string>
     <string name="enroll_your_device_header" msgid="2226305405591945098">"तुमच्या डिव्हाइसची नोंदणी करा"</string>
-    <string name="enroll_your_device_financing_subheader" msgid="7378414469334757425">"तुम्ही आता तुमच्या डिव्हाइसची नोंदणी <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> च्या अर्थविषयक प्रोग्राममध्ये करू शकता"</string>
-    <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"तुम्ही आता तुमच्या डिव्हाइसची नोंदणी <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> च्या सबसिडिविषयक प्रोग्राममध्ये करू शकता"</string>
+    <string name="enroll_your_device_financing_subheader" msgid="8810608106273097451">"तुम्ही आता <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> च्या अर्थविषयक प्रोग्राममध्ये तुमच्या डिव्हाइसची नोंदणी करू शकता"</string>
+    <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"तुम्ही आता तुमच्या डिव्हाइसची नोंदणी <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> च्या सबसिडीविषयक प्रोग्राममध्ये करू शकता"</string>
     <string name="subsidy_program_header" msgid="2321508488856303554">"तुम्ही <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> च्या सबसिडी प्रोग्रामवर आहात"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"डिव्हाइसची नोंदणी"</string>
     <string name="device_financing_enrollment_body_text" msgid="5506086383249511498">"तुमच्या डिव्हाइसची नोंदणी <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> च्या अर्थविषयक प्रोग्राममध्ये ३० दिवसांमध्ये केली जाईल"</string>
@@ -121,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{डिव्हाइस १ दिवसात रीसेट होईल}other{डिव्हाइस # दिवसांत रीसेट होईल}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"डिव्हाइस <xliff:g id="TIMER">%s</xliff:g> मध्ये रीसेट होईल"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"सर्व डिव्हाइस डेटा हटवला जाईल. तुमच्या डिव्हाइसची नोंदणी करण्यात मदतीसाठी, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> शी संपर्क साधा"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"कृपया डिव्हाइसची नोंदणी पुढे ढकलणे सुरू ठेवण्यासाठी DeviceLock कडील सूचनेला अनुमती द्या."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"आर्थिक तरतूद करता आली नाही"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"तुमच्या भांडवल पुरवणाऱ्या व्यक्तीशी संपर्क साधण्याच्या मार्गांसाठी येथे क्लिक करा. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>अधिक जाणून घ्या<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"बाहेर पडा"</string>

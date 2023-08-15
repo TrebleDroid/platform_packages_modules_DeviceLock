@@ -31,22 +31,22 @@
     <string name="try_again" msgid="5964839819170927721">"আবার চেষ্টা করুন"</string>
     <string name="reset_phone" msgid="1161657350311160627">"ফোন রিসেট করুন"</string>
     <string name="control_section_title" msgid="2213476068991045785">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> অ্যাপটি কী কী করতে পারবে?"</string>
-    <string name="control_lock_device_text" msgid="8253302484073757764">"পেমেন্ট না করলে এই ডিভাইসের ব্যবহার সীমিত করা হবে"</string>
-    <string name="control_download_text" msgid="8514650561843088172">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> অ্যাপ ডাউনলোড, ইনস্টল ও আপডেট করুন"</string>
-    <string name="control_disable_debug_text" msgid="8112443250013094442">"ডিবাগিং ফিচার বন্ধ করুন"</string>
+    <string name="control_lock_device_text" msgid="8253302484073757764">"পেমেন্ট না করলে এই ডিভাইসের ব্যবহার সীমিত করা"</string>
+    <string name="control_download_text" msgid="8514650561843088172">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> অ্যাপ ডাউনলোড, ইনস্টল ও আপডেট করা"</string>
+    <string name="control_disable_debug_text" msgid="8112443250013094442">"ডিবাগিং ফিচার বন্ধ করা"</string>
     <string name="locked_section_title" msgid="2748725389334076510">"এই ডিভাইসটি লক করা থাকলেও কী কী কাজ করতে পারে?"</string>
     <string name="locked_emergency_text" msgid="3509216445555779286">"জরুরি কল সংক্রান্ত পরিষেবা"</string>
     <string name="locked_phone_usage_text" msgid="1913605870324552847">"ইনকামিং এবং কিছু আউটগোয়িং কল"</string>
     <string name="locked_settings_usage_text" msgid="8336476063187737700">"সেটিংস"</string>
     <string name="locked_backup_and_restore_text" msgid="104616318625243429">"আপনার ডেটা &lt;a href=https://support.google.com/android/answer/2819582&gt;ব্যাক-আপ নেওয়া ও ফিরিয়ে আনা&lt;/a&gt;"</string>
     <string name="exposure_section_title" msgid="2329122144337528752">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> কী কী দেখতে পাবে?"</string>
-    <string name="exposure_install_text" msgid="2631074166447765453">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> অ্যাপ ইনস্টল বা আনইনস্টল করার সময়"</string>
+    <string name="exposure_install_text" msgid="2631074166447765453">"কখন <xliff:g id="CREDITOR_APP">%1$s</xliff:g> অ্যাপ ইনস্টল বা আনইনস্টল করা হয়েছে"</string>
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g>-এর করা যেকোনও লক বা আনলকের অনুরোধ"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> অ্যাপ উপলভ্য না থাকলে"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"ওপেন-সোর্স লাইসেন্স"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"\'সুরক্ষা\' সেটিংসের \'ফাইন্যান্স করা ডিভাইস\' বিভাগের ম্যানেজমেন্ট সংক্রান্ত সুবিধা এই ডিভাইসের ক্ষেত্রে প্রযোজ্য নয়।"</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"এই ডিভাইস <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> দিয়েছে"</string>
-    <string name="download_kiosk_app" msgid="1845089944897502656">"Kiosk app অটোমেটিক ডাউনলোড ও ইনস্টল হবে"</string>
+    <string name="download_kiosk_app" msgid="1845089944897502656">"Kiosk অ্যাপ অটোমেটিক ডাউনলোড ও ইনস্টল হবে"</string>
     <string name="install_kiosk_app_secondary_user" msgid="49911908012320834">"এই ব্যবহারকারীর জন্য Kiosk app ইনস্টল করা হবে"</string>
     <string name="restrict_device_if_missing_payment" msgid="5721216628714899148">"আপনি পেমেন্ট মিস করলে, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> এই ডিভাইসের ব্যবহার সীমিত করে দিতে পারে"</string>
     <string name="restrict_device_if_dont_make_payment" msgid="1619095674945507015">"আপনি প্রয়োজনীয় পেমেন্ট না করলে, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> এই ডিভাইসটির ব্যবহার সীমিত করতে পারে। আরও তথ্য জানার জন্য <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>নিয়ম ও শর্তাবলী দেখুন<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g>।"</string>
@@ -60,7 +60,7 @@
     <string name="header_icon_content_description" msgid="6069602031334473195">"তথ্য"</string>
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"প্রভিশন তথ্য"</string>
     <string name="enroll_your_device_header" msgid="2226305405591945098">"আপনার ডিভাইস এনরোল করুন"</string>
-    <string name="enroll_your_device_financing_subheader" msgid="7378414469334757425">"আপনি এখন <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>-এর ফাইন্যান্সিং প্রোগ্রামে এনরোল করতে পারবেন"</string>
+    <string name="enroll_your_device_financing_subheader" msgid="8810608106273097451">"আপনি এখন <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>-এর ফাইন্যান্স প্রোগ্রামে নিজের ডিভাইস এনরোল করতে পারবেন"</string>
     <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"আপনি এখন <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>-এর সাবসিডি প্রোগ্রামে এনরোল করতে পারবেন"</string>
     <string name="subsidy_program_header" msgid="2321508488856303554">"আপনি <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>-এর সাবসিডি প্রোগ্রামে রয়েছেন"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"ডিভাইস এনরোলমেন্ট"</string>
@@ -121,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{১ দিনের মধ্যে ডিভাইস রিসেট হবে}one{# দিনের মধ্যে ডিভাইস রিসেট হবে}other{# দিনের মধ্যে ডিভাইস রিসেট হবে}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"<xliff:g id="TIMER">%s</xliff:g>-এর মধ্যে ডিভাইস রিসেট হবে"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"ডিভাইসের সব ডেটা মুছে ফেলা হবে। আপনার ডিভাইস এনরোল করার জন্য <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>-এর সাথে যোগাযোগ করুন"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"ডিভাইস এনরোলমেন্টের প্রক্রিয়া বন্ধ রাখতে, DeviceLock থেকে বিজ্ঞপ্তি পাঠানোর অনুমতি দিন।"</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"ফাইন্যান্সিং প্রভিশন করা যায়নি"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"আপনার অর্থদাতার সাথে কীভাবে যোগাযোগ করবেন তা জানতে, এখানে ক্লিক করুন। <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>আরও জানুন<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"বেরিয়ে আসুন"</string>

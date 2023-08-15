@@ -60,7 +60,7 @@
     <string name="header_icon_content_description" msgid="6069602031334473195">"መረጃ"</string>
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"የአቅርቦት መረጃ"</string>
     <string name="enroll_your_device_header" msgid="2226305405591945098">"መሣሪያዎን ያስመዝግቡ"</string>
-    <string name="enroll_your_device_financing_subheader" msgid="7378414469334757425">"አሁን መሣሪያዎን በ<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> የፋይናንስ ፕሮግራም ውስጥ መመዝገብ ይችላሉ"</string>
+    <string name="enroll_your_device_financing_subheader" msgid="8810608106273097451">"አሁን መሣሪያዎን በ<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> የፋይናንስ ፕሮግራም ውስጥ ማስመዝገብ ይችላሉ"</string>
     <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"አሁን መሣሪያዎን በ<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> የድጎማ ፕሮግራም ውስጥ መመዝገብ ይችላሉ"</string>
     <string name="subsidy_program_header" msgid="2321508488856303554">"የ<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> የድጋፍ ፕሮግራም ላይ ነዎት"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"የመሣሪያ ምዝገባ"</string>
@@ -121,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{መሣሪያ በ1 ቀን ውስጥ ዳግም ይጀምራል}one{መሣሪያ በ# ቀን ውስጥ ዳግም ይጀምራል}other{መሣሪያ በ# ቀናት ውስጥ ዳግም ይጀምራል}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"መሣሪያ <xliff:g id="TIMER">%s</xliff:g> ውስጥ ዳግም ይጀምራል"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"ሁሉም የመሣሪያ ውሂብ ይሰረዛል። መሣሪያዎን መመዝገብ ላይ እገዛ ለማግኘት <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>ን ያግኙ"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"የመሣሪያውን ምዝገባ መላክ ለመቀጠል እባክዎ ከDeviceLock ማሳወቂያ ይፍቀዱ።"</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"የፋይናንስ አቅርቦት አልተሳካም"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"የፋይናንስ አስተዳዳሪዎን የሚያገኙባቸውን መንገዶች ለማግኘት እባክዎ እዚህ ጠቅ ያድርጉ። <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>የበለጠ ለመረዳት<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"ውጣ"</string>

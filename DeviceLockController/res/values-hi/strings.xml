@@ -31,9 +31,9 @@
     <string name="try_again" msgid="5964839819170927721">"फिर से कोशिश करें"</string>
     <string name="reset_phone" msgid="1161657350311160627">"फ़ोन रीसेट करें"</string>
     <string name="control_section_title" msgid="2213476068991045785">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> क्या कर सकता है?"</string>
-    <string name="control_lock_device_text" msgid="8253302484073757764">"पेमेंट न करने पर, इस डिवाइस पर पाबंदी लगाएं"</string>
-    <string name="control_download_text" msgid="8514650561843088172">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ऐप्लिकेशन को डाउनलोड, इंस्टॉल, और अपडेट करें"</string>
-    <string name="control_disable_debug_text" msgid="8112443250013094442">"डीबग करने की सुविधा बंद करें"</string>
+    <string name="control_lock_device_text" msgid="8253302484073757764">"पेमेंट न करने पर, इस डिवाइस पर पाबंदी लगा सकता है"</string>
+    <string name="control_download_text" msgid="8514650561843088172">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ऐप्लिकेशन को डाउनलोड, इंस्टॉल, और अपडेट कर सकता है"</string>
+    <string name="control_disable_debug_text" msgid="8112443250013094442">"डीबग करने की सुविधा बंद कर सकता है"</string>
     <string name="locked_section_title" msgid="2748725389334076510">"डिवाइस लॉक हो जाने पर, किन सुविधाओं का इस्तेमाल किया जा सकता है?"</string>
     <string name="locked_emergency_text" msgid="3509216445555779286">"आपातकालीन कॉल करने की सुविधा"</string>
     <string name="locked_phone_usage_text" msgid="1913605870324552847">"इनकमिंग और कुछ आउटगोइंग काॅल"</string>
@@ -60,7 +60,7 @@
     <string name="header_icon_content_description" msgid="6069602031334473195">"जानकारी"</string>
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"प्रॉविज़निंग का डेटा"</string>
     <string name="enroll_your_device_header" msgid="2226305405591945098">"अपना डिवाइस रजिस्टर करें"</string>
-    <string name="enroll_your_device_financing_subheader" msgid="7378414469334757425">"अब आपका डिवाइस, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> के फ़ाइनेंस प्रोग्राम में रजिस्टर किया जा सकता है"</string>
+    <string name="enroll_your_device_financing_subheader" msgid="8810608106273097451">"अब आपका डिवाइस, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> के फ़ाइनेंस प्रोग्राम में रजिस्टर किया जा सकता है"</string>
     <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"अब आपका डिवाइस, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> के सब्सिडी प्रोग्राम में रजिस्टर किया जा सकता है"</string>
     <string name="subsidy_program_header" msgid="2321508488856303554">"आप <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> के सब्सिडी प्रोग्राम में शामिल हैं"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"डिवाइस रजिस्टर करें"</string>
@@ -121,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{डिवाइस 1 दिन में रीसेट हो जाएगा}one{डिवाइस # दिन में रीसेट हो जाएगा}other{डिवाइस # दिन में रीसेट हो जाएगा}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"डिवाइस <xliff:g id="TIMER">%s</xliff:g> में रीसेट हो जाएगा"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"डिवाइस का सारा डेटा मिटा दिया जाएगा. अपने डिवाइस को रजिस्टर करने में मदद पाने के लिए, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> से संपर्क करें"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"डिवाइस का रजिस्ट्रेशन करने की तारीख आगे बढ़ाते रहने के लिए, कृपया DeviceLock से सूचना पाने की सुविधा चालू करें."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"डिवाइस प्रॉविज़निंग को फ़ाइनेंस नहीं किया जा सका"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"कृपया, अपने फ़ाइनेंशियर से संपर्क करने के तरीके जानने के लिए यहां क्लिक करें. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>ज़्यादा जानें<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"बाहर निकलें"</string>

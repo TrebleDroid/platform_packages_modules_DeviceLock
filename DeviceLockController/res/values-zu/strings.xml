@@ -60,7 +60,7 @@
     <string name="header_icon_content_description" msgid="6069602031334473195">"Ulwazi"</string>
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"Ulwazi lwelungiselelo"</string>
     <string name="enroll_your_device_header" msgid="2226305405591945098">"Bhalisa idivayisi yakho"</string>
-    <string name="enroll_your_device_financing_subheader" msgid="7378414469334757425">"Usungakwazi ubhalisa idivayisi ohlelweni lokuxhasa lwe-<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
+    <string name="enroll_your_device_financing_subheader" msgid="8810608106273097451">"Usungakwazi manje ukubhalisa idivayisi yakho ohlelweni lwezezimali lwe-<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"Usungakwazi manje ukubhalisa idivayisi yakho ohlelweni losizo lwe-<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="subsidy_program_header" msgid="2321508488856303554">"Usohlelweni losizo lwe-<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"Ukubhaliswa kwedivayisa"</string>
@@ -121,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{Idivayisi izosethwa kabusha osukwini olungu-1}one{Idivayisi izosethwa kabusha ezinsukwini ezingu-#}other{Idivayisi izosethwa kabusha ezinsukwini ezingu-#}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"Idivayisi izosethwa kabusha ngo-<xliff:g id="TIMER">%s</xliff:g>"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Yonke idatha yedivayisi izosulwa. Ukuze uthole usizo lokubhalisa idivayisi yakho, thinta i-<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Sicela uvumele isaziso esisuka ku-DeviceLock ukuze uqhubeke nokudlulisa ukubhaliswa kwedivayisi."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Ukuxhaswa kwelungiselelo kuhlulekile"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"Sicela uchofoze lapha ukuze uthole izindlela zokuthinta umxhasi wakho wezezimali. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Funda kabanzi<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Phuma"</string>

@@ -46,10 +46,10 @@
     <string name="open_source_licenses" msgid="6464389386262455443">"Licencias de software libre"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"Las funciones de gestión que aparecen en la sección del dispositivo financiado de los ajustes de Seguridad no se aplican a este dispositivo."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"Este dispositivo lo proporciona <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
-    <string name="download_kiosk_app" msgid="1845089944897502656">"La aplicación de kiosko se descargará e instalará automáticamente"</string>
+    <string name="download_kiosk_app" msgid="1845089944897502656">"La aplicación de kiosko se descargará e instalará automáticamente."</string>
     <string name="install_kiosk_app_secondary_user" msgid="49911908012320834">"La aplicación de kiosko se instalará para este usuario"</string>
-    <string name="restrict_device_if_missing_payment" msgid="5721216628714899148">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> puede restringir este dispositivo si no realizas un pago"</string>
-    <string name="restrict_device_if_dont_make_payment" msgid="1619095674945507015">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> puede restringir este dispositivo si no realizas los pagos necesarios. Para ver más detalles, consulta los <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>términos y condiciones<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g>."</string>
+    <string name="restrict_device_if_missing_payment" msgid="5721216628714899148">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> puede restringir este dispositivo si no realizas un pago."</string>
+    <string name="restrict_device_if_dont_make_payment" msgid="1619095674945507015">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> puede restringir este dispositivo si no realizas los pagos necesarios. Para ver más detalles, consulta los <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>Términos y Condiciones<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g>."</string>
     <string name="restrict_device_if_owner_doesnt_make_payment" msgid="3841412765931627895">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> puede restringir este dispositivo si el propietario no realiza los pagos"</string>
     <string name="previous" msgid="5241891780917802570">"Anterior"</string>
     <string name="next" msgid="8248291863254324326">"Siguiente"</string>
@@ -59,8 +59,8 @@
     <string name="do_it_in_one_hour" msgid="2727777340568739453">"Posponer 1 hora"</string>
     <string name="header_icon_content_description" msgid="6069602031334473195">"Información"</string>
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"Información de aprovisionamiento"</string>
-    <string name="enroll_your_device_header" msgid="2226305405591945098">"Registrar el dispositivo"</string>
-    <string name="enroll_your_device_financing_subheader" msgid="7378414469334757425">"Ahora puedes registrar tu dispositivo en el programa de financiación de <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
+    <string name="enroll_your_device_header" msgid="2226305405591945098">"Registra el dispositivo"</string>
+    <string name="enroll_your_device_financing_subheader" msgid="8810608106273097451">"Ahora puedes registrar tu dispositivo en el programa de financiación de <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"Ahora puedes registrar tu dispositivo en el programa de compensación de <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="subsidy_program_header" msgid="2321508488856303554">"Estás en el programa de compensación de <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"Registro del dispositivo"</string>
@@ -121,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{El dispositivo se restablecerá en 1 día}other{El dispositivo se restablecerá en # días}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"El dispositivo se restablecerá en <xliff:g id="TIMER">%s</xliff:g>"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Se eliminarán todos los datos del dispositivo. Para obtener ayuda con el registro de tu dispositivo, contacta con <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>."</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Habilita las notificaciones de Bloqueo del dispositivo para seguir aplazando el registro del dispositivo."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"No se ha podido aprovisionar la financiación"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"Haz clic aquí para consultar cómo contactar con tu asesor financiero. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Más información<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Salir"</string>

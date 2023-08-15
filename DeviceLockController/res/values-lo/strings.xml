@@ -31,7 +31,7 @@
     <string name="try_again" msgid="5964839819170927721">"ລອງໃໝ່"</string>
     <string name="reset_phone" msgid="1161657350311160627">"ຣີເຊັດໂທລະສັບ"</string>
     <string name="control_section_title" msgid="2213476068991045785">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ສາມາດເຮັດຫຍັງໄດ້ແດ່?"</string>
-    <string name="control_lock_device_text" msgid="8253302484073757764">"ກະລຸນາຈຳກັດອຸປະກອນນີ້ຫາກທ່ານບໍ່ໄດ້ຈ່າຍເງິນ"</string>
+    <string name="control_lock_device_text" msgid="8253302484073757764">"ຈຳກັດອຸປະກອນນີ້ຫາກທ່ານບໍ່ໄດ້ຈ່າຍເງິນ"</string>
     <string name="control_download_text" msgid="8514650561843088172">"ດາວໂຫຼດ, ຕິດຕັ້ງ ແລະ ອັບເດດແອັບ <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="control_disable_debug_text" msgid="8112443250013094442">"ປິດຄຸນສົມບັດການດີບັກ"</string>
     <string name="locked_section_title" msgid="2748725389334076510">"ມີຫຍັງໃຊ້ໄດ້ຫາກອຸປະກອນນີ້ຖືກລັອກ?"</string>
@@ -60,7 +60,7 @@
     <string name="header_icon_content_description" msgid="6069602031334473195">"ຂໍ້ມູນ"</string>
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"ຂໍ້ມູນການຈັດກຽມ"</string>
     <string name="enroll_your_device_header" msgid="2226305405591945098">"ລົງທະບຽນອຸປະກອນຂອງທ່ານ"</string>
-    <string name="enroll_your_device_financing_subheader" msgid="7378414469334757425">"ຕອນນີ້ທ່ານສາມາດລົງທະບຽນອຸປະກອນຂອງທ່ານໃນໂປຣແກຣມສະໜັບສະໜູນທາງການເງິນຂອງ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ໄດ້ແລ້ວ"</string>
+    <string name="enroll_your_device_financing_subheader" msgid="8810608106273097451">"ຕອນນີ້ທ່ານສາມາດລົງທະບຽນອຸປະກອນຂອງທ່ານໃນໂປຣແກຣມສະໜັບສະໜູນທາງການເງິນຂອງ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ໄດ້ແລ້ວ"</string>
     <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"ຕອນນີ້ທ່ານສາມາດລົງທະບຽນອຸປະກອນຂອງທ່ານໃນໂປຣແກຣມສະໜັບສະໜູນທາງການເງິນຂອງ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ໄດ້ແລ້ວ"</string>
     <string name="subsidy_program_header" msgid="2321508488856303554">"ທ່ານຢູ່ໃນໂປຣແກຣມສະໜັບສະໜູນທາງການເງິນຂອງ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"ການລົງທະບຽນອຸປະກອນ"</string>
@@ -121,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{ອຸປະກອນຈະຣີເຊັດໃນອີກ 1 ມື້}other{ອຸປະກອນຈະຣີເຊັດໃນອີກ # ມື້}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"ອຸປະກອນຈະຣີເຊັດໃນອີກ <xliff:g id="TIMER">%s</xliff:g>"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"ຂໍ້ມູນທັງໝົດໃນອຸປະກອນຈະຖືກລຶບອອກ. ເພື່ອຂໍຄວາມຊ່ວຍເຫຼືອໃນການລົງທະບຽນອຸປະກອນຂອງທ່ານ, ກະລຸນາຕິດຕໍ່ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"ກະລຸນາອະນຸຍາດໃຫ້ມີການແຈ້ງເຕືອນຈາກ DeviceLock ເພື່ອເລື່ອນການລົງທະບຽນອຸປະກອນອອກໄປກ່ອນ."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"ການຈັດກຽມດ້ານການເງິນບໍ່ສຳເລັດ"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"ກະລຸນາຄລິກຢູ່ບ່ອນນີ້ສຳລັບວິທີໃນການຕິດຕໍ່ນັກການເງິນຂອງທ່ານ. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>ສຶກສາເພີ່ມເຕີມ<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"ອອກ"</string>

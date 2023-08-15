@@ -60,7 +60,7 @@
     <string name="header_icon_content_description" msgid="6069602031334473195">"Informasjon"</string>
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"Provisjoneringsinfo"</string>
     <string name="enroll_your_device_header" msgid="2226305405591945098">"Registrer enheten din"</string>
-    <string name="enroll_your_device_financing_subheader" msgid="7378414469334757425">"Nå kan du registrere enheten din i finansieringsprogrammet til <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
+    <string name="enroll_your_device_financing_subheader" msgid="8810608106273097451">"Nå kan du registrere enheten din i finansieringsordningen til <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"Nå kan du registrere enheten din i subsidieringsprogrammet til <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="subsidy_program_header" msgid="2321508488856303554">"Du er med i subsidieringsprogrammet til <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"Registrering av enheten"</string>
@@ -121,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{Enheten tilbakestilles om 1 dag}other{Enheten tilbakestilles om # dager}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"Enheten tilbakestilles om <xliff:g id="TIMER">%s</xliff:g>"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Alle enhetsdata slettes. Hvis du trenger hjelp med å registrere enheten din, bør du kontakte <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Du må tillate varsler fra DeviceLock for å fortsette å utsette registreringen av enheten."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Kunne ikke provisjonere finansiering"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"Klikk her for å finne måter å kontakte finansieringsløsningen din på. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Finn ut mer<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Avslutt"</string>

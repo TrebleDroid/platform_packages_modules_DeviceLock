@@ -49,7 +49,7 @@
     <string name="download_kiosk_app" msgid="1845089944897502656">"Киоск аппыг автоматаар татаж суулгана"</string>
     <string name="install_kiosk_app_secondary_user" msgid="49911908012320834">"Киоск аппыг энэ хэрэглэгчид суулгана"</string>
     <string name="restrict_device_if_missing_payment" msgid="5721216628714899148">"Хэрэв та төлбөрөө төлөөгүй бол <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> энэ төхөөрөмжийг хязгаарлах боломжтой"</string>
-    <string name="restrict_device_if_dont_make_payment" msgid="1619095674945507015">"Хэрэв та шаардлагатай төлбөрийг төлөөгүй бол <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> энэ төхөөрөмжийг хязграалах боломжтой. Дэлгэрэнгүй мэдээлэл авах бол <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>Үйлчилгээний ерөнхий нөхцөлийг<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g> харна уу."</string>
+    <string name="restrict_device_if_dont_make_payment" msgid="1619095674945507015">"Хэрэв та шаардлагатай төлбөрийг төлөөгүй бол <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> энэ төхөөрөмжийг хязгаарлах боломжтой. Дэлгэрэнгүй мэдээлэл авах бол <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>Үйлчилгээний ерөнхий нөхцөлийг<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g> харна уу."</string>
     <string name="restrict_device_if_owner_doesnt_make_payment" msgid="3841412765931627895">"Хэрэв өмчлөгч төлбөрөө төлөөгүй бол <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> энэ төхөөрөмжийг хязгаарлах боломжтой"</string>
     <string name="previous" msgid="5241891780917802570">"Өмнөх"</string>
     <string name="next" msgid="8248291863254324326">"Дараах"</string>
@@ -60,7 +60,7 @@
     <string name="header_icon_content_description" msgid="6069602031334473195">"Мэдээлэл"</string>
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"Бэлтгэлийн мэдээлэл"</string>
     <string name="enroll_your_device_header" msgid="2226305405591945098">"Төхөөрөмжөө бүртгүүлнэ үү"</string>
-    <string name="enroll_your_device_financing_subheader" msgid="7378414469334757425">"Та одоо төхөөрөмжөө <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>-н санхүүгийн хөтөлбөрт бүртгүүлэх боломжтой"</string>
+    <string name="enroll_your_device_financing_subheader" msgid="8810608106273097451">"Та одоо төхөөрөмжөө <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>-н санхүүгийн хөтөлбөрт бүртгүүлэх боломжтой"</string>
     <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"Та одоо төхөөрөмжөө <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>-н татаасны хөтөлбөрт бүртгүүлэх боломжтой"</string>
     <string name="subsidy_program_header" msgid="2321508488856303554">"Та <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>-н татаасны хөтөлбөрт байна"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"Төхөөрөмж бүртгүүлэх"</string>
@@ -121,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{Төхөөрөмжийг 1 хоногийн дараа шинэчилнэ}other{Төхөөрөмжийг # хоногийн дараа шинэчилнэ}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"Төхөөрөмжийг <xliff:g id="TIMER">%s</xliff:g>-н дараа шинэчилнэ"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Төхөөрөмжийн бүх өгөгдлийг устгана. Төхөөрөмжөө бүртгүүлэх тусламж авах бол <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>-тай холбогдоно уу"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Төхөөрөмжийн бүртгэлийг үргэлжлүүлэн хойшлуулахын тулд DeviceLock-н мэдэгдлийг зөвшөөрнө үү."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Санхүүгийн бэлтгэлийг хийж чадсангүй"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"Санхүүчтэйгээ холбоо барих аргуудыг авах бол энд товшино уу. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Нэмэлт мэдээлэл авах<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Гарах"</string>

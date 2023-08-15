@@ -30,8 +30,8 @@
     <string name="setup_error_title_text" msgid="1123742279081942535">"無法開啟「<xliff:g id="CREDITOR_APP">%1$s</xliff:g>」應用程式"</string>
     <string name="try_again" msgid="5964839819170927721">"再試一次"</string>
     <string name="reset_phone" msgid="1161657350311160627">"重設手機"</string>
-    <string name="control_section_title" msgid="2213476068991045785">"「<xliff:g id="CREDITOR_APP">%1$s</xliff:g>」有什麼功能？"</string>
-    <string name="control_lock_device_text" msgid="8253302484073757764">"如未付款，此裝置會受限制"</string>
+    <string name="control_section_title" msgid="2213476068991045785">"「<xliff:g id="CREDITOR_APP">%1$s</xliff:g>」可以採取甚麼行動？"</string>
+    <string name="control_lock_device_text" msgid="8253302484073757764">"在你未有未付款時限制此裝置"</string>
     <string name="control_download_text" msgid="8514650561843088172">"下載、安裝及更新「<xliff:g id="CREDITOR_APP">%1$s</xliff:g>」應用程式"</string>
     <string name="control_disable_debug_text" msgid="8112443250013094442">"關閉偵錯功能"</string>
     <string name="locked_section_title" msgid="2748725389334076510">"裝置鎖定時可使用哪些功能？"</string>
@@ -60,7 +60,7 @@
     <string name="header_icon_content_description" msgid="6069602031334473195">"資料"</string>
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"佈建資料"</string>
     <string name="enroll_your_device_header" msgid="2226305405591945098">"註冊裝置"</string>
-    <string name="enroll_your_device_financing_subheader" msgid="7378414469334757425">"裝置現可註冊「<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>」的分期付款計劃"</string>
+    <string name="enroll_your_device_financing_subheader" msgid="8810608106273097451">"裝置現可註冊「<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>」的分期付款計劃"</string>
     <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"裝置現可註冊「<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>」的資助計劃"</string>
     <string name="subsidy_program_header" msgid="2321508488856303554">"你已加入「<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>」的資助計劃"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"裝置註冊"</string>
@@ -121,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{裝置將在 1 天後重設}other{裝置將在 # 天後重設}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"裝置將在 <xliff:g id="TIMER">%s</xliff:g>後重設"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"系統將會刪除所有裝置資料。如需有關註冊裝置的協助，請聯絡「<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>」"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"如要繼續延後註冊裝置，請允許 DeviceLock 傳送通知。"</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"無法佈建分期付款計劃"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"按一下即可查看分期付款提供者的聯絡方法。<xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>瞭解詳情<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"離開"</string>

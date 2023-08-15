@@ -30,16 +30,16 @@
     <string name="setup_error_title_text" msgid="1123742279081942535">"Не ўдалося адкрыць праграму \"<xliff:g id="CREDITOR_APP">%1$s</xliff:g>\""</string>
     <string name="try_again" msgid="5964839819170927721">"Паўтарыць спробу"</string>
     <string name="reset_phone" msgid="1161657350311160627">"Скінуць налады тэлефона"</string>
-    <string name="control_section_title" msgid="2213476068991045785">"Магчымасці праграмы \"<xliff:g id="CREDITOR_APP">%1$s</xliff:g>\""</string>
+    <string name="control_section_title" msgid="2213476068991045785">"Магчымасці \"<xliff:g id="CREDITOR_APP">%1$s</xliff:g>\""</string>
     <string name="control_lock_device_text" msgid="8253302484073757764">"Абмяжоўваць працу прылады, калі вы не зробіце плацеж"</string>
-    <string name="control_download_text" msgid="8514650561843088172">"Спампуйце, усталюйце і абнавіце праграму \"<xliff:g id="CREDITOR_APP">%1$s</xliff:g>\""</string>
+    <string name="control_download_text" msgid="8514650561843088172">"Спампоўваць, усталёўваць і абнаўляць праграму \"<xliff:g id="CREDITOR_APP">%1$s</xliff:g>\""</string>
     <string name="control_disable_debug_text" msgid="8112443250013094442">"Выключаць функцыі адладкі"</string>
-    <string name="locked_section_title" msgid="2748725389334076510">"Якія праграмы будуць працаваць пры заблакіраванай прыладзе?"</string>
+    <string name="locked_section_title" msgid="2748725389334076510">"Якія функцыі будуць працаваць пры заблакіраванай прыладзе?"</string>
     <string name="locked_emergency_text" msgid="3509216445555779286">"Службы экстранных выклікаў"</string>
     <string name="locked_phone_usage_text" msgid="1913605870324552847">"Уваходныя і некаторыя выходныя выклікі"</string>
     <string name="locked_settings_usage_text" msgid="8336476063187737700">"Налады"</string>
     <string name="locked_backup_and_restore_text" msgid="104616318625243429">"&lt;a href=https://support.google.com/android/answer/2819582&gt;Рэзервовае капіраванне і аднаўленне&lt;/a&gt; даных"</string>
-    <string name="exposure_section_title" msgid="2329122144337528752">"Якая інфармацыя даступная праграме \"<xliff:g id="CREDITOR_APP">%1$s</xliff:g>\"?"</string>
+    <string name="exposure_section_title" msgid="2329122144337528752">"Якая інфармацыя даступная \"<xliff:g id="CREDITOR_APP">%1$s</xliff:g>\"?"</string>
     <string name="exposure_install_text" msgid="2631074166447765453">"Калі праграма \"<xliff:g id="CREDITOR_APP">%1$s</xliff:g>\" выдалена ці ўсталявана"</string>
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Любыя запыты блакіроўкі і разблакіроўкі ад праграмы \"<xliff:g id="CREDITOR_APP">%1$s</xliff:g>\""</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Калі праграма \"<xliff:g id="CREDITOR_APP">%1$s</xliff:g>\" недаступная"</string>
@@ -60,7 +60,7 @@
     <string name="header_icon_content_description" msgid="6069602031334473195">"Інфармацыя"</string>
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"Аб падрыхтоўцы"</string>
     <string name="enroll_your_device_header" msgid="2226305405591945098">"Зарэгіструйце прыладу"</string>
-    <string name="enroll_your_device_financing_subheader" msgid="7378414469334757425">"Цяпер вы можаце зарэгістраваць сваю прыладу ў праграме фінансавання кампаніі \"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>\""</string>
+    <string name="enroll_your_device_financing_subheader" msgid="8810608106273097451">"Цяпер вы можаце зарэгістраваць сваю прыладу ў праграме фінансавання кампаніі \"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>\""</string>
     <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"Цяпер вы можаце зарэгістраваць прыладу ў праграме субсідзіравання кампаніі \"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>\""</string>
     <string name="subsidy_program_header" msgid="2321508488856303554">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> дае вам субсідзіраванне"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"Рэгістрацыя прылады"</string>
@@ -121,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{Прылада будзе скінута праз адзін дзень}one{Прылада будзе скінута праз # дзень}few{Прылада будзе скінута праз # дні}many{Прылада будзе скінута праз # дзён}other{Прылада будзе скінута праз # дня}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"Прылада будзе скінута праз <xliff:g id="TIMER">%s</xliff:g>"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Усе даныя прылады будуць выдалены. Па дапамогу з рэгістрацыяй звяртайцеся ў кампанію \"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>\"."</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Каб адкласці рэгістрацыю прылады, дазвольце DeviceLock прысылаць вам апавяшчэнні."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Не ўдалося падрыхтаваць прыладу да праграмы фінансавання"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"Вы можаце звязацца з фінансавым спецыялістам: націсніце <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>тут<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>, каб даведацца больш"</string>
     <string name="exit" msgid="645084771882733921">"Выйсці"</string>

@@ -60,7 +60,7 @@
     <string name="header_icon_content_description" msgid="6069602031334473195">"Informācija"</string>
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"Nodrošin. inform."</string>
     <string name="enroll_your_device_header" msgid="2226305405591945098">"Ierīces reģistrēšana"</string>
-    <string name="enroll_your_device_financing_subheader" msgid="7378414469334757425">"Tagad varat reģistrēt savu ierīci “<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>” finansēšanas programmā"</string>
+    <string name="enroll_your_device_financing_subheader" msgid="8810608106273097451">"Tagad varat reģistrēt savu ierīci “<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>” finansēšanas programmā"</string>
     <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"Tagad varat reģistrēt savu ierīci “<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>” subsidēšanas programmā"</string>
     <string name="subsidy_program_header" msgid="2321508488856303554">"Jūs piedalāties <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> subsidēšanas programmā"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"Ierīces reģistrācija"</string>
@@ -121,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{Ierīce tiks atiestatīta pēc 1 dienas}zero{Ierīce tiks atiestatīta pēc # dienām}one{Ierīce tiks atiestatīta pēc # dienas}other{Ierīce tiks atiestatīta pēc # dienām}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"Ierīce tiks atiestatīta pēc: <xliff:g id="TIMER">%s</xliff:g>"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Visi ierīces dati tiks izdzēsti. Lai saņemtu palīdzību par ierīces reģistrēšanu, sazinieties ar <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>."</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Lūdzu, atļaujiet DeviceLock paziņojumu, lai turpinātu ierīces reģistrācijas atlikšanu."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Neizdevās nodrošināt finansējumu"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"Lūdzu, noklikšķiniet šeit, lai uzzinātu, kā sazināties ar finansētāju. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Uzziniet vairāk<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>."</string>
     <string name="exit" msgid="645084771882733921">"Iziet"</string>
