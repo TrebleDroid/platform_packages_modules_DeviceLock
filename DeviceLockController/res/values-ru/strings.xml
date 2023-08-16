@@ -69,7 +69,7 @@
     <string name="device_enrollment_notification_body_text" msgid="8755080244956655854">"Регистрация возобновится в <xliff:g id="TIME">%1$s</xliff:g>. Вы можете продолжать пользоваться устройством."</string>
     <string name="continue_using_device" msgid="5816570734692191190">"Можно дальше пользоваться устройством."</string>
     <string name="device_paid" msgid="6606280698381856804">"Вы оплатили устройство"</string>
-    <string name="device_removed_from_subsidy_program" msgid="1243434945619071051">"Устройство удалено из программы субсидирования кредитора \"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>\""</string>
+    <string name="device_removed_from_subsidy_program" msgid="1243434945619071051">"Устройство удалено из программы субсидирования компании \"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>\""</string>
     <string name="device_removed_from_finance_program" msgid="825548999540107578">"Устройство удалено из программы финансирования кредитора \"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>\"."</string>
     <string name="restrictions_lifted" msgid="5785586265984319396">"Все ограничения на работу устройства сняты."</string>
     <string name="uninstall_kiosk_app" msgid="3459557395024053988">"Теперь вы можете удалить киоск-приложение."</string>
