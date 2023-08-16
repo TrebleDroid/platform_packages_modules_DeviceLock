@@ -223,16 +223,14 @@ enum ClientProvisionState {
 // Request to report the device provision state of a device that is
 // undergoing device provisioning.
 message ReportDeviceProvisionStateRequest {
-  // The reason why device provisioning failed if applicable.
-  optional ClientProvisionFailureReason client_provision_failure_reason = 1;
   // The previous device provision state that the device was in. If not known,
   // then CLIENT_PROVISION_STATE_UNSPECIFIED should be used. It is not known
   // by the client on the first attempt of device provisioning.
-  optional ClientProvisionState previous_client_provision_state = 2;
+  optional ClientProvisionState previous_client_provision_state = 1;
   // Whether device provision was a success.
-  optional bool provision_success = 3;
+  optional bool provision_success = 2;
   // The device identifier that is registered with the Device Lock server.
-  optional string registered_device_identifier = 4;
+  optional string registered_device_identifier = 3;
 }
 
 // Response to a request that is reporting the device provision state of a
