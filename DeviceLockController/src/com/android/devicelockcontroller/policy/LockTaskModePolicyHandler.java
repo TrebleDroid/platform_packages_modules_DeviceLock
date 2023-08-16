@@ -42,8 +42,6 @@ import android.provider.Settings.Secure;
 import android.telecom.TelecomManager;
 import android.util.ArraySet;
 
-import androidx.annotation.VisibleForTesting;
-
 import com.android.devicelockcontroller.R;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
 import com.android.devicelockcontroller.storage.SetupParametersClient;
@@ -52,32 +50,34 @@ import com.android.devicelockcontroller.util.LogUtil;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.MoreExecutors;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 /** Handles lock task mode features. */
 final class LockTaskModePolicyHandler implements PolicyHandler {
-    @VisibleForTesting
-    static final int DEFAULT_LOCK_TASK_FEATURES =
+    private static final int DEFAULT_LOCK_TASK_FEATURES_FOR_DLC =
             (DevicePolicyManager.LOCK_TASK_FEATURE_SYSTEM_INFO
                     | DevicePolicyManager.LOCK_TASK_FEATURE_KEYGUARD
-                    | DevicePolicyManager.LOCK_TASK_FEATURE_HOME
                     | DevicePolicyManager.LOCK_TASK_FEATURE_GLOBAL_ACTIONS
                     | DevicePolicyManager.LOCK_TASK_FEATURE_BLOCK_ACTIVITY_START_IN_TASK);
+    private static final int DEFAULT_LOCK_TASK_FEATURES_FOR_KIOSK =
+            DEFAULT_LOCK_TASK_FEATURES_FOR_DLC | DevicePolicyManager.LOCK_TASK_FEATURE_HOME;
     private static final String TAG = "LockTaskModePolicyHandler";
     private final Context mContext;
     private final DevicePolicyManager mDpm;
     private final DevicePolicyController mPolicyController;
+    private final Executor mExecutor;
 
     LockTaskModePolicyHandler(Context context, DevicePolicyManager dpm,
             DevicePolicyController policyController) {
         mContext = context;
         mPolicyController = policyController;
         mDpm = dpm;
+        mExecutor = Executors.newCachedThreadPool();
     }
 
     private static IntentFilter getHomeIntentFilter() {
@@ -104,10 +104,10 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
                 return disableLockTaskMode();
             case PROVISION_IN_PROGRESS:
             case PROVISION_SUCCEEDED:
-                return enableLockTaskMode(/* includeController= */ true);
+                return enableLockTaskModeForController();
             case KIOSK_PROVISIONED:
             case LOCKED:
-                return enableLockTaskMode(/* includeController= */ false);
+                return enableLockTaskModeForKiosk();
             default:
                 return Futures.immediateFailedFuture(
                         new IllegalStateException(String.valueOf(state)));
@@ -119,9 +119,10 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
      * device leaves lock task mode.
      */
     private boolean setPreferredActivityForHome(ComponentName activity) {
-        if (!mDpm.isLockTaskPermitted(activity.getPackageName())) {
+        String packageName = activity.getPackageName();
+        if (!mDpm.isLockTaskPermitted(packageName)) {
             LogUtil.e(TAG, String.format(Locale.US, "%s is not permitted in lock task mode",
-                    activity.getPackageName()));
+                    packageName));
 
             return false;
         }
@@ -131,7 +132,7 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
             mDpm.clearPackagePersistentPreferredActivities(null /* admin */, currentPackage);
         }
         mDpm.addPersistentPreferredActivity(null /* admin */, getHomeIntentFilter(), activity);
-        UserParameters.setPackageOverridingHome(mContext, activity.getPackageName());
+        UserParameters.setPackageOverridingHome(mContext, packageName);
 
         return true;
     }
@@ -153,11 +154,18 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
                     LogUtil.i(TAG, String.format(Locale.US, "Update Lock task allowlist %s",
                             Arrays.toString(allowlistPackages)));
                     return null;
-                }, Executors.newSingleThreadExecutor());
+                }, mExecutor);
     }
 
-    private @ResultType ListenableFuture<@ResultType Integer> enableLockTaskMode(
-            boolean includeController) {
+    private ListenableFuture<@ResultType Integer> enableLockTaskModeForController() {
+        return Futures.transform(updateAllowlist(/* includeController= */ true),
+                unused -> {
+                    mDpm.setLockTaskFeatures(/* admin= */ null, DEFAULT_LOCK_TASK_FEATURES_FOR_DLC);
+                    return SUCCESS;
+                }, mExecutor);
+    }
+
+    private @ResultType ListenableFuture<@ResultType Integer> enableLockTaskModeForKiosk() {
         ListenableFuture<Boolean> notificationsInLockTaskModeEnabled =
                 SetupParametersClient.getInstance().isNotificationsInLockTaskModeEnabled();
         ListenableFuture<Intent> launchIntent =
@@ -165,18 +173,16 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
         return Futures.whenAllSucceed(
                         launchIntent,
                         notificationsInLockTaskModeEnabled,
-                        updateAllowlist(includeController))
-                .call(
-                        () -> {
-                            int flags = DEFAULT_LOCK_TASK_FEATURES;
-                            if (Futures.getDone(notificationsInLockTaskModeEnabled)) {
-                                flags |= LOCK_TASK_FEATURE_NOTIFICATIONS;
-                            }
-                            mDpm.setLockTaskFeatures(null, flags);
-                            setPreferredActivityForHome(
-                                    Futures.getDone(launchIntent).getComponent());
-                            return SUCCESS;
-                        }, mContext.getMainExecutor());
+                        updateAllowlist(/* includeController= */ false))
+                .call(() -> {
+                    int flags = DEFAULT_LOCK_TASK_FEATURES_FOR_KIOSK;
+                    if (Futures.getDone(notificationsInLockTaskModeEnabled)) {
+                        flags |= LOCK_TASK_FEATURE_NOTIFICATIONS;
+                    }
+                    mDpm.setLockTaskFeatures(/* admin= */ null, flags);
+                    setPreferredActivityForHome(Futures.getDone(launchIntent).getComponent());
+                    return SUCCESS;
+                }, mExecutor);
     }
 
     private @ResultType ListenableFuture<@ResultType Integer> disableLockTaskMode() {
@@ -220,7 +226,7 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
                         allowlistPackages.add(Futures.getDone(kioskPackageTask));
                         allowlistPackages.addAll(Futures.getDone(kioskAllowlistTask));
                         return allowlistPackages;
-                    }, MoreExecutors.directExecutor());
+                    }, mExecutor);
         }
     }
 
