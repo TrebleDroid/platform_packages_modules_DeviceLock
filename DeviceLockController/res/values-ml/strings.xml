@@ -60,7 +60,7 @@
     <string name="header_icon_content_description" msgid="6069602031334473195">"വിവരങ്ങൾ"</string>
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"പ്രൊവിഷൻ വിവരങ്ങൾ"</string>
     <string name="enroll_your_device_header" msgid="2226305405591945098">"നിങ്ങളുടെ ഉപകരണം എൻറോൾ ചെയ്യുക"</string>
-    <string name="enroll_your_device_financing_subheader" msgid="7378414469334757425">"ഇപ്പോൾ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> എന്നതിന്റെ ഫിനാൻസിംഗ് പ്രോഗ്രാമിൽ നിങ്ങളുടെ ഉപകരണം എൻറോൾ ചെയ്യാനാകും"</string>
+    <string name="enroll_your_device_financing_subheader" msgid="8810608106273097451">"ഇപ്പോൾ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> എന്നതിന്റെ ഫിനാൻസ് പ്രോഗ്രാമിൽ നിങ്ങളുടെ ഉപകരണം എൻറോൾ ചെയ്യാനാകും"</string>
     <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"ഇപ്പോൾ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> എന്നതിന്റെ സബ്‌സിഡി പ്രോഗ്രാമിൽ നിങ്ങളുടെ ഉപകരണം എൻറോൾ ചെയ്യാനാകും"</string>
     <string name="subsidy_program_header" msgid="2321508488856303554">"നിങ്ങൾ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> സബ്‌സിഡി പ്രോഗ്രാമിലുണ്ട്"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"ഉപകരണ എൻറോൾമെന്റ്"</string>
@@ -121,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{ഒരു ദിവസത്തിനുള്ളിൽ ഉപകരണം റീസെറ്റ് ചെയ്യും}other{# ദിവസത്തിനുള്ളിൽ ഉപകരണം റീസെറ്റ് ചെയ്യും}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"<xliff:g id="TIMER">%s</xliff:g>-നുള്ളിൽ ഉപകരണം റീസെറ്റ് ചെയ്യും"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"എല്ലാ ഉപകരണ ഡാറ്റയും ഇല്ലാതാക്കും. നിങ്ങളുടെ ഉപകരണം എൻറോൾ ചെയ്യുന്നതിനുള്ള സഹായത്തിന്, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> എന്നതിനെ ബന്ധപ്പെടുക"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"ഉപകരണത്തിന്റെ എൻറോൾമെന്റ് മാറ്റിവയ്ക്കുന്നത് തുടരാൻ DeviceLock-ൽ നിന്നുള്ള അറിയിപ്പ് അനുവദിക്കുക."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"ഫിനാൻസിംഗ് പ്രൊവിഷനിംഗ് പരാജയപ്പെട്ടു"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"നിങ്ങളുടെ സാമ്പത്തിക വിദഗ്‌ധരെ ബന്ധപ്പെടുന്നതിനുള്ള മാർഗ്ഗങ്ങൾക്കായി ഇവിടെ ക്ലിക്ക് ചെയ്യുക. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>കൂടുതലറിയുക<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"പുറത്ത് കടക്കുക"</string>

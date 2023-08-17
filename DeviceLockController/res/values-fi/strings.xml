@@ -32,8 +32,8 @@
     <string name="reset_phone" msgid="1161657350311160627">"Nollaa puhelin"</string>
     <string name="control_section_title" msgid="2213476068991045785">"Mitä <xliff:g id="CREDITOR_APP">%1$s</xliff:g> voi tehdä?"</string>
     <string name="control_lock_device_text" msgid="8253302484073757764">"Jos et suorita maksua, laitetta voidaan rajoittaa"</string>
-    <string name="control_download_text" msgid="8514650561843088172">"Lataa, asenna ja päivitä <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
-    <string name="control_disable_debug_text" msgid="8112443250013094442">"Laita virheenkorjausominaisuudet pois päältä"</string>
+    <string name="control_download_text" msgid="8514650561843088172">"Ladata, asentaa ja päivittää sovelluksen (<xliff:g id="CREDITOR_APP">%1$s</xliff:g>)"</string>
+    <string name="control_disable_debug_text" msgid="8112443250013094442">"Laittaa virheenkorjausominaisuudet pois päältä"</string>
     <string name="locked_section_title" msgid="2748725389334076510">"Mitkä ominaisuudet toimivat, jos laite lukitaan?"</string>
     <string name="locked_emergency_text" msgid="3509216445555779286">"Hätäpuhelupalvelut"</string>
     <string name="locked_phone_usage_text" msgid="1913605870324552847">"Saapuvat ja jotkin lähtevät puhelut"</string>
@@ -60,7 +60,7 @@
     <string name="header_icon_content_description" msgid="6069602031334473195">"Tiedot"</string>
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"Tiedot tarjoamisesta"</string>
     <string name="enroll_your_device_header" msgid="2226305405591945098">"Rekisteröi laite"</string>
-    <string name="enroll_your_device_financing_subheader" msgid="7378414469334757425">"Voit nyt rekisteröidä laitteen rahoitusohjelmaan (<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>)"</string>
+    <string name="enroll_your_device_financing_subheader" msgid="8810608106273097451">"Voit nyt rekisteröidä laitteen rahoitusohjelmaan (<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>)"</string>
     <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"Voit nyt rekisteröidä laitteen tukiohjelmaan (<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>)"</string>
     <string name="subsidy_program_header" msgid="2321508488856303554">"Olet liittynyt tukiohjelmaan (<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>)"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"Laitteen rekisteröinti"</string>
@@ -121,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{Laite nollataan 1 päivän kuluttua}other{Laite nollataan # päivän kuluttua}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"Laite nollataan, kun <xliff:g id="TIMER">%s</xliff:g> on kulunut"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Kaikki laitteen data poistetaan. Jos tarvitset apua laitteen rekisteröintiin, ota yhteyttä palveluntarjoajaan: <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Salli DeviceLockin ilmoitus, niin voit jatkaa laitteen rekisteröinnin lykkäämistä."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Rahoituksen tarjoaminen epäonnistui"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"Klikkaa tästä, niin näet tapoja ottaa yhteyttä rahoittajaan. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Lue lisää<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Sulje"</string>

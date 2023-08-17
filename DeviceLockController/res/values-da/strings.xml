@@ -31,9 +31,9 @@
     <string name="try_again" msgid="5964839819170927721">"Prøv igen"</string>
     <string name="reset_phone" msgid="1161657350311160627">"Nulstil telefon"</string>
     <string name="control_section_title" msgid="2213476068991045785">"Hvad kan <xliff:g id="CREDITOR_APP">%1$s</xliff:g> gøre?"</string>
-    <string name="control_lock_device_text" msgid="8253302484073757764">"Begræns denne enhed, hvis du ikke foretager en betaling"</string>
-    <string name="control_download_text" msgid="8514650561843088172">"Download, installer og opdater <xliff:g id="CREDITOR_APP">%1$s</xliff:g>-appen"</string>
-    <string name="control_disable_debug_text" msgid="8112443250013094442">"Deaktiver funktioner til fejlretning"</string>
+    <string name="control_lock_device_text" msgid="8253302484073757764">"Begrænse denne enhed, hvis du ikke foretager en betaling"</string>
+    <string name="control_download_text" msgid="8514650561843088172">"Downloade, installere og opdatere <xliff:g id="CREDITOR_APP">%1$s</xliff:g>-appen"</string>
+    <string name="control_disable_debug_text" msgid="8112443250013094442">"Deaktivere funktioner til fejlretning"</string>
     <string name="locked_section_title" msgid="2748725389334076510">"Hvad fungerer, hvis enheden er låst?"</string>
     <string name="locked_emergency_text" msgid="3509216445555779286">"Tjenester til nødopkald"</string>
     <string name="locked_phone_usage_text" msgid="1913605870324552847">"Indgående og nogle udgående opkald"</string>
@@ -60,7 +60,7 @@
     <string name="header_icon_content_description" msgid="6069602031334473195">"Oplysninger"</string>
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"Provisioneringsinfo"</string>
     <string name="enroll_your_device_header" msgid="2226305405591945098">"Tilmeld din enhed"</string>
-    <string name="enroll_your_device_financing_subheader" msgid="7378414469334757425">"Du kan nu tilmelde din enhed finansieringsprogrammet fra <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
+    <string name="enroll_your_device_financing_subheader" msgid="8810608106273097451">"Din enhed kan nu tilmeldes finansieringsprogrammet fra <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"Du kan nu tilmelde din enhed tilskudsprogrammet fra <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="subsidy_program_header" msgid="2321508488856303554">"Du deltager i tilskudsprogrammet fra <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"Tilmelding af enhed"</string>
@@ -121,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{Enheden nulstilles om 1 dag}one{Enheden nulstilles om # dag}other{Enheden nulstilles om # dage}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"Enheden nulstilles om <xliff:g id="TIMER">%s</xliff:g>"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Alle enhedsdata slettes. Kontakt <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> for at få hjælp til at tilmelde din enhed"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Tillad notifikation fra DeviceLock for at fortsætte med at udskyde tilmeldingen af enheden."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Provisionering af finansiering mislykkedes"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"Klik her for at finde ud af, hvordan du kan kontakte din financier. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Få flere oplysninger<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Afslut"</string>

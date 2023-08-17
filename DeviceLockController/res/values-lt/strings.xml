@@ -40,7 +40,7 @@
     <string name="locked_settings_usage_text" msgid="8336476063187737700">"Nustatymai"</string>
     <string name="locked_backup_and_restore_text" msgid="104616318625243429">"&lt;a href=https://support.google.com/android/answer/2819582&gt;Atsarginės duomenų kopijos kūrimas ir&lt;/a&gt; duomenų atkūrimas"</string>
     <string name="exposure_section_title" msgid="2329122144337528752">"Ką „<xliff:g id="CREDITOR_APP">%1$s</xliff:g>“ mato?"</string>
-    <string name="exposure_install_text" msgid="2631074166447765453">"Kada programa „<xliff:g id="CREDITOR_APP">%1$s</xliff:g>“ įdiegiama ar pašalinama?"</string>
+    <string name="exposure_install_text" msgid="2631074166447765453">"Kada programa „<xliff:g id="CREDITOR_APP">%1$s</xliff:g>“ įdiegiama ar pašalinama"</string>
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Visos „<xliff:g id="CREDITOR_APP">%1$s</xliff:g>“ pateiktos užrakinimo ar atrakinimo užklausos"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Jei programa „<xliff:g id="CREDITOR_APP">%1$s</xliff:g>“ nepasiekiama"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Atvirojo šaltinio licencijos"</string>
@@ -60,7 +60,7 @@
     <string name="header_icon_content_description" msgid="6069602031334473195">"Informacija"</string>
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"Pateikimo informac."</string>
     <string name="enroll_your_device_header" msgid="2226305405591945098">"Užregistruokite įrenginį"</string>
-    <string name="enroll_your_device_financing_subheader" msgid="7378414469334757425">"Dabar galite užregistruoti įrenginį „<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>“ finansavimo programoje"</string>
+    <string name="enroll_your_device_financing_subheader" msgid="8810608106273097451">"Dabar galite užregistruoti įrenginį „<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>“ finansavimo programoje"</string>
     <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"Dabar galite užregistruoti įrenginį „<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>“ subsidijų programoje"</string>
     <string name="subsidy_program_header" msgid="2321508488856303554">"Dalyvaujate „<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>“ subsidijų programoje"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"Įrenginio registracija"</string>
@@ -121,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{Įrenginys bus nustatytas iš naujo už vienos dienos}one{Įrenginys bus nustatytas iš naujo už # dienos}few{Įrenginys bus nustatytas iš naujo už # dienų}many{Įrenginys bus nustatytas iš naujo už # dienos}other{Įrenginys bus nustatytas iš naujo už # dienų}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"Įrenginys bus nustatytas iš naujo už <xliff:g id="TIMER">%s</xliff:g>"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Visi įrenginio duomenys bus ištrinti. Jei reikia pagalbos dėl įrenginio registracijos, susisiekite su „<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>“"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Leiskite „DeviceLock“ pranešimus, kad ir toliau atidėtumėte įrenginio registraciją."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Finansavimo pateikti nepavyko"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"Spustelėkite čia ir sužinokite, kaip susisiekti su finansuotoju. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Sužinokite daugiau<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Išeiti"</string>

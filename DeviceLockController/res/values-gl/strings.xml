@@ -60,16 +60,16 @@
     <string name="header_icon_content_description" msgid="6069602031334473195">"Información"</string>
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"Info de provisión"</string>
     <string name="enroll_your_device_header" msgid="2226305405591945098">"Inscribe o teu dispositivo"</string>
-    <string name="enroll_your_device_financing_subheader" msgid="7378414469334757425">"Xa podes inscribir o dispositivo no programa de finanzas de <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
-    <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"Xa podes inscribir o dispositivo no programa de subvencións de <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
-    <string name="subsidy_program_header" msgid="2321508488856303554">"Estás no programa de subvencións de <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
+    <string name="enroll_your_device_financing_subheader" msgid="8810608106273097451">"Xa podes inscribir o dispositivo no programa de financiamento de <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
+    <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"Xa podes inscribir o dispositivo no programa de bonificación de <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
+    <string name="subsidy_program_header" msgid="2321508488856303554">"Estás no programa de bonificación de <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"Inscrición do dispositivo"</string>
     <string name="device_financing_enrollment_body_text" msgid="5506086383249511498">"O dispositivo inscribirase no programa de finanzas de <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> dentro de 30 días"</string>
-    <string name="device_subsidy_enrollment_body_text" msgid="3971584929178719388">"O dispositivo inscribirase no programa de subvencións de <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> dentro de 30 días"</string>
+    <string name="device_subsidy_enrollment_body_text" msgid="3971584929178719388">"O dispositivo inscribirase no programa de bonificación de <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> dentro de 30 días"</string>
     <string name="device_enrollment_notification_body_text" msgid="8755080244956655854">"A inscrición retomarase a esta hora: <xliff:g id="TIME">%1$s</xliff:g>. Podes seguir usando o dispositivo."</string>
     <string name="continue_using_device" msgid="5816570734692191190">"Podes seguir usando o dispositivo"</string>
     <string name="device_paid" msgid="6606280698381856804">"Xa pagaches o dispositivo"</string>
-    <string name="device_removed_from_subsidy_program" msgid="1243434945619071051">"O dispositivo quitouse do programa de subvencións de <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
+    <string name="device_removed_from_subsidy_program" msgid="1243434945619071051">"O dispositivo quitouse do programa de bonificación de <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="device_removed_from_finance_program" msgid="825548999540107578">"O dispositivo quitouse do programa de finanzas de <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="restrictions_lifted" msgid="5785586265984319396">"Levantáronse todas as restricións aplicadas ao dispositivo"</string>
     <string name="uninstall_kiosk_app" msgid="3459557395024053988">"Podes desinstalar a aplicación de quiosco desde o dispositivo"</string>
@@ -121,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{O dispositivo restablecerase dentro de 1 día}other{O dispositivo restablecerase dentro de # días}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"O dispositivo restablecerase dentro de <xliff:g id="TIMER">%s</xliff:g>"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Eliminaranse todos os datos do dispositivo. Se precisas axuda para inscribilo, ponte en contacto con <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Permite as notificacións de DeviceLock para continuar pospoñendo a inscrición do dispositivo."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Produciuse un erro durante o aprovisionamento financeiro"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"Fai clic aquí para poñerte en contacto co teu financeiro. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Máis información<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Saír"</string>

@@ -38,9 +38,9 @@
     <string name="locked_emergency_text" msgid="3509216445555779286">"Құтқару қызметіне қоңырау шалу қызметтері"</string>
     <string name="locked_phone_usage_text" msgid="1913605870324552847">"Кіріс және кейбір шығыс қоңыраулар"</string>
     <string name="locked_settings_usage_text" msgid="8336476063187737700">"Параметрлер"</string>
-    <string name="locked_backup_and_restore_text" msgid="104616318625243429">"&lt;a href=https://support.google.com/android/answer/2819582&gt;Деректердің сақтық көшірмесін жасау&lt;/a&gt; және оларды қалпына келтіру"</string>
+    <string name="locked_backup_and_restore_text" msgid="104616318625243429">"Деректердің &lt;a href=https://support.google.com/android/answer/2819582&gt;сақтық көшірмесін жасау және оларды қалпына келтіру&lt;/a&gt;"</string>
     <string name="exposure_section_title" msgid="2329122144337528752">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> қолданбасына қандай ақпарат көрінеді?"</string>
-    <string name="exposure_install_text" msgid="2631074166447765453">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> қолданбасы орнатылғанда не жойылғанда"</string>
+    <string name="exposure_install_text" msgid="2631074166447765453">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> қолданбасының орнатылуы және жойылуы"</string>
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> қолданбасының құлыптау және құлыпты ашу сұраулары"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> қолданбасы қолжетімді болмаса"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Ашық кодты бағдарлама лицензиялары"</string>
@@ -60,7 +60,7 @@
     <string name="header_icon_content_description" msgid="6069602031334473195">"Ақпарат"</string>
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"Ұсыну ақпараты"</string>
     <string name="enroll_your_device_header" msgid="2226305405591945098">"Құрылғыңызды тіркеңіз"</string>
-    <string name="enroll_your_device_financing_subheader" msgid="7378414469334757425">"Енді құрылғыңызды кредитордың (<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>) қаржыландыру бағдарламасына тіркей аласыз."</string>
+    <string name="enroll_your_device_financing_subheader" msgid="8810608106273097451">"Енді құрылғыңызды кредитордың (<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>) субсидиялау бағдарламасына тіркей аласыз."</string>
     <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"Енді құрылғыңызды кредитордың (<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>) субсидиялау бағдарламасына тіркей аласыз."</string>
     <string name="subsidy_program_header" msgid="2321508488856303554">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> субсидиялау бағдарламасына қосылдыңыз"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"Құрылғыны тіркеу"</string>
@@ -121,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{Құрылғы 1 күннен кейін бастапқы күйге қайтарылады}other{Құрылғы # күннен кейін бастапқы күйге қайтарылады}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"Құрылғы <xliff:g id="TIMER">%s</xliff:g> кейін бастапқы күйге қайтарылады"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Құрылғыдағы барлық дерек жойылады. Құрылғыны тіркеу бойынша көмек алу үшін кредиторға (<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>) хабарласыңыз."</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Құрылғыны тіркеуді кейінге қалдыра беру үшін DeviceLock-тың хабарландыру жіберуіне рұқсат етіңіз."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Қаржымен қамтамасыз ету мүмкін болмады"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"Қаржыгермен қалай хабарласуға болатынын білу үшін осы жерді басыңыз. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Толық ақпарат<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Шығу"</string>

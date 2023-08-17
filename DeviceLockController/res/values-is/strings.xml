@@ -32,8 +32,8 @@
     <string name="reset_phone" msgid="1161657350311160627">"Endurstilla síma"</string>
     <string name="control_section_title" msgid="2213476068991045785">"Hvað getur <xliff:g id="CREDITOR_APP">%1$s</xliff:g> gert?"</string>
     <string name="control_lock_device_text" msgid="8253302484073757764">"Sett takmarkanir á þetta tæki ef þú greiðir ekki"</string>
-    <string name="control_download_text" msgid="8514650561843088172">"Sækja, setja upp og uppfæra <xliff:g id="CREDITOR_APP">%1$s</xliff:g>-forritið"</string>
-    <string name="control_disable_debug_text" msgid="8112443250013094442">"Slökkva á villuleitareiginleikum"</string>
+    <string name="control_download_text" msgid="8514650561843088172">"Sótt, sett upp og uppfært <xliff:g id="CREDITOR_APP">%1$s</xliff:g>-forritið"</string>
+    <string name="control_disable_debug_text" msgid="8112443250013094442">"Slökkt á villuleitareiginleikum"</string>
     <string name="locked_section_title" msgid="2748725389334076510">"Hvað virkar ef þetta tæki er læst?"</string>
     <string name="locked_emergency_text" msgid="3509216445555779286">"Neyðarsímtalaþjónusta"</string>
     <string name="locked_phone_usage_text" msgid="1913605870324552847">"Móttekin símtöl og sum hringd símtöl"</string>
@@ -60,7 +60,7 @@
     <string name="header_icon_content_description" msgid="6069602031334473195">"Upplýsingar"</string>
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"Úthlutunarupplýsingar"</string>
     <string name="enroll_your_device_header" msgid="2226305405591945098">"Skráðu tækið þitt"</string>
-    <string name="enroll_your_device_financing_subheader" msgid="7378414469334757425">"Nú geturðu skráð tækið þitt í fjármögnunarkerfi <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
+    <string name="enroll_your_device_financing_subheader" msgid="8810608106273097451">"Nú geturðu skráð tækið þitt í fjármögnunarkerfi <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"Nú geturðu skráð tækið þitt í niðurgreiðslukerfi <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="subsidy_program_header" msgid="2321508488856303554">"Þú ert í niðurgreiðslukerfi <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"Skráning tækis"</string>
@@ -121,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{Tæki verður endurstillt eftir 1 dag}one{Tæki verður endurstillt eftir # dag}other{Tæki verður endurstillt eftir # daga}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"Tækið verður endurstillt eftir <xliff:g id="TIMER">%s</xliff:g>"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Öllum gögnum tækis verður eytt. Hafðu samband við <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> til að fá aðstoð við að skrá tækið"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Leyfðu tilkynningu frá DeviceLock til að halda áfram að fresta skráningu tækisins."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Fjármögnunarúthlutun mistókst"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"Smelltu hér til að sjá leiðir til að ná sambandi við fjármögnunarþjónustuna. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Nánar<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Hætta"</string>

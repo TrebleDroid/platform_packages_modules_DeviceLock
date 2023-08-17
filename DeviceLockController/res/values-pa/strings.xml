@@ -21,7 +21,7 @@
     <string name="next_button" msgid="1856423430963548653">"ਅੱਗੇ"</string>
     <string name="reset_button" msgid="4649354411129240809">"ਰੀਸੈੱਟ ਕਰੋ"</string>
     <string name="setup_more_button" msgid="4456370972302510109">"ਹੋਰ"</string>
-    <string name="setup_info_title_text" msgid="299562193092219293">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ਇਸ ਡੀਵਾਈਸ ਦਾ ਪ੍ਰਬੰਧਨ ਕਿਵੇਂ ਕਰ ਸਕਦੀ ਹੈ"</string>
+    <string name="setup_info_title_text" msgid="299562193092219293">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ਵੱਲੋਂ ਇਸ ਡੀਵਾਈਸ ਦਾ ਪ੍ਰਬੰਧਨ ਕਿਵੇਂ ਕੀਤਾ ਜਾ ਸਕਦਾ ਹੈ"</string>
     <string name="setup_failed_title_text" msgid="9045111389981992536">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ਐਪ ਨੂੰ ਸਥਾਪਤ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਦਾ"</string>
     <string name="setup_failed_reset_device_text" msgid="178419033440060908">"ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰਨ ਲਈ ਡੀਵਾਈਸ ਨੂੰ ਰੀਸੈੱਟ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ।"</string>
     <string name="setup_failed_reset_device_timer_text" msgid="5270970227714985986">"{count,plural, =1{ਇਸ ਡੀਵਾਈਸ ਨੂੰ ਰੀਸੈੱਟ ਕਰ ਕੇ ਦੁਬਾਰਾ ਸੈੱਟਅੱਪ ਕਰਨ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ। ਇਹ 1 ਸਕਿੰਟ ਵਿੱਚ ਖੁਦ ਰੀਸੈੱਟ ਹੋ ਜਾਵੇਗਾ।}one{ਇਸ ਡੀਵਾਈਸ ਨੂੰ ਰੀਸੈੱਟ ਕਰ ਕੇ ਦੁਬਾਰਾ ਸੈੱਟਅੱਪ ਕਰਨ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ। ਇਹ # ਸਕਿੰਟ ਵਿੱਚ ਖੁਦ ਰੀਸੈੱਟ ਹੋ ਜਾਵੇਗਾ।}other{ਇਸ ਡੀਵਾਈਸ ਨੂੰ ਰੀਸੈੱਟ ਕਰ ਕੇ ਦੁਬਾਰਾ ਸੈੱਟਅੱਪ ਕਰਨ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ। ਇਹ # ਸਕਿੰਟਾਂ ਵਿੱਚ ਖੁਦ ਰੀਸੈੱਟ ਹੋ ਜਾਵੇਗਾ।}}"</string>
@@ -30,25 +30,25 @@
     <string name="setup_error_title_text" msgid="1123742279081942535">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ਐਪ ਖੋਲ੍ਹੀ ਨਹੀਂ ਜਾ ਸਕਦੀ"</string>
     <string name="try_again" msgid="5964839819170927721">"ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ"</string>
     <string name="reset_phone" msgid="1161657350311160627">"ਫ਼ੋਨ ਰੀਸੈੱਟ ਕਰੋ"</string>
-    <string name="control_section_title" msgid="2213476068991045785">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ਕੀ ਕਰ ਸਕਦੀ ਹੈ?"</string>
-    <string name="control_lock_device_text" msgid="8253302484073757764">"ਜੇ ਤੁਸੀਂ ਭੁਗਤਾਨ ਨਹੀਂ ਕਰਦੇ, ਤਾਂ ਇਸ ਡੀਵਾਈਸ \'ਤੇ ਪਾਬੰਦੀ ਲਗਾਓ"</string>
-    <string name="control_download_text" msgid="8514650561843088172">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ਐਪ ਨੂੰ ਡਾਊਨਲੋਡ, ਸਥਾਪਤ ਅਤੇ ਅੱਪਡੇਟ ਕਰੋ"</string>
-    <string name="control_disable_debug_text" msgid="8112443250013094442">"ਡੀਬੱਗਿੰਗ ਵਿਸ਼ੇਸ਼ਤਾਵਾਂ ਨੂੰ ਬੰਦ ਕਰੋ"</string>
+    <string name="control_section_title" msgid="2213476068991045785">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ਵੱਲੋਂ ਕੀ ਕੀਤਾ ਜਾ ਸਕਦਾ ਹੈ?"</string>
+    <string name="control_lock_device_text" msgid="8253302484073757764">"ਤੁਹਾਡੇ ਵੱਲੋਂ ਭੁਗਤਾਨ ਨਾ ਕੀਤੇ ਜਾਣ \'ਤੇ, ਇਸ ਡੀਵਾਈਸ ਨੂੰ ਪ੍ਰਤੀਬੰਧਿਤ ਕੀਤਾ ਜਾ ਸਕਦਾ ਹੈ"</string>
+    <string name="control_download_text" msgid="8514650561843088172">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ਐਪ ਨੂੰ ਡਾਊਨਲੋਡ, ਸਥਾਪਤ ਅਤੇ ਅੱਪਡੇਟ ਕੀਤਾ ਜਾ ਸਕਦਾ ਹੈ"</string>
+    <string name="control_disable_debug_text" msgid="8112443250013094442">"ਡੀਬੱਗਿੰਗ ਵਿਸ਼ੇਸ਼ਤਾਵਾਂ ਨੂੰ ਬੰਦ ਕੀਤਾ ਜਾ ਸਕਦਾ ਹੈ"</string>
     <string name="locked_section_title" msgid="2748725389334076510">"ਇਸ ਡੀਵਾਈਸ ਦੇ ਲਾਕ ਹੋਣ \'ਤੇ ਕਿਹੜੀ ਚੀਜ਼ ਕੰਮ ਕਰਦੀ ਹੈ?"</string>
     <string name="locked_emergency_text" msgid="3509216445555779286">"ਐਮਰਜੈਂਸੀ ਕਾਲਿੰਗ ਸੇਵਾਵਾਂ"</string>
     <string name="locked_phone_usage_text" msgid="1913605870324552847">"ਇਨਕਮਿੰਗ ਅਤੇ ਕੁਝ ਆਊਟਗੋਇੰਗ ਕਾਲਾਂ"</string>
     <string name="locked_settings_usage_text" msgid="8336476063187737700">"ਸੈਟਿੰਗਾਂ"</string>
     <string name="locked_backup_and_restore_text" msgid="104616318625243429">"ਤੁਹਾਡੇ ਡਾਟੇ ਦਾ &lt;a href=https://support.google.com/android/answer/2819582&gt;ਬੈਕਅੱਪ ਲੈਣਾ ਅਤੇ ਉਸਨੂੰ ਮੁੜ-ਬਹਾਲ ਕਰਨਾ&lt;/a&gt;"</string>
     <string name="exposure_section_title" msgid="2329122144337528752">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ਨੂੰ ਕੀ ਦਿਖਾਈ ਦਿੰਦਾ ਹੈ?"</string>
-    <string name="exposure_install_text" msgid="2631074166447765453">"ਜਦੋਂ <xliff:g id="CREDITOR_APP">%1$s</xliff:g> ਐਪ ਨੂੰ ਸਥਾਪਤ ਅਤੇ ਅਣਸਥਾਪਤ ਕੀਤਾ ਜਾਂਦਾ ਹੈ"</string>
+    <string name="exposure_install_text" msgid="2631074166447765453">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ਐਪ ਨੂੰ ਕਦੋਂ ਸਥਾਪਤ ਅਤੇ ਅਣਸਥਾਪਤ ਕੀਤਾ ਜਾਂਦਾ ਹੈ"</string>
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ਤੋਂ ਲਾਕ ਜਾਂ ਅਣਲਾਕ ਕਰਨ ਲਈ ਕੋਈ ਬੇਨਤੀ"</string>
-    <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"ਜੇ <xliff:g id="CREDITOR_APP">%1$s</xliff:g> ਐਪ ਉਪਲਬਧ ਨਹੀਂ ਹੈ"</string>
+    <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ਐਪ ਉਪਲਬਧ ਹੈ ਜਾਂ ਨਹੀਂ"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"ਖੁੱਲ੍ਹੇ ਸਰੋਤ ਲਾਇਸੰਸ"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"ਸੁਰੱਖਿਆ ਸੈਟਿੰਗਾਂ ਦੇ ਵਿੱਤ ਪ੍ਰਬੰਧਿਤ ਡੀਵਾਈਸ ਸੈਕਸ਼ਨ ਵਿਚਲੀਆਂ ਪ੍ਰਬੰਧਨ ਸਮਰੱਥਾਵਾਂ ਇਸ ਡੀਵਾਈਸ \'ਤੇ ਲਾਗੂ ਨਹੀਂ ਹੁੰਦੀਆਂ।"</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"ਇਹ ਡੀਵਾਈਸ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ਵੱਲੋਂ ਮੁਹੱਈਆ ਕਰਵਾਇਆ ਗਿਆ ਹੈ"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"ਕਿਓਸਕ ਐਪ ਸਵੈਚਲਿਤ ਤੌਰ \'ਤੇ ਡਾਊਨਲੋਡ ਅਤੇ ਸਥਾਪਤ ਹੋ ਜਾਵੇਗੀ"</string>
     <string name="install_kiosk_app_secondary_user" msgid="49911908012320834">"ਕਿਓਸਕ ਐਪ ਇਸ ਵਰਤੋਂਕਾਰ ਲਈ ਸਥਾਪਤ ਕੀਤੀ ਜਾਵੇਗੀ"</string>
-    <string name="restrict_device_if_missing_payment" msgid="5721216628714899148">"ਤੁਹਾਡੇ ਵੱਲੋਂ ਕੋਈ ਭੁਗਤਾਨ ਖੁੰਝਾ ਦੇਣ \'ਤੇ, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ਇਸ ਡੀਵਾਈਸ ਨੂੰ ਪ੍ਰਤਿਬੰਧਿਤ ਕਰ ਸਕਦਾ ਹੈ"</string>
+    <string name="restrict_device_if_missing_payment" msgid="5721216628714899148">"ਤੁਹਾਡੇ ਵੱਲੋਂ ਕੋਈ ਭੁਗਤਾਨ ਨਾ ਕਰਨ \'ਤੇ, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ਇਸ ਡੀਵਾਈਸ ਨੂੰ ਪ੍ਰਤਿਬੰਧਿਤ ਕਰ ਸਕਦਾ ਹੈ"</string>
     <string name="restrict_device_if_dont_make_payment" msgid="1619095674945507015">"ਤੁਹਾਡੇ ਵੱਲੋਂ ਲੋੜੀਂਦੇ ਭੁਗਤਾਨ ਨਾ ਕਰਨ \'ਤੇ, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ਇਸ ਡੀਵਾਈਸ ਨੂੰ ਪ੍ਰਤਿਬੰਧਿਤ ਕਰ ਸਕਦਾ ਹੈ। ਵੇਰਵਿਆਂ ਲਈ, <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>ਨਿਯਮ ਅਤੇ ਸ਼ਰਤਾਂ<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g> ਦੇਖੋ।"</string>
     <string name="restrict_device_if_owner_doesnt_make_payment" msgid="3841412765931627895">"ਮਾਲਕ ਵੱਲੋਂ ਭੁਗਤਾਨ ਨਾ ਕਰਨ \'ਤੇ, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ਇਸ ਡੀਵਾਈਸ ਨੂੰ ਪ੍ਰਤਿਬੰਧਿਤ ਕਰ ਸਕਦਾ ਹੈ"</string>
     <string name="previous" msgid="5241891780917802570">"ਪਿੱਛੇ"</string>
@@ -60,7 +60,7 @@
     <string name="header_icon_content_description" msgid="6069602031334473195">"ਜਾਣਕਾਰੀ"</string>
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"ਵਿਵਸਥਾ ਜਾਣਕਾਰੀ"</string>
     <string name="enroll_your_device_header" msgid="2226305405591945098">"ਆਪਣੇ ਡੀਵਾਈਸ ਨੂੰ ਦਰਜ ਕਰੋ"</string>
-    <string name="enroll_your_device_financing_subheader" msgid="7378414469334757425">"ਤੁਸੀਂ ਹੁਣ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ਦੇ ਵਿੱਤ ਪ੍ਰੋਗਰਾਮ ਵਿੱਚ ਆਪਣਾ ਡੀਵਾਈਸ ਦਰਜ ਕਰ ਸਕਦੇ ਹੋ"</string>
+    <string name="enroll_your_device_financing_subheader" msgid="8810608106273097451">"ਤੁਸੀਂ ਹੁਣ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ਦੇ ਵਿੱਤ ਪ੍ਰੋਗਰਾਮ ਵਿੱਚ ਆਪਣਾ ਡੀਵਾਈਸ ਦਰਜ ਕਰ ਸਕਦੇ ਹੋ"</string>
     <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"ਤੁਸੀਂ ਹੁਣ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ਦੇ ਸਬਸਿਡੀ ਪ੍ਰੋਗਰਾਮ ਵਿੱਚ ਆਪਣਾ ਡੀਵਾਈਸ ਦਰਜ ਕਰ ਸਕਦੇ ਹੋ"</string>
     <string name="subsidy_program_header" msgid="2321508488856303554">"ਤੁਸੀਂ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ਦੇ ਸਬਸਿਡੀ ਪ੍ਰੋਗਰਾਮ \'ਤੇ ਹੋ"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"ਡੀਵਾਈਸ ਦਰਜ ਕਰਨਾ"</string>
@@ -121,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{ਡੀਵਾਈਸ 1 ਦਿਨ ਵਿੱਚ ਰੀਸੈੱਟ ਹੋ ਜਾਵੇਗਾ}one{ਡੀਵਾਈਸ # ਦਿਨ ਵਿੱਚ ਰੀਸੈੱਟ ਹੋ ਜਾਵੇਗਾ}other{ਡੀਵਾਈਸ # ਦਿਨਾਂ ਵਿੱਚ ਰੀਸੈੱਟ ਹੋ ਜਾਵੇਗਾ}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"ਡੀਵਾਈਸ <xliff:g id="TIMER">%s</xliff:g> ਵਿੱਚ ਰੀਸੈੱਟ ਹੋ ਜਾਵੇਗਾ"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"ਸਾਰੇ ਡੀਵਾਈਸ ਡਾਟੇ ਨੂੰ ਮਿਟਾ ਦਿੱਤਾ ਜਾਵੇਗਾ। ਤੁਹਾਡੇ ਡੀਵਾਈਸ ਨੂੰ ਦਰਜ ਕਰਨ ਵਿੱਚ ਮਦਦ ਲਈ, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ਨੂੰ ਸੰਪਰਕ ਕਰੋ"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"ਕਿਰਪਾ ਕਰਕੇ ਡੀਵਾਈਸ ਨੂੰ ਦਰਜ ਕਰਨ ਦੀ ਪ੍ਰਕਿਰਿਆ ਨੂੰ ਮੁਲਤਵੀ ਕਰਨਾ ਜਾਰੀ ਰੱਖਣ ਲਈ, DeviceLock ਤੋਂ ਸੂਚਨਾ ਦੀ ਇਜਾਜ਼ਤ ਦਿਓ।"</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"ਵਿੱਤ ਵਿਵਸਥਾ ਅਸਫਲ ਰਹੀ"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੇ ਫਾਈਨੈਂਸਰ ਨਾਲ ਸੰਪਰਕ ਕਰਨ ਦੇ ਤਰੀਕਿਆਂ ਲਈ ਇੱਥੇ ਕਲਿੱਕ ਕਰੋ। <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>ਹੋਰ ਜਾਣੋ<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"ਬਾਹਰ ਜਾਓ"</string>

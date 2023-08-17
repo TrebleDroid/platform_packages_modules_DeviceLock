@@ -60,7 +60,7 @@
     <string name="header_icon_content_description" msgid="6069602031334473195">"Information"</string>
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"Info om tillhandahållande"</string>
     <string name="enroll_your_device_header" msgid="2226305405591945098">"Registrera din enhet"</string>
-    <string name="enroll_your_device_financing_subheader" msgid="7378414469334757425">"Nu kan du registrera din enhet för avbetalningsprogrammet hos <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
+    <string name="enroll_your_device_financing_subheader" msgid="8810608106273097451">"Nu kan du registrera din enhet för avbetalningsprogrammet hos <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"Nu kan du registrera din enhet för finansiering med <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="subsidy_program_header" msgid="2321508488856303554">"Du får finansiering med <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"Registrering av enhet"</string>
@@ -121,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{Enheten återställs om 1 dag}other{Enheten återställs om # dagar}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"Enheten återställs om <xliff:g id="TIMER">%s</xliff:g>"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"All enhetsdata raderas. Kontakta <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> om du behöver hjälp att registrera enheten"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Tillåt aviseringar från DeviceLock för att fortsätta att skjuta upp registreringen av enheten."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Tillhandahållande av finansiering misslyckades"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"Klicka här för att visa hur du kontaktar finansiären. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Läs mer<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Stäng"</string>

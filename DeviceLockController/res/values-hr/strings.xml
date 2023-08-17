@@ -60,7 +60,7 @@
     <string name="header_icon_content_description" msgid="6069602031334473195">"Informacije"</string>
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"Podaci o pristupu"</string>
     <string name="enroll_your_device_header" msgid="2226305405591945098">"Prijavite svoj uređaj"</string>
-    <string name="enroll_your_device_financing_subheader" msgid="7378414469334757425">"Odsad možete prijaviti svoj uređaj u financijski program davatelja usluge <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
+    <string name="enroll_your_device_financing_subheader" msgid="8810608106273097451">"Svoj uređaj sada možete prijaviti u financijski program davatelja usluge <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"Odsad možete prijaviti svoj uređaj u program subvencioniranja davatelja usluge <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="subsidy_program_header" msgid="2321508488856303554">"Uključeni ste u program subvencioniranja davatelja usluge <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"Prijava uređaja"</string>
@@ -121,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{Uređaj će se ponovno pokrenuti za 1 dan}one{Uređaj će se ponovno pokrenuti za # dan}few{Uređaj će se ponovno pokrenuti za # dana}other{Uređaj će se ponovno pokrenuti za # dana}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"Uređaj će se poništiti za <xliff:g id="TIMER">%s</xliff:g>"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Svi će se podaci o uređaju izbrisati. Za pomoć pri prijavi uređaja kontaktirajte davatelja usluga <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Omogućite obavijest od DeviceLocka da biste nastavili s odgodom prijave uređaja."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Financijski pristup nije uspio"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"Kliknite ovdje da biste pronašli načine na koje možete kontaktirati svog financijera. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Saznajte više<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Izlaz"</string>

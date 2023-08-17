@@ -48,7 +48,7 @@
     <string name="device_provided_by_provider" msgid="290593329676291991">"このデバイスは <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> から提供されています"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"キオスクアプリは自動的にダウンロード、インストールされます"</string>
     <string name="install_kiosk_app_secondary_user" msgid="49911908012320834">"このユーザーに対してキオスクアプリがインストールされます"</string>
-    <string name="restrict_device_if_missing_payment" msgid="5721216628714899148">"支払いができなかった場合、<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> はこのデバイスを制限する可能性があります"</string>
+    <string name="restrict_device_if_missing_payment" msgid="5721216628714899148">"支払いが行われなかった場合、<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> はこのデバイスを制限する可能性があります"</string>
     <string name="restrict_device_if_dont_make_payment" msgid="1619095674945507015">"必要な支払いを行わない場合、<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> はこのデバイスを制限する可能性があります。詳しくは、<xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>利用規約<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g>をご覧ください。"</string>
     <string name="restrict_device_if_owner_doesnt_make_payment" msgid="3841412765931627895">"所有者が支払いを行わない場合、<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> はこのデバイスを制限する可能性があります"</string>
     <string name="previous" msgid="5241891780917802570">"前へ"</string>
@@ -60,7 +60,7 @@
     <string name="header_icon_content_description" msgid="6069602031334473195">"情報"</string>
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"プロビジョニング情報"</string>
     <string name="enroll_your_device_header" msgid="2226305405591945098">"デバイスを登録する"</string>
-    <string name="enroll_your_device_financing_subheader" msgid="7378414469334757425">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> の融資プログラムにデバイスを登録できるようになりました"</string>
+    <string name="enroll_your_device_financing_subheader" msgid="8810608106273097451">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> の融資プログラムにデバイスを登録できるようになりました"</string>
     <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> の補助金プログラムにデバイスを登録できるようになりました"</string>
     <string name="subsidy_program_header" msgid="2321508488856303554">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> の補助金プログラムに参加しています"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"デバイスの登録"</string>
@@ -121,7 +121,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{デバイスは 1 日以内にリセットされます}other{デバイスは # 日以内にリセットされます}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"デバイスは <xliff:g id="TIMER">%s</xliff:g> にリセットされます"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"デバイスのデータはすべて削除されます。デバイスの登録についてサポートが必要な場合は、<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> にお問い合わせください"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"デバイスの登録を引き続き延期するには、DeviceLock からの通知を許可してください。"</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"融資のプロビジョニングに失敗しました"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"融資業者への連絡方法については、こちらをクリックしてください。<xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>詳細<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"終了"</string>
