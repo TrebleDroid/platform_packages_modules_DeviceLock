@@ -32,8 +32,8 @@
     <string name="reset_phone" msgid="1161657350311160627">"Endurstilla síma"</string>
     <string name="control_section_title" msgid="2213476068991045785">"Hvað getur <xliff:g id="CREDITOR_APP">%1$s</xliff:g> gert?"</string>
     <string name="control_lock_device_text" msgid="8253302484073757764">"Sett takmarkanir á þetta tæki ef þú greiðir ekki"</string>
-    <string name="control_download_text" msgid="8514650561843088172">"Sækja, setja upp og uppfæra <xliff:g id="CREDITOR_APP">%1$s</xliff:g>-forritið"</string>
-    <string name="control_disable_debug_text" msgid="8112443250013094442">"Slökkva á villuleitareiginleikum"</string>
+    <string name="control_download_text" msgid="8514650561843088172">"Sótt, sett upp og uppfært <xliff:g id="CREDITOR_APP">%1$s</xliff:g>-forritið"</string>
+    <string name="control_disable_debug_text" msgid="8112443250013094442">"Slökkt á villuleitareiginleikum"</string>
     <string name="locked_section_title" msgid="2748725389334076510">"Hvað virkar ef þetta tæki er læst?"</string>
     <string name="locked_emergency_text" msgid="3509216445555779286">"Neyðarsímtalaþjónusta"</string>
     <string name="locked_phone_usage_text" msgid="1913605870324552847">"Móttekin símtöl og sum hringd símtöl"</string>

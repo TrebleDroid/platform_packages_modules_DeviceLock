@@ -31,9 +31,9 @@
     <string name="try_again" msgid="5964839819170927721">"Tentar de novo"</string>
     <string name="reset_phone" msgid="1161657350311160627">"Redefinir o smartphone"</string>
     <string name="control_section_title" msgid="2213476068991045785">"O que o <xliff:g id="CREDITOR_APP">%1$s</xliff:g> faz?"</string>
-    <string name="control_lock_device_text" msgid="8253302484073757764">"Restringir o dispositivo se você não efetuar um pagamento"</string>
-    <string name="control_download_text" msgid="8514650561843088172">"Faça o download, instale e atualize o app <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
-    <string name="control_disable_debug_text" msgid="8112443250013094442">"Desativar os recursos de depuração"</string>
+    <string name="control_lock_device_text" msgid="8253302484073757764">"Restringe o dispositivo se você não efetuar um pagamento"</string>
+    <string name="control_download_text" msgid="8514650561843088172">"Faz o download, instala e atualiza o app <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
+    <string name="control_disable_debug_text" msgid="8112443250013094442">"Desativa os recursos de depuração"</string>
     <string name="locked_section_title" msgid="2748725389334076510">"O que continuará funcionando se o dispositivo for bloqueado?"</string>
     <string name="locked_emergency_text" msgid="3509216445555779286">"Serviços de chamada de emergência"</string>
     <string name="locked_phone_usage_text" msgid="1913605870324552847">"Ligações recebidas e algumas efetuadas"</string>

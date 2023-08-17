@@ -21,7 +21,7 @@
     <string name="next_button" msgid="1856423430963548653">"Далі"</string>
     <string name="reset_button" msgid="4649354411129240809">"Скинути"</string>
     <string name="setup_more_button" msgid="4456370972302510109">"Більше"</string>
-    <string name="setup_info_title_text" msgid="299562193092219293">"Як додаток <xliff:g id="CREDITOR_APP">%1$s</xliff:g> може керувати цим пристроєм"</string>
+    <string name="setup_info_title_text" msgid="299562193092219293">"Як <xliff:g id="CREDITOR_APP">%1$s</xliff:g> може керувати цим пристроєм"</string>
     <string name="setup_failed_title_text" msgid="9045111389981992536">"Не вдається встановити додаток <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="setup_failed_reset_device_text" msgid="178419033440060908">"Налаштування пристрою скидаються, щоб повторити спробу."</string>
     <string name="setup_failed_reset_device_timer_text" msgid="5270970227714985986">"{count,plural, =1{Скиньте параметри цього пристрою, а тоді спробуйте налаштувати його знову. Цю дію буде виконано автоматично через 1 секунду.}one{Скиньте параметри цього пристрою, а тоді спробуйте налаштувати його знову. Цю дію буде виконано автоматично через # секунду.}few{Скиньте параметри цього пристрою, а тоді спробуйте налаштувати його знову. Цю дію буде виконано автоматично через # секунди.}many{Скиньте параметри цього пристрою, а тоді спробуйте налаштувати його знову. Цю дію буде виконано автоматично через # секунд.}other{Скиньте параметри цього пристрою, а тоді спробуйте налаштувати його знову. Цю дію буде виконано автоматично через # секунди.}}"</string>
@@ -30,16 +30,16 @@
     <string name="setup_error_title_text" msgid="1123742279081942535">"Не вдається відкрити додаток <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="try_again" msgid="5964839819170927721">"Повторити спробу"</string>
     <string name="reset_phone" msgid="1161657350311160627">"Скинути налаштування телефона"</string>
-    <string name="control_section_title" msgid="2213476068991045785">"Можливості додатка <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
-    <string name="control_lock_device_text" msgid="8253302484073757764">"Якщо не здійснити платіж, користування пристроєм буде обмежено"</string>
-    <string name="control_download_text" msgid="8514650561843088172">"Завантажте, встановіть і оновіть додаток <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
-    <string name="control_disable_debug_text" msgid="8112443250013094442">"Вимкніть функції налагодження"</string>
+    <string name="control_section_title" msgid="2213476068991045785">"Що може робити <xliff:g id="CREDITOR_APP">%1$s</xliff:g>?"</string>
+    <string name="control_lock_device_text" msgid="8253302484073757764">"Обмежувати користування пристроєм, якщо не здійснити платіж"</string>
+    <string name="control_download_text" msgid="8514650561843088172">"Завантажувати, встановлювати й оновлювати додаток <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
+    <string name="control_disable_debug_text" msgid="8112443250013094442">"Вимикати функції налагодження"</string>
     <string name="locked_section_title" msgid="2748725389334076510">"Які функції працюватимуть на заблокованому пристрої?"</string>
     <string name="locked_emergency_text" msgid="3509216445555779286">"Сервіси для екстрених викликів"</string>
     <string name="locked_phone_usage_text" msgid="1913605870324552847">"Вхідні й деякі вихідні виклики"</string>
     <string name="locked_settings_usage_text" msgid="8336476063187737700">"Налаштування"</string>
     <string name="locked_backup_and_restore_text" msgid="104616318625243429">"&lt;a href=https://support.google.com/android/answer/2819582&gt;Резервне копіювання й відновлення&lt;/a&gt; ваших даних"</string>
-    <string name="exposure_section_title" msgid="2329122144337528752">"До яких даних має доступ додаток <xliff:g id="CREDITOR_APP">%1$s</xliff:g>?"</string>
+    <string name="exposure_section_title" msgid="2329122144337528752">"До яких даних має доступ <xliff:g id="CREDITOR_APP">%1$s</xliff:g>?"</string>
     <string name="exposure_install_text" msgid="2631074166447765453">"Дати встановлення й видалення додатка <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Усі запити на блокування й розблокування з додатка <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Інформація про відсутність додатка <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>

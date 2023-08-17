@@ -32,8 +32,8 @@
     <string name="reset_phone" msgid="1161657350311160627">"Rivendos telefonin"</string>
     <string name="control_section_title" msgid="2213476068991045785">"Çfarë mund të bëjë <xliff:g id="CREDITOR_APP">%1$s</xliff:g>?"</string>
     <string name="control_lock_device_text" msgid="8253302484073757764">"Të kufizojë këtë pajisje nëse nuk kryen një pagesë"</string>
-    <string name="control_download_text" msgid="8514650561843088172">"Shkarko, instalo dhe përditëso aplikacionin <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
-    <string name="control_disable_debug_text" msgid="8112443250013094442">"Çaktivizo veçoritë e korrigjimit"</string>
+    <string name="control_download_text" msgid="8514650561843088172">"Të shkarkojë, instalojë dhe përditësojë aplikacionin <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
+    <string name="control_disable_debug_text" msgid="8112443250013094442">"Të çaktivizojë veçoritë e korrigjimit"</string>
     <string name="locked_section_title" msgid="2748725389334076510">"Çfarë funksionon nëse kjo pajisje kyçet?"</string>
     <string name="locked_emergency_text" msgid="3509216445555779286">"Shërbimet e telefonatave të urgjencës"</string>
     <string name="locked_phone_usage_text" msgid="1913605870324552847">"Telefonatat hyrëse dhe disa dalëse"</string>

@@ -31,7 +31,7 @@
     <string name="try_again" msgid="5964839819170927721">"Zkusit znovu"</string>
     <string name="reset_phone" msgid="1161657350311160627">"Resetovat telefon"</string>
     <string name="control_section_title" msgid="2213476068991045785">"Co může aplikace <xliff:g id="CREDITOR_APP">%1$s</xliff:g> dělat?"</string>
-    <string name="control_lock_device_text" msgid="8253302484073757764">"Pokud nezaplatíte, přístup k zařízení bude omezen"</string>
+    <string name="control_lock_device_text" msgid="8253302484073757764">"Omezit přístup k zařízení, pokud nezaplatíte"</string>
     <string name="control_download_text" msgid="8514650561843088172">"Stáhnout, nainstalovat a aktualizovat aplikaci <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="control_disable_debug_text" msgid="8112443250013094442">"Vypnout funkce ladění"</string>
     <string name="locked_section_title" msgid="2748725389334076510">"Co funguje, když je zařízení uzamčeno?"</string>

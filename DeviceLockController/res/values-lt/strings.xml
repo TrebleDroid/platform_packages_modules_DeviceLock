@@ -40,7 +40,7 @@
     <string name="locked_settings_usage_text" msgid="8336476063187737700">"Nustatymai"</string>
     <string name="locked_backup_and_restore_text" msgid="104616318625243429">"&lt;a href=https://support.google.com/android/answer/2819582&gt;Atsarginės duomenų kopijos kūrimas ir&lt;/a&gt; duomenų atkūrimas"</string>
     <string name="exposure_section_title" msgid="2329122144337528752">"Ką „<xliff:g id="CREDITOR_APP">%1$s</xliff:g>“ mato?"</string>
-    <string name="exposure_install_text" msgid="2631074166447765453">"Kada programa „<xliff:g id="CREDITOR_APP">%1$s</xliff:g>“ įdiegiama ar pašalinama?"</string>
+    <string name="exposure_install_text" msgid="2631074166447765453">"Kada programa „<xliff:g id="CREDITOR_APP">%1$s</xliff:g>“ įdiegiama ar pašalinama"</string>
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Visos „<xliff:g id="CREDITOR_APP">%1$s</xliff:g>“ pateiktos užrakinimo ar atrakinimo užklausos"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Jei programa „<xliff:g id="CREDITOR_APP">%1$s</xliff:g>“ nepasiekiama"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"Atvirojo šaltinio licencijos"</string>

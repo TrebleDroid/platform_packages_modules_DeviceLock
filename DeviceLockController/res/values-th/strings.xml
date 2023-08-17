@@ -31,7 +31,7 @@
     <string name="try_again" msgid="5964839819170927721">"ลองอีกครั้ง"</string>
     <string name="reset_phone" msgid="1161657350311160627">"รีเซ็ตโทรศัพท์"</string>
     <string name="control_section_title" msgid="2213476068991045785">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ทำอะไรได้บ้าง"</string>
-    <string name="control_lock_device_text" msgid="8253302484073757764">"จำกัดอุปกรณ์นี้หากคุณไม่ได้จะชำระเงิน"</string>
+    <string name="control_lock_device_text" msgid="8253302484073757764">"จำกัดอุปกรณ์นี้หากคุณไม่ได้ชำระเงิน"</string>
     <string name="control_download_text" msgid="8514650561843088172">"ดาวน์โหลด ติดตั้ง และอัปเดตแอป <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="control_disable_debug_text" msgid="8112443250013094442">"ปิดฟีเจอร์การแก้ไขข้อบกพร่อง"</string>
     <string name="locked_section_title" msgid="2748725389334076510">"มีอะไรใช้งานได้บ้างหากอุปกรณ์นี้ล็อกอยู่"</string>
@@ -42,7 +42,7 @@
     <string name="exposure_section_title" msgid="2329122144337528752">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> จะมองเห็นอะไรบ้าง"</string>
     <string name="exposure_install_text" msgid="2631074166447765453">"เวลาที่มีการติดตั้งหรือถอนการติดตั้งแอป <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"คำขอล็อกหรือปลดล็อกจาก <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
-    <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"หากแอป <xliff:g id="CREDITOR_APP">%1$s</xliff:g> ไม่พร้อมใช้งาน"</string>
+    <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"เห็นว่าแอป <xliff:g id="CREDITOR_APP">%1$s</xliff:g> พร้อมใช้งานหรือไม่"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"ใบอนุญาตโอเพนซอร์ส"</string>
     <string name="footer_notice" msgid="7606898520964750584">"ความสามารถอื่นๆ สำหรับการจัดการใน"<b>"การตั้งค่า &gt; ความปลอดภัย &gt; ข้อมูลอุปกรณ์ที่มีการจัดการ"</b>"จะไม่ได้นำมาใช้กับอุปกรณ์นี้"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"ความสามารถในการจัดการในส่วนอุปกรณ์ที่ได้รับการสนับสนุนทางการเงินของการตั้งค่าความปลอดภัยจะไม่นำมาใช้กับอุปกรณ์นี้"</string>

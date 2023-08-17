@@ -21,7 +21,7 @@
     <string name="next_button" msgid="1856423430963548653">"繼續"</string>
     <string name="reset_button" msgid="4649354411129240809">"重設"</string>
     <string name="setup_more_button" msgid="4456370972302510109">"更多"</string>
-    <string name="setup_info_title_text" msgid="299562193092219293">"「<xliff:g id="CREDITOR_APP">%1$s</xliff:g>」如何管理這部裝置"</string>
+    <string name="setup_info_title_text" msgid="299562193092219293">"「<xliff:g id="CREDITOR_APP">%1$s</xliff:g>」可以如何管理這部裝置"</string>
     <string name="setup_failed_title_text" msgid="9045111389981992536">"無法安裝「<xliff:g id="CREDITOR_APP">%1$s</xliff:g>」應用程式"</string>
     <string name="setup_failed_reset_device_text" msgid="178419033440060908">"正在重設裝置，以便再試一次。"</string>
     <string name="setup_failed_reset_device_timer_text" msgid="5270970227714985986">"{count,plural, =1{請重設這部裝置，然後再嘗試重新設定。裝置將在 1 秒後自動重設。}other{請重設這部裝置，然後再嘗試重新設定。裝置將在 # 秒後自動重設。}}"</string>
@@ -30,8 +30,8 @@
     <string name="setup_error_title_text" msgid="1123742279081942535">"無法開啟「<xliff:g id="CREDITOR_APP">%1$s</xliff:g>」應用程式"</string>
     <string name="try_again" msgid="5964839819170927721">"再試一次"</string>
     <string name="reset_phone" msgid="1161657350311160627">"重設手機"</string>
-    <string name="control_section_title" msgid="2213476068991045785">"「<xliff:g id="CREDITOR_APP">%1$s</xliff:g>」的功能"</string>
-    <string name="control_lock_device_text" msgid="8253302484073757764">"如未付款，這部裝置會受到限制"</string>
+    <string name="control_section_title" msgid="2213476068991045785">"「<xliff:g id="CREDITOR_APP">%1$s</xliff:g>」可以執行的操作"</string>
+    <string name="control_lock_device_text" msgid="8253302484073757764">"如果你未付款，可以對這部裝置的使用進行限制"</string>
     <string name="control_download_text" msgid="8514650561843088172">"下載、安裝及更新「<xliff:g id="CREDITOR_APP">%1$s</xliff:g>」應用程式"</string>
     <string name="control_disable_debug_text" msgid="8112443250013094442">"關閉偵錯功能"</string>
     <string name="locked_section_title" msgid="2748725389334076510">"可在裝置鎖定時運作的功能"</string>

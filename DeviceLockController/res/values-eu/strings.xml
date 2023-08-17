@@ -31,9 +31,9 @@
     <string name="try_again" msgid="5964839819170927721">"Saiatu berriro"</string>
     <string name="reset_phone" msgid="1161657350311160627">"Berrezarri telefonoa"</string>
     <string name="control_section_title" msgid="2213476068991045785">"Zer egin dezake <xliff:g id="CREDITOR_APP">%1$s</xliff:g> aplikazioak?"</string>
-    <string name="control_lock_device_text" msgid="8253302484073757764">"Ordainketa egin ezean, murriztu gailua"</string>
-    <string name="control_download_text" msgid="8514650561843088172">"Deskargatu, instalatu eta eguneratu <xliff:g id="CREDITOR_APP">%1$s</xliff:g> aplikazioa"</string>
-    <string name="control_disable_debug_text" msgid="8112443250013094442">"Desaktibatu arazketa-eginbideak"</string>
+    <string name="control_lock_device_text" msgid="8253302484073757764">"Ordainketa egin ezean, gailua murriztu."</string>
+    <string name="control_download_text" msgid="8514650561843088172">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> aplikazioa deskargatu, instalatu eta eguneratu."</string>
+    <string name="control_disable_debug_text" msgid="8112443250013094442">"Arazketa-eginbideak desaktibatu."</string>
     <string name="locked_section_title" msgid="2748725389334076510">"Zerk funtzionatzen du gailua blokeatuta dagoenean?"</string>
     <string name="locked_emergency_text" msgid="3509216445555779286">"Larrialdi-deien zerbitzuak"</string>
     <string name="locked_phone_usage_text" msgid="1913605870324552847">"Sarrerako deiak eta irteerako dei batzuk"</string>
@@ -47,9 +47,9 @@
     <string name="footer_notice" msgid="7606898520964750584"><b>"Ezarpenak &gt; Segurtasuna &gt; Kudeatutako gailuari buruzko informazioa"</b>" ataleko gainerako kudeaketa-gaitasunak ez dira gailu honetan aplikagarriak"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"Segurtasun-ezarpenetako gailu finantzatuaren ataleko kudeaketa-gaitasunak ez dira gailu honetan aplikagarriak."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> hornitzaileak eman du gailu hau"</string>
-    <string name="download_kiosk_app" msgid="1845089944897502656">"Kiosko-aplikazioa automatikoki deskargatu eta instalatuko da"</string>
+    <string name="download_kiosk_app" msgid="1845089944897502656">"Kiosko-aplikazioa automatikoki deskargatu eta instalatuko da."</string>
     <string name="install_kiosk_app_secondary_user" msgid="49911908012320834">"Erabiltzaile horri kiosko-aplikazioa instalatuko zaio"</string>
-    <string name="restrict_device_if_missing_payment" msgid="5721216628714899148">"Ordainketaren bat egiten ez baduzu, baliteke <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> hornitzaileak gailua murriztea"</string>
+    <string name="restrict_device_if_missing_payment" msgid="5721216628714899148">"Ordainketaren bat egiten ez baduzu, baliteke <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> hornitzaileak gailua murriztea."</string>
     <string name="restrict_device_if_dont_make_payment" msgid="1619095674945507015">"Beharrezko ordainketak egiten ez badituzu, baliteke <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> hornitzaileak gailua murriztea. Xehetasunak lortzeko, ikusi <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>Zehaztapenak eta baldintzak<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g>."</string>
     <string name="restrict_device_if_owner_doesnt_make_payment" msgid="3841412765931627895">"Jabeak ordainketak egiten ez baditu, baliteke <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> hornitzaileak gailua murriztea"</string>
     <string name="previous" msgid="5241891780917802570">"Aurrekoa"</string>
@@ -79,7 +79,7 @@
     <string name="installing_kiosk_app" msgid="324208168205545860">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> aplikazioa instalatzen…"</string>
     <string name="opening_kiosk_app" msgid="2021888641430165654">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> aplikazioa irekitzen…"</string>
     <string name="settings_banner_title" msgid="527041021011279252">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> hornitzaileak emandako gailua"</string>
-    <string name="settings_banner_body" msgid="5814902066260202824">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> hornitzaileak gailuko ezarpenak alda ditzake"</string>
+    <string name="settings_banner_body" msgid="5814902066260202824">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> hornitzaileak gailuaren ezarpenak alda ditzake"</string>
     <string name="settings_banner_button" msgid="1831020849782670907">"Informazio gehiago"</string>
     <string name="settings_screen_title" msgid="721470080648091035">"Gailu finantzatuari buruzko informazioa"</string>
     <string name="settings_intro" msgid="5809531331925309396">"Kreditu bidezko gailu-hornitzaileak, ezarpenak aldatu, eta gailuan kiosko-aplikazioa instala dezake.\n\nBaliteke <xliff:g id="PROVIDER_NAME_0">%1$s</xliff:g> hornitzaileak gailua murriztea beharrezko ordainketak egiten ez badituzu edo <xliff:g id="PROVIDER_NAME_1">%1$s</xliff:g> hornitzailearen SIMa erabiltzeari uzten badiozu.\n\nInformazio gehiago lortzeko, jarri <xliff:g id="PROVIDER_NAME_2">%1$s</xliff:g> hornitzailearekin harremanetan."</string>

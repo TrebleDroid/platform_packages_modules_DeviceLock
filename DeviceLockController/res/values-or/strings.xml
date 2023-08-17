@@ -31,18 +31,18 @@
     <string name="try_again" msgid="5964839819170927721">"ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ"</string>
     <string name="reset_phone" msgid="1161657350311160627">"ଫୋନ୍ ରିସେଟ୍ କରନ୍ତୁ"</string>
     <string name="control_section_title" msgid="2213476068991045785">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> କଣ କରିପାରିବ?"</string>
-    <string name="control_lock_device_text" msgid="8253302484073757764">"ଯଦି ଆପଣ କୌଣସି ପେମେଣ୍ଟ ନକରନ୍ତି ତେବେ ଏହି ଡିଭାଇସକୁ ପ୍ରତିବନ୍ଧିତ କରନ୍ତୁ"</string>
-    <string name="control_download_text" msgid="8514650561843088172">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ଆପକୁ ଡାଉନଲୋଡ, ଇନଷ୍ଟଲ ଏବଂ ଅପଡେଟ କରନ୍ତୁ"</string>
-    <string name="control_disable_debug_text" msgid="8112443250013094442">"ଡିବଗିଂ ଫିଚରଗୁଡ଼ିକୁ ବନ୍ଦ କରନ୍ତୁ"</string>
+    <string name="control_lock_device_text" msgid="8253302484073757764">"ଯଦି ଆପଣ କୌଣସି ପେମେଣ୍ଟ ନକରନ୍ତି ତେବେ ଏହି ଡିଭାଇସକୁ ପ୍ରତିବନ୍ଧିତ କରେ"</string>
+    <string name="control_download_text" msgid="8514650561843088172">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ଆପକୁ ଡାଉନଲୋଡ, ଇନଷ୍ଟଲ ଏବଂ ଅପଡେଟ କରେ"</string>
+    <string name="control_disable_debug_text" msgid="8112443250013094442">"ଡିବଗିଂ ଫିଚରଗୁଡ଼ିକୁ ବନ୍ଦ କରେ"</string>
     <string name="locked_section_title" msgid="2748725389334076510">"ଏହି ଡିଭାଇସ ଲକ ଥିଲେ ଏହା କେଉଁ କାମ କରେ?"</string>
     <string name="locked_emergency_text" msgid="3509216445555779286">"ଜରୁରୀକାଳୀନ କଲିଂ ସେବାଗୁଡ଼ିକ"</string>
     <string name="locked_phone_usage_text" msgid="1913605870324552847">"ଇନକମିଂ ଏବଂ କିଛି ଆଉଟଗୋଇଂ କଲ୍"</string>
     <string name="locked_settings_usage_text" msgid="8336476063187737700">"ସେଟିଂସ"</string>
     <string name="locked_backup_and_restore_text" msgid="104616318625243429">"&lt;a href=https://support.google.com/android/answer/2819582&gt;ଆପଣଙ୍କ ଡାଟାର ବେକଅପ ନେଇ ରିଷ୍ଟୋର କରିବା&lt;/a&gt;"</string>
-    <string name="exposure_section_title" msgid="2329122144337528752">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g>କୁ କଣ ଦୃଶ୍ୟମାନ ଅଟେ?"</string>
-    <string name="exposure_install_text" msgid="2631074166447765453">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ଆପ୍ ଇନଷ୍ଟଲ୍ ବା ଅନଇନଷ୍ଟଲ୍ ଥିଲେ"</string>
-    <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g>ରୁ ଯେ କୌଣସି ଲକ୍ କିମ୍ବା ଅନଲକ୍ କରିବାର ଅନୁରୋଧ"</string>
-    <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"ଯଦି <xliff:g id="CREDITOR_APP">%1$s</xliff:g> ଆପ୍ ଉପଲବ୍ଧ ନାହିଁ"</string>
+    <string name="exposure_section_title" msgid="2329122144337528752">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g>କୁ କଣ ଦେଖାଯାଏ?"</string>
+    <string name="exposure_install_text" msgid="2631074166447765453">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> ଆପ କେବେ ଇନଷ୍ଟଲ ବା ଅନଇନଷ୍ଟଲ ହୋଇଛି"</string>
+    <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g>ରୁ କୌଣସି ଲକ କିମ୍ବା ଅନଲକ କରିବାର ଅନୁରୋଧ"</string>
+    <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"ଯଦି <xliff:g id="CREDITOR_APP">%1$s</xliff:g> ଆପ ଉପଲବ୍ଧ ନାହିଁ"</string>
     <string name="open_source_licenses" msgid="6464389386262455443">"ଓପନ-ସୋର୍ସ ଲାଇସେନ୍ସଗୁଡ଼ିକ"</string>
     <string name="footer_notice" msgid="7606898520964750584"><b>"ସେଟିଂସ &gt; ସୁରକ୍ଷା &gt; ପରିଚାଳିତ ଡିଭାଇସ ସୂଚନା"</b>"ରେ ଅନ୍ୟ ପରିଚାଳନା କ୍ଷମତାଗୁଡ଼ିକ ଏହି ଡିଭାଇସରେ ଲାଗୁ ହୁଏ ନାହିଁ"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"ସୁରକ୍ଷା ସେଟିଂସର ଫାଇନାନ୍ସଡ୍ ଡିଭାଇସ୍ ବିଭାଗରେ ଥିବା ପରିଚାଳନା ଦକ୍ଷତା ଏହି ଡିଭାଇସରେ ଲାଗୁ ହୁଏ ନାହିଁ।"</string>
