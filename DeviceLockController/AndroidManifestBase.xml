@@ -124,9 +124,9 @@
             android:authorities="${applicationId}.androidx-startup"
             tools:node="remove" />
 
-        <!-- System user only boot completed broadcast receiver -->
+        <!-- System user only boot completed broadcast receiver. This should disabled after provision ready -->
         <receiver
-            android:name="com.android.devicelockcontroller.receivers.SingleUserBootCompletedReceiver"
+            android:name="com.android.devicelockcontroller.receivers.CheckInBootCompletedReceiver"
             android:exported="false"
             androidprv:systemUserOnly="true">
             <intent-filter>
@@ -134,7 +134,7 @@
             </intent-filter>
         </receiver>
 
-        <!-- Multi users boot completed broadcast receiver -->
+        <!-- Multi users boot completed broadcast receiver. This receiver should disabled after first boot -->
         <receiver
             android:name="com.android.devicelockcontroller.receivers.BootCompletedReceiver"
             android:exported="false"
@@ -144,10 +144,11 @@
             </intent-filter>
         </receiver>
 
-        <!-- Multi users locked boot completed broadcast receiver -->
+        <!-- Multi users locked boot completed broadcast receiver. This receiver should only be enabled after provision ready -->
         <receiver
             android:name="com.android.devicelockcontroller.receivers.LockedBootCompletedReceiver"
             android:directBootAware="true"
+            android:enabled="false"
             android:exported="false"
             android:singleUser="false">
             <intent-filter>
@@ -164,6 +165,11 @@
                 <action android:name="android.intent.action.TIME_SET" />
             </intent-filter>
         </receiver>
+
+        <receiver
+            android:name="com.android.devicelockcontroller.receivers.ProvisionReadyReceiver"
+            android:exported="false"
+            android:singleUser="false" />
 
         <receiver
             android:name="com.android.devicelockcontroller.receivers.ResumeProvisionReceiver"

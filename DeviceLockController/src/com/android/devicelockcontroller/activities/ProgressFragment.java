@@ -16,9 +16,11 @@
 
 package com.android.devicelockcontroller.activities;
 
+import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionEvent.PROVISION_FAILURE;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import android.app.admin.DevicePolicyManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,8 +36,10 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.android.devicelockcontroller.R;
 import com.android.devicelockcontroller.activities.util.UrlUtils;
-import com.android.devicelockcontroller.policy.LockTaskModeHelper;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
+import com.android.devicelockcontroller.policy.ProvisionHelper;
+import com.android.devicelockcontroller.policy.ProvisionHelperImpl;
+import com.android.devicelockcontroller.policy.ProvisionStateController;
 
 /**
  * A screen which always displays a progress bar.
@@ -72,15 +76,16 @@ public final class ProgressFragment extends Fragment {
                     if (provisioningProgress.mIconId != 0) {
                         headerIconImageView.setImageResource(provisioningProgress.mIconId);
                     }
+                    Context context = requireContext();
                     if (provisioningProgress.mHeaderId != 0) {
                         headerTextView.setText(
-                                requireContext().getString(provisioningProgress.mHeaderId,
+                                context.getString(provisioningProgress.mHeaderId,
                                         provisioningProgressViewModel
                                                 .mProviderNameLiveData.getValue()));
                     }
                     if (provisioningProgress.mSubheaderId != 0) {
                         UrlUtils.setUrlText(subheaderTextView,
-                                requireContext().getString(provisioningProgress.mSubheaderId,
+                                context.getString(provisioningProgress.mSubheaderId,
                                         provisioningProgressViewModel
                                                 .mSupportUrlLiveData
                                                 .getValue()));
@@ -95,21 +100,22 @@ public final class ProgressFragment extends Fragment {
                         Button retryButton = bottomView.findViewById(R.id.button_retry);
                         checkNotNull(retryButton);
                         PolicyObjectsInterface policyObjects =
-                                (PolicyObjectsInterface) getActivity().getApplicationContext();
-
+                                (PolicyObjectsInterface) context.getApplicationContext();
+                        ProvisionStateController provisionStateController =
+                                policyObjects.getProvisionStateController();
+                        ProvisionHelper provisionHelper = new ProvisionHelperImpl(
+                                context,
+                                provisionStateController);
                         retryButton.setOnClickListener(
-                                view -> provisioningProgressViewModel.retrySetupFlow(
-                                        policyObjects.getSetupController(),
-                                        policyObjects.getStateController(),
-                                        getActivity()));
+                                view -> provisionHelper.scheduleKioskAppInstallation(
+                                        requireActivity(),
+                                        provisioningProgressViewModel));
 
                         Button exitButton = bottomView.findViewById(R.id.button_exit);
                         checkNotNull(exitButton);
-                        exitButton.setOnClickListener(view -> {
-                            DevicePolicyManager dpm = getContext().getSystemService(
-                                    DevicePolicyManager.class);
-                            LockTaskModeHelper.disableLockTaskMode(getContext(), dpm);
-                        });
+                        exitButton.setOnClickListener(
+                                view -> provisionStateController.postSetNextStateForEventRequest(
+                                        PROVISION_FAILURE));
                     } else {
                         bottomView.setVisibility(View.GONE);
                     }

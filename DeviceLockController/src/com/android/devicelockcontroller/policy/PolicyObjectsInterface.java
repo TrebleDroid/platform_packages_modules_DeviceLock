@@ -21,13 +21,13 @@ package com.android.devicelockcontroller.policy;
  */
 public interface PolicyObjectsInterface {
     /** Returns an instance of DeviceStateController. */
-    DeviceStateController getStateController();
+    DeviceStateController getDeviceStateController();
+
+    /** Returns an instance of ProvisionStateController. */
+    ProvisionStateController getProvisionStateController();
 
     /** Returns an instance of DevicePolicyController. */
     DevicePolicyController getPolicyController();
-
-    /** Returns an instance of SetupController. */
-    SetupController getSetupController();
 
     /** Destroy all the singleton objects */
     void destroyObjects();

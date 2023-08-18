@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.android.devicelockcontroller.storage;
+package com.android.devicelockcontroller.activities;
 
-import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState;
-
-abstract class AbstractGlobalParametersTestBase {
-    static final boolean NEED_CHECK_IN = false;
-    static final String REGISTERED_DEVICE_ID = "test_id";
-    static final boolean FORCED_PROVISION = true;
-    static final String ENROLLMENT_TOKEN = "test_enrollment_token";
-
-    @DeviceProvisionState
-    static final int LAST_RECEIVED_PROVISION_STATE = DeviceProvisionState.PROVISION_STATE_RETRY;
+/**
+ * An interface providing API to change provisioning progress.
+ */
+public interface ProvisioningProgressController {
+    /**
+     * Set the {@link ProvisioningProgress} to the given state.
+     *
+     * <p>This method is thread-safe and can be called from any thread.
+     */
+    void setProvisioningProgress(ProvisioningProgress provisioningProgress);
 }

@@ -18,7 +18,6 @@ package com.android.devicelockcontroller;
 
 import android.app.Application;
 import android.content.Context;
-import android.os.UserManager;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.Nullable;
@@ -27,17 +26,11 @@ import androidx.work.DelegatingWorkerFactory;
 import androidx.work.ListenableWorker;
 
 import com.android.devicelockcontroller.policy.DevicePolicyController;
-import com.android.devicelockcontroller.policy.DevicePolicyControllerImpl;
 import com.android.devicelockcontroller.policy.DeviceStateController;
-import com.android.devicelockcontroller.policy.DeviceStateControllerImpl;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
-import com.android.devicelockcontroller.policy.SetupController;
-import com.android.devicelockcontroller.policy.SetupControllerImpl;
+import com.android.devicelockcontroller.policy.ProvisionStateController;
+import com.android.devicelockcontroller.policy.ProvisionStateControllerImpl;
 import com.android.devicelockcontroller.util.LogUtil;
-
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.MoreExecutors;
 
 /**
  * Application class for Device Lock Controller.
@@ -46,69 +39,41 @@ public class DeviceLockControllerApplication extends Application implements
         PolicyObjectsInterface, Configuration.Provider {
     private static final String TAG = "DeviceLockControllerApplication";
 
-    private DevicePolicyController mPolicyController;
-
     private static Context sApplicationContext;
-    private SetupController mSetupController;
+    private ProvisionStateController mProvisionStateController;
 
     @Override
     public void onCreate() {
         super.onCreate();
         sApplicationContext = getApplicationContext();
         LogUtil.i(TAG, "onCreate");
-
-        final boolean isUserProfile =
-                sApplicationContext.getSystemService(UserManager.class).isProfile();
-
-        if (isUserProfile) {
-            return;
-        }
-
-        // Make sure policies are enforced when the controller is started.
-        Futures.addCallback(getStateController().enforcePoliciesForCurrentState(),
-                new FutureCallback<>() {
-                    @Override
-                    public void onSuccess(Void result) {
-                        LogUtil.i(TAG, "Policies enforced");
-                    }
-
-                    @Override
-                    public void onFailure(Throwable t) {
-                        LogUtil.w(TAG, "Failed to enforce policies for current state", t);
-                    }
-                }, MoreExecutors.directExecutor());
     }
 
     @Override
     @MainThread
-    public DeviceStateController getStateController() {
-        return getPolicyController().getStateController();
+    public DeviceStateController getDeviceStateController() {
+        return getProvisionStateController().getDeviceStateController();
+    }
+
+    @Override
+    @MainThread
+    public ProvisionStateController getProvisionStateController() {
+        if (mProvisionStateController == null) {
+            mProvisionStateController = new ProvisionStateControllerImpl(this);
+        }
+        return mProvisionStateController;
     }
 
     @Override
     @MainThread
     public DevicePolicyController getPolicyController() {
-        if (mPolicyController == null) {
-            mPolicyController = new DevicePolicyControllerImpl(this,
-                    new DeviceStateControllerImpl(this));
-        }
-
-        return mPolicyController;
+        return getProvisionStateController().getDevicePolicyController();
     }
 
     @Override
-    public SetupController getSetupController() {
-        if (mSetupController == null) {
-            mSetupController = new SetupControllerImpl(this, getStateController(),
-                    getPolicyController());
-        }
-        return mSetupController;
-    }
-
-    @Override
+    @MainThread
     public void destroyObjects() {
-        mPolicyController = null;
-        mSetupController = null;
+        mProvisionStateController = null;
     }
 
     public static Context getAppContext() {

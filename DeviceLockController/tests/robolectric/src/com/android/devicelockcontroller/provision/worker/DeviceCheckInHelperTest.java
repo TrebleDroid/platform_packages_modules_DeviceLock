@@ -26,11 +26,11 @@ import static com.google.common.truth.Truth.assertThat;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.robolectric.annotation.LooperMode.Mode.LEGACY;
 
+import android.content.Intent;
 import android.os.SystemClock;
 import android.telephony.TelephonyManager;
 import android.util.ArraySet;
@@ -46,11 +46,9 @@ import com.android.devicelockcontroller.DeviceLockControllerScheduler;
 import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
 import com.android.devicelockcontroller.common.DeviceId;
 import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceCheckInStatus;
-import com.android.devicelockcontroller.policy.DeviceStateController;
-import com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent;
-import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
 import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrpcResponse;
 import com.android.devicelockcontroller.provision.grpc.ProvisioningConfiguration;
+import com.android.devicelockcontroller.receivers.ProvisionReadyReceiver;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
 
 import com.google.common.util.concurrent.Futures;
@@ -138,38 +136,36 @@ public final class DeviceCheckInHelperTest {
     }
 
     @Test
-    public void testHandleGetDeviceCheckInStatusResponse_stopCheckIn_shouldSetNeedCheckInFalse() {
+    public void testHandleGetDeviceCheckInStatusResponse_stopCheckIn_shouldReturnTrue() {
         final GetDeviceCheckInStatusGrpcResponse response = createStopResponse();
 
         assertThat(mHelper.handleGetDeviceCheckInStatusResponse(response,
                 new DeviceLockControllerScheduler(mTestApplication))).isTrue();
-        assertThat(Futures.getUnchecked(mGlobalParametersClient.needCheckIn())).isFalse();
     }
 
     @Test
-    public void
-            handleProvisionReadyResponse_validConfiguration_shouldSetStateAndStartLockTaskMode() {
+    public void handleProvisionReadyResponse_validConfiguration_shouldSendBroadcast() {
         GetDeviceCheckInStatusGrpcResponse response = createReadyResponse(TEST_CONFIGURATION);
-        DeviceStateController stateController = mTestApplication.getStateController();
-        when(stateController.setNextStateForEvent(DeviceEvent.PROVISION_READY)).thenReturn(
-                Futures.immediateFuture(DeviceState.PROVISION_SUCCEEDED));
 
-        assertThat(mHelper.handleProvisionReadyResponse(response, stateController)).isTrue();
+        assertThat(mHelper.handleProvisionReadyResponse(response)).isTrue();
 
-        verify(stateController).setNextStateForEvent(eq(DeviceEvent.PROVISION_READY));
-        assertThat(Futures.getUnchecked(mGlobalParametersClient.needCheckIn())).isFalse();
+        assertThat(Futures.getUnchecked(mGlobalParametersClient.isProvisionReady())).isTrue();
+        List<Intent> intents = Shadows.shadowOf(mTestApplication).getBroadcastIntents();
+        assertThat(intents.size()).isEqualTo(1);
+        assertThat(intents.get(0).getComponent().getClassName()).isEqualTo(
+                ProvisionReadyReceiver.class.getName());
     }
 
     @Test
-    public void testHandleProvisionReadyResponse_invalidConfiguration_shouldNotSetState() {
+    public void testHandleProvisionReadyResponse_invalidConfiguration_shouldNotSendBroadcast() {
         GetDeviceCheckInStatusGrpcResponse response = createReadyResponse(
                 /* configuration= */ null);
-        DeviceStateController stateController = mTestApplication.getStateController();
 
-        assertThat(mHelper.handleProvisionReadyResponse(
-                response, stateController)).isFalse();
+        assertThat(mHelper.handleProvisionReadyResponse(response)).isFalse();
 
-        verify(stateController, never()).setNextStateForEvent(eq(DeviceEvent.PROVISION_READY));
+        assertThat(Futures.getUnchecked(mGlobalParametersClient.isProvisionReady())).isFalse();
+        List<Intent> intents = Shadows.shadowOf(mTestApplication).getBroadcastIntents();
+        assertThat(intents.size()).isEqualTo(0);
     }
 
     @Test

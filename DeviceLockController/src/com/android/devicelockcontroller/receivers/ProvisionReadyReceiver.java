@@ -16,29 +16,20 @@
 
 package com.android.devicelockcontroller.receivers;
 
+import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionEvent.PROVISION_READY;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
-import com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionEvent;
-import com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState;
 
-/**
- * A broadcast receiver to trigger {@link ProvisionEvent#PROVISION_RESUME} and change state to
- * {@link ProvisionState#PROVISION_IN_PROGRESS}
- */
-public final class ResumeProvisionReceiver extends BroadcastReceiver {
-
-    public static final String TAG = "ResumeProvisionReceiver";
-
+/** A receiver to handle explicit provision ready intent */
+public final class ProvisionReadyReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (!ResumeProvisionReceiver.class.getName().equals(
-                intent.getComponent().getClassName())) {
-            throw new IllegalArgumentException("Can not handle implicit intent!");
-        }
-        ((PolicyObjectsInterface) context.getApplicationContext()).getProvisionStateController()
-                .postSetNextStateForEventRequest(ProvisionEvent.PROVISION_RESUME);
+
+        ((PolicyObjectsInterface) context.getApplicationContext())
+                .getProvisionStateController().postSetNextStateForEventRequest(PROVISION_READY);
     }
 }
