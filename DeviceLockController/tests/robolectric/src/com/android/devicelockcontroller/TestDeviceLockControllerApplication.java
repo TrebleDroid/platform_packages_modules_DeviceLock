@@ -23,6 +23,7 @@ import android.app.Application;
 
 import com.android.devicelockcontroller.policy.DevicePolicyController;
 import com.android.devicelockcontroller.policy.DeviceStateController;
+import com.android.devicelockcontroller.policy.FinalizationController;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
 import com.android.devicelockcontroller.policy.ProvisionHelper;
 import com.android.devicelockcontroller.policy.ProvisionStateController;
@@ -48,6 +49,7 @@ public final class TestDeviceLockControllerApplication extends Application imple
     private DeviceStateController mStateController;
     private ProvisionHelper mProvisionHelper;
     private ProvisionStateController mUserStateController;
+    private FinalizationController mFinalizationController;
     private SetupParametersClient mSetupParametersClient;
     private GlobalParametersClient mGlobalParametersClient;
 
@@ -80,6 +82,13 @@ public final class TestDeviceLockControllerApplication extends Application imple
         return mPolicyController;
     }
 
+    @Override
+    public FinalizationController getFinalizationController() {
+        if (mFinalizationController == null) {
+            mFinalizationController = mock(FinalizationController.class);
+        }
+        return mFinalizationController;
+    }
 
     @Override
     public void destroyObjects() {
