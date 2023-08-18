@@ -68,12 +68,12 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
 
     @Override
     public ListenableFuture<Boolean> onProvisionInProgress() {
-        return enableLockTaskModeForController();
+        return enableLockTaskModeSafely(/* forController= */ true);
     }
 
     @Override
     public ListenableFuture<Boolean> onProvisioned() {
-        return enableLockTaskModeForKiosk();
+        return enableLockTaskModeSafely(/* forController= */ false);
     }
 
     @Override
@@ -88,7 +88,7 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
 
     @Override
     public ListenableFuture<Boolean> onLocked() {
-        return enableLockTaskModeForKiosk();
+        return enableLockTaskModeSafely(/* forController= */ false);
     }
 
     @Override
@@ -118,6 +118,24 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
                     LogUtil.i(TAG, String.format(Locale.US, "Update Lock task allowlist %s",
                             Arrays.toString(allowlistPackages)));
                     return null;
+                }, mBgExecutor);
+    }
+
+    /**
+     * Safely initiate Lock Task Mode
+     *
+     * @param forController Whether the Device Lock Controller itself (true) or the Kiosk (false)
+     *                      is in charge of this instance of Lock Task Mode
+     */
+    private ListenableFuture<Boolean> enableLockTaskModeSafely(boolean forController) {
+        // Disabling lock task mode before enabling it prevents vulnerabilities if another app
+        // has already initiated lock task mode
+        return Futures.transformAsync(disableLockTaskMode(),
+                unused -> {
+                    if (forController) {
+                        return enableLockTaskModeForController();
+                    }
+                    return enableLockTaskModeForKiosk();
                 }, mBgExecutor);
     }
 
