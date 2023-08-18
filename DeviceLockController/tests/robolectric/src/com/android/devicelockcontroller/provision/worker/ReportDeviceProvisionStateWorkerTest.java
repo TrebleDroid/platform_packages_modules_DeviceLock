@@ -43,6 +43,7 @@ import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.ReportDeviceProvisionStateGrpcResponse;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
+import com.android.devicelockcontroller.storage.UserParameters;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.testing.TestingExecutors;
@@ -127,9 +128,10 @@ public final class ReportDeviceProvisionStateWorkerTest {
         GlobalParametersClient globalParameters = GlobalParametersClient.getInstance();
         assertThat(globalParameters.getLastReceivedProvisionState().get()).isEqualTo(
                 PROVISION_STATE_FACTORY_RESET);
-        assertThat(globalParameters.getDaysLeftUntilReset().get()).isEqualTo(
-                TEST_DAYS_LEFT_UNTIL_RESET);
         assertThat(globalParameters.getEnrollmentToken().get()).isEqualTo(TEST_ENROLLMENT_TOKEN);
+        assertThat(UserParameters.getDaysLeftUntilReset(mTestApp)).isEqualTo(
+                TEST_DAYS_LEFT_UNTIL_RESET);
+
         verify(mScheduler).scheduleNextProvisionFailedStepAlarm();
     }
 }

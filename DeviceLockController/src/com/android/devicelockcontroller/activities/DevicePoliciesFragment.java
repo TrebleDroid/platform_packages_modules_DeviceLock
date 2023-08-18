@@ -21,6 +21,7 @@ import static com.android.devicelockcontroller.activities.DevicePoliciesViewMode
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,12 +38,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.devicelockcontroller.R;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
-import com.android.devicelockcontroller.policy.SetupController;
-import com.android.devicelockcontroller.util.LogUtil;
-
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.MoreExecutors;
+import com.android.devicelockcontroller.policy.ProvisionHelper;
+import com.android.devicelockcontroller.policy.ProvisionHelperImpl;
 
 /**
  * A screen which lists the polies enforced on the device by the device provider.
@@ -87,53 +84,16 @@ public final class DevicePoliciesFragment extends Fragment {
                 providerName -> headerTextView.setText(
                         getString(HEADER_TEXT_ID, providerName)));
 
-        SetupController setupController =
-                ((PolicyObjectsInterface) getActivity().getApplicationContext())
-                        .getSetupController();
+        Context context = requireContext().getApplicationContext();
+        ProvisionHelper provisionHelper = new ProvisionHelperImpl(context,
+                ((PolicyObjectsInterface) context).getProvisionStateController());
 
         ProvisioningProgressViewModel provisioningProgressViewModel =
                 new ViewModelProvider(requireActivity()).get(ProvisioningProgressViewModel.class);
         Button button = view.findViewById(R.id.button_next);
         checkNotNull(button);
         button.setOnClickListener(
-                v -> {
-                    provisioningProgressViewModel.setProvisioningProgress(
-                            ProvisioningProgress.GETTING_DEVICE_READY);
-                    Futures.addCallback(
-                            setupController.startSetupFlow(getActivity()),
-                            new FutureCallback<>() {
-                                @Override
-                                public void onSuccess(Void result) {
-                                    LogUtil.i(TAG, "Setup flow has started installing kiosk app");
-                                    provisioningProgressViewModel.setProvisioningProgress(
-                                            ProvisioningProgress.INSTALLING_KIOSK_APP);
-                                }
-
-                                @Override
-                                public void onFailure(Throwable t) {
-                                    LogUtil.e(TAG, "Failed to start setup flow!", t);
-                                    provisioningProgressViewModel.setProvisioningProgress(
-                                            ProvisioningProgress.PROVISIONING_FAILED);
-                                }
-                            }, MoreExecutors.directExecutor());
-                });
-
-        setupController.addListener(new SetupController.SetupUpdatesCallbacks() {
-            @Override
-            public void setupFailed(int reason) {
-                LogUtil.e(TAG, "Failed to finish setup flow!");
-                provisioningProgressViewModel.setProvisioningProgress(
-                        ProvisioningProgress.PROVISIONING_FAILED);
-                setupController.removeListener(this);
-            }
-
-            @Override
-            public void setupCompleted() {
-                LogUtil.i(TAG, "Successfully finished setup flow!");
-                provisioningProgressViewModel.setProvisioningProgress(
-                        ProvisioningProgress.OPENING_KIOSK_APP);
-                setupController.removeListener(this);
-            }
-        });
+                v -> provisionHelper.scheduleKioskAppInstallation(requireActivity(),
+                        provisioningProgressViewModel));
     }
 }

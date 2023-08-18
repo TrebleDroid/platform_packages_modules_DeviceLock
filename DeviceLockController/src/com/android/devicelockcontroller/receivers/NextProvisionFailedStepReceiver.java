@@ -22,6 +22,7 @@ import static com.android.devicelockcontroller.common.DeviceLockConstants.Device
 import static com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState.PROVISION_STATE_RETRY;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState.PROVISION_STATE_SUCCESS;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState.PROVISION_STATE_UNSPECIFIED;
+import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionEvent.PROVISION_RETRY;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -33,11 +34,11 @@ import androidx.work.WorkManager;
 import com.android.devicelockcontroller.AbstractDeviceLockControllerScheduler;
 import com.android.devicelockcontroller.DeviceLockControllerScheduler;
 import com.android.devicelockcontroller.activities.DeviceLockNotificationManager;
-import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
-import com.android.devicelockcontroller.provision.worker.DeviceCheckInHelper;
+import com.android.devicelockcontroller.policy.ProvisionStateController;
 import com.android.devicelockcontroller.provision.worker.ReportDeviceProvisionStateWorker;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
+import com.android.devicelockcontroller.storage.UserParameters;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import com.google.common.util.concurrent.FutureCallback;
@@ -78,38 +79,33 @@ public final class NextProvisionFailedStepReceiver extends BroadcastReceiver {
 
         if (mScheduler == null) mScheduler = new DeviceLockControllerScheduler(context);
         GlobalParametersClient globalParameters = GlobalParametersClient.getInstance();
-        ListenableFuture<Boolean> needToReportFuture = Futures.transformAsync(
+        ProvisionStateController userStateController =
+                ((PolicyObjectsInterface) context.getApplicationContext())
+                        .getProvisionStateController();
+        ListenableFuture<Boolean> needToReportFuture = Futures.transform(
                 globalParameters.getLastReceivedProvisionState(),
                 provisionState -> {
                     switch (provisionState) {
                         case PROVISION_STATE_RETRY:
-                            DeviceStateController deviceStateController =
-                                    ((PolicyObjectsInterface) context.getApplicationContext())
-                                            .getStateController();
-                            DeviceCheckInHelper.setProvisionReady(deviceStateController,
-                                    context);
+                            userStateController.postSetNextStateForEventRequest(PROVISION_RETRY);
                             // We can not report the state here, because we do not know the
                             // result of retry. It will be reported after the retry finishes, no
                             // matter it succeeds or fails.
-                            return Futures.immediateFuture(false);
+                            return false;
                         case PROVISION_STATE_DISMISSIBLE_UI:
-                            return Futures.transform(
-                                    globalParameters.getDaysLeftUntilReset(),
-                                    days -> {
-                                        DeviceLockNotificationManager.sendDeviceResetNotification(
-                                                context, days);
-                                        return true;
-                                    }, MoreExecutors.directExecutor());
+                            DeviceLockNotificationManager.sendDeviceResetNotification(context,
+                                    UserParameters.getDaysLeftUntilReset(context));
+                            return true;
                         case PROVISION_STATE_PERSISTENT_UI:
                             DeviceLockNotificationManager
                                     .sendDeviceResetInOneDayOngoingNotification(context);
-                            return Futures.immediateFuture(true);
+                            return true;
                         case PROVISION_STATE_FACTORY_RESET:
                             mScheduler.scheduleResetDeviceAlarm();
-                            return Futures.immediateFuture(true);
+                            return true;
                         case PROVISION_STATE_SUCCESS:
                         case PROVISION_STATE_UNSPECIFIED:
-                            return Futures.immediateFuture(false);
+                            return false;
                         default:
                             throw new IllegalStateException(
                                     UNEXPECTED_PROVISION_STATE_ERROR_MESSAGE);

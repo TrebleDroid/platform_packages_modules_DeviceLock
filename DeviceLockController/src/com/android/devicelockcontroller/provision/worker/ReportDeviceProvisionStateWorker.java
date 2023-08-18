@@ -31,11 +31,10 @@ import androidx.work.WorkerParameters;
 
 import com.android.devicelockcontroller.AbstractDeviceLockControllerScheduler;
 import com.android.devicelockcontroller.DeviceLockControllerScheduler;
-import com.android.devicelockcontroller.common.DeviceLockConstants.SetupFailureReason;
-import com.android.devicelockcontroller.policy.SetupController;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.ReportDeviceProvisionStateGrpcResponse;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
+import com.android.devicelockcontroller.storage.UserParameters;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -45,42 +44,21 @@ import com.google.common.util.concurrent.ListeningExecutorService;
  * A worker class dedicated to report state of provision for the device lock program.
  */
 public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorker {
-
-    public static final String KEY_DEVICE_PROVISION_FAILURE_REASON =
-            "device-provision-failure-reason";
     public static final String KEY_IS_PROVISION_SUCCESSFUL = "is-provision-successful";
     public static final String REPORT_PROVISION_STATE_WORK_NAME = "report-provision-state";
-    private AbstractDeviceLockControllerScheduler mDeviceLockControllerScheduler;
+    public static final int REASON_SETUP_FAILED = 0;
+    private final AbstractDeviceLockControllerScheduler mDeviceLockControllerScheduler;
 
-    /**
-     * Get a {@link SetupController.SetupUpdatesCallbacks} which will enqueue this worker to report
-     * provision success / failure.
-     */
-    @NonNull
-    public static SetupController.SetupUpdatesCallbacks getSetupUpdatesCallbacks(
-            WorkManager workManager) {
-        return new SetupController.SetupUpdatesCallbacks() {
-            @Override
-            public void setupFailed(@SetupFailureReason int reason) {
-                reportSetupFailed(reason, workManager);
-            }
-
-            @Override
-            public void setupCompleted() {
-                reportSetupCompleted(workManager);
-            }
-        };
-    }
-
-    private static void reportSetupFailed(@SetupFailureReason int reason, WorkManager workManager) {
+    /** Report provision failure and get next failed step */
+    public static void reportSetupFailed(WorkManager workManager) {
         Data inputData = new Data.Builder()
                 .putBoolean(KEY_IS_PROVISION_SUCCESSFUL, false)
-                .putInt(KEY_DEVICE_PROVISION_FAILURE_REASON, reason)
                 .build();
         enqueueReportWork(inputData, workManager);
     }
 
-    private static void reportSetupCompleted(WorkManager workManager) {
+    /** Report provision success */
+    public static void reportSetupCompleted(WorkManager workManager) {
         Data inputData = new Data.Builder()
                 .putBoolean(KEY_IS_PROVISION_SUCCESSFUL, true)
                 .build();
@@ -132,10 +110,8 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
         return Futures.whenAllSucceed(mClient, lastState).call(() -> {
             boolean isSuccessful = getInputData().getBoolean(
                     KEY_IS_PROVISION_SUCCESSFUL, /* defaultValue= */ false);
-            int reason = getInputData().getInt(KEY_DEVICE_PROVISION_FAILURE_REASON,
-                    SetupFailureReason.SETUP_FAILED);
             ReportDeviceProvisionStateGrpcResponse response =
-                    Futures.getDone(mClient).reportDeviceProvisionState(reason,
+                    Futures.getDone(mClient).reportDeviceProvisionState(REASON_SETUP_FAILED,
                             Futures.getDone(lastState),
                             isSuccessful);
             if (response.hasRecoverableError()) return Result.retry();
@@ -146,8 +122,7 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
             }
             int daysLeftUntilReset = response.getDaysLeftUntilReset();
             if (daysLeftUntilReset > 0) {
-                Futures.getUnchecked(
-                        globalParametersClient.setDaysLeftUntilReset(daysLeftUntilReset));
+                UserParameters.setDaysLeftUntilReset(mContext, daysLeftUntilReset);
             }
             Futures.getUnchecked(globalParametersClient.setLastReceivedProvisionState(
                     response.getNextClientProvisionState()));

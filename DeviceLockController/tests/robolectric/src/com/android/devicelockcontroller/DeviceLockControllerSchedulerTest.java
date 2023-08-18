@@ -17,8 +17,8 @@
 package com.android.devicelockcontroller;
 
 import static com.android.devicelockcontroller.DeviceLockControllerScheduler.DEVICE_CHECK_IN_WORK_NAME;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PROVISION_PAUSED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNPROVISIONED;
+import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState.PROVISION_PAUSED;
+import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState.UNPROVISIONED;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -38,11 +38,13 @@ import androidx.work.WorkManager;
 import androidx.work.testing.SynchronousExecutor;
 import androidx.work.testing.WorkManagerTestInitHelper;
 
-import com.android.devicelockcontroller.policy.DeviceStateController;
+import com.android.devicelockcontroller.policy.ProvisionStateController;
 import com.android.devicelockcontroller.provision.worker.DeviceCheckInWorker;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
+import com.android.devicelockcontroller.storage.UserParameters;
 
 import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.testing.TestingExecutors;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -87,7 +89,8 @@ public final class DeviceLockControllerSchedulerTest {
     @Before
     public void setUp() throws Exception {
         mTestApp = ApplicationProvider.getApplicationContext();
-        mScheduler = new DeviceLockControllerScheduler(mTestApp, TEST_CLOCK);
+        mScheduler = new DeviceLockControllerScheduler(mTestApp, TEST_CLOCK,
+                TestingExecutors.sameThreadScheduledExecutor());
         mClient = GlobalParametersClient.getInstance();
         Configuration config = new Configuration.Builder()
                 .setMinimumLoggingLevel(android.util.Log.DEBUG)
@@ -99,11 +102,11 @@ public final class DeviceLockControllerSchedulerTest {
     @Test
     public void correctExpectedToRunTime_retryCheckInExpected_positiveDelta_shouldUpdate() {
         // GIVEN device is unprovisioned
-        DeviceStateController stateController = mTestApp.getStateController();
-        when(stateController.getState()).thenReturn(UNPROVISIONED);
+        ProvisionStateController stateController = mTestApp.getProvisionStateController();
+        when(stateController.getState()).thenReturn(Futures.immediateFuture(UNPROVISIONED));
 
         // GIVEN retry check in is expected
-        Futures.getUnchecked(mClient.setNextCheckInTimeMillis(TEST_NEXT_CHECK_IN_TIME_MILLIS));
+        UserParameters.setNextCheckInTimeMillis(mTestApp, TEST_NEXT_CHECK_IN_TIME_MILLIS);
 
         // WHEN time change happens
         mScheduler.correctExpectedToRunTime(TEST_POSITIVE_DELTA);
@@ -111,18 +114,18 @@ public final class DeviceLockControllerSchedulerTest {
         // THEN next check in time should be updated
         long expectedToRunAfterChange =
                 TEST_NEXT_CHECK_IN_TIME_MILLIS + TEST_POSITIVE_DELTA.toMillis();
-        assertThat(Futures.getUnchecked(mClient.getNextCheckInTimeMillis())).isEqualTo(
+        assertThat(UserParameters.getNextCheckInTimeMillis(mTestApp)).isEqualTo(
                 expectedToRunAfterChange);
     }
 
     @Test
     public void correctExpectedToRunTime_retryCheckInExpected_negativeDelta_shouldUpdate() {
         // GIVEN device is unprovisioned
-        DeviceStateController stateController = mTestApp.getStateController();
-        when(stateController.getState()).thenReturn(UNPROVISIONED);
+        ProvisionStateController stateController = mTestApp.getProvisionStateController();
+        when(stateController.getState()).thenReturn(Futures.immediateFuture(UNPROVISIONED));
 
         // GIVEN retry check in is expected
-        Futures.getUnchecked(mClient.setNextCheckInTimeMillis(TEST_NEXT_CHECK_IN_TIME_MILLIS));
+        UserParameters.setNextCheckInTimeMillis(mTestApp, TEST_NEXT_CHECK_IN_TIME_MILLIS);
 
         // WHEN time change happens
         mScheduler.correctExpectedToRunTime(TEST_NEGATIVE_DELTA);
@@ -130,19 +133,18 @@ public final class DeviceLockControllerSchedulerTest {
         // THEN next check in time should be updated
         long expectedToRunAfterChange =
                 TEST_NEXT_CHECK_IN_TIME_MILLIS + TEST_NEGATIVE_DELTA.toMillis();
-        assertThat(Futures.getUnchecked(mClient.getNextCheckInTimeMillis())).isEqualTo(
+        assertThat(UserParameters.getNextCheckInTimeMillis(mTestApp)).isEqualTo(
                 expectedToRunAfterChange);
     }
 
     @Test
     public void correctExpectedToRunTime_resumeProvisionExpected_positiveDelta_shouldUpdate() {
         // GIVEN device is unprovisioned
-        DeviceStateController stateController = mTestApp.getStateController();
-        when(stateController.getState()).thenReturn(PROVISION_PAUSED);
+        ProvisionStateController stateController = mTestApp.getProvisionStateController();
+        when(stateController.getState()).thenReturn(Futures.immediateFuture(PROVISION_PAUSED));
 
         // GIVEN retry check in is expected
-        Futures.getUnchecked(
-                mClient.setResumeProvisionTimeMillis(TEST_RESUME_PROVISION_TIME_MILLIS));
+        UserParameters.setResumeProvisionTimeMillis(mTestApp, TEST_RESUME_PROVISION_TIME_MILLIS);
 
         // WHEN time change happens
         mScheduler.correctExpectedToRunTime(TEST_POSITIVE_DELTA);
@@ -150,19 +152,18 @@ public final class DeviceLockControllerSchedulerTest {
         // THEN next check in time should be updated
         long expectedToRunAfterChange =
                 TEST_RESUME_PROVISION_TIME_MILLIS + TEST_POSITIVE_DELTA.toMillis();
-        assertThat(Futures.getUnchecked(mClient.getResumeProvisionTimeMillis())).isEqualTo(
+        assertThat(UserParameters.getResumeProvisionTimeMillis(mTestApp)).isEqualTo(
                 expectedToRunAfterChange);
     }
 
     @Test
     public void correctExpectedToRunTime_resumeProvisionExpected_negativeDelta_shouldUpdate() {
         // GIVEN device is unprovisioned
-        DeviceStateController stateController = mTestApp.getStateController();
-        when(stateController.getState()).thenReturn(PROVISION_PAUSED);
+        ProvisionStateController stateController = mTestApp.getProvisionStateController();
+        when(stateController.getState()).thenReturn(Futures.immediateFuture(PROVISION_PAUSED));
 
         // GIVEN retry check in is expected
-        Futures.getUnchecked(
-                mClient.setResumeProvisionTimeMillis(TEST_RESUME_PROVISION_TIME_MILLIS));
+        UserParameters.setResumeProvisionTimeMillis(mTestApp, TEST_RESUME_PROVISION_TIME_MILLIS);
 
         // WHEN time change happens
         mScheduler.correctExpectedToRunTime(TEST_NEGATIVE_DELTA);
@@ -170,7 +171,7 @@ public final class DeviceLockControllerSchedulerTest {
         // THEN next check in time should be updated
         long expectedToRunAfterChange =
                 TEST_RESUME_PROVISION_TIME_MILLIS + TEST_NEGATIVE_DELTA.toMillis();
-        assertThat(Futures.getUnchecked(mClient.getResumeProvisionTimeMillis())).isEqualTo(
+        assertThat(UserParameters.getResumeProvisionTimeMillis(mTestApp)).isEqualTo(
                 expectedToRunAfterChange);
     }
 
@@ -180,7 +181,7 @@ public final class DeviceLockControllerSchedulerTest {
         ShadowAlarmManager alarmManager = Shadows.shadowOf(
                 mTestApp.getSystemService(AlarmManager.class));
         assertThat(alarmManager.peekNextScheduledAlarm()).isNull();
-        assertThat(Futures.getUnchecked(mClient.getResumeProvisionTimeMillis())).isEqualTo(0);
+        assertThat(UserParameters.getResumeProvisionTimeMillis(mTestApp)).isEqualTo(0);
 
         // WHEN resume provision alarm is scheduled
         mScheduler.scheduleResumeProvisionAlarm();
@@ -195,7 +196,7 @@ public final class DeviceLockControllerSchedulerTest {
                 SystemClock.elapsedRealtime() + PROVISION_PAUSED_MILLIS);
 
         // THEN expected trigger time should be stored in storage
-        assertThat(Futures.getUnchecked(mClient.getResumeProvisionTimeMillis())).isEqualTo(
+        assertThat(UserParameters.getResumeProvisionTimeMillis(mTestApp)).isEqualTo(
                 TEST_CURRENT_TIME_MILLIS + PROVISION_PAUSED_MILLIS);
 
     }
@@ -208,11 +209,10 @@ public final class DeviceLockControllerSchedulerTest {
         assertThat(alarmManager.peekNextScheduledAlarm()).isNull();
 
         // GIVEN expected resume time in storage
-        Futures.getUnchecked(
-                mClient.setResumeProvisionTimeMillis(TEST_RESUME_PROVISION_TIME_MILLIS));
+        UserParameters.setResumeProvisionTimeMillis(mTestApp, TEST_RESUME_PROVISION_TIME_MILLIS);
 
         // WHEN resume provision alarm is rescheduled
-        mScheduler.rescheduleResumeProvisionAlarm();
+        mScheduler.rescheduleResumeProvisionAlarmIfNeeded();
 
         // THEN correct alarm should be scheduled at correct time
         PendingIntent actualPendingIntent = alarmManager.peekNextScheduledAlarm().operation;
@@ -267,7 +267,8 @@ public final class DeviceLockControllerSchedulerTest {
 
         // THEN expected trigger time is stored in storage
         long expectedTriggerTime = TEST_CURRENT_TIME_MILLIS + TEST_RETRY_CHECK_IN_DELAY.toMillis();
-        assertThat(mClient.getNextCheckInTimeMillis().get()).isEqualTo(expectedTriggerTime);
+        assertThat(UserParameters.getNextCheckInTimeMillis(mTestApp)).isEqualTo(
+                expectedTriggerTime);
     }
 
     @Test
@@ -282,10 +283,10 @@ public final class DeviceLockControllerSchedulerTest {
                 request);
 
         // GIVEN expected trigger time
-        mClient.setNextCheckInTimeMillis(TEST_NEXT_CHECK_IN_TIME_MILLIS).get();
+        UserParameters.setNextCheckInTimeMillis(mTestApp, TEST_NEXT_CHECK_IN_TIME_MILLIS);
 
         // WHEN reschedule retry check-in work
-        mScheduler.rescheduleRetryCheckInWork();
+        mScheduler.rescheduleRetryCheckInWorkIfNeeded();
 
         // THEN retry check-in work should be scheduled with correct delay
         List<WorkInfo> actualWorks = workManager.getWorkInfosForUniqueWork(
@@ -300,14 +301,14 @@ public final class DeviceLockControllerSchedulerTest {
     }
 
     @Test
-    public void scheduleNextProvisionFailedStepAlarm_initialStep_noDelay() throws Exception {
+    public void scheduleNextProvisionFailedStepAlarm_initialStep_noDelay() {
         // GIVEN no alarm is scheduled
         ShadowAlarmManager alarmManager = Shadows.shadowOf(
                 mTestApp.getSystemService(AlarmManager.class));
         assertThat(alarmManager.peekNextScheduledAlarm()).isNull();
 
         // GIVEN no existing timestamp
-        assertThat(mClient.getNextProvisionFailedStepTimeMills().get()).isEqualTo(0);
+        assertThat(UserParameters.getNextProvisionFailedStepTimeMills(mTestApp)).isEqualTo(0);
 
         // WHEN schedule next provision failed step alarm
         mScheduler.scheduleNextProvisionFailedStepAlarm();
@@ -321,20 +322,20 @@ public final class DeviceLockControllerSchedulerTest {
         assertThat(actualTriggerTime).isEqualTo(SystemClock.elapsedRealtime());
 
         // THEN expected trigger time should be stored in storage
-        assertThat(Futures.getUnchecked(mClient.getNextProvisionFailedStepTimeMills())).isEqualTo(
+        assertThat(UserParameters.getNextProvisionFailedStepTimeMills(mTestApp)).isEqualTo(
                 TEST_CURRENT_TIME_MILLIS);
     }
 
     @Test
-    public void scheduleNextProvisionFailedStepAlarm_followUpStep_defaultDelay() throws Exception {
+    public void scheduleNextProvisionFailedStepAlarm_followUpStep_defaultDelay() {
         // GIVEN no alarm is scheduled
         ShadowAlarmManager alarmManager = Shadows.shadowOf(
                 mTestApp.getSystemService(AlarmManager.class));
         assertThat(alarmManager.peekNextScheduledAlarm()).isNull();
 
         // GIVEN timestamp exits for last performed step.
-        mClient.setNextProvisionFailedStepTimeMills(
-                TEST_NEXT_PROVISION_FAILED_STEP_TIME_MILLIS).get();
+        UserParameters.setNextProvisionFailedStepTimeMills(mTestApp,
+                TEST_NEXT_PROVISION_FAILED_STEP_TIME_MILLIS);
 
         // WHEN schedule next provision failed step alarm
         mScheduler.scheduleNextProvisionFailedStepAlarm();
@@ -351,18 +352,18 @@ public final class DeviceLockControllerSchedulerTest {
         assertThat(actualTriggerTime).isEqualTo(expectedTriggerTime);
 
         // THEN expected trigger time should be stored in storage
-        assertThat(Futures.getUnchecked(mClient.getNextProvisionFailedStepTimeMills())).isEqualTo(
+        assertThat(UserParameters.getNextProvisionFailedStepTimeMills(mTestApp)).isEqualTo(
                 TEST_NEXT_PROVISION_FAILED_STEP_TIME_MILLIS
                         + PROVISION_STATE_REPORT_INTERVAL_MILLIS);
     }
 
     @Test
-    public void scheduleResetDeviceAlarm() throws Exception {
+    public void scheduleResetDeviceAlarm() {
         // GIVEN no alarm is scheduled
         ShadowAlarmManager alarmManager = Shadows.shadowOf(
                 mTestApp.getSystemService(AlarmManager.class));
         assertThat(alarmManager.peekNextScheduledAlarm()).isNull();
-        assertThat(mClient.getResetDeviceTimeMillis().get()).isEqualTo(0);
+        assertThat(UserParameters.getResetDeviceTimeMillis(mTestApp)).isEqualTo(0);
 
         // WHEN schedule reset device alarm
         mScheduler.scheduleResetDeviceAlarm();
@@ -377,7 +378,7 @@ public final class DeviceLockControllerSchedulerTest {
                 SystemClock.elapsedRealtime() + RESET_DEVICE_MILLIS);
 
         // THEN expected trigger time should be stored in storage
-        assertThat(Futures.getUnchecked(mClient.getResetDeviceTimeMillis())).isEqualTo(
+        assertThat(UserParameters.getResetDeviceTimeMillis(mTestApp)).isEqualTo(
                 TEST_CURRENT_TIME_MILLIS + RESET_DEVICE_MILLIS);
     }
 
@@ -389,12 +390,11 @@ public final class DeviceLockControllerSchedulerTest {
         assertThat(alarmManager.peekNextScheduledAlarm()).isNull();
 
         // GIVEN expected time in storage
-        Futures.getUnchecked(
-                mClient.setNextProvisionFailedStepTimeMills(
-                        TEST_NEXT_PROVISION_FAILED_STEP_TIME_MILLIS));
+        UserParameters.setNextProvisionFailedStepTimeMills(mTestApp,
+                TEST_NEXT_PROVISION_FAILED_STEP_TIME_MILLIS);
 
         // WHEN next provision failed step alarm is rescheduled
-        mScheduler.rescheduleNextProvisionFailedStepAlarm();
+        mScheduler.rescheduleNextProvisionFailedStepAlarmIfNeeded();
 
         // THEN correct alarm should be scheduled at correct time
         PendingIntent actualPendingIntent = alarmManager.peekNextScheduledAlarm().operation;
@@ -414,11 +414,11 @@ public final class DeviceLockControllerSchedulerTest {
         assertThat(alarmManager.peekNextScheduledAlarm()).isNull();
 
         // GIVEN expected reset device time in storage
-        Futures.getUnchecked(mClient.setNextProvisionFailedStepTimeMills(
-                TEST_RESET_DEVICE_TIME_MILLIS));
+        UserParameters.setNextProvisionFailedStepTimeMills(mTestApp,
+                TEST_RESET_DEVICE_TIME_MILLIS);
 
         // WHEN reset device alarm is rescheduled
-        mScheduler.rescheduleNextProvisionFailedStepAlarm();
+        mScheduler.rescheduleNextProvisionFailedStepAlarmIfNeeded();
 
         // THEN correct alarm should be scheduled at correct time
         PendingIntent actualPendingIntent = alarmManager.peekNextScheduledAlarm().operation;

@@ -89,45 +89,4 @@ public class GlobalParametersServiceTest extends AbstractGlobalParametersTestBas
         assertThat(mIGlobalParametersService.getLastReceivedProvisionState()).isEqualTo(
                 LAST_RECEIVED_PROVISION_STATE);
     }
-
-    @Test
-    public void getBootTimeMillis_returnTestTimestamp() throws RemoteException {
-        assertThat(mIGlobalParametersService.getBootTimeMillis()).isNotEqualTo(TEST_TIMESTAMP);
-
-        mIGlobalParametersService.setBootTimeMillis(TEST_TIMESTAMP);
-
-        assertThat(mIGlobalParametersService.getBootTimeMillis()).isEqualTo(TEST_TIMESTAMP);
-    }
-
-    @Test
-    public void getNextCheckInTimeMillis_returnTestTimestamp() throws RemoteException {
-        assertThat(mIGlobalParametersService.getNextCheckInTimeMillis()).isNotEqualTo(
-                TEST_TIMESTAMP);
-
-        mIGlobalParametersService.setNextCheckInTimeMillis(TEST_TIMESTAMP);
-
-        assertThat(mIGlobalParametersService.getNextCheckInTimeMillis()).isEqualTo(TEST_TIMESTAMP);
-    }
-
-    @Test
-    public void getResumeSetupTimeMillis_returnTestTimestamp() throws RemoteException {
-        assertThat(mIGlobalParametersService.getResumeProvisionTimeMillis()).isNotEqualTo(
-                TEST_TIMESTAMP);
-
-        mIGlobalParametersService.setResumeProvisionTimeMillis(TEST_TIMESTAMP);
-
-        assertThat(mIGlobalParametersService.getResumeProvisionTimeMillis()).isEqualTo(
-                TEST_TIMESTAMP);
-    }
-
-    @Test
-    public void getNextProvisionFailedStepTimeMills_returnTestTimestamp() throws RemoteException {
-        assertThat(mIGlobalParametersService.getNextProvisionFailedStepTimeMills()).isNotEqualTo(
-                TEST_TIMESTAMP);
-
-        mIGlobalParametersService.setNextProvisionFailedStepTimeMills(TEST_TIMESTAMP);
-
-        assertThat(mIGlobalParametersService.getNextProvisionFailedStepTimeMills()).isEqualTo(
-                TEST_TIMESTAMP);
-    }
 }

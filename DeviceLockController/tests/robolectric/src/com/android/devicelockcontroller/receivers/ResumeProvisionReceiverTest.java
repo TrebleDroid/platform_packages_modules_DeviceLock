@@ -16,22 +16,18 @@
 
 package com.android.devicelockcontroller.receivers;
 
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.PROVISION_RESUME;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PROVISION_IN_PROGRESS;
+import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionEvent.PROVISION_RESUME;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import android.content.Intent;
 
 import androidx.test.core.app.ApplicationProvider;
 
 import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
-import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
-
-import com.google.common.util.concurrent.Futures;
+import com.android.devicelockcontroller.policy.ProvisionStateController;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,13 +42,11 @@ public class ResumeProvisionReceiverTest {
         ResumeProvisionReceiver resumeProvisionReceiver = new ResumeProvisionReceiver();
         TestDeviceLockControllerApplication testApp = ApplicationProvider.getApplicationContext();
         Intent intent = new Intent(testApp, ResumeProvisionReceiver.class);
-        DeviceStateController stateController =
-                ((PolicyObjectsInterface) testApp).getStateController();
-        when(stateController.setNextStateForEvent(PROVISION_RESUME)).thenReturn(
-                Futures.immediateFuture(PROVISION_IN_PROGRESS));
+        ProvisionStateController stateController =
+                ((PolicyObjectsInterface) testApp).getProvisionStateController();
 
         resumeProvisionReceiver.onReceive(testApp, intent);
 
-        verify(stateController).setNextStateForEvent(eq(PROVISION_RESUME));
+        verify(stateController).postSetNextStateForEventRequest(eq(PROVISION_RESUME));
     }
 }

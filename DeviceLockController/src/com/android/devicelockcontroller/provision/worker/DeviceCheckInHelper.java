@@ -25,11 +25,14 @@ import static com.android.devicelockcontroller.common.DeviceLockConstants.RETRY_
 import static com.android.devicelockcontroller.common.DeviceLockConstants.STATUS_UNSPECIFIED;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.STOP_CHECK_IN;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.TOTAL_DEVICE_ID_TYPES;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.PROVISION_READY;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.os.UserHandle;
 import android.telephony.TelephonyManager;
 import android.util.ArraySet;
 
@@ -40,23 +43,18 @@ import androidx.annotation.WorkerThread;
 import com.android.devicelockcontroller.AbstractDeviceLockControllerScheduler;
 import com.android.devicelockcontroller.R;
 import com.android.devicelockcontroller.common.DeviceId;
-import com.android.devicelockcontroller.policy.DeviceStateController;
-import com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent;
-import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
 import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrpcResponse;
 import com.android.devicelockcontroller.provision.grpc.ProvisioningConfiguration;
+import com.android.devicelockcontroller.receivers.CheckInBootCompletedReceiver;
+import com.android.devicelockcontroller.receivers.ProvisionReadyReceiver;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.storage.SetupParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
 
-import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.MoreExecutors;
 
 import java.time.DateTimeException;
 import java.time.Duration;
-import java.util.Locale;
 
 /**
  * Helper class to perform the device check-in process with device lock backend server
@@ -127,11 +125,9 @@ public final class DeviceCheckInHelper extends AbstractDeviceCheckInHelper {
         LogUtil.d(TAG, "check in response: " + response.getDeviceCheckInStatus());
         switch (response.getDeviceCheckInStatus()) {
             case READY_FOR_PROVISION:
-                PolicyObjectsInterface policies =
-                        (PolicyObjectsInterface) mAppContext.getApplicationContext();
-                return handleProvisionReadyResponse(
-                        response,
-                        policies.getStateController());
+                boolean result = handleProvisionReadyResponse(response);
+                disableCheckInBootCompletedReceiver();
+                return result;
             case RETRY_CHECK_IN:
                 try {
                     Duration delay = Duration.between(
@@ -146,7 +142,7 @@ public final class DeviceCheckInHelper extends AbstractDeviceCheckInHelper {
                     return false;
                 }
             case STOP_CHECK_IN:
-                Futures.getUnchecked(GlobalParametersClient.getInstance().setNeedCheckIn(false));
+                disableCheckInBootCompletedReceiver();
                 return true;
             case STATUS_UNSPECIFIED:
             default:
@@ -157,9 +153,9 @@ public final class DeviceCheckInHelper extends AbstractDeviceCheckInHelper {
     @VisibleForTesting
     @WorkerThread
     boolean handleProvisionReadyResponse(
-            @NonNull GetDeviceCheckInStatusGrpcResponse response,
-            DeviceStateController stateController) {
-        Futures.getUnchecked(GlobalParametersClient.getInstance().setProvisionForced(
+            @NonNull GetDeviceCheckInStatusGrpcResponse response) {
+        GlobalParametersClient globalParametersClient = GlobalParametersClient.getInstance();
+        Futures.getUnchecked(globalParametersClient.setProvisionForced(
                 response.isProvisionForced()));
         final ProvisioningConfiguration configuration = response.getProvisioningConfig();
         if (configuration == null) {
@@ -172,40 +168,16 @@ public final class DeviceCheckInHelper extends AbstractDeviceCheckInHelper {
                 response.isProvisioningMandatory());
         Futures.getUnchecked(
                 SetupParametersClient.getInstance().createPrefs(provisionBundle));
-        setProvisionReady(stateController, mAppContext);
+        Futures.getUnchecked(globalParametersClient.setProvisionReady(true));
+        mAppContext.sendBroadcastAsUser(
+                new Intent(mAppContext, ProvisionReadyReceiver.class),
+                UserHandle.ALL);
         return true;
     }
 
-    /**
-     * Helper method to set the state for {@link DeviceEvent#PROVISION_READY} event.
-     */
-    public static void setProvisionReady(DeviceStateController stateController,
-            Context mAppContext) {
-        FutureCallback<Void> futureCallback = new FutureCallback<>() {
-            @Override
-            public void onSuccess(Void result) {
-                LogUtil.i(TAG,
-                        String.format(Locale.US,
-                                "State transition succeeded for event: %s",
-                                DeviceStateController.eventToString(PROVISION_READY)));
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                //TODO: Reset the state to where it can successfully transition.
-                LogUtil.e(TAG,
-                        String.format(Locale.US,
-                                "State transition failed for event: %s",
-                                DeviceStateController.eventToString(PROVISION_READY)), t);
-            }
-        };
-        mAppContext.getMainExecutor().execute(
-                () -> {
-                    ListenableFuture<Void> tasks = Futures.whenAllSucceed(
-                                    GlobalParametersClient.getInstance().setNeedCheckIn(false),
-                                    stateController.setNextStateForEvent(PROVISION_READY))
-                            .call(() -> null, MoreExecutors.directExecutor());
-                    Futures.addCallback(tasks, futureCallback, MoreExecutors.directExecutor());
-                });
+    private void disableCheckInBootCompletedReceiver() {
+        mAppContext.getPackageManager().setComponentEnabledSetting(
+                new ComponentName(mAppContext, CheckInBootCompletedReceiver.class),
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
     }
 }

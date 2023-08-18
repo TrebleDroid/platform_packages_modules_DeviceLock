@@ -16,7 +16,8 @@
 
 package com.android.devicelockcontroller.receivers;
 
-import static org.mockito.Mockito.never;
+import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState.UNPROVISIONED;
+
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -25,7 +26,11 @@ import android.content.Intent;
 import androidx.test.core.app.ApplicationProvider;
 
 import com.android.devicelockcontroller.AbstractDeviceLockControllerScheduler;
-import com.android.devicelockcontroller.policy.DeviceStateController;
+import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
+import com.android.devicelockcontroller.storage.UserParameters;
+
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.testing.TestingExecutors;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -35,43 +40,37 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
-public final class SingleUserBootCompletedReceiverTest {
+public final class CheckInBootCompletedReceiverTest {
 
-    @Mock
-    private DeviceStateController mDeviceStateController;
+    public static final Intent INTENT = new Intent(Intent.ACTION_BOOT_COMPLETED);
     @Mock
     private AbstractDeviceLockControllerScheduler mScheduler;
+    private CheckInBootCompletedReceiver mReceiver;
+    private TestDeviceLockControllerApplication mTestApp;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
+        mReceiver = new CheckInBootCompletedReceiver(mScheduler,
+                TestingExecutors.sameThreadScheduledExecutor());
+        mTestApp = ApplicationProvider.getApplicationContext();
     }
 
     @Test
-    public void onReceive_checkInIsNeeded_shouldEnqueueCheckInWork() {
-        when(mDeviceStateController.isCheckInNeeded()).thenReturn(true);
+    public void onReceive_initialCheckInScheduled_shouldRescheduleRetry() {
+        UserParameters.initialCheckInScheduled(mTestApp);
+        when(mTestApp.getProvisionStateController().getState()).thenReturn(
+                Futures.immediateFuture(UNPROVISIONED));
 
-        SingleUserBootCompletedReceiver.checkInIfNeeded(mDeviceStateController, mScheduler);
+        mReceiver.onReceive(mTestApp, INTENT);
+
+        verify(mScheduler).rescheduleRetryCheckInWorkIfNeeded();
+    }
+
+    @Test
+    public void onReceive_shouldScheduleInitialCheckIn() {
+        mReceiver.onReceive(mTestApp, INTENT);
 
         verify(mScheduler).scheduleInitialCheckInWork();
-    }
-
-    @Test
-    public void onReceive_checkInNotNeeded_shouldNotEnqueueCheckInWork() {
-        when(mDeviceStateController.isCheckInNeeded()).thenReturn(false);
-
-        SingleUserBootCompletedReceiver.checkInIfNeeded(mDeviceStateController, mScheduler);
-
-        verify(mScheduler, never()).scheduleInitialCheckInWork();
-    }
-
-    @Test
-    public void onReceive_rescheduleAlarOrWorksIfNeeded() {
-        SingleUserBootCompletedReceiver receiver = new SingleUserBootCompletedReceiver(mScheduler);
-
-        receiver.onReceive(ApplicationProvider.getApplicationContext(),
-                new Intent(Intent.ACTION_BOOT_COMPLETED));
-
-        verify(mScheduler).rescheduleIfNeeded();
     }
 }

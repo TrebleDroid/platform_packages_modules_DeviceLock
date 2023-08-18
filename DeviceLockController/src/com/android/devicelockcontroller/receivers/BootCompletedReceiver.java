@@ -16,31 +16,27 @@
 
 package com.android.devicelockcontroller.receivers;
 
-import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.SystemClock;
 import android.os.UserManager;
 
-import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
-import com.android.devicelockcontroller.util.LogUtil;
+import com.android.devicelockcontroller.policy.ProvisionStateController;
+import com.android.devicelockcontroller.storage.UserParameters;
 
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.MoreExecutors;
-
-import java.util.Objects;
+import java.time.Clock;
+import java.time.Instant;
 
 /**
- * Boot completed broadcast receiver to start lock task mode if applicable. This broadcast receiver
+ * Boot completed broadcast receiver to initialize the user. This broadcast receiver
  * runs for every user on the device.
- * Note that this boot completed receiver differs with {@link SingleUserBootCompletedReceiver} in
- * the way that it runs for any users.
+ * Note that this receiver will disable itself after the initial run.
  */
 public final class BootCompletedReceiver extends BroadcastReceiver {
-
-    static final String TAG = "BootCompletedReceiver";
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -53,26 +49,17 @@ public final class BootCompletedReceiver extends BroadcastReceiver {
             return;
         }
 
-        DeviceStateController stateController =
-                ((PolicyObjectsInterface) context.getApplicationContext())
-                        .getPolicyController().getStateController();
-        ActivityManager am =
-                Objects.requireNonNull(context.getSystemService(ActivityManager.class));
-        if (stateController.isLockedInternal()
-                != (am.getLockTaskModeState() == ActivityManager.LOCK_TASK_MODE_LOCKED)) {
-            Futures.addCallback(stateController.enforcePoliciesForCurrentState(),
-                    new FutureCallback<>() {
-                        @Override
-                        public void onSuccess(Void result) {
-                            LogUtil.i(TAG, "Successfully called enforcePoliciesForCurrentState()");
-                        }
 
-                        @Override
-                        public void onFailure(Throwable t) {
-                            LogUtil.e(TAG, "Failed to call enforcePoliciesForCurrentState()", t);
-                        }
-                    },
-                    MoreExecutors.directExecutor());
-        }
+        Instant bootTimeStamp = Instant.now(Clock.systemUTC()).minusMillis(
+                SystemClock.elapsedRealtime());
+        UserParameters.setBootTimeMillis(context, bootTimeStamp.toEpochMilli());
+
+        ProvisionStateController userStateController =
+                ((PolicyObjectsInterface) context.getApplicationContext())
+                        .getProvisionStateController();
+        userStateController.initState();
+        context.getPackageManager().setComponentEnabledSetting(
+                new ComponentName(context, this.getClass()),
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
     }
 }

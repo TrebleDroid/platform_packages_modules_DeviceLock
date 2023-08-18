@@ -83,45 +83,4 @@ public final class GlobalParametersTest extends AbstractGlobalParametersTestBase
         assertThat(GlobalParameters.getLastReceivedProvisionState(mContext)).isEqualTo(
                 LAST_RECEIVED_PROVISION_STATE);
     }
-
-    @Test
-    public void getBootTimeMillis_returnTestTimestamp() {
-        assertThat(GlobalParameters.getBootTimeMillis(mContext)).isNotEqualTo(TEST_TIMESTAMP);
-
-        GlobalParameters.setBootTimeMillis(mContext, TEST_TIMESTAMP);
-
-        assertThat(GlobalParameters.getBootTimeMillis(mContext)).isEqualTo(TEST_TIMESTAMP);
-    }
-
-    @Test
-    public void getNextCheckInTimeMillis_returnTestTimestamp() {
-        assertThat(GlobalParameters.getNextCheckInTimeMillis(mContext)).isNotEqualTo(
-                TEST_TIMESTAMP);
-
-        GlobalParameters.setNextCheckInTimeMillis(mContext, TEST_TIMESTAMP);
-
-        assertThat(GlobalParameters.getNextCheckInTimeMillis(mContext)).isEqualTo(TEST_TIMESTAMP);
-    }
-
-    @Test
-    public void getResumeProvisionTimeMillis_returnTestTimestamp() {
-        assertThat(GlobalParameters.getResumeProvisionTimeMillis(mContext)).isNotEqualTo(
-                TEST_TIMESTAMP);
-
-        GlobalParameters.setResumeProvisionTimeMillis(mContext, TEST_TIMESTAMP);
-
-        assertThat(GlobalParameters.getResumeProvisionTimeMillis(mContext)).isEqualTo(
-                TEST_TIMESTAMP);
-    }
-
-    @Test
-    public void getNextProvisionFailedStepTimeMills_returnTestTimestamp() {
-        assertThat(GlobalParameters.getNextProvisionFailedStepTimeMills(mContext)).isNotEqualTo(
-                TEST_TIMESTAMP);
-
-        GlobalParameters.setNextProvisionFailedStepTimeMills(mContext, TEST_TIMESTAMP);
-
-        assertThat(GlobalParameters.getNextProvisionFailedStepTimeMills(mContext)).isEqualTo(
-                TEST_TIMESTAMP);
-    }
 }

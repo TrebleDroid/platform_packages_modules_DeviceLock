@@ -27,7 +27,7 @@ import androidx.test.core.app.ApplicationProvider;
 
 import com.android.devicelockcontroller.AbstractDeviceLockControllerScheduler;
 import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
-import com.android.devicelockcontroller.storage.GlobalParametersClient;
+import com.android.devicelockcontroller.storage.UserParameters;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -45,14 +45,12 @@ public final class TimeChangedBroadcastReceiverTest {
     private static final long TEST_BOOT_TIME_MILLIS = Duration.ofDays(1).toMillis();
     private static final long TEST_CURRENT_TIME_AFTER_CHANGE_MILLIS = Duration.ofDays(2).toMillis();
     private TestDeviceLockControllerApplication mTestApp;
-    private GlobalParametersClient mClient;
     private AbstractDeviceLockControllerScheduler mScheduler;
     private TimeChangedBroadcastReceiver mReceiver;
 
     @Before
     public void setUp() {
         mTestApp = ApplicationProvider.getApplicationContext();
-        mClient = GlobalParametersClient.getInstance();
         mScheduler = mock(AbstractDeviceLockControllerScheduler.class);
         mReceiver = new TimeChangedBroadcastReceiver(mScheduler, Clock.fixed(
                 Instant.ofEpochMilli(TEST_CURRENT_TIME_AFTER_CHANGE_MILLIS),
@@ -60,9 +58,9 @@ public final class TimeChangedBroadcastReceiverTest {
     }
 
     @Test
-    public void onReceive() throws Exception {
+    public void onReceive() {
         // GIVEN boot time
-        mClient.setBootTimeMillis(TEST_BOOT_TIME_MILLIS).get();
+        UserParameters.setBootTimeMillis(mTestApp, TEST_BOOT_TIME_MILLIS);
 
         // WHEN time changed broadcast received
         mReceiver.onReceive(mTestApp, new Intent(Intent.ACTION_TIME_CHANGED));

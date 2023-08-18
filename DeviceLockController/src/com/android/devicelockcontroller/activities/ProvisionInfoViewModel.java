@@ -25,8 +25,6 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.android.devicelockcontroller.DeviceLockControllerApplication;
-import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.storage.SetupParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
@@ -47,7 +45,7 @@ public abstract class ProvisionInfoViewModel extends AndroidViewModel {
     public static final String TAG = "ProvisionInfoViewModel";
     int mHeaderDrawableId;
     int mHeaderTextId;
-    int mSubheaderTextId;
+    int mSubHeaderTextId;
     List<ProvisionInfo> mProvisionInfoList;
     final MutableLiveData<String> mProviderNameLiveData;
     final MutableLiveData<String> mTermsAndConditionsUrlLiveData;
@@ -55,15 +53,6 @@ public abstract class ProvisionInfoViewModel extends AndroidViewModel {
     final MediatorLiveData<Pair<Integer, String>> mHeaderTextLiveData;
     final MediatorLiveData<Pair<Integer, String>> mSubHeaderTextLiveData;
     final MediatorLiveData<List<ProvisionInfo>> mProvisionInfoListLiveData;
-
-    final MutableLiveData<@DeviceStateController.DeviceState Integer> mDeviceState =
-            new MutableLiveData<>();
-
-    private final DeviceStateController.StateListener mStateListener = newState -> {
-        mDeviceState.postValue(newState);
-        LogUtil.d("ProvisionInfoViewModel", "deviceStateListener, newState: " + newState);
-        return Futures.immediateVoidFuture();
-    };
 
     public ProvisionInfoViewModel(@NonNull Application application) {
         super(application);
@@ -77,13 +66,8 @@ public abstract class ProvisionInfoViewModel extends AndroidViewModel {
         mSubHeaderTextLiveData = new MediatorLiveData<>();
         mSubHeaderTextLiveData.addSource(mProviderNameLiveData,
                 providerName -> mSubHeaderTextLiveData.setValue(
-                        new Pair<>(mSubheaderTextId, providerName)));
+                        new Pair<>(mSubHeaderTextId, providerName)));
         mProvisionInfoListLiveData = new MediatorLiveData<>();
-
-        DeviceStateController stateController =
-                ((DeviceLockControllerApplication) application).getStateController();
-        mDeviceState.setValue(stateController.getState());
-        stateController.addCallback(mStateListener);
 
         SetupParametersClient setupParametersClient = SetupParametersClient.getInstance();
         ListenableFuture<String> getKioskAppProviderNameFuture =
@@ -143,12 +127,5 @@ public abstract class ProvisionInfoViewModel extends AndroidViewModel {
                         LogUtil.e(TAG, "Failed to get if provision should be forced", t);
                     }
                 }, MoreExecutors.directExecutor());
-    }
-
-    @Override
-    public void onCleared() {
-        LogUtil.d(TAG, "onCleared");
-        ((DeviceLockControllerApplication) getApplication()).getStateController()
-                .removeCallback(mStateListener);
     }
 }

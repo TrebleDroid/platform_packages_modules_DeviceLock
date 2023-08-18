@@ -18,13 +18,10 @@ package com.android.devicelockcontroller.activities;
 
 import android.text.TextUtils;
 
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.android.devicelockcontroller.policy.DeviceStateController;
-import com.android.devicelockcontroller.policy.SetupController;
 import com.android.devicelockcontroller.storage.SetupParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
 
@@ -37,7 +34,8 @@ import com.google.common.util.concurrent.MoreExecutors;
  * A {@link ViewModel} which provides {@link ProvisioningProgress} to the
  * {@link ProvisioningActivity}.
  */
-public final class ProvisioningProgressViewModel extends ViewModel {
+public final class ProvisioningProgressViewModel extends ViewModel implements
+        ProvisioningProgressController {
 
     private static final String TAG = "ProvisioningProgressViewModel";
 
@@ -110,6 +108,7 @@ public final class ProvisioningProgressViewModel extends ViewModel {
      *
      * <p>This method is thread-safe and can be called from any thread.
      */
+    @Override
     public void setProvisioningProgress(ProvisioningProgress provisioningProgress) {
         if (mAreProviderNameAndSupportUrlReady) {
             LogUtil.d(TAG, "Updating ProvisioningProgress");
@@ -120,49 +119,5 @@ public final class ProvisioningProgressViewModel extends ViewModel {
                     "The upstream LiveData is not ready yet, hold on until it completes");
             mProvisioningProgress = provisioningProgress;
         }
-    }
-
-    /**
-     * Reset the {@link ProvisioningProgress} and retry the setup flow.
-     */
-    public void retrySetupFlow(SetupController setupController,
-            DeviceStateController stateController,
-            LifecycleOwner lifecycleOwner) {
-        LogUtil.d(TAG, "retry setup flow");
-        setProvisioningProgress(ProvisioningProgress.GETTING_DEVICE_READY);
-
-        Futures.addCallback(
-                Futures.transformAsync(stateController.setNextStateForEvent(
-                                DeviceStateController.DeviceEvent.PROVISION_RETRY),
-                        unused -> setupController.startSetupFlow(lifecycleOwner),
-                        MoreExecutors.directExecutor()),
-                new FutureCallback<>() {
-                    @Override
-                    public void onSuccess(Void result) {
-                        LogUtil.i(TAG, "Setup flow has started installing kiosk app");
-                        setProvisioningProgress(ProvisioningProgress.INSTALLING_KIOSK_APP);
-                    }
-
-                    @Override
-                    public void onFailure(Throwable t) {
-                        LogUtil.e(TAG, "Failed to retry setup flow!", t);
-                        setProvisioningProgress(ProvisioningProgress.PROVISIONING_FAILED);
-                    }
-                }, MoreExecutors.directExecutor());
-        setupController.addListener(new SetupController.SetupUpdatesCallbacks() {
-            @Override
-            public void setupFailed(int reason) {
-                LogUtil.e(TAG, "Failed to finish setup flow!");
-                setProvisioningProgress(ProvisioningProgress.PROVISIONING_FAILED);
-                setupController.removeListener(this);
-            }
-
-            @Override
-            public void setupCompleted() {
-                LogUtil.i(TAG, "Retry setup succeeded");
-                setProvisioningProgress(ProvisioningProgress.OPENING_KIOSK_APP);
-                setupController.removeListener(this);
-            }
-        });
     }
 }

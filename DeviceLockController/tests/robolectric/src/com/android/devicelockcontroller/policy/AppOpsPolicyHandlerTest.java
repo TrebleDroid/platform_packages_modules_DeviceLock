@@ -16,27 +16,23 @@
 
 package com.android.devicelockcontroller.policy;
 
-import static com.google.common.truth.Truth.assertThat;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_PACKAGE;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
-import android.content.Context;
+import android.os.Bundle;
 import android.os.OutcomeReceiver;
 
-import androidx.test.core.app.ApplicationProvider;
-
 import com.android.devicelockcontroller.SystemDeviceLockManager;
-import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
-import com.android.devicelockcontroller.storage.SetupParametersClientInterface;
+import com.android.devicelockcontroller.storage.SetupParametersClient;
 
-import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.testing.TestingExecutors;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -47,59 +43,13 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.mockito.stubbing.Answer;
-import org.robolectric.ParameterizedRobolectricTestRunner;
-import org.robolectric.ParameterizedRobolectricTestRunner.Parameter;
-import org.robolectric.ParameterizedRobolectricTestRunner.Parameters;
+import org.robolectric.RobolectricTestRunner;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.Executor;
 
-@RunWith(ParameterizedRobolectricTestRunner.class)
+@RunWith(RobolectricTestRunner.class)
 public class AppOpsPolicyHandlerTest {
-    private Context mContext;
-
-    @Parameter
-    @DeviceState
-    public int mState;
-
-    @Parameter(1)
-    public boolean mExemptFromStartActivityFromBackgroundRestriction;
-
-    @Parameter(2)
-    public boolean mBackgroundRestrictionShouldBeApplied;
-
-    @Parameter(3)
-    public boolean mExemptFromHibernationRestriction;
-
-    @Parameter(4)
-    public boolean mHibernationRestrictionShouldBeApplied;
-
-    @Parameters(name = "State: {0} is exempt from starting activity from background "
-            + "restriction: {1} background restriction should be applied: {2} "
-            + "is exempt from hibernation: {3} hibernation restriction should be applied: {4}")
-    public static List<Object[]> parameters() {
-        return Arrays.asList(new Object[][]{
-                // State | exempt from background restrictions | background restriction applied |
-                // exempt from hibernation | hibernation restriction applied
-
-                // State that should not change exemptions
-                {DeviceState.PSEUDO_LOCKED,     true, false, true, false},
-                {DeviceState.PSEUDO_UNLOCKED,   true, false, true, false},
-                // Exempt from background activity start restrictions but should not
-                // change hibernation restrictions
-                {DeviceState.PROVISION_IN_PROGRESS, true, true, true, false},
-                {DeviceState.PROVISION_SUCCEEDED,   true, true, true, false},
-                {DeviceState.PROVISION_FAILED,      true, true, true, false},
-                {DeviceState.KIOSK_PROVISIONED,       true, true, true, false},
-                // Exempt from background activity start and hibernation
-                {DeviceState.UNLOCKED,          true, true, true, true},
-                {DeviceState.LOCKED,            true, true, true, true},
-                // Non exempt from background activity start restrictions and hibernation
-                {DeviceState.UNPROVISIONED,     false, true, false, true},
-                {DeviceState.CLEARED,           false, true, false, true}
-        });
-    }
+    public static final String TEST_PACKAGE = "test-package";
 
     @Rule
     public final MockitoRule mocks = MockitoJUnit.rule();
@@ -107,19 +57,15 @@ public class AppOpsPolicyHandlerTest {
     @Mock
     private SystemDeviceLockManager mSystemDeviceLockManagerMock;
 
-    @Mock
-    private SetupParametersClientInterface mSetupParametersClient;
+    private AppOpsPolicyHandler mHandler;
 
     @Before
     public void setUp() {
-        mContext = ApplicationProvider.getApplicationContext();
-    }
-
-    @Test
-    public void setPolicyForState_setsExpectedRestrictions() {
-        PolicyHandler handler = new AppOpsPolicyHandler(mContext, mSystemDeviceLockManagerMock,
-                mSetupParametersClient);
-
+        mHandler = new AppOpsPolicyHandler(mSystemDeviceLockManagerMock,
+                TestingExecutors.sameThreadScheduledExecutor());
+        Bundle bundle = new Bundle();
+        bundle.putString(EXTRA_KIOSK_PACKAGE, TEST_PACKAGE);
+        SetupParametersClient.getInstance().createPrefs(bundle);
         doAnswer((Answer<Boolean>) invocation -> {
             OutcomeReceiver<Void, Exception> callback = invocation.getArgument(2 /* callback */);
             callback.onResult(null /* result */);
@@ -130,8 +76,6 @@ public class AppOpsPolicyHandlerTest {
                         any(Executor.class),
                         ArgumentMatchers.<OutcomeReceiver<Void, Exception>>any());
 
-        when(mSetupParametersClient.getKioskPackage()).thenReturn(Futures.immediateFuture(""));
-
         doAnswer((Answer<Boolean>) invocation -> {
             OutcomeReceiver<Void, Exception> callback = invocation.getArgument(3 /* callback */);
             callback.onResult(null /* result */);
@@ -141,21 +85,63 @@ public class AppOpsPolicyHandlerTest {
                 .setExemptFromHibernation(anyString(), anyBoolean(),
                         any(Executor.class),
                         ArgumentMatchers.<OutcomeReceiver<Void, Exception>>any());
+    }
 
-        assertThat(Futures.getUnchecked(handler.setPolicyForState(mState)))
-                .isEqualTo(AppOpsPolicyHandler.SUCCESS);
+    @Test
+    public void onProvisioned_shouldExemptBackgroundStartAndHibernation() {
+        mHandler.onProvisioned();
 
-        final int backgroundRestrictionCount = mBackgroundRestrictionShouldBeApplied ? 1 : 0;
-        verify(mSystemDeviceLockManagerMock, times(backgroundRestrictionCount))
+        verify(mSystemDeviceLockManagerMock)
                 .setExemptFromActivityBackgroundStartRestriction(
-                        eq(mExemptFromStartActivityFromBackgroundRestriction),
+                        eq(true),
                         any(Executor.class),
                         ArgumentMatchers.<OutcomeReceiver<Void, Exception>>any());
-
-        final int hibernationCount = mHibernationRestrictionShouldBeApplied ? 1 : 0;
-        verify(mSystemDeviceLockManagerMock, times(hibernationCount))
+        verify(mSystemDeviceLockManagerMock)
                 .setExemptFromHibernation(anyString(),
-                        eq(mExemptFromHibernationRestriction),
+                        eq(true),
+                        any(Executor.class),
+                        ArgumentMatchers.<OutcomeReceiver<Void, Exception>>any());
+    }
+
+    @Test
+    public void onProvisionInProgress_shouldExemptBackgroundStartAndHibernation() {
+        mHandler.onProvisionInProgress();
+
+        verify(mSystemDeviceLockManagerMock)
+                .setExemptFromActivityBackgroundStartRestriction(
+                        eq(true),
+                        any(Executor.class),
+                        ArgumentMatchers.<OutcomeReceiver<Void, Exception>>any());
+        verify(mSystemDeviceLockManagerMock, never())
+                .setExemptFromHibernation(anyString(),
+                        eq(true),
+                        any(Executor.class),
+                        ArgumentMatchers.<OutcomeReceiver<Void, Exception>>any());
+    }
+
+    @Test
+    public void onProvisionFailed_shouldBanBackgroundStart() {
+        mHandler.onProvisionFailed();
+
+        verify(mSystemDeviceLockManagerMock)
+                .setExemptFromActivityBackgroundStartRestriction(
+                        eq(false),
+                        any(Executor.class),
+                        ArgumentMatchers.<OutcomeReceiver<Void, Exception>>any());
+    }
+
+    @Test
+    public void onCleared_shouldBanBackagorundStartAndHibernation() {
+        mHandler.onCleared();
+
+        verify(mSystemDeviceLockManagerMock)
+                .setExemptFromActivityBackgroundStartRestriction(
+                        eq(false),
+                        any(Executor.class),
+                        ArgumentMatchers.<OutcomeReceiver<Void, Exception>>any());
+        verify(mSystemDeviceLockManagerMock)
+                .setExemptFromHibernation(anyString(),
+                        eq(false),
                         any(Executor.class),
                         ArgumentMatchers.<OutcomeReceiver<Void, Exception>>any());
     }

@@ -159,7 +159,7 @@ public final class DeviceLockNotificationManager {
 
     // Already requested POST_NOTIFICATION permission in ProvisionInfoFragment
     @SuppressLint("MissingPermission")
-    static void sendDeferredProvisioningNotification(Context context,
+    public static void sendDeferredProvisioningNotification(Context context,
             LocalDateTime resumeDateTime, PendingIntent pendingIntent) {
         createNotificationChannel(context);
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT);
