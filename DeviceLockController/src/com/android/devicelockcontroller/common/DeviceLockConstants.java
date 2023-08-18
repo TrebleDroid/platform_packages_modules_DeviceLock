@@ -25,6 +25,11 @@ import java.lang.annotation.Target;
 
 /** Constants being used by more than one class in the Device Lock application. */
 public final class DeviceLockConstants {
+    /** Device reset count down minute when mandatory provision fails */
+    public static final int MANDATORY_PROVISION_DEVICE_RESET_COUNTDOWN_MINUTE = 2;
+    /** Device reset count down minute when non-mandatory provision fails */
+    public static final int NON_MANDATORY_PROVISION_DEVICE_RESET_COUNTDOWN_MINUTE = 30;
+
     // Constants related to unique device identifiers.
     @Retention(RetentionPolicy.SOURCE)
     @IntDef(value = {

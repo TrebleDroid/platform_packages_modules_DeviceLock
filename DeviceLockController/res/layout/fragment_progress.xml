@@ -48,9 +48,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:textSize="16sp"
+            android:textSize="@dimen/provision_screen_sub_header_text_size"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/header_text"/>
+        <!-- TODO(b/296582802): Review this with UI/UX -->
+        <Chronometer
+            android:id="@+id/countdown_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/provision_screen_sub_header_text_size"
+            android:countDown="true"
+            android:format="@string/device_reset_timer_notification_title"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/subheader_text" />
     </androidx.constraintlayout.widget.ConstraintLayout>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/content"
