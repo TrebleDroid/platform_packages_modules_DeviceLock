@@ -153,7 +153,7 @@ public final class DeviceCheckInClientDebug extends DeviceCheckInClient {
      * Reports the current provision state of the device.
      */
     @Override
-    public ReportDeviceProvisionStateGrpcResponse reportDeviceProvisionState(int reasonOfFailure,
+    public ReportDeviceProvisionStateGrpcResponse reportDeviceProvisionState(
             int lastReceivedProvisionState, boolean isSuccessful) {
         return new ReportDeviceProvisionStateGrpcResponse() {
             @Override
