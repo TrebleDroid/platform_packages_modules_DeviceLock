@@ -16,6 +16,8 @@
 
 package com.android.devicelockcontroller.common;
 
+import android.content.Context;
+
 import androidx.annotation.IntDef;
 
 import java.lang.annotation.ElementType;
@@ -25,6 +27,8 @@ import java.lang.annotation.Target;
 
 /** Constants being used by more than one class in the Device Lock application. */
 public final class DeviceLockConstants {
+
+    public static final String KEY_KIOSK_APP_INSTALLED = "devicelock_kiosk_app_installed";
 
     // Constants related to unique device identifiers.
     @Retention(RetentionPolicy.SOURCE)
@@ -120,13 +124,33 @@ public final class DeviceLockConstants {
 
     public static final String ACTION_START_DEVICE_FINANCING_SECONDARY_USER_PROVISIONING =
             "com.android.devicelockcontroller.action"
-                    + ".START_DEVICE_FINANCING_SECONDARY_USER_PROVISIONING";
+            + ".START_DEVICE_FINANCING_SECONDARY_USER_PROVISIONING";
 
     public static final String ACTION_START_DEVICE_SUBSIDY_PROVISIONING =
             "com.android.devicelockcontroller.action.START_DEVICE_SUBSIDY_PROVISIONING";
 
     public static final String ACTION_START_DEVICE_SUBSIDY_DEFERRED_PROVISIONING =
             "com.android.devicelockcontroller.action.START_DEVICE_SUBSIDY_DEFERRED_PROVISIONING";
+
+    /** Uses the package name of {@link Context#getPackageName()} to return the landing activity. */
+    public static String getLandingActivity(Context context) {
+        return context.getPackageName() + "/"
+               + "com.android.devicelockcontroller.activities.LandingActivity";
+    }
+
+    /** Definitions for setup failure types. */
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef(
+            value = {
+                    SetupFailureReason.SETUP_FAILED,
+                    SetupFailureReason.INSTALL_FAILED,
+            })
+    public @interface SetupFailureReason {
+        /** Setup failed to complete */
+        int SETUP_FAILED = 0;
+        /** Failed to install the creditor apk. */
+        int INSTALL_FAILED = 1;
+    }
 
     /** Definitions for device provision states. */
     @Retention(RetentionPolicy.SOURCE)
