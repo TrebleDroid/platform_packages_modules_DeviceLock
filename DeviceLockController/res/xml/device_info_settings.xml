@@ -35,11 +35,6 @@
                     android:layout_height="wrap_content"
                     android:title="@string/settings_safe_mode"
                     android:selectable="false" />
-        <Preference android:key="@string/settings_config_date_time_preference_key"
-                    android:order="130"
-                    android:layout_height="wrap_content"
-                    android:title="@string/settings_config_date_time"
-                    android:selectable="false" />
         <Preference android:key="@string/settings_developer_options_preference_key"
                     android:order="140"
                     android:layout_height="wrap_content"

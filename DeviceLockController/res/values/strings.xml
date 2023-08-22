@@ -163,10 +163,6 @@
     <string name="settings_safe_mode">Reboot your device into safe mode</string>
     <!-- Key of the settings_safe_mode Preference. translatable="false" -->
     <string name="settings_safe_mode_preference_key">settings_safe_mode_preference_key</string>
-    <!-- Label explaining that updating the date and time on the device. [CHAR LIMIT=60] -->
-    <string name="settings_config_date_time">Change date, time, and time zones</string>
-    <!-- Key of the settings_config_date_time Preference. translatable="false" -->
-    <string name="settings_config_date_time_preference_key">settings_config_date_time_preference_key</string>
     <!-- Label explaining that turning on the developer options on the device. [CHAR LIMIT=40]-->
     <string name="settings_developer_options">Use developer options</string>
     <!-- Key of the settings_developer_options Preference. translatable="false" -->
