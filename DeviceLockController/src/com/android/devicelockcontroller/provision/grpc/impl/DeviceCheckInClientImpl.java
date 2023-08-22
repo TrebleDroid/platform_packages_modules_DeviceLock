@@ -16,6 +16,9 @@
 
 package com.android.devicelockcontroller.provision.grpc.impl;
 
+import static com.android.devicelockcontroller.proto.ClientProvisionFailureReason.CLIENT_PROVISION_FAILURE_REASON_INSTALL_FAILED;
+import static com.android.devicelockcontroller.proto.ClientProvisionFailureReason.CLIENT_PROVISION_FAILURE_REASON_SETUP_FAILED;
+
 import android.util.ArraySet;
 
 import androidx.annotation.Keep;
@@ -24,7 +27,9 @@ import com.android.devicelockcontroller.common.DeviceId;
 import com.android.devicelockcontroller.common.DeviceLockConstants;
 import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceIdType;
 import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState;
+import com.android.devicelockcontroller.common.DeviceLockConstants.SetupFailureReason;
 import com.android.devicelockcontroller.proto.ClientDeviceIdentifier;
+import com.android.devicelockcontroller.proto.ClientProvisionFailureReason;
 import com.android.devicelockcontroller.proto.ClientProvisionState;
 import com.android.devicelockcontroller.proto.DeviceIdentifierType;
 import com.android.devicelockcontroller.proto.DeviceLockCheckinServiceGrpc;
@@ -111,6 +116,7 @@ public final class DeviceCheckInClientImpl extends DeviceCheckInClient {
     /**
      * Reports the current provision state of the device.
      *
+     * @param reasonOfFailure            one of {@link SetupFailureReason}
      * @param lastReceivedProvisionState one of {@link DeviceProvisionState}.
      *                                   It must be the value from the response when this API
      *                                   was called last time. If this API is called for the first
@@ -123,13 +129,13 @@ public final class DeviceCheckInClientImpl extends DeviceCheckInClient {
      * @return A class that encapsulate the response from the backend server.
      */
     @Override
-    public ReportDeviceProvisionStateGrpcResponse reportDeviceProvisionState(
+    public ReportDeviceProvisionStateGrpcResponse reportDeviceProvisionState(int reasonOfFailure,
             int lastReceivedProvisionState, boolean isSuccessful) {
         try {
             return new ReportDeviceProvisionStateGrpcResponseWrapper(
                     mBlockingStub.reportDeviceProvisionState(
-                            createReportDeviceProvisionStateRequest(lastReceivedProvisionState,
-                                    isSuccessful, sRegisteredId)));
+                            createReportDeviceProvisionStateRequest(reasonOfFailure,
+                                    lastReceivedProvisionState, isSuccessful, sRegisteredId)));
         } catch (StatusRuntimeException e) {
             return new ReportDeviceProvisionStateGrpcResponseWrapper(e.getStatus());
         }
@@ -182,10 +188,22 @@ public final class DeviceCheckInClientImpl extends DeviceCheckInClient {
     }
 
     private static ReportDeviceProvisionStateRequest createReportDeviceProvisionStateRequest(
+            @SetupFailureReason int reasonOfFailure,
             @DeviceProvisionState int lastReceivedProvisionState,
             boolean isSuccessful,
             String registeredId) {
-
+        ClientProvisionFailureReason reason;
+        switch (reasonOfFailure) {
+            case SetupFailureReason.SETUP_FAILED:
+                reason = CLIENT_PROVISION_FAILURE_REASON_SETUP_FAILED;
+                break;
+            case SetupFailureReason.INSTALL_FAILED:
+                reason = CLIENT_PROVISION_FAILURE_REASON_INSTALL_FAILED;
+                break;
+            default:
+                throw new IllegalStateException(
+                        "Unexpected provision failure reason value: " + reasonOfFailure);
+        }
         ClientProvisionState state;
         switch (lastReceivedProvisionState) {
             case DeviceProvisionState.PROVISION_STATE_UNSPECIFIED:
@@ -211,6 +229,7 @@ public final class DeviceCheckInClientImpl extends DeviceCheckInClient {
                         "Unexpected value: " + lastReceivedProvisionState);
         }
         return ReportDeviceProvisionStateRequest.newBuilder()
+                .setClientProvisionFailureReason(reason)
                 .setPreviousClientProvisionState(state)
                 .setProvisionSuccess(isSuccessful)
                 .setRegisteredDeviceIdentifier(registeredId)
