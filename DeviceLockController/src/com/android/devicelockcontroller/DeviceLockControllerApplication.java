@@ -27,6 +27,8 @@ import androidx.work.ListenableWorker;
 
 import com.android.devicelockcontroller.policy.DevicePolicyController;
 import com.android.devicelockcontroller.policy.DeviceStateController;
+import com.android.devicelockcontroller.policy.FinalizationController;
+import com.android.devicelockcontroller.policy.FinalizationControllerImpl;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
 import com.android.devicelockcontroller.policy.ProvisionStateController;
 import com.android.devicelockcontroller.policy.ProvisionStateControllerImpl;
@@ -41,6 +43,7 @@ public class DeviceLockControllerApplication extends Application implements
 
     private static Context sApplicationContext;
     private ProvisionStateController mProvisionStateController;
+    private FinalizationController mFinalizationController;
 
     @Override
     public void onCreate() {
@@ -72,8 +75,18 @@ public class DeviceLockControllerApplication extends Application implements
 
     @Override
     @MainThread
+    public FinalizationController getFinalizationController() {
+        if (mFinalizationController == null) {
+            mFinalizationController = new FinalizationControllerImpl(this);
+        }
+        return mFinalizationController;
+    }
+
+    @Override
+    @MainThread
     public void destroyObjects() {
         mProvisionStateController = null;
+        mFinalizationController = null;
     }
 
     public static Context getAppContext() {
