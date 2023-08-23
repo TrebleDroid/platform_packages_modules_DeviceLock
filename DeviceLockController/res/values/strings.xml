@@ -148,7 +148,7 @@
     <!-- Title of the settings screen. This screen summarize what would happen on the device under a finance program. [CHAR_LIMIT=40]-->
     <string name="settings_screen_title">Financed device info</string>
     <!-- Top introduction on the Settings screen, summarizing the changes a device provider can make to this device. [CHAR LIMIT=NONE] -->
-    <string name="settings_intro">Your credit provider can change settings and install the Kiosk app on the device.\n\n<xliff:g id="provider name">%1$s</xliff:g> may restrict this device if you don\u2019t make the necessary payments or stop using <xliff:g id="provider name">%1$s</xliff:g>\u2019s SIM.\n\nTo learn more, contact <xliff:g id="provider name">%1$s</xliff:g>.</string>
+    <string name="settings_intro"><xliff:g id="provider name">%1$s</xliff:g> can change settings and install the Kiosk app on the device.\n\n<xliff:g id="provider name">%1$s</xliff:g> may restrict this device if you don\u2019t make the necessary payments or stop using <xliff:g id="provider name">%1$s</xliff:g>\u2019s SIM.\n\nTo learn more, contact <xliff:g id="provider name">%1$s</xliff:g>.</string>
     <!-- Key of the settings_intro Preference. translatable="false" -->
     <string name="settings_intro_preference_key">settings_intro_preference_key</string>
     <!-- Section header. This section shows what restrictions will be enforced on the device when it is financed / subsidized. [CHAR LIMIT=60] -->
