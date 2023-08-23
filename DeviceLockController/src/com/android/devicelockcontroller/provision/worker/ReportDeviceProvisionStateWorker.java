@@ -46,7 +46,6 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorker {
     public static final String KEY_IS_PROVISION_SUCCESSFUL = "is-provision-successful";
     public static final String REPORT_PROVISION_STATE_WORK_NAME = "report-provision-state";
-    public static final int REASON_SETUP_FAILED = 0;
     private final AbstractDeviceLockControllerScheduler mDeviceLockControllerScheduler;
 
     /** Report provision failure and get next failed step */
@@ -111,7 +110,7 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
             boolean isSuccessful = getInputData().getBoolean(
                     KEY_IS_PROVISION_SUCCESSFUL, /* defaultValue= */ false);
             ReportDeviceProvisionStateGrpcResponse response =
-                    Futures.getDone(mClient).reportDeviceProvisionState(REASON_SETUP_FAILED,
+                    Futures.getDone(mClient).reportDeviceProvisionState(
                             Futures.getDone(lastState),
                             isSuccessful);
             if (response.hasRecoverableError()) return Result.retry();

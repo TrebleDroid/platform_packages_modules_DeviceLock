@@ -27,7 +27,6 @@ import androidx.annotation.WorkerThread;
 import com.android.devicelockcontroller.common.DeviceId;
 import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState;
 import com.android.devicelockcontroller.common.DeviceLockConstants.PauseDeviceProvisioningReason;
-import com.android.devicelockcontroller.common.DeviceLockConstants.SetupFailureReason;
 import com.android.devicelockcontroller.util.LogUtil;
 
 /**
@@ -132,7 +131,6 @@ public abstract class DeviceCheckInClient {
     /**
      * Reports the current provision state of the device.
      *
-     * @param reasonOfFailure            one of {@link SetupFailureReason}
      * @param lastReceivedProvisionState one of {@link DeviceProvisionState}.
      *                                   It must be the value from the response when this API
      *                                   was called last time. If this API is called for the first
@@ -146,7 +144,6 @@ public abstract class DeviceCheckInClient {
      */
     @WorkerThread
     public abstract ReportDeviceProvisionStateGrpcResponse reportDeviceProvisionState(
-            @SetupFailureReason int reasonOfFailure,
             @DeviceProvisionState int lastReceivedProvisionState,
             boolean isSuccessful);
 }
