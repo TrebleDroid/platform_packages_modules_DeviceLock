@@ -123,15 +123,15 @@ final class GetDeviceCheckInStatusGrpcResponseWrapper extends GetDeviceCheckInSt
             return ProvisioningType.TYPE_UNDEFINED;
         }
 
-        switch (mNextStep.getDeviceProvisioningInformation().getConfigurationType()) {
-            case CONFIGURATION_TYPE_FINANCED:
+        switch (mNextStep.getDeviceProvisioningInformation().getEnrollmentType()) {
+            case ENROLLMENT_TYPE_FINANCE:
                 return ProvisioningType.TYPE_FINANCED;
-            case CONFIGURATION_TYPE_SUBSIDY:
+            case ENROLLMENT_TYPE_SUBSIDY:
                 return ProvisioningType.TYPE_SUBSIDY;
-            case CONFIGURATION_TYPE_UNSPECIFIED:
+            case ENROLLMENT_TYPE_UNSPECIFIED:
                 return ProvisioningType.TYPE_UNDEFINED;
             default:
-                throw new IllegalArgumentException("Unknown configuration type");
+                throw new IllegalArgumentException("Unknown enrollment type");
         }
     }
 
