@@ -17,22 +17,17 @@
 package com.android.devicelockcontroller;
 
 import android.app.Service;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteCallback;
 
 import androidx.annotation.NonNull;
-import androidx.work.WorkManager;
 
 import com.android.devicelockcontroller.policy.DevicePolicyController;
 import com.android.devicelockcontroller.policy.DeviceStateController;
+import com.android.devicelockcontroller.policy.FinalizationController;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
-import com.android.devicelockcontroller.provision.worker.ReportDeviceLockProgramCompleteWorker;
-import com.android.devicelockcontroller.receivers.LockedBootCompletedReceiver;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
 
@@ -48,6 +43,7 @@ public final class DeviceLockControllerService extends Service {
     private static final String TAG = "DeviceLockControllerService";
     private DeviceStateController mStateController;
     private DevicePolicyController mPolicyController;
+    private FinalizationController mFinalizationController;
 
     private final IDeviceLockControllerService.Stub mBinder =
             new IDeviceLockControllerService.Stub() {
@@ -83,23 +79,11 @@ public final class DeviceLockControllerService extends Service {
                 @Override
                 public void clearDeviceRestrictions(RemoteCallback remoteCallback) {
                     Futures.addCallback(
-                            Futures.transform(mStateController.clearDevice(),
-                                    unused -> {
-                                        Context context = getApplicationContext();
-                                        WorkManager workManager =
-                                                WorkManager.getInstance(context);
-                                        ReportDeviceLockProgramCompleteWorker
-                                                .reportDeviceLockProgramComplete(workManager);
-                                        getPackageManager().setComponentEnabledSetting(
-                                                new ComponentName(context,
-                                                        LockedBootCompletedReceiver.class),
-                                                PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                                                PackageManager.DONT_KILL_APP);
-                                        return true;
-                                    }, MoreExecutors.directExecutor()),
+                            Futures.transformAsync(mStateController.clearDevice(),
+                                    unused -> mFinalizationController.notifyRestrictionsCleared(),
+                                    MoreExecutors.directExecutor()),
                             remoteCallbackWrapper(remoteCallback, KEY_CLEAR_DEVICE_RESULT),
                             MoreExecutors.directExecutor());
-
                 }
 
                 @Override
@@ -149,6 +133,7 @@ public final class DeviceLockControllerService extends Service {
         final PolicyObjectsInterface policyObjects = (PolicyObjectsInterface) getApplication();
         mStateController = policyObjects.getDeviceStateController();
         mPolicyController = policyObjects.getPolicyController();
+        mFinalizationController = policyObjects.getFinalizationController();
     }
 
     @Override
