@@ -22,6 +22,7 @@ import "google/protobuf/timestamp.proto";
 import "configuration_info.proto";
 import "device_checkin_info.proto";
 import "device_info.proto";
+import "enrollment_info.proto";
 
 option java_package = "com.android.devicelockcontroller.proto";
 option java_multiple_files = true;
@@ -121,10 +122,10 @@ message NextCheckinInformation {
 message DeviceProvisioningInformation {
   // The configuration information assigned to the device.
   optional ConfigurationInfo configuration_information = 1;
-  // The type of configuration assigned to the device. This is used by the
+  // The type of enrollment assigned to the device. This is used by the
   // Device Lock Android client to determine what type of strings should be
   // shown to the user.
-  optional ConfigurationType configuration_type = 2;
+  optional EnrollmentType enrollment_type = 2;
   // The provision type selected when enrolling the device into a locking
   // program. The Device Lock Android client would use this to determine which
   // provision approach should be used to provision the device.
