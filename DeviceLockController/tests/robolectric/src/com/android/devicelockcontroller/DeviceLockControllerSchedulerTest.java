@@ -38,6 +38,7 @@ import androidx.work.WorkManager;
 import androidx.work.testing.SynchronousExecutor;
 import androidx.work.testing.WorkManagerTestInitHelper;
 
+import com.android.devicelockcontroller.common.DeviceLockConstants;
 import com.android.devicelockcontroller.policy.ProvisionStateController;
 import com.android.devicelockcontroller.provision.worker.DeviceCheckInWorker;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
@@ -81,7 +82,7 @@ public final class DeviceLockControllerSchedulerTest {
     private static final Duration TEST_POSITIVE_DELTA = Duration.ofHours(5);
     private static final Duration TEST_NEGATIVE_DELTA = Duration.ofHours(-5);
     private static final long RESET_DEVICE_MILLIS = TimeUnit.MINUTES.toMillis(
-            DeviceLockControllerScheduler.RESET_DEVICE_DEFAULT_MINUTES);
+            DeviceLockConstants.NON_MANDATORY_PROVISION_DEVICE_RESET_COUNTDOWN_MINUTE);
     DeviceLockControllerScheduler mScheduler;
     TestDeviceLockControllerApplication mTestApp;
     private GlobalParametersClient mClient;

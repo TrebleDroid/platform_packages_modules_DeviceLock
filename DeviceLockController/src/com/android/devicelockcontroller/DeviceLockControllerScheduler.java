@@ -16,6 +16,8 @@
 
 package com.android.devicelockcontroller;
 
+import static com.android.devicelockcontroller.common.DeviceLockConstants.MANDATORY_PROVISION_DEVICE_RESET_COUNTDOWN_MINUTE;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.NON_MANDATORY_PROVISION_DEVICE_RESET_COUNTDOWN_MINUTE;
 import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState.PROVISION_FAILED;
 import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState.PROVISION_PAUSED;
 import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState.UNPROVISIONED;
@@ -74,10 +76,6 @@ public final class DeviceLockControllerScheduler extends AbstractDeviceLockContr
     static final long PROVISION_STATE_REPORT_INTERVAL_DEFAULT_MINUTES = TimeUnit.DAYS.toMinutes(1);
     private static final String KEY_PROVISION_REPORT_INTERVAL_MINUTES =
             "devicelock.provision.report-interval-minutes";
-    // The default minute value of the count down when device is about to reset.
-    @VisibleForTesting
-    static final int RESET_DEVICE_DEFAULT_MINUTES = 30;
-    public static final int RESET_DEVICE_IN_TWO_MINUTES = 2;
     private final Context mContext;
     private static final int CHECK_IN_INTERVAL_MINUTE = 60;
     private final Clock mClock;
@@ -234,22 +232,22 @@ public final class DeviceLockControllerScheduler extends AbstractDeviceLockContr
 
     @Override
     public void scheduleResetDeviceAlarm() {
-        Duration delay = Duration.ofMinutes(RESET_DEVICE_DEFAULT_MINUTES);
+        Duration delay = Duration.ofMinutes(NON_MANDATORY_PROVISION_DEVICE_RESET_COUNTDOWN_MINUTE);
         if (Build.isDebuggable()) {
             delay = Duration.ofMinutes(
                     SystemProperties.getInt("devicelock.provision.reset-device-minutes",
-                            RESET_DEVICE_DEFAULT_MINUTES));
+                            NON_MANDATORY_PROVISION_DEVICE_RESET_COUNTDOWN_MINUTE));
         }
         scheduleResetDeviceAlarm(delay);
     }
 
     @Override
     public void scheduleMandatoryResetDeviceAlarm() {
-        Duration delay = Duration.ofMinutes(RESET_DEVICE_IN_TWO_MINUTES);
+        Duration delay = Duration.ofMinutes(MANDATORY_PROVISION_DEVICE_RESET_COUNTDOWN_MINUTE);
         if (Build.isDebuggable()) {
             delay = Duration.ofMinutes(
-                    SystemProperties.getInt("devicelock.provision.reset-device-minutes",
-                            RESET_DEVICE_IN_TWO_MINUTES));
+                    SystemProperties.getInt("devicelock.provision.mandatory-reset-device-minutes",
+                            MANDATORY_PROVISION_DEVICE_RESET_COUNTDOWN_MINUTE));
         }
         scheduleResetDeviceAlarm(delay);
     }
