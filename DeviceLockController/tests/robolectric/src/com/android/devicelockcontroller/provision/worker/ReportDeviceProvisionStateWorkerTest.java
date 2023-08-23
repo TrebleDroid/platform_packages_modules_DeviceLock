@@ -60,7 +60,6 @@ import org.robolectric.RobolectricTestRunner;
 @RunWith(RobolectricTestRunner.class)
 public final class ReportDeviceProvisionStateWorkerTest {
     private static final int TEST_DAYS_LEFT_UNTIL_RESET = 3;
-    private static final String TEST_ENROLLMENT_TOKEN = "1234567890";
     @Rule
     public final MockitoRule mMocks = MockitoJUnit.rule();
     @Mock
@@ -120,14 +119,12 @@ public final class ReportDeviceProvisionStateWorkerTest {
         when(mResponse.isSuccessful()).thenReturn(true);
         when(mResponse.getNextClientProvisionState()).thenReturn(PROVISION_STATE_FACTORY_RESET);
         when(mResponse.getDaysLeftUntilReset()).thenReturn(TEST_DAYS_LEFT_UNTIL_RESET);
-        when(mResponse.getEnrollmentToken()).thenReturn(TEST_ENROLLMENT_TOKEN);
 
         assertThat(Futures.getUnchecked(mWorker.startWork())).isEqualTo(Result.success());
 
         GlobalParametersClient globalParameters = GlobalParametersClient.getInstance();
         assertThat(globalParameters.getLastReceivedProvisionState().get()).isEqualTo(
                 PROVISION_STATE_FACTORY_RESET);
-        assertThat(globalParameters.getEnrollmentToken().get()).isEqualTo(TEST_ENROLLMENT_TOKEN);
         assertThat(UserParameters.getDaysLeftUntilReset(mTestApp)).isEqualTo(
                 TEST_DAYS_LEFT_UNTIL_RESET);
 

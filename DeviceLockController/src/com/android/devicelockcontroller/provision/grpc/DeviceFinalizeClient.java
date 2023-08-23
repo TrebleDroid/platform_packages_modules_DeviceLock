@@ -36,7 +36,6 @@ public abstract class DeviceFinalizeClient {
     public static final String DEVICE_FINALIZE_CLIENT_DEBUG_CLASS_NAME =
             "com.android.devicelockcontroller.debug.DeviceFinalizeClientDebug";
     private static volatile DeviceFinalizeClient sClient;
-    protected static String sEnrollmentToken = "";
     protected static String sRegisteredId = "";
     protected static String sHostName = "";
     protected static int sPortNumber = 0;
@@ -52,8 +51,7 @@ public abstract class DeviceFinalizeClient {
             String hostName,
             int portNumber,
             Pair<String, String> apiKey,
-            String registeredId,
-            String enrollmentToken) {
+            String registeredId) {
         boolean useDebugClient = Build.isDebuggable()
                 && SystemProperties.getBoolean("debug.devicelock.finalize", /* def= */ false);
         if (sClient == null || sUseDebugClient != useDebugClient) {
@@ -66,7 +64,6 @@ public abstract class DeviceFinalizeClient {
                 sHostName = hostName;
                 sPortNumber = portNumber;
                 sRegisteredId = registeredId;
-                sEnrollmentToken = enrollmentToken;
                 sApiKey = apiKey;
                 sUseDebugClient = useDebugClient;
                 try {

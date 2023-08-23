@@ -40,7 +40,6 @@ final class GlobalParameters {
     private static final String KEY_NEED_CHECK_IN = "need_check_in";
     private static final String KEY_REGISTERED_DEVICE_ID = "registered_device_id";
     private static final String KEY_FORCED_PROVISION = "forced_provision";
-    private static final String KEY_ENROLLMENT_TOKEN = "enrollment_token";
     private static final String KEY_LAST_RECEIVED_PROVISION_STATE = "last-received-provision-state";
     private static final String TAG = "GlobalParameters";
     private static final String KEY_DEVICE_STATE = "device_state";
@@ -152,30 +151,6 @@ final class GlobalParameters {
                 .apply();
     }
 
-    /**
-     * Get the enrollment token assigned by the Device Lock backend server.
-     *
-     * @param context Context used to get the shared preferences.
-     * @return A string value of the enrollment token.
-     */
-    @Nullable
-    static String getEnrollmentToken(Context context) {
-        return getSharedPreferences(context).getString(KEY_ENROLLMENT_TOKEN, null);
-    }
-
-    /**
-     * Set the enrollment token assigned by the Device Lock backend server.
-     *
-     * @param context Context used to get the shared preferences.
-     * @param token   The string value of the enrollment token.
-     */
-    static void setEnrollmentToken(Context context, String token) {
-        getSharedPreferences(context)
-                .edit()
-                .putString(KEY_ENROLLMENT_TOKEN, token)
-                .apply();
-    }
-
     @DeviceProvisionState
     static int getLastReceivedProvisionState(Context context) {
         return getSharedPreferences(context).getInt(KEY_LAST_RECEIVED_PROVISION_STATE,
@@ -203,14 +178,12 @@ final class GlobalParameters {
                         + "%s: %s\n"    // need_check_in:
                         + "%s: %s\n"    // registered_device_id:
                         + "%s: %s\n"    // forced_provision:
-                        + "%s: %s\n"    // enrollment_token:
                         + "%s: %s\n"    // last-received-provision-state:
                         + "%s: %s\n"    // device_state:
                         + "%s: %s\n",    // is-provision-ready:
                 KEY_NEED_CHECK_IN, needCheckIn(context),
                 KEY_REGISTERED_DEVICE_ID, getRegisteredDeviceId(context),
                 KEY_FORCED_PROVISION, isProvisionForced(context),
-                KEY_ENROLLMENT_TOKEN, getEnrollmentToken(context),
                 KEY_LAST_RECEIVED_PROVISION_STATE, getLastReceivedProvisionState(context),
                 KEY_DEVICE_STATE, getDeviceState(context),
                 KEY_IS_PROVISION_READY, isProvisionReady(context)

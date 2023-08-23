@@ -233,30 +233,6 @@ public final class GlobalParametersClient extends DlcClient {
     }
 
     /**
-     * Get the enrollment token assigned by the Device Lock backend server.
-     *
-     * @return A string value of the enrollment token.
-     */
-    @Nullable
-    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
-    public ListenableFuture<String> getEnrollmentToken() {
-        return call(() -> asInterface(getService()).getEnrollmentToken());
-    }
-
-    /**
-     * Set the enrollment token assigned by the Device Lock backend server.
-     *
-     * @param token The string value of the enrollment token.
-     */
-    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
-    public ListenableFuture<Void> setEnrollmentToken(String token) {
-        return call(() -> {
-            asInterface(getService()).setEnrollmentToken(token);
-            return null;
-        });
-    }
-
-    /**
      * Get the last received provision state determined by device lock server.
      *
      * @return one of {@link DeviceProvisionState}.
