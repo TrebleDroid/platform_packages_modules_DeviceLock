@@ -39,8 +39,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.work.WorkManager;
 
-import com.android.devicelockcontroller.AbstractDeviceLockControllerScheduler;
-import com.android.devicelockcontroller.DeviceLockControllerScheduler;
 import com.android.devicelockcontroller.provision.worker.ReportDeviceProvisionStateWorker;
 import com.android.devicelockcontroller.receivers.LockedBootCompletedReceiver;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
@@ -68,7 +66,6 @@ public final class ProvisionStateControllerImpl implements ProvisionStateControl
     private final DevicePolicyController mPolicyController;
     private final DeviceStateController mDeviceStateController;
     private final Executor mBgExecutor;
-    private AbstractDeviceLockControllerScheduler mScheduler;
 
     @GuardedBy("this")
     private ListenableFuture<@ProvisionState Integer> mCurrentStateFuture;
@@ -162,10 +159,6 @@ public final class ProvisionStateControllerImpl implements ProvisionStateControl
         } else if (state == PROVISION_FAILED) {
             ReportDeviceProvisionStateWorker.reportSetupFailed(
                     WorkManager.getInstance(mContext));
-            if (mScheduler == null) {
-                mScheduler = new DeviceLockControllerScheduler(mContext);
-            }
-            mScheduler.scheduleNextProvisionFailedStepAlarm();
         } else if (state == PROVISION_IN_PROGRESS) {
             mContext.getPackageManager().setComponentEnabledSetting(
                     new ComponentName(mContext, LockedBootCompletedReceiver.class),

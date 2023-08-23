@@ -31,7 +31,7 @@ public class DeviceFinancingProvisionInfoViewModel extends ProvisionInfoViewMode
 
     private static final int HEADER_DRAWABLE_ID = R.drawable.ic_info_24px;
 
-    private static final int HEADER_TEXT_ID = R.string.device_provided_by_provider;
+    private static final int MANDATORY_HEADER_TEXT_ID = R.string.device_provided_by_provider;
 
     private static final Integer[] DRAWABLE_IDS = new Integer[]{
             R.drawable.ic_file_download_24px, R.drawable.ic_lock_outline_24px,
@@ -41,11 +41,18 @@ public class DeviceFinancingProvisionInfoViewModel extends ProvisionInfoViewMode
             R.string.download_kiosk_app, R.string.restrict_device_if_missing_payment,
     };
 
+    private static final int HEADER_TEXT_ID = R.string.enroll_your_device_header;
+
+    private static final int SUBHEADER_TEXT_ID =
+            R.string.enroll_your_device_financing_subheader;
+
     public DeviceFinancingProvisionInfoViewModel(@NonNull Application application) {
         super(application);
 
         mHeaderDrawableId = HEADER_DRAWABLE_ID;
+        mMandatoryHeaderTextId = MANDATORY_HEADER_TEXT_ID;
         mHeaderTextId = HEADER_TEXT_ID;
+        mSubHeaderTextId = SUBHEADER_TEXT_ID;
 
         List<ProvisionInfo> provisionInfoList = new ArrayList<>();
         for (int i = 0, size = DRAWABLE_IDS.length; i < size; ++i) {

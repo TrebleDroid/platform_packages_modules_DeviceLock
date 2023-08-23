@@ -68,9 +68,9 @@ public abstract class AbstractDeviceLockControllerScheduler {
     public abstract void scheduleResetDeviceAlarm();
 
     /**
-     * Schedule an alarm to factory reset the device with a given delay.
+     * Schedule an alarm to factory reset the device in case of mandatory provision is failed.
      */
-    public abstract void scheduleResetDeviceAlarm(Duration delay);
+    public abstract void scheduleMandatoryResetDeviceAlarm();
 
     /** Reschedule the reset device alarm if needed */
     public abstract void rescheduleResetDeviceAlarmIfNeeded();
