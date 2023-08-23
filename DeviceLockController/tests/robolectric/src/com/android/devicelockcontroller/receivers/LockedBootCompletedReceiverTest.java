@@ -93,7 +93,7 @@ public final class LockedBootCompletedReceiverTest {
 
         mReceiver.onReceive(mTestApplication, INTENT);
 
-        verify(mScheduler).rescheduleResumeProvisionAlarmIfNeeded();
+        verify(mScheduler).notifyRebootWhenProvisionPaused();
     }
 
     @Test
@@ -102,7 +102,6 @@ public final class LockedBootCompletedReceiverTest {
                 Futures.immediateFuture(PROVISION_FAILED));
         mReceiver.onReceive(mTestApplication, INTENT);
 
-        verify(mScheduler).rescheduleNextProvisionFailedStepAlarmIfNeeded();
-        verify(mScheduler).rescheduleResetDeviceAlarmIfNeeded();
+        verify(mScheduler).notifyRebootWhenProvisionFailed();
     }
 }

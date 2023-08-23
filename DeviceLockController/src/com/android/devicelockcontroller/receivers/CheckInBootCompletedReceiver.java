@@ -72,11 +72,12 @@ public final class CheckInBootCompletedReceiver extends BroadcastReceiver {
         if (isUserProfile) {
             return;
         }
-
-        if (mScheduler == null) mScheduler = new DeviceLockControllerScheduler(context);
         ProvisionStateController provisionStateController =
                 ((PolicyObjectsInterface) context.getApplicationContext())
                         .getProvisionStateController();
+        if (mScheduler == null) {
+            mScheduler = new DeviceLockControllerScheduler(context, provisionStateController);
+        }
         ListenableFuture<Boolean> needReschedule = Futures.transformAsync(
                 Futures.submit(() -> UserParameters.needInitialCheckIn(context), mExecutor),
                 needCheckIn -> {
@@ -94,7 +95,7 @@ public final class CheckInBootCompletedReceiver extends BroadcastReceiver {
                     @Override
                     public void onSuccess(Boolean result) {
                         if (result) {
-                            mScheduler.rescheduleRetryCheckInWorkIfNeeded();
+                            mScheduler.notifyNeedRescheduleCheckIn();
                         }
                     }
 

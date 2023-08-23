@@ -18,8 +18,15 @@ package com.android.devicelockcontroller.util;
 
 import android.os.Looper;
 
+import com.google.common.util.concurrent.MoreExecutors;
+
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
 /** An utility class related to multi-threading */
 public final class ThreadUtils {
+    private static volatile Executor sSequentialSchedulerExecutor;
+
     // Prevent instantiation
     private ThreadUtils() {
     }
@@ -49,5 +56,17 @@ public final class ThreadUtils {
             throw new IllegalStateException(
                     "Can not invoke " + methodName + " on a background thread");
         }
+    }
+
+    /**
+     * Get the sequential executor for
+     * {@link com.android.devicelockcontroller.DeviceLockControllerScheduler}
+     */
+    public static synchronized Executor getSequentialSchedulerExecutor() {
+        if (sSequentialSchedulerExecutor == null) {
+            sSequentialSchedulerExecutor = MoreExecutors.newSequentialExecutor(
+                    Executors.newSingleThreadExecutor());
+        }
+        return sSequentialSchedulerExecutor;
     }
 }
