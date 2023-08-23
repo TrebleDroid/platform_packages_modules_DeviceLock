@@ -144,6 +144,17 @@
             </intent-filter>
         </receiver>
 
+        <!-- Multi users boot completed broadcast receiver. -->
+        <receiver
+            android:name="com.android.devicelockcontroller.receivers.FinalizationBootCompletedReceiver"
+            android:exported="false"
+            android:singleUser="false"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
         <!-- Multi users locked boot completed broadcast receiver. This receiver should only be enabled after provision ready -->
         <receiver
             android:name="com.android.devicelockcontroller.receivers.LockedBootCompletedReceiver"

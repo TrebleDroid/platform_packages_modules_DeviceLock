@@ -24,6 +24,7 @@ import androidx.annotation.Nullable;
 
 import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
+import com.android.devicelockcontroller.policy.FinalizationControllerImpl.FinalizationState;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import java.util.Locale;
@@ -43,6 +44,7 @@ final class GlobalParameters {
     private static final String KEY_LAST_RECEIVED_PROVISION_STATE = "last-received-provision-state";
     private static final String TAG = "GlobalParameters";
     private static final String KEY_DEVICE_STATE = "device_state";
+    private static final String KEY_FINALIZATION_STATE = "finalization_state";
     public static final String KEY_IS_PROVISION_READY = "key-is-provision-ready";
 
 
@@ -136,6 +138,22 @@ final class GlobalParameters {
      */
     static void setDeviceState(Context context, @DeviceState int state) {
         getSharedPreferences(context).edit().putInt(KEY_DEVICE_STATE, state).apply();
+    }
+
+    /**
+     * Gets the current {@link FinalizationState}.
+     */
+    @FinalizationState
+    static int getFinalizationState(Context context) {
+        return getSharedPreferences(context).getInt(
+                KEY_FINALIZATION_STATE, FinalizationState.UNFINALIZED);
+    }
+
+    /**
+     * Sets the current {@link FinalizationState}.
+     */
+    static void setFinalizationState(Context context, @FinalizationState int state) {
+        getSharedPreferences(context).edit().putInt(KEY_FINALIZATION_STATE, state).apply();
     }
 
     /**
