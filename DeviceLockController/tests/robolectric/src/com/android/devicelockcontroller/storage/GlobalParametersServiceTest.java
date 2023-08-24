@@ -71,15 +71,6 @@ public class GlobalParametersServiceTest extends AbstractGlobalParametersTestBas
     }
 
     @Test
-    public void getEnrollmentToken_shouldReturnExpectedResult() throws RemoteException {
-        assertThat(mIGlobalParametersService.getEnrollmentToken()).isNull();
-
-        mIGlobalParametersService.setEnrollmentToken(ENROLLMENT_TOKEN);
-
-        assertThat(mIGlobalParametersService.getEnrollmentToken()).isEqualTo(ENROLLMENT_TOKEN);
-    }
-
-    @Test
     public void getLastReceivedProvisionState_shouldReturnExpectedResult() throws RemoteException {
         assertThat(mIGlobalParametersService.getLastReceivedProvisionState()).isNotEqualTo(
                 LAST_RECEIVED_PROVISION_STATE);

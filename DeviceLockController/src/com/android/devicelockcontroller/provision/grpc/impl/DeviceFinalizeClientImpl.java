@@ -48,7 +48,7 @@ public final class DeviceFinalizeClientImpl extends DeviceFinalizeClient {
         try {
             mBlockingStub.reportDeviceProgramComplete(
                     ReportDeviceProgramCompleteRequest.newBuilder().setRegisteredDeviceIdentifier(
-                            sRegisteredId).setEnrollmentToken(sEnrollmentToken).build());
+                            sRegisteredId).build());
             return new ReportDeviceProgramCompleteResponse();
         } catch (StatusRuntimeException e) {
             return new ReportDeviceProgramCompleteResponse(e.getStatus());

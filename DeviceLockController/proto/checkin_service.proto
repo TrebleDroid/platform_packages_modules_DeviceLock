@@ -188,11 +188,7 @@ message ReportDeviceProvisionCompleteRequest {
 
 // Response to a request reporting that device provisioning of an eligible
 // device is complete.
-message ReportDeviceProvisionCompleteResponse {
-  // An enrollment token the Device Lock Android client can use for future
-  // communication with the Device Lock server post-provisioning.
-  optional string enrollment_token = 1;
-}
+message ReportDeviceProvisionCompleteResponse {}
 
 // The different reasons device provisioning can fail on a device.
 enum ClientProvisionFailureReason {
@@ -244,12 +240,8 @@ message ReportDeviceProvisionStateResponse {
   // this provision state would be used as the previous provision state in the
   // request.
   optional ClientProvisionState next_client_provision_state = 1;
-  // An enrollment token the Device Lock Android client can use for future
-  // communication with the Device Lock server post-provisioning. This is only
-  // provided if device provisioning was a success.
-  optional string enrollment_token = 2;
   // The number of days left until the device should factory reset because of a failed provision.
   // This number should only be used when next_client_provision_state is
   // CLIENT_PROVISION_STATE_DISMISSIBLE_UI
-  optional uint32 days_left_until_reset = 3;
+  optional uint32 days_left_until_reset = 2;
 }

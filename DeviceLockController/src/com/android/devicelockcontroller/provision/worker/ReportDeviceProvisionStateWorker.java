@@ -17,7 +17,6 @@
 package com.android.devicelockcontroller.provision.worker;
 
 import android.content.Context;
-import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
@@ -115,10 +114,6 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
                             isSuccessful);
             if (response.hasRecoverableError()) return Result.retry();
             if (response.hasFatalError()) return Result.failure();
-            String enrollmentToken = response.getEnrollmentToken();
-            if (!TextUtils.isEmpty(enrollmentToken)) {
-                Futures.getUnchecked(globalParametersClient.setEnrollmentToken(enrollmentToken));
-            }
             int daysLeftUntilReset = response.getDaysLeftUntilReset();
             if (daysLeftUntilReset > 0) {
                 UserParameters.setDaysLeftUntilReset(mContext, daysLeftUntilReset);

@@ -77,18 +77,6 @@ public final class ReportDeviceProvisionStateGrpcResponseWrapper extends
     }
 
     /**
-     * An enrollment token the device can use for future communication with the Device Lock backend
-     * server post-provisioning. This is only provided if device provisioning was a success.
-     *
-     * @return The enrollment token string.
-     */
-    @Nullable
-    @Override
-    public String getEnrollmentToken() {
-        return mResponse != null ? mResponse.getEnrollmentToken() : null;
-    }
-
-    /**
      * Get the number of days left until the device should factory reset because of a failed
      * provision. This number will be used to show a dismissible notification to the user.
      *

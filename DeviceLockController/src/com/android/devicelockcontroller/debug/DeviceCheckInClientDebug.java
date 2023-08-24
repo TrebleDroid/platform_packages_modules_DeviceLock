@@ -164,13 +164,6 @@ public final class DeviceCheckInClientDebug extends DeviceCheckInClient {
                         PROVISION_STATE_UNSPECIFIED));
             }
 
-            @Nullable
-            @Override
-            public String getEnrollmentToken() {
-                // Not useful in local testing setup.
-                return null;
-            }
-
             @Override
             public int getDaysLeftUntilReset() {
                 return DebugLogUtil.logAndReturn(TAG,

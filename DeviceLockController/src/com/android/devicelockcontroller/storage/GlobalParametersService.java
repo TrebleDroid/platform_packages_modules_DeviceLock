@@ -96,16 +96,6 @@ public final class GlobalParametersService extends Service {
                 }
 
                 @Override
-                public String getEnrollmentToken() {
-                    return GlobalParameters.getEnrollmentToken(mContext);
-                }
-
-                @Override
-                public void setEnrollmentToken(String token) {
-                    GlobalParameters.setEnrollmentToken(mContext, token);
-                }
-
-                @Override
                 @DeviceProvisionState
                 public int getLastReceivedProvisionState() {
                     return GlobalParameters.getLastReceivedProvisionState(mContext);
