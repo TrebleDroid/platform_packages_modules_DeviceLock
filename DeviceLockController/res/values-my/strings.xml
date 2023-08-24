@@ -49,7 +49,7 @@
     <string name="device_provided_by_provider" msgid="290593329676291991">"ဤစက်ပစ္စည်းကို <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> က ပံ့ပိုးထားသည်"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Kiosk app ကို ဒေါင်းလုဒ်လုပ်ပြီး အလိုအလျောက် ထည့်သွင်းပါမည်"</string>
     <string name="install_kiosk_app_secondary_user" msgid="49911908012320834">"Kiosk app ကို ဤအသုံးပြုသူအတွက် ထည့်သွင်းပါမည်"</string>
-    <string name="restrict_device_if_missing_payment" msgid="5721216628714899148">"ငွေပေးချေမှု မပြုမိပါက <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> သည် ဤစက်ကို ကန့်သတ်နိုင်သည်"</string>
+    <string name="restrict_device_if_missing_payment" msgid="5721216628714899148">"ငွေပေးချေရန် ပျက်ကွက်ပါက <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> သည် ဤစက်ကို ကန့်သတ်နိုင်သည်"</string>
     <string name="restrict_device_if_dont_make_payment" msgid="1619095674945507015">"လိုအပ်သော ငွေပေးချေမှုများ မပြုလုပ်ပါက <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> သည် ဤစက်ကို ကန့်သတ်နိုင်သည်။ အသေးစိတ်ကို <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>ဝန်ဆောင်မှုစည်းမျဉ်းများ<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g> တွင် ကြည့်ပါ။"</string>
     <string name="restrict_device_if_owner_doesnt_make_payment" msgid="3841412765931627895">"ပိုင်ရှင်သည် ငွေပေးချေမှု မပြုလုပ်ပါက <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> သည် ဤစက်ကို ကန့်သတ်နိုင်သည်"</string>
     <string name="previous" msgid="5241891780917802570">"ယခင်"</string>

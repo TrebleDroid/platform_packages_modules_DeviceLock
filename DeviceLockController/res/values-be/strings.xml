@@ -49,7 +49,7 @@
     <string name="device_provided_by_provider" msgid="290593329676291991">"Гэта прылада належыць кампаніі \"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>\""</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Праграма-кіёск будзе спампавана і ўсталявана аўтаматычна"</string>
     <string name="install_kiosk_app_secondary_user" msgid="49911908012320834">"Для гэтага карыстальніка будзе ўсталявана праграма-кіёск"</string>
-    <string name="restrict_device_if_missing_payment" msgid="5721216628714899148">"Калі вы прапусціце плацеж,<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> можа абмежаваць працу прылады"</string>
+    <string name="restrict_device_if_missing_payment" msgid="5721216628714899148">"Калі вы прапусціце плацеж, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> можа абмежаваць працу прылады"</string>
     <string name="restrict_device_if_dont_make_payment" msgid="1619095674945507015">"Калі вы не будзеце рабіць неабходныя плацяжы, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> можа абмежаваць працу прылады. Падрабязныя звесткі можна знайсці ва <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>Умовах выкарыстання<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g>."</string>
     <string name="restrict_device_if_owner_doesnt_make_payment" msgid="3841412765931627895">"Калі ўладальнік не будзе рабіць плацяжы, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> можа абмежаваць працу прылады"</string>
     <string name="previous" msgid="5241891780917802570">"Назад"</string>

@@ -62,7 +62,7 @@
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"Inf. o pružanju usluge"</string>
     <string name="enroll_your_device_header" msgid="2226305405591945098">"Registrirajte uređaj"</string>
     <string name="enroll_your_device_financing_subheader" msgid="7378414469334757425">"Sada možete prijaviti uređaj u program finansiranja koji pruža <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
-    <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"Sada možete registrirati uređaj u program subvencija koji pruža <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
+    <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"Sada možete registrirati uređaj za program subvencija koji pruža <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="subsidy_program_header" msgid="2321508488856303554">"U programu ste subvencija koji pruža <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"Prijava uređaja"</string>
     <string name="device_financing_enrollment_body_text" msgid="5506086383249511498">"Uređaj će se prijaviti u program finansiranja koji pruža <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> unutar 30 dana"</string>

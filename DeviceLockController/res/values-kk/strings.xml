@@ -49,7 +49,7 @@
     <string name="device_provided_by_provider" msgid="290593329676291991">"Осы құрылғыны <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ұсынады."</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Киоск қолданбасы жүктеп алынып, автоматты түрде орнатылады."</string>
     <string name="install_kiosk_app_secondary_user" msgid="49911908012320834">"Киоск қолданбасы осы пайдаланушы үшін орнатылады."</string>
-    <string name="restrict_device_if_missing_payment" msgid="5721216628714899148">"Төлем жасауды өткізіп алсаңыз, кредитор (<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>) осы құрылғының пайдаланылуын шектей алады."</string>
+    <string name="restrict_device_if_missing_payment" msgid="5721216628714899148">"Төлемді өткізіп алсаңыз, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> осы құрылғының пайдаланылуын шектей алады."</string>
     <string name="restrict_device_if_dont_make_payment" msgid="1619095674945507015">"Қажетті төлемдерді жасамасаңыз, кредитор (<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>) осы құрылғының пайдаланылуын шектей алады. Толық ақпарат алу үшін <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>Шарттар мен талаптарды<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g> қараңыз."</string>
     <string name="restrict_device_if_owner_doesnt_make_payment" msgid="3841412765931627895">"Иесі төлем жасамаса, кредитор (<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>) осы құрылғының пайдаланылуын шектей алады."</string>
     <string name="previous" msgid="5241891780917802570">"Алдыңғы"</string>

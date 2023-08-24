@@ -65,7 +65,7 @@
     <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"Դուք այժմ կարող եք գրանցել ձեր սարքը <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>-ի սուբսիդավորման ծրագրում"</string>
     <string name="subsidy_program_header" msgid="2321508488856303554">"Դուք <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>-ի սուբսիդավորման ծրագրի անդամ եք"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"Սարքի գրանցում"</string>
-    <string name="device_financing_enrollment_body_text" msgid="5506086383249511498">"Ձեր սարքը 30 օրվա ընթացքում կգրանցվի <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>-ի՝ ֆինանսավորման ծրագրում"</string>
+    <string name="device_financing_enrollment_body_text" msgid="5506086383249511498">"Ձեր սարքը 30 օրվա ընթացքում կգրանցվի <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>-ի ֆինանսավորման ծրագրում"</string>
     <string name="device_subsidy_enrollment_body_text" msgid="3971584929178719388">"Ձեր սարքը 30 օրվա ընթացքում կգրանցվի <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>-ի սուբսիդավորման ծրագրում"</string>
     <string name="device_enrollment_notification_body_text" msgid="8755080244956655854">"Գրանցումը կվերսկսվի <xliff:g id="TIME">%1$s</xliff:g>։ Կարող եք շարունակել սարքի օգտագործումը։"</string>
     <string name="continue_using_device" msgid="5816570734692191190">"Կարող եք շարունակել սարքի օգտագործումը"</string>
