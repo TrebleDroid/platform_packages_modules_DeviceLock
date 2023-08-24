@@ -16,6 +16,8 @@
 
 package com.android.devicelockcontroller.policy;
 
+import com.android.devicelockcontroller.provision.grpc.DeviceFinalizeClient.ReportDeviceProgramCompleteResponse;
+
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -30,4 +32,13 @@ public interface FinalizationController {
      * @return future for when the clear has been handled
      */
     ListenableFuture<Void> notifyRestrictionsCleared();
+
+    /**
+     * Notify the controller of the result of reporting the finalization state to the server
+     *
+     * @param response from the server
+     * @return future for when the report has been handled
+     */
+    ListenableFuture<Void> notifyFinalizationReportResult(
+            ReportDeviceProgramCompleteResponse response);
 }
