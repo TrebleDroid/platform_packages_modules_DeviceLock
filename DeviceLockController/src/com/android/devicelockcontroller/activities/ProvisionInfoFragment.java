@@ -17,7 +17,6 @@
 package com.android.devicelockcontroller.activities;
 
 import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_FINANCING_PROVISIONING;
-import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_FINANCING_SECONDARY_USER_PROVISIONING;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_SUBSIDY_PROVISIONING;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -77,10 +76,6 @@ public final class ProvisionInfoFragment extends Fragment {
         switch (Objects.requireNonNull(getActivity()).getIntent().getAction()) {
             case ACTION_START_DEVICE_FINANCING_PROVISIONING:
                 viewModel = viewModelProvider.get(DeviceFinancingProvisionInfoViewModel.class);
-                break;
-            case ACTION_START_DEVICE_FINANCING_SECONDARY_USER_PROVISIONING:
-                viewModel = viewModelProvider.get(
-                        DeviceFinancingSecondaryUserProvisionInfoViewModel.class);
                 break;
             case ACTION_START_DEVICE_SUBSIDY_PROVISIONING:
                 viewModel = viewModelProvider.get(DeviceSubsidyProvisionInfoViewModel.class);
