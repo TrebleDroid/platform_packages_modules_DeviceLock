@@ -48,15 +48,14 @@
     <string name="device_provided_by_provider" msgid="290593329676291991">"এই ডিভাইস <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> দিয়েছে"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Kiosk অ্যাপ অটোমেটিক ডাউনলোড ও ইনস্টল হবে"</string>
     <string name="install_kiosk_app_secondary_user" msgid="49911908012320834">"এই ব্যবহারকারীর জন্য Kiosk app ইনস্টল করা হবে"</string>
-    <string name="restrict_device_if_missing_payment" msgid="5721216628714899148">"আপনি পেমেন্ট মিস করলে, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> এই ডিভাইসের ব্যবহার সীমিত করে দিতে পারে"</string>
+    <string name="restrict_device_if_missing_payment" msgid="2907880869705064855">"আপনি পেমেন্ট না করলে, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ডিভাইসের ব্যবহার সীমিত করে দিতে পারে"</string>
     <string name="restrict_device_if_dont_make_payment" msgid="1619095674945507015">"আপনি প্রয়োজনীয় পেমেন্ট না করলে, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> এই ডিভাইসটির ব্যবহার সীমিত করতে পারে। আরও তথ্য জানার জন্য <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>নিয়ম ও শর্তাবলী দেখুন<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g>।"</string>
-    <string name="restrict_device_if_owner_doesnt_make_payment" msgid="3841412765931627895">"ডিভাইসের মালিক পেমেন্ট না করলে, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> এই ডিভাইসের ব্যবহার সীমিত করে দিতে পারে"</string>
     <string name="previous" msgid="5241891780917802570">"পূর্ববর্তী"</string>
     <string name="next" msgid="8248291863254324326">"পরবর্তী"</string>
     <string name="start" msgid="2842214844667658537">"শুরু করুন"</string>
     <string name="ok" msgid="3568398726528719749">"ঠিক আছে"</string>
     <string name="done" msgid="4507782734740410307">"হয়ে গেছে"</string>
-    <string name="do_it_in_one_hour" msgid="2727777340568739453">"১ ঘণ্টা পরে করুন"</string>
+    <string name="do_it_in_one_hour" msgid="2727777340568739453">"১ ঘণ্টার মধ্যে করুন"</string>
     <string name="header_icon_content_description" msgid="6069602031334473195">"তথ্য"</string>
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"প্রভিশন তথ্য"</string>
     <string name="enroll_your_device_header" msgid="2226305405591945098">"আপনার ডিভাইস এনরোল করুন"</string>
@@ -89,8 +88,6 @@
     <string name="settings_install_apps_preference_key" msgid="27542314345238427">"settings_install_apps_preference_key"</string>
     <string name="settings_safe_mode" msgid="3035228015586375153">"\'নিরাপদ মোড\' ব্যবহার করে ডিভাইস রিবুট করুন"</string>
     <string name="settings_safe_mode_preference_key" msgid="2106617747358027424">"settings_safe_mode_preference_key"</string>
-    <string name="settings_config_date_time" msgid="3406612829802458778">"তারিখ, সময় ও টাইম জোন পরিবর্তন করুন"</string>
-    <string name="settings_config_date_time_preference_key" msgid="1838160765185598823">"settings_config_date_time_preference_key"</string>
     <string name="settings_developer_options" msgid="880701002025216672">"ডেভেলপার বিকল্প ব্যবহার করুন"</string>
     <string name="settings_developer_options_preference_key" msgid="6807036808722582954">"settings_developer_options_preference_key"</string>
     <string name="settings_credit_provider_capabilities_category" msgid="1274440595211820868">"ডিভাইসের কোনও সমস্যা হলে, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> যা করতে পারে:"</string>

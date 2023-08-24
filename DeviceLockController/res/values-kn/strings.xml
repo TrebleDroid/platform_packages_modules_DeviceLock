@@ -48,9 +48,8 @@
     <string name="device_provided_by_provider" msgid="290593329676291991">"ಈ ಸಾಧನವನ್ನು <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ಒದಗಿಸಿದ್ದಾರೆ"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"kiosk ಆ್ಯಪ್ ಅನ್ನು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಡೌನ್‌ಲೋಡ್ ಹಾಗೂ ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಲಾಗುತ್ತದೆ"</string>
     <string name="install_kiosk_app_secondary_user" msgid="49911908012320834">"ಈ ಬಳಕೆದಾರರಿಗಾಗಿ Kiosk ಆ್ಯಪ್ ಅನ್ನು ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಲಾಗುತ್ತದೆ"</string>
-    <string name="restrict_device_if_missing_payment" msgid="5721216628714899148">"ನೀವು ಪಾವತಿಯನ್ನು ಮಿಸ್ ಮಾಡಿಕೊಂಡರೆ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ಈ ಸಾಧನವನ್ನು ನಿರ್ಬಂಧಿಸಬಹುದು"</string>
+    <string name="restrict_device_if_missing_payment" msgid="2907880869705064855">"ನೀವು ಪಾವತಿಯನ್ನು ಮಿಸ್ ಮಾಡಿಕೊಂಡರೆ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ಸಾಧನವನ್ನು ನಿರ್ಬಂಧಿಸಬಹುದು"</string>
     <string name="restrict_device_if_dont_make_payment" msgid="1619095674945507015">"ನೀವು ಅಗತ್ಯವಿರುವ ಪಾವತಿಗಳನ್ನು ಮಾಡದಿದ್ದರೆ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ಈ ಸಾಧನವನ್ನು ನಿರ್ಬಂಧಿಸಬಹುದು. ವಿವರಗಳಿಗಾಗಿ, <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>ನಿಯಮಗಳು ಮತ್ತು ಷರತ್ತುಗಳನ್ನು<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g> ನೋಡಿ."</string>
-    <string name="restrict_device_if_owner_doesnt_make_payment" msgid="3841412765931627895">"ಮಾಲೀಕರು ಪಾವತಿಗಳನ್ನು ಮಾಡದಿದ್ದರೆ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ಈ ಸಾಧನವನ್ನು ನಿರ್ಬಂಧಿಸಬಹುದು"</string>
     <string name="previous" msgid="5241891780917802570">"ಹಿಂದಿನದು"</string>
     <string name="next" msgid="8248291863254324326">"ಮುಂದಿನದು"</string>
     <string name="start" msgid="2842214844667658537">"ಪ್ರಾರಂಭಿಸಿ"</string>
@@ -89,8 +88,6 @@
     <string name="settings_install_apps_preference_key" msgid="27542314345238427">"settings_install_apps_preference_key"</string>
     <string name="settings_safe_mode" msgid="3035228015586375153">"ನಿಮ್ಮ ಸಾಧನವನ್ನು ಸುರಕ್ಷಿತ ಮೋಡ್‌ಗೆ ರೀಬೂಟ್ ಮಾಡಿ"</string>
     <string name="settings_safe_mode_preference_key" msgid="2106617747358027424">"settings_safe_mode_preference_key"</string>
-    <string name="settings_config_date_time" msgid="3406612829802458778">"ದಿನಾಂಕ, ಸಮಯ ಮತ್ತು ಸಮಯ ವಲಯಗಳನ್ನು ಬದಲಾಯಿಸಿ"</string>
-    <string name="settings_config_date_time_preference_key" msgid="1838160765185598823">"settings_config_date_time_preference_key"</string>
     <string name="settings_developer_options" msgid="880701002025216672">"ಡೆವಲಪರ್ ಆಯ್ಕೆಗಳನ್ನು ಬಳಸಿ"</string>
     <string name="settings_developer_options_preference_key" msgid="6807036808722582954">"settings_developer_options_preference_key"</string>
     <string name="settings_credit_provider_capabilities_category" msgid="1274440595211820868">"ಸಾಧನದಲ್ಲಿ ಸಮಸ್ಯೆಯಾದರೆ, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ಹೀಗೆ ಮಾಡಬಹುದು:"</string>
