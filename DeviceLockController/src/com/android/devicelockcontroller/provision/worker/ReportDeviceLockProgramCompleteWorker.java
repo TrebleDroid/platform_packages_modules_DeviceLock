@@ -65,12 +65,9 @@ public final class ReportDeviceLockProgramCompleteWorker extends ListenableWorke
                     context.getResources().getString(R.string.finalize_service_api_key_value));
             ListenableFuture<String> registeredDeviceId =
                     GlobalParametersClient.getInstance().getRegisteredDeviceId();
-            ListenableFuture<String> enrollmentToken =
-                    GlobalParametersClient.getInstance().getEnrollmentToken();
-            mClient = Futures.whenAllSucceed(registeredDeviceId, enrollmentToken).call(
-                    () -> DeviceFinalizeClient.getInstance(className, hostName, portNumber, apikey,
-                            Futures.getDone(registeredDeviceId), Futures.getDone(enrollmentToken)),
-                    executorService);
+            mClient = Futures.transform(registeredDeviceId,
+                    id -> DeviceFinalizeClient.getInstance(className, hostName, portNumber, apikey,
+                            id), executorService);
         } else {
             mClient = Futures.immediateFuture(client);
         }

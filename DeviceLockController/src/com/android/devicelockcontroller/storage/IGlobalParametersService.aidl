@@ -33,8 +33,6 @@ interface IGlobalParametersService {
     void setProvisionForced(boolean isForced);
     int getDeviceState();
     void setDeviceState(int state);
-    String getEnrollmentToken();
-    void setEnrollmentToken(String token);
     int getLastReceivedProvisionState();
     void setLastReceivedProvisionState(int provisionState);
 }
