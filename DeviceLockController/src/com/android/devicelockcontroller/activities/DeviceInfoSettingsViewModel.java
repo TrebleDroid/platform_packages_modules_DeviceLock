@@ -16,7 +16,9 @@
 
 package com.android.devicelockcontroller.activities;
 
-import android.text.TextUtils;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.ProvisioningType.TYPE_FINANCED;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.ProvisioningType.TYPE_SUBSIDY;
+
 import android.util.Pair;
 
 import androidx.lifecycle.MutableLiveData;
@@ -28,8 +30,10 @@ import com.android.devicelockcontroller.util.LogUtil;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -42,8 +46,6 @@ public final class DeviceInfoSettingsViewModel extends ViewModel {
 
     // Preferences that need to be updated with provider name
     private static final List<Pair<Integer, Integer>> PREFERENCE_KEY_TITLE_PAIRS = Arrays.asList(
-            new Pair<>(R.string.settings_intro_preference_key,
-                    R.string.settings_intro),
             new Pair<>(R.string.settings_credit_provider_capabilities_category_preference_key,
                     R.string.settings_credit_provider_capabilities_category),
             new Pair<>(R.string.settings_allowlisted_apps_preference_key,
@@ -58,27 +60,52 @@ public final class DeviceInfoSettingsViewModel extends ViewModel {
     final MutableLiveData<String> mProviderNameLiveData;
 
     public DeviceInfoSettingsViewModel() {
-        mPreferenceKeyTitlePairs = PREFERENCE_KEY_TITLE_PAIRS;
+        mPreferenceKeyTitlePairs = new ArrayList<>(PREFERENCE_KEY_TITLE_PAIRS);
         mProviderNameLiveData = new MutableLiveData<>();
 
+        SetupParametersClient setupParametersClient = SetupParametersClient.getInstance();
+        ListenableFuture<Integer> getProvisioningTypeFuture =
+                setupParametersClient.getProvisioningType();
+        ListenableFuture<String> getKioskAppProviderNameFuture =
+                setupParametersClient.getKioskAppProviderName();
+
         Futures.addCallback(
-                SetupParametersClient.getInstance().getKioskAppProviderName(),
-                new FutureCallback<>() {
+                Futures.whenAllSucceed(getProvisioningTypeFuture, getKioskAppProviderNameFuture)
+                        .call(() -> {
+                            Integer provisioningType = Futures.getDone(
+                                    getProvisioningTypeFuture);
+                            switch (provisioningType) {
+                                case TYPE_FINANCED:
+                                    mPreferenceKeyTitlePairs.add(
+                                            new Pair<>(
+                                                    R.string.settings_intro_preference_key,
+                                                    R.string.settings_intro_device_financing));
+                                    break;
+                                case TYPE_SUBSIDY:
+                                    mPreferenceKeyTitlePairs.add(
+                                            new Pair<>(
+                                                    R.string.settings_intro_preference_key,
+                                                    R.string.settings_intro_device_subsidy));
+                                    break;
+                                default:
+                                    throw new IllegalStateException(
+                                            "Invalid provisioning type");
+                            }
+
+                            mProviderNameLiveData.postValue(
+                                    Futures.getDone(getKioskAppProviderNameFuture));
+                            return null;
+                        }, MoreExecutors.directExecutor()),
+                new FutureCallback<Void>() {
                     @Override
-                    public void onSuccess(String providerName) {
-                        if (TextUtils.isEmpty(providerName)) {
-                            LogUtil.e(TAG, "Device provider name is empty, should not reach here.");
-                            return;
-                        }
-                        mProviderNameLiveData.postValue(providerName);
+                    public void onSuccess(Void result) {
+                        LogUtil.d(TAG, "Successfully retrieved setup parameters");
                     }
 
                     @Override
                     public void onFailure(Throwable t) {
-                        LogUtil.e(TAG, "Failed to get Kiosk app provider name", t);
+                        LogUtil.e(TAG, "Failed to retrieve setup parameters", t);
                     }
                 }, MoreExecutors.directExecutor());
     }
-
-
 }
