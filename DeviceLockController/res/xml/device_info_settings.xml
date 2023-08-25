@@ -18,8 +18,7 @@
                   android:title="@string/settings_screen_title">
 
     <com.android.settingslib.widget.TopIntroPreference
-        android:key="@string/settings_intro_preference_key"
-        android:title="@string/settings_intro"/>
+        android:key="@string/settings_intro_preference_key"/>
 
     <PreferenceCategory android:key="@string/settings_restrictions_category_preference_key"
                         android:order="100"

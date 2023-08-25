@@ -45,11 +45,13 @@ public final class DeviceInfoSettingsFragment extends PreferenceFragmentCompat {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        requireActivity().setTitle(getString(R.string.settings_screen_title));
 
         DeviceInfoSettingsViewModel viewModel = new ViewModelProvider(this).get(
                 DeviceInfoSettingsViewModel.class);
         viewModel.mProviderNameLiveData.observe(getViewLifecycleOwner(), providerName -> {
+            requireActivity().setTitle(
+                    getString(R.string.device_provided_by_provider, providerName));
+
             PreferenceManager preferenceManager = getPreferenceManager();
             hideIconView(preferenceManager.getPreferenceScreen());
             for (Pair<Integer, Integer> keyTitlePair : viewModel.mPreferenceKeyTitlePairs) {
