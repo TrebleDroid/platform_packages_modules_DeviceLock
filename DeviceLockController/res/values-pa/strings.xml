@@ -48,9 +48,8 @@
     <string name="device_provided_by_provider" msgid="290593329676291991">"ਇਹ ਡੀਵਾਈਸ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ਵੱਲੋਂ ਮੁਹੱਈਆ ਕਰਵਾਇਆ ਗਿਆ ਹੈ"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"ਕਿਓਸਕ ਐਪ ਸਵੈਚਲਿਤ ਤੌਰ \'ਤੇ ਡਾਊਨਲੋਡ ਅਤੇ ਸਥਾਪਤ ਹੋ ਜਾਵੇਗੀ"</string>
     <string name="install_kiosk_app_secondary_user" msgid="49911908012320834">"ਕਿਓਸਕ ਐਪ ਇਸ ਵਰਤੋਂਕਾਰ ਲਈ ਸਥਾਪਤ ਕੀਤੀ ਜਾਵੇਗੀ"</string>
-    <string name="restrict_device_if_missing_payment" msgid="5721216628714899148">"ਤੁਹਾਡੇ ਵੱਲੋਂ ਕੋਈ ਭੁਗਤਾਨ ਨਾ ਕਰਨ \'ਤੇ, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ਇਸ ਡੀਵਾਈਸ ਨੂੰ ਪ੍ਰਤਿਬੰਧਿਤ ਕਰ ਸਕਦਾ ਹੈ"</string>
+    <string name="restrict_device_if_missing_payment" msgid="2907880869705064855">"ਜੇ ਤੁਸੀਂ ਭੁਗਤਾਨ ਖੁੰਝਾ ਦਿੰਦੇ ਹੋ, ਤਾਂ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ਵੱਲੋਂ ਡੀਵਾਈਸ ਨੂੰ ਪ੍ਰਤਿਬੰਧਿਤ ਕੀਤਾ ਜਾ ਸਕਦਾ ਹੈ"</string>
     <string name="restrict_device_if_dont_make_payment" msgid="1619095674945507015">"ਤੁਹਾਡੇ ਵੱਲੋਂ ਲੋੜੀਂਦੇ ਭੁਗਤਾਨ ਨਾ ਕਰਨ \'ਤੇ, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ਇਸ ਡੀਵਾਈਸ ਨੂੰ ਪ੍ਰਤਿਬੰਧਿਤ ਕਰ ਸਕਦਾ ਹੈ। ਵੇਰਵਿਆਂ ਲਈ, <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>ਨਿਯਮ ਅਤੇ ਸ਼ਰਤਾਂ<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g> ਦੇਖੋ।"</string>
-    <string name="restrict_device_if_owner_doesnt_make_payment" msgid="3841412765931627895">"ਮਾਲਕ ਵੱਲੋਂ ਭੁਗਤਾਨ ਨਾ ਕਰਨ \'ਤੇ, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ਇਸ ਡੀਵਾਈਸ ਨੂੰ ਪ੍ਰਤਿਬੰਧਿਤ ਕਰ ਸਕਦਾ ਹੈ"</string>
     <string name="previous" msgid="5241891780917802570">"ਪਿੱਛੇ"</string>
     <string name="next" msgid="8248291863254324326">"ਅੱਗੇ"</string>
     <string name="start" msgid="2842214844667658537">"ਸ਼ੁਰੂ ਕਰੋ"</string>
@@ -89,8 +88,6 @@
     <string name="settings_install_apps_preference_key" msgid="27542314345238427">"settings_install_apps_preference_key"</string>
     <string name="settings_safe_mode" msgid="3035228015586375153">"ਆਪਣੇ ਡੀਵਾਈਸ ਨੂੰ ਸੁਰੱਖਿਅਤ ਮੋਡ ਵਿੱਚ ਰੀਬੂਟ ਕਰੋ"</string>
     <string name="settings_safe_mode_preference_key" msgid="2106617747358027424">"settings_safe_mode_preference_key"</string>
-    <string name="settings_config_date_time" msgid="3406612829802458778">"ਤਾਰੀਖ, ਸਮਾਂ ਅਤੇ ਸਮਾਂ ਖੇਤਰ ਬਦਲੋ"</string>
-    <string name="settings_config_date_time_preference_key" msgid="1838160765185598823">"settings_config_date_time_preference_key"</string>
     <string name="settings_developer_options" msgid="880701002025216672">"ਵਿਕਾਸਕਾਰ ਚੋਣਾਂ ਦੀ ਵਰਤੋਂ ਕਰੋ"</string>
     <string name="settings_developer_options_preference_key" msgid="6807036808722582954">"settings_developer_options_preference_key"</string>
     <string name="settings_credit_provider_capabilities_category" msgid="1274440595211820868">"ਡੀਵਾਈਸ ਨਾਲ ਗੜਬੜ ਹੋਣ \'ਤੇ, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ਇਹ ਕਰ ਸਕਦਾ ਹੈ:"</string>
