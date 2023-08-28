@@ -27,8 +27,8 @@ import android.os.HandlerThread;
 
 import androidx.test.core.app.ApplicationProvider;
 
-import com.android.devicelockcontroller.AbstractDeviceLockControllerScheduler;
 import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
+import com.android.devicelockcontroller.schedule.DeviceLockControllerScheduler;
 import com.android.devicelockcontroller.storage.UserParameters;
 
 import com.google.common.util.concurrent.Futures;
@@ -37,8 +37,6 @@ import com.google.common.util.concurrent.MoreExecutors;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.Shadows;
 import org.robolectric.shadows.ShadowLooper;
@@ -47,22 +45,21 @@ import org.robolectric.shadows.ShadowLooper;
 public final class CheckInBootCompletedReceiverTest {
 
     public static final Intent INTENT = new Intent(Intent.ACTION_BOOT_COMPLETED);
-    @Mock
-    private AbstractDeviceLockControllerScheduler mScheduler;
+    private DeviceLockControllerScheduler mScheduler;
     private CheckInBootCompletedReceiver mReceiver;
     private TestDeviceLockControllerApplication mTestApp;
     private ShadowLooper mShadowLooper;
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
         HandlerThread handlerThread = new HandlerThread("test");
         handlerThread.start();
         Handler handler = handlerThread.getThreadHandler();
         mShadowLooper = Shadows.shadowOf(handler.getLooper());
-        mReceiver = new CheckInBootCompletedReceiver(mScheduler,
+        mReceiver = new CheckInBootCompletedReceiver(
                 MoreExecutors.newSequentialExecutor(handler::post));
         mTestApp = ApplicationProvider.getApplicationContext();
+        mScheduler = mTestApp.getDeviceLockControllerScheduler();
     }
 
     @Test

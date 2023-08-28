@@ -25,7 +25,6 @@ import static com.android.devicelockcontroller.provision.worker.ReportDeviceProv
 
 import static com.google.common.truth.Truth.assertThat;
 
-import static org.mockito.Mockito.mock;
 import static org.robolectric.annotation.LooperMode.Mode.LEGACY;
 
 import android.content.Intent;
@@ -40,7 +39,6 @@ import androidx.work.WorkManager;
 import androidx.work.testing.SynchronousExecutor;
 import androidx.work.testing.WorkManagerTestInitHelper;
 
-import com.android.devicelockcontroller.AbstractDeviceLockControllerScheduler;
 import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
 
@@ -62,7 +60,6 @@ import java.util.List;
 public class NextProvisionFailedStepReceiverTest {
 
     private GlobalParametersClient mGlobalParameters;
-    private AbstractDeviceLockControllerScheduler mScheduler;
     private NextProvisionFailedStepReceiver mReceiver;
     private TestDeviceLockControllerApplication mTestApp;
     private Intent mIntent;
@@ -72,12 +69,11 @@ public class NextProvisionFailedStepReceiverTest {
     public void setUp() throws Exception {
         mTestApp = ApplicationProvider.getApplicationContext();
         mGlobalParameters = GlobalParametersClient.getInstance();
-        mScheduler = mock(AbstractDeviceLockControllerScheduler.class);
         HandlerThread handlerThread = new HandlerThread("test");
         handlerThread.start();
         Handler handler = handlerThread.getThreadHandler();
         mShadowLooper = Shadows.shadowOf(handler.getLooper());
-        mReceiver = new NextProvisionFailedStepReceiver(mScheduler,
+        mReceiver = new NextProvisionFailedStepReceiver(
                 MoreExecutors.newSequentialExecutor(handler::post));
         mIntent = new Intent(mTestApp, NextProvisionFailedStepReceiver.class);
 

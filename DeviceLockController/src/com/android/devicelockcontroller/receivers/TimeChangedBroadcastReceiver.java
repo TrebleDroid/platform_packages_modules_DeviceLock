@@ -21,14 +21,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.UserManager;
 
-import androidx.annotation.VisibleForTesting;
-
-import com.android.devicelockcontroller.AbstractDeviceLockControllerScheduler;
-import com.android.devicelockcontroller.DeviceLockControllerScheduler;
-import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
+import com.android.devicelockcontroller.schedule.DeviceLockControllerSchedulerProvider;
 import com.android.devicelockcontroller.util.LogUtil;
-
-import java.time.Clock;
 
 /**
  * Handle {@link Intent#ACTION_TIME_CHANGED}. This receiver runs for every user.
@@ -39,18 +33,6 @@ import java.time.Clock;
 public final class TimeChangedBroadcastReceiver extends BroadcastReceiver {
 
     private static final String TAG = "TimeChangedBroadcastReceiver";
-    private AbstractDeviceLockControllerScheduler mScheduler;
-    private Clock mClock;
-
-    public TimeChangedBroadcastReceiver() {
-        this(null, Clock.systemUTC());
-    }
-
-    @VisibleForTesting
-    TimeChangedBroadcastReceiver(AbstractDeviceLockControllerScheduler scheduler, Clock clock) {
-        mScheduler = scheduler;
-        mClock = clock;
-    }
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -65,11 +47,9 @@ public final class TimeChangedBroadcastReceiver extends BroadcastReceiver {
         if (isUserProfile) {
             return;
         }
-        if (mScheduler == null) {
-            mScheduler = new DeviceLockControllerScheduler(context,
-                    ((PolicyObjectsInterface) context).getProvisionStateController());
-        }
+        DeviceLockControllerSchedulerProvider schedulerProvider =
+                (DeviceLockControllerSchedulerProvider) context.getApplicationContext();
 
-        mScheduler.notifyTimeChanged();
+        schedulerProvider.getDeviceLockControllerScheduler().notifyTimeChanged();
     }
 }

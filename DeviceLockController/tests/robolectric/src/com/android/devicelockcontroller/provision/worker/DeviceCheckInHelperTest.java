@@ -41,14 +41,13 @@ import androidx.work.Configuration;
 import androidx.work.testing.SynchronousExecutor;
 import androidx.work.testing.WorkManagerTestInitHelper;
 
-import com.android.devicelockcontroller.AbstractDeviceLockControllerScheduler;
-import com.android.devicelockcontroller.DeviceLockControllerScheduler;
 import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
 import com.android.devicelockcontroller.common.DeviceId;
 import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceCheckInStatus;
 import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrpcResponse;
 import com.android.devicelockcontroller.provision.grpc.ProvisioningConfiguration;
 import com.android.devicelockcontroller.receivers.ProvisionReadyReceiver;
+import com.android.devicelockcontroller.schedule.DeviceLockControllerScheduler;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
 
 import com.google.common.util.concurrent.Futures;
@@ -104,12 +103,12 @@ public final class DeviceCheckInHelperTest {
 
     private ShadowTelephonyManager mTelephonyManager;
     private GlobalParametersClient mGlobalParametersClient;
-    private AbstractDeviceLockControllerScheduler mScheduler;
+    private DeviceLockControllerScheduler mScheduler;
 
     @Before
     public void setUp() {
         mTestApplication = ApplicationProvider.getApplicationContext();
-        mScheduler = mock(AbstractDeviceLockControllerScheduler.class);
+        mScheduler = mTestApplication.getDeviceLockControllerScheduler();
 
         mTelephonyManager = Shadows.shadowOf(
                 mTestApplication.getSystemService(TelephonyManager.class));
@@ -140,8 +139,7 @@ public final class DeviceCheckInHelperTest {
         final GetDeviceCheckInStatusGrpcResponse response = createStopResponse();
 
         assertThat(mHelper.handleGetDeviceCheckInStatusResponse(response,
-                new DeviceLockControllerScheduler(mTestApplication,
-                        mTestApplication.getProvisionStateController()))).isTrue();
+                mock(DeviceLockControllerScheduler.class))).isTrue();
     }
 
     @Test

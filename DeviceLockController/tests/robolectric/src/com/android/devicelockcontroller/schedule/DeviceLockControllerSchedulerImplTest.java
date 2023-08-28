@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.android.devicelockcontroller;
+package com.android.devicelockcontroller.schedule;
 
-import static com.android.devicelockcontroller.DeviceLockControllerScheduler.DEVICE_CHECK_IN_WORK_NAME;
 import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState.PROVISION_PAUSED;
 import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState.UNPROVISIONED;
+import static com.android.devicelockcontroller.schedule.DeviceLockControllerSchedulerImpl.DEVICE_CHECK_IN_WORK_NAME;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -36,6 +36,7 @@ import androidx.work.WorkManager;
 import androidx.work.testing.SynchronousExecutor;
 import androidx.work.testing.WorkManagerTestInitHelper;
 
+import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
 import com.android.devicelockcontroller.common.DeviceLockConstants;
 import com.android.devicelockcontroller.provision.worker.DeviceCheckInWorker;
 import com.android.devicelockcontroller.storage.UserParameters;
@@ -58,9 +59,9 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @RunWith(RobolectricTestRunner.class)
-public final class DeviceLockControllerSchedulerTest {
+public final class DeviceLockControllerSchedulerImplTest {
     private static final long PROVISION_PAUSED_MILLIS = TimeUnit.MINUTES.toMillis(
-            DeviceLockControllerScheduler.PROVISION_PAUSED_MINUTES_DEFAULT);
+            DeviceLockControllerSchedulerImpl.PROVISION_PAUSED_MINUTES_DEFAULT);
     private static final Duration TEST_RETRY_CHECK_IN_DELAY = Duration.ofDays(30);
     private static final long TEST_NEXT_CHECK_IN_TIME_MILLIS = Duration.ofHours(10).toMillis();
     private static final long TEST_RESUME_PROVISION_TIME_MILLIS = Duration.ofHours(20).toMillis();
@@ -70,7 +71,7 @@ public final class DeviceLockControllerSchedulerTest {
             50).toMillis();
 
     private static final long PROVISION_STATE_REPORT_INTERVAL_MILLIS = TimeUnit.MINUTES.toMillis(
-            DeviceLockControllerScheduler.PROVISION_STATE_REPORT_INTERVAL_DEFAULT_MINUTES);
+            DeviceLockControllerSchedulerImpl.PROVISION_STATE_REPORT_INTERVAL_DEFAULT_MINUTES);
     private static final long TEST_CURRENT_TIME_MILLIS = Duration.ofHours(5).toMillis();
     private static final Clock TEST_CLOCK = Clock.fixed(
             Instant.ofEpochMilli(TEST_CURRENT_TIME_MILLIS),
@@ -79,13 +80,13 @@ public final class DeviceLockControllerSchedulerTest {
     public static final long TEST_NEGATIVE_DELTA_MILLIS = Duration.ofHours(-5).toMillis();
     private static final long RESET_DEVICE_MILLIS = TimeUnit.MINUTES.toMillis(
             DeviceLockConstants.NON_MANDATORY_PROVISION_DEVICE_RESET_COUNTDOWN_MINUTE);
-    DeviceLockControllerScheduler mScheduler;
+    DeviceLockControllerSchedulerImpl mScheduler;
     TestDeviceLockControllerApplication mTestApp;
 
     @Before
     public void setUp() throws Exception {
         mTestApp = ApplicationProvider.getApplicationContext();
-        mScheduler = new DeviceLockControllerScheduler(mTestApp, TEST_CLOCK,
+        mScheduler = new DeviceLockControllerSchedulerImpl(mTestApp, TEST_CLOCK,
                 mTestApp.getProvisionStateController());
         Configuration config = new Configuration.Builder()
                 .setMinimumLoggingLevel(android.util.Log.DEBUG)

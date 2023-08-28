@@ -40,13 +40,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.annotation.WorkerThread;
 
-import com.android.devicelockcontroller.AbstractDeviceLockControllerScheduler;
 import com.android.devicelockcontroller.R;
 import com.android.devicelockcontroller.common.DeviceId;
 import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrpcResponse;
 import com.android.devicelockcontroller.provision.grpc.ProvisioningConfiguration;
 import com.android.devicelockcontroller.receivers.CheckInBootCompletedReceiver;
 import com.android.devicelockcontroller.receivers.ProvisionReadyReceiver;
+import com.android.devicelockcontroller.schedule.DeviceLockControllerScheduler;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.storage.SetupParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
@@ -119,7 +119,7 @@ public final class DeviceCheckInHelper extends AbstractDeviceCheckInHelper {
     @WorkerThread
     boolean handleGetDeviceCheckInStatusResponse(
             GetDeviceCheckInStatusGrpcResponse response,
-            AbstractDeviceLockControllerScheduler scheduler) {
+            DeviceLockControllerScheduler scheduler) {
         Futures.getUnchecked(GlobalParametersClient.getInstance().setRegisteredDeviceId(
                 response.getRegisteredDeviceIdentifier()));
         LogUtil.d(TAG, "check in response: " + response.getDeviceCheckInStatus());
