@@ -41,7 +41,6 @@ import androidx.work.OutOfQuotaPolicy;
 import androidx.work.WorkManager;
 
 import com.android.devicelockcontroller.activities.DeviceLockNotificationManager;
-import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
 import com.android.devicelockcontroller.policy.ProvisionStateController;
 import com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState;
 import com.android.devicelockcontroller.provision.worker.DeviceCheckInWorker;
@@ -50,16 +49,17 @@ import com.android.devicelockcontroller.receivers.ResetDeviceReceiver;
 import com.android.devicelockcontroller.receivers.ResumeProvisionReceiver;
 import com.android.devicelockcontroller.storage.UserParameters;
 import com.android.devicelockcontroller.util.LogUtil;
+import com.android.devicelockcontroller.util.ThreadUtils;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.MoreExecutors;
 
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Objects;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /** A class responsible for scheduling delayed work / alarm */
@@ -79,64 +79,79 @@ public final class DeviceLockControllerScheduler extends AbstractDeviceLockContr
     private final Context mContext;
     private static final int CHECK_IN_INTERVAL_MINUTE = 60;
     private final Clock mClock;
-    private final Executor mExecutor;
-    private ProvisionStateController mUserStateController;
+    private final Executor mSequentialExecutor;
+    private final ProvisionStateController mProvisionStateController;
 
 
-    public DeviceLockControllerScheduler(Context context) {
-        this(context, Clock.systemUTC(), Executors.newSingleThreadExecutor());
+    public DeviceLockControllerScheduler(Context context,
+            ProvisionStateController provisionStateController) {
+        this(context, Clock.systemUTC(), provisionStateController);
     }
 
     @VisibleForTesting
-    DeviceLockControllerScheduler(Context context, Clock clock, Executor executor) {
+    DeviceLockControllerScheduler(Context context, Clock clock,
+            ProvisionStateController provisionStateController) {
         mContext = context;
-        PolicyObjectsInterface policyObjectsInterface =
-                (PolicyObjectsInterface) mContext.getApplicationContext();
-        mUserStateController = policyObjectsInterface.getProvisionStateController();
+        mProvisionStateController = provisionStateController;
         mClock = clock;
-        mExecutor = executor;
+        mSequentialExecutor = ThreadUtils.getSequentialSchedulerExecutor();
     }
 
     @Override
-    public void correctExpectedToRunTime(Duration delta) {
-        Futures.addCallback(mUserStateController.getState(),
+    public void notifyTimeChanged() {
+        Futures.addCallback(mProvisionStateController.getState(),
                 new FutureCallback<>() {
                     @Override
                     public void onSuccess(@ProvisionState Integer currentState) {
-                        UserParameters.setBootTimeMillis(mContext,
-                                UserParameters.getBootTimeMillis(mContext) + delta.toMillis());
-                        if (currentState == UNPROVISIONED) {
-                            long before = UserParameters.getNextCheckInTimeMillis(mContext);
-                            if (before > 0) {
-                                UserParameters.setNextCheckInTimeMillis(mContext,
-                                        before + delta.toMillis());
-                            }
-                        } else if (currentState == PROVISION_PAUSED) {
-                            long before = UserParameters.getResumeProvisionTimeMillis(mContext);
-                            if (before > 0) {
-                                UserParameters.setResumeProvisionTimeMillis(mContext,
-                                        before + delta.toMillis());
-                            }
-                        } else if (currentState == PROVISION_FAILED) {
-                            long before = UserParameters.getNextProvisionFailedStepTimeMills(
-                                    mContext);
-                            if (before > 0) {
-                                UserParameters.setNextProvisionFailedStepTimeMills(mContext,
-                                        before + delta.toMillis());
-                            }
-                            before = UserParameters.getResetDeviceTimeMillis(mContext);
-                            if (before > 0) {
-                                UserParameters.setResetDeviceTImeMillis(mContext,
-                                        before + delta.toMillis());
-                            }
-                        }
+                        correctStoredTime(currentState);
                     }
 
                     @Override
                     public void onFailure(Throwable t) {
                         throw new RuntimeException(t);
                     }
-                }, mExecutor);
+                }, mSequentialExecutor);
+    }
+
+    /**
+     * Correct the stored time for when a scheduled work/alarm should execute based on the
+     * difference between current time and stored time.
+     *
+     * @param currentState The current {@link ProvisionState} used to determine which work/alarm may
+     *                     be possibly scheduled.
+     */
+    @VisibleForTesting
+    void correctStoredTime(@ProvisionState Integer currentState) {
+        long bootTimestamp = UserParameters.getBootTimeMillis(mContext);
+        long delta =
+                mClock.millis() - (bootTimestamp + SystemClock.elapsedRealtime());
+        UserParameters.setBootTimeMillis(mContext,
+                UserParameters.getBootTimeMillis(mContext) + delta);
+        if (currentState == UNPROVISIONED) {
+            long before = UserParameters.getNextCheckInTimeMillis(mContext);
+            if (before > 0) {
+                UserParameters.setNextCheckInTimeMillis(mContext,
+                        before + delta);
+            }
+        } else if (currentState == PROVISION_PAUSED) {
+            long before = UserParameters.getResumeProvisionTimeMillis(mContext);
+            if (before > 0) {
+                UserParameters.setResumeProvisionTimeMillis(mContext,
+                        before + delta);
+            }
+        } else if (currentState == PROVISION_FAILED) {
+            long before = UserParameters.getNextProvisionFailedStepTimeMills(
+                    mContext);
+            if (before > 0) {
+                UserParameters.setNextProvisionFailedStepTimeMills(mContext,
+                        before + delta);
+            }
+            before = UserParameters.getResetDeviceTimeMillis(mContext);
+            if (before > 0) {
+                UserParameters.setResetDeviceTimeMillis(mContext,
+                        before + delta);
+            }
+        }
     }
 
     @Override
@@ -150,18 +165,14 @@ public final class DeviceLockControllerScheduler extends AbstractDeviceLockContr
         LogUtil.i(TAG, "Scheduling resume provision work with delay: " + delay);
         scheduleResumeProvisionAlarm(delay);
         Instant whenExpectedToRun = Instant.now(mClock).plus(delay);
-        UserParameters.setResumeProvisionTimeMillis(mContext, whenExpectedToRun.toEpochMilli());
+        UserParameters.setResumeProvisionTimeMillis(mContext,
+                whenExpectedToRun.toEpochMilli());
     }
 
     @Override
-    public void rescheduleResumeProvisionAlarmIfNeeded() {
-        long resumeProvisionTimeMillis = UserParameters.getResumeProvisionTimeMillis(mContext);
-        if (resumeProvisionTimeMillis > 0) {
-            Duration delay = Duration.between(
-                    Instant.now(mClock),
-                    Instant.ofEpochMilli(resumeProvisionTimeMillis));
-            scheduleResumeProvisionAlarm(delay);
-        }
+    public void notifyRebootWhenProvisionPaused() {
+        dispatchFuture(this::rescheduleResumeProvisionAlarmIfNeeded,
+                "notifyRebootWhenProvisionPaused");
     }
 
     @Override
@@ -180,7 +191,12 @@ public final class DeviceLockControllerScheduler extends AbstractDeviceLockContr
     }
 
     @Override
-    public void rescheduleRetryCheckInWorkIfNeeded() {
+    public void notifyNeedRescheduleCheckIn() {
+        dispatchFuture(this::rescheduleRetryCheckInWork, "notifyNeedRescheduleCheckIn");
+    }
+
+    @VisibleForTesting
+    void rescheduleRetryCheckInWork() {
         long nextCheckInTimeMillis = UserParameters.getNextCheckInTimeMillis(mContext);
         if (nextCheckInTimeMillis > 0) {
             Duration delay = Duration.between(
@@ -220,15 +236,13 @@ public final class DeviceLockControllerScheduler extends AbstractDeviceLockContr
     }
 
     @Override
-    public void rescheduleNextProvisionFailedStepAlarmIfNeeded() {
-        long timestamp = UserParameters.getNextProvisionFailedStepTimeMills(mContext);
-        if (timestamp > 0) {
-            Duration delay = Duration.between(
-                    Instant.now(mClock),
-                    Instant.ofEpochMilli(timestamp));
-            scheduleNextProvisionFailedStepAlarm(delay);
-        }
+    public void notifyRebootWhenProvisionFailed() {
+        dispatchFuture(() -> {
+            rescheduleNextProvisionFailedStepAlarmIfNeeded();
+            rescheduleResetDeviceAlarmIfNeeded();
+        }, "notifyRebootWhenProvisionFailed");
     }
+
 
     @Override
     public void scheduleResetDeviceAlarm() {
@@ -257,11 +271,22 @@ public final class DeviceLockControllerScheduler extends AbstractDeviceLockContr
         Instant whenExpectedToRun = Instant.now(mClock).plus(delay);
         DeviceLockNotificationManager.sendDeviceResetTimerNotification(mContext,
                 SystemClock.elapsedRealtime() + delay.toMillis());
-        UserParameters.setResetDeviceTImeMillis(mContext, whenExpectedToRun.toEpochMilli());
+        UserParameters.setResetDeviceTimeMillis(mContext, whenExpectedToRun.toEpochMilli());
     }
 
-    @Override
-    public void rescheduleResetDeviceAlarmIfNeeded() {
+    @VisibleForTesting
+    void rescheduleNextProvisionFailedStepAlarmIfNeeded() {
+        long timestamp = UserParameters.getNextProvisionFailedStepTimeMills(mContext);
+        if (timestamp > 0) {
+            Duration delay = Duration.between(
+                    Instant.now(mClock),
+                    Instant.ofEpochMilli(timestamp));
+            scheduleNextProvisionFailedStepAlarm(delay);
+        }
+    }
+
+    @VisibleForTesting
+    void rescheduleResetDeviceAlarmIfNeeded() {
         long timestamp = UserParameters.getResetDeviceTimeMillis(mContext);
         if (timestamp > 0) {
             Duration delay = Duration.between(
@@ -269,6 +294,38 @@ public final class DeviceLockControllerScheduler extends AbstractDeviceLockContr
                     Instant.ofEpochMilli(timestamp));
             scheduleResetDeviceAlarmInternal(delay);
         }
+    }
+
+    @VisibleForTesting
+    void rescheduleResumeProvisionAlarmIfNeeded() {
+        long resumeProvisionTimeMillis = UserParameters.getResumeProvisionTimeMillis(mContext);
+        if (resumeProvisionTimeMillis > 0) {
+            Duration delay = Duration.between(
+                    Instant.now(mClock),
+                    Instant.ofEpochMilli(resumeProvisionTimeMillis));
+            scheduleResumeProvisionAlarm(delay);
+        }
+    }
+
+    /**
+     * Run the input runnable in order on the scheduler's sequential executor
+     *
+     * @param runnable   The runnable to run on worker thread.
+     * @param methodName The name of the method that requested to run runnable.
+     */
+    private void dispatchFuture(Runnable runnable, String methodName) {
+        Futures.addCallback(Futures.submit(runnable, mSequentialExecutor),
+                new FutureCallback<>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        LogUtil.i(TAG, "Successfully called " + methodName);
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+                        throw new RuntimeException("failed to call " + methodName, t);
+                    }
+                }, MoreExecutors.directExecutor());
     }
 
     private void enqueueCheckInWorkRequest(boolean isExpedited, Duration delay) {

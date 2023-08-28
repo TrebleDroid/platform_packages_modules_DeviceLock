@@ -63,7 +63,8 @@ public final class DeviceLockControllerWorkerFactory extends WorkerFactory {
             } catch (InstantiationException | IllegalAccessException
                      | InvocationTargetException | NoSuchMethodException e) {
                 // Unable to create the instance by this WorkerFactory
-                LogUtil.i(TAG, "Delegating to default WorkerFactory to create: " + workerClassName);
+                LogUtil.i(TAG, "Delegating to default WorkerFactory to create: " + workerClassName,
+                        e);
             }
         }
         return worker;

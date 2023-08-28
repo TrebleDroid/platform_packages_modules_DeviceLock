@@ -23,6 +23,8 @@ import androidx.annotation.VisibleForTesting;
 import androidx.work.WorkerParameters;
 
 import com.android.devicelockcontroller.DeviceLockControllerScheduler;
+import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
+import com.android.devicelockcontroller.policy.ProvisionStateController;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrpcResponse;
 import com.android.devicelockcontroller.util.LogUtil;
@@ -55,6 +57,8 @@ public final class DeviceCheckInWorker extends AbstractCheckInWorker {
     @NonNull
     @Override
     public ListenableFuture<Result> startWork() {
+        ProvisionStateController provisionStateController =
+                ((PolicyObjectsInterface) getApplicationContext()).getProvisionStateController();
         return Futures.transformAsync(
                 mExecutorService.submit(mCheckInHelper::getDeviceUniqueIds),
                 deviceIds -> {
@@ -72,7 +76,8 @@ public final class DeviceCheckInWorker extends AbstractCheckInWorker {
                         }
                         if (response.isSuccessful()) {
                             return mCheckInHelper.handleGetDeviceCheckInStatusResponse(response,
-                                    new DeviceLockControllerScheduler(mContext))
+                                    new DeviceLockControllerScheduler(mContext,
+                                            provisionStateController))
                                     ? Result.success()
                                     : Result.retry();
                         }

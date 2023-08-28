@@ -88,8 +88,8 @@ public final class ProvisionHelperImpl implements ProvisionHelper {
                         createNotification();
                         WorkManager workManager = WorkManager.getInstance(mContext);
                         PauseProvisioningWorker.reportProvisionPausedByUser(workManager);
-                        new DeviceLockControllerScheduler(
-                                mContext).scheduleResumeProvisionAlarm();
+                        new DeviceLockControllerScheduler(mContext,
+                                mStateController).scheduleResumeProvisionAlarm();
                     }
 
                     @Override
@@ -172,7 +172,7 @@ public final class ProvisionHelperImpl implements ProvisionHelper {
                             progressController.setProvisioningProgress(
                                     ProvisioningProgress.PROVISION_FAILED_MANDATORY);
                             new DeviceLockControllerScheduler(
-                                    mContext).scheduleMandatoryResetDeviceAlarm();
+                                    mContext, mStateController).scheduleMandatoryResetDeviceAlarm();
                         } else {
                             progressController.setProvisioningProgress(
                                     ProvisioningProgress.PROVISIONING_FAILED);

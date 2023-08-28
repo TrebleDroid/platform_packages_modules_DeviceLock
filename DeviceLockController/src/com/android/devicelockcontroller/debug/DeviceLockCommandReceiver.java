@@ -40,6 +40,7 @@ import com.android.devicelockcontroller.policy.DevicePolicyController;
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
+import com.android.devicelockcontroller.policy.ProvisionStateController;
 import com.android.devicelockcontroller.provision.worker.DeviceCheckInWorker;
 import com.android.devicelockcontroller.provision.worker.PauseProvisioningWorker;
 import com.android.devicelockcontroller.provision.worker.ReportDeviceLockProgramCompleteWorker;
@@ -109,8 +110,10 @@ public final class DeviceLockCommandReceiver extends BroadcastReceiver {
 
         Context appContext = context.getApplicationContext();
 
+        ProvisionStateController provisionStateController =
+                ((PolicyObjectsInterface) appContext).getProvisionStateController();
         DeviceStateController deviceStateController =
-                ((PolicyObjectsInterface) appContext).getDeviceStateController();
+                provisionStateController.getDeviceStateController();
 
         @Commands
         String command = String.valueOf(intent.getStringExtra(EXTRA_COMMAND));
@@ -131,7 +134,7 @@ public final class DeviceLockCommandReceiver extends BroadcastReceiver {
                         getSetStateCallBack(CLEARED), MoreExecutors.directExecutor());
                 break;
             case Commands.CHECK_IN:
-                tryCheckIn(appContext);
+                tryCheckIn(appContext, provisionStateController);
                 break;
             case Commands.DUMP:
                 dumpStorage(context);
@@ -160,19 +163,20 @@ public final class DeviceLockCommandReceiver extends BroadcastReceiver {
                 }, MoreExecutors.directExecutor());
     }
 
-    private static void tryCheckIn(Context appContext) {
+    private static void tryCheckIn(Context appContext,
+            ProvisionStateController provisionStateController) {
         if (!appContext.getSystemService(UserManager.class).isSystemUser()) {
             LogUtil.e(TAG, "Only system user can perform a check-in");
             return;
         }
-
+        DeviceLockControllerScheduler scheduler =
+                new DeviceLockControllerScheduler(appContext, provisionStateController);
         Futures.addCallback(GlobalParametersClient.getInstance().needCheckIn(),
                 new FutureCallback<>() {
                     @Override
                     public void onSuccess(Boolean needCheckIn) {
                         if (needCheckIn) {
-                            new DeviceLockControllerScheduler(
-                                    appContext).scheduleInitialCheckInWork();
+                            scheduler.scheduleInitialCheckInWork();
                         } else {
                             LogUtil.e(TAG,
                                     "Can not check in at current state!\n"

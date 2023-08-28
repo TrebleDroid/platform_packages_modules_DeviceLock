@@ -22,25 +22,24 @@ import java.time.Duration;
 public abstract class AbstractDeviceLockControllerScheduler {
 
     /**
-     * Correct the stored expected to run time based on the time change delta.
-     *
-     * @param delta The duration from time before change to time after change. This value could be
-     *              negative.
+     * Notify the scheduler that system time has changed.
      */
-    public abstract void correctExpectedToRunTime(Duration delta);
+    public abstract void notifyTimeChanged();
 
     /**
-     * Reschedule the retry check-in work if needed.
+     * Notify the scheduler that reschedule might be required for check-in work
      */
-    public abstract void rescheduleRetryCheckInWorkIfNeeded();
+    public abstract void notifyNeedRescheduleCheckIn();
 
     /**
      * Schedule an alarm to resume the provision flow.
      */
     public abstract void scheduleResumeProvisionAlarm();
 
-    /** Reschedule the resume provision alarm if needed */
-    public abstract void rescheduleResumeProvisionAlarmIfNeeded();
+    /**
+     * Notify the scheduler that device reboot when provision is paused.
+     */
+    public abstract void notifyRebootWhenProvisionPaused();
 
     /**
      * Schedule the initial check-in work when device first boot.
@@ -59,8 +58,10 @@ public abstract class AbstractDeviceLockControllerScheduler {
      */
     public abstract void scheduleNextProvisionFailedStepAlarm();
 
-    /** Reschedule the next provision failed step alarm if needed */
-    public abstract void rescheduleNextProvisionFailedStepAlarmIfNeeded();
+    /**
+     * Notify the scheduler that device reboot when provision has failed.
+     */
+    public abstract void notifyRebootWhenProvisionFailed();
 
     /**
      * Schedule an alarm to factory reset the device in case of provision is failed.
@@ -71,7 +72,4 @@ public abstract class AbstractDeviceLockControllerScheduler {
      * Schedule an alarm to factory reset the device in case of mandatory provision is failed.
      */
     public abstract void scheduleMandatoryResetDeviceAlarm();
-
-    /** Reschedule the reset device alarm if needed */
-    public abstract void rescheduleResetDeviceAlarmIfNeeded();
 }

@@ -33,6 +33,7 @@ import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
 import com.android.devicelockcontroller.policy.ProvisionStateController;
 import com.android.devicelockcontroller.policy.ProvisionStateControllerImpl;
 import com.android.devicelockcontroller.util.LogUtil;
+import com.android.devicelockcontroller.util.ThreadUtils;
 
 /**
  * Application class for Device Lock Controller.
@@ -55,12 +56,14 @@ public class DeviceLockControllerApplication extends Application implements
     @Override
     @MainThread
     public DeviceStateController getDeviceStateController() {
+        ThreadUtils.assertMainThread("getDeviceStateController");
         return getProvisionStateController().getDeviceStateController();
     }
 
     @Override
     @MainThread
     public ProvisionStateController getProvisionStateController() {
+        ThreadUtils.assertMainThread("getProvisionStateController");
         if (mProvisionStateController == null) {
             mProvisionStateController = new ProvisionStateControllerImpl(this);
         }
@@ -70,12 +73,14 @@ public class DeviceLockControllerApplication extends Application implements
     @Override
     @MainThread
     public DevicePolicyController getPolicyController() {
+        ThreadUtils.assertMainThread("getPolicyController");
         return getProvisionStateController().getDevicePolicyController();
     }
 
     @Override
     @MainThread
     public FinalizationController getFinalizationController() {
+        ThreadUtils.assertMainThread("getFinalizationController");
         if (mFinalizationController == null) {
             mFinalizationController = new FinalizationControllerImpl(this);
         }
@@ -85,6 +90,7 @@ public class DeviceLockControllerApplication extends Application implements
     @Override
     @MainThread
     public void destroyObjects() {
+        ThreadUtils.assertMainThread("destroyObjects");
         mProvisionStateController = null;
         mFinalizationController = null;
     }

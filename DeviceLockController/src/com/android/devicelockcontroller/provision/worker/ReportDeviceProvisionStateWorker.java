@@ -30,6 +30,7 @@ import androidx.work.WorkerParameters;
 
 import com.android.devicelockcontroller.AbstractDeviceLockControllerScheduler;
 import com.android.devicelockcontroller.DeviceLockControllerScheduler;
+import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.ReportDeviceProvisionStateGrpcResponse;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
@@ -45,7 +46,7 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorker {
     public static final String KEY_IS_PROVISION_SUCCESSFUL = "is-provision-successful";
     public static final String REPORT_PROVISION_STATE_WORK_NAME = "report-provision-state";
-    private final AbstractDeviceLockControllerScheduler mDeviceLockControllerScheduler;
+    private AbstractDeviceLockControllerScheduler mDeviceLockControllerScheduler;
 
     /** Report provision failure and get next failed step */
     public static void reportSetupFailed(WorkManager workManager) {
@@ -86,8 +87,8 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
 
     public ReportDeviceProvisionStateWorker(@NonNull Context context,
             @NonNull WorkerParameters workerParams, ListeningExecutorService executorService) {
-        this(context, workerParams, null, executorService,
-                new DeviceLockControllerScheduler(context));
+        this(context, workerParams, /* client= */ null,
+                executorService, /* deviceLockControllerScheduler= */ null);
     }
 
     @VisibleForTesting
@@ -105,6 +106,10 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
         GlobalParametersClient globalParametersClient = GlobalParametersClient.getInstance();
         ListenableFuture<Integer> lastState =
                 globalParametersClient.getLastReceivedProvisionState();
+        if (mDeviceLockControllerScheduler == null) {
+            mDeviceLockControllerScheduler = new DeviceLockControllerScheduler(mContext,
+                    ((PolicyObjectsInterface) mContext).getProvisionStateController());
+        }
         return Futures.whenAllSucceed(mClient, lastState).call(() -> {
             boolean isSuccessful = getInputData().getBoolean(
                     KEY_IS_PROVISION_SUCCESSFUL, /* defaultValue= */ false);

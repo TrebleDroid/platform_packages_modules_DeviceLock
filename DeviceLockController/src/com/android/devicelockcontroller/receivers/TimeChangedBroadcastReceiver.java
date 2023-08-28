@@ -19,19 +19,16 @@ package com.android.devicelockcontroller.receivers;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.SystemClock;
 import android.os.UserManager;
 
 import androidx.annotation.VisibleForTesting;
 
 import com.android.devicelockcontroller.AbstractDeviceLockControllerScheduler;
 import com.android.devicelockcontroller.DeviceLockControllerScheduler;
-import com.android.devicelockcontroller.storage.UserParameters;
+import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import java.time.Clock;
-import java.time.Duration;
-import java.time.Instant;
 
 /**
  * Handle {@link Intent#ACTION_TIME_CHANGED}. This receiver runs for every user.
@@ -68,13 +65,11 @@ public final class TimeChangedBroadcastReceiver extends BroadcastReceiver {
         if (isUserProfile) {
             return;
         }
-        if (mScheduler == null) mScheduler = new DeviceLockControllerScheduler(context);
+        if (mScheduler == null) {
+            mScheduler = new DeviceLockControllerScheduler(context,
+                    ((PolicyObjectsInterface) context).getProvisionStateController());
+        }
 
-        long bootTimestamp = UserParameters.getBootTimeMillis(context);
-        Instant bootInstant = Instant.ofEpochMilli(bootTimestamp);
-
-        mScheduler.correctExpectedToRunTime(
-                Duration.between(bootInstant.plusMillis(
-                        SystemClock.elapsedRealtime()), Instant.now(mClock)));
+        mScheduler.notifyTimeChanged();
     }
 }

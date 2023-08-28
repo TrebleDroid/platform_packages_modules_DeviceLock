@@ -140,7 +140,8 @@ public final class DeviceCheckInHelperTest {
         final GetDeviceCheckInStatusGrpcResponse response = createStopResponse();
 
         assertThat(mHelper.handleGetDeviceCheckInStatusResponse(response,
-                new DeviceLockControllerScheduler(mTestApplication))).isTrue();
+                new DeviceLockControllerScheduler(mTestApplication,
+                        mTestApplication.getProvisionStateController()))).isTrue();
     }
 
     @Test

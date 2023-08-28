@@ -27,6 +27,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+
 @RunWith(RobolectricTestRunner.class)
 public final class UserParametersTest {
     private Context mContext;
@@ -40,10 +43,13 @@ public final class UserParametersTest {
 
 
     @Test
-    public void getPackageOverridingHome_shouldReturnExpectedOverridingHomePackage() {
-        assertThat(UserParameters.getPackageOverridingHome(mContext)).isNull();
-        UserParameters.setPackageOverridingHome(mContext, PACKAGE_OVERRIDING_HOME);
-        assertThat(UserParameters.getPackageOverridingHome(mContext))
-                .isEqualTo(PACKAGE_OVERRIDING_HOME);
+    public void getPackageOverridingHome_shouldReturnExpectedOverridingHomePackage()
+            throws ExecutionException, InterruptedException {
+        Executors.newSingleThreadExecutor().submit(() -> {
+            assertThat(UserParameters.getPackageOverridingHome(mContext)).isNull();
+            UserParameters.setPackageOverridingHome(mContext, PACKAGE_OVERRIDING_HOME);
+            assertThat(UserParameters.getPackageOverridingHome(mContext))
+                    .isEqualTo(PACKAGE_OVERRIDING_HOME);
+        }).get();
     }
 }
