@@ -46,7 +46,7 @@ import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.storage.UserParameters;
 
 import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.testing.TestingExecutors;
+import com.google.common.util.concurrent.MoreExecutors;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -56,6 +56,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
+
+import java.util.concurrent.Executors;
 
 @RunWith(RobolectricTestRunner.class)
 public final class ReportDeviceProvisionStateWorkerTest {
@@ -93,7 +95,8 @@ public final class ReportDeviceProvisionStateWorkerTest {
                                         ReportDeviceProvisionStateWorker.class.getName())
                                         ? new ReportDeviceProvisionStateWorker(context,
                                         workerParameters, mClient,
-                                        TestingExecutors.sameThreadScheduledExecutor(), mScheduler)
+                                        MoreExecutors.listeningDecorator(
+                                                Executors.newSingleThreadExecutor()), mScheduler)
                                         : null;
                             }
                         }).build();
@@ -125,8 +128,9 @@ public final class ReportDeviceProvisionStateWorkerTest {
         GlobalParametersClient globalParameters = GlobalParametersClient.getInstance();
         assertThat(globalParameters.getLastReceivedProvisionState().get()).isEqualTo(
                 PROVISION_STATE_FACTORY_RESET);
-        assertThat(UserParameters.getDaysLeftUntilReset(mTestApp)).isEqualTo(
-                TEST_DAYS_LEFT_UNTIL_RESET);
+        Executors.newSingleThreadExecutor().submit(
+                () -> assertThat(UserParameters.getDaysLeftUntilReset(mTestApp)).isEqualTo(
+                        TEST_DAYS_LEFT_UNTIL_RESET)).get();
 
         verify(mScheduler).scheduleNextProvisionFailedStepAlarm();
     }

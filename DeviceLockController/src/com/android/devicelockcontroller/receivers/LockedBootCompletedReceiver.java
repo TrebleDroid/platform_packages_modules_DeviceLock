@@ -93,17 +93,16 @@ public final class LockedBootCompletedReceiver extends BroadcastReceiver {
                         .getProvisionStateController();
         stateController.getDevicePolicyController().enforceCurrentPolicies();
         if (mScheduler == null) {
-            mScheduler = new DeviceLockControllerScheduler(context);
+            mScheduler = new DeviceLockControllerScheduler(context, stateController);
         }
         Futures.addCallback(stateController.getState(),
                 new FutureCallback<>() {
                     @Override
                     public void onSuccess(@ProvisionState Integer state) {
                         if (state == PROVISION_PAUSED) {
-                            mScheduler.rescheduleResumeProvisionAlarmIfNeeded();
+                            mScheduler.notifyRebootWhenProvisionPaused();
                         } else if (state == PROVISION_FAILED) {
-                            mScheduler.rescheduleNextProvisionFailedStepAlarmIfNeeded();
-                            mScheduler.rescheduleResetDeviceAlarmIfNeeded();
+                            mScheduler.notifyRebootWhenProvisionFailed();
                         }
                     }
 

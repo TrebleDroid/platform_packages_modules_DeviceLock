@@ -62,6 +62,7 @@ java_library {
     apex_available: ["com.android.devicelock"],
     static_libs: [
         "androidx.annotation_annotation",
+        "guava",
     ],
     visibility: [
         "//packages/modules/DeviceLock:__subpackages__",

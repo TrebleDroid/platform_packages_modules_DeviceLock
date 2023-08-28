@@ -41,6 +41,7 @@ import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrp
 import com.android.devicelockcontroller.provision.grpc.IsDeviceInApprovedCountryGrpcResponse;
 import com.android.devicelockcontroller.provision.grpc.PauseDeviceProvisioningGrpcResponse;
 import com.android.devicelockcontroller.provision.grpc.ReportDeviceProvisionStateGrpcResponse;
+import com.android.devicelockcontroller.util.ThreadUtils;
 
 import javax.annotation.Nullable;
 
@@ -67,6 +68,7 @@ public final class DeviceCheckInClientImpl extends DeviceCheckInClient {
     public GetDeviceCheckInStatusGrpcResponse getDeviceCheckInStatus(
             ArraySet<DeviceId> deviceIds, String carrierInfo,
             @Nullable String fcmRegistrationToken) {
+        ThreadUtils.assertWorkerThread("getDeviceCheckInStatus");
         try {
             final GetDeviceCheckInStatusGrpcResponse response =
                     new GetDeviceCheckInStatusGrpcResponseWrapper(
@@ -89,6 +91,7 @@ public final class DeviceCheckInClientImpl extends DeviceCheckInClient {
     @Override
     public IsDeviceInApprovedCountryGrpcResponse isDeviceInApprovedCountry(
             @Nullable String carrierInfo) {
+        ThreadUtils.assertWorkerThread("isDeviceInApprovedCountry");
         try {
             return new IsDeviceInApprovedCountryGrpcResponseWrapper(
                     mBlockingStub.isDeviceInApprovedCountry(
@@ -100,8 +103,8 @@ public final class DeviceCheckInClientImpl extends DeviceCheckInClient {
 
     @Override
     public PauseDeviceProvisioningGrpcResponse pauseDeviceProvisioning(int reason) {
+        ThreadUtils.assertWorkerThread("pauseDeviceProvisioning");
         try {
-
             mBlockingStub.pauseDeviceProvisioning(
                     createPauseDeviceProvisioningRequest(sRegisteredId, reason));
             return new PauseDeviceProvisioningGrpcResponse();
@@ -127,6 +130,7 @@ public final class DeviceCheckInClientImpl extends DeviceCheckInClient {
     @Override
     public ReportDeviceProvisionStateGrpcResponse reportDeviceProvisionState(
             int lastReceivedProvisionState, boolean isSuccessful) {
+        ThreadUtils.assertWorkerThread("reportDeviceProvisionState");
         try {
             return new ReportDeviceProvisionStateGrpcResponseWrapper(
                     mBlockingStub.reportDeviceProvisionState(

@@ -26,8 +26,10 @@ import androidx.annotation.WorkerThread;
 
 import com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState;
 import com.android.devicelockcontroller.util.LogUtil;
+import com.android.devicelockcontroller.util.ThreadUtils;
 
 import java.util.Locale;
+import java.util.concurrent.Executors;
 
 /**
  * Stores per-user local parameters.
@@ -63,6 +65,7 @@ public final class UserParameters {
     @WorkerThread
     @ProvisionState
     public static int getProvisionState(Context context) {
+        ThreadUtils.assertWorkerThread("getProvisionState");
         return getSharedPreferences(context).getInt(KEY_PROVISION_STATE,
                 ProvisionState.UNPROVISIONED);
     }
@@ -77,6 +80,7 @@ public final class UserParameters {
     /** Check if initial check-in is required. */
     @WorkerThread
     public static boolean needInitialCheckIn(Context context) {
+        ThreadUtils.assertWorkerThread("needInitialCheckIn");
         return getSharedPreferences(context).getBoolean(KEY_NEED_INITIAL_CHECK_IN, true);
     }
 
@@ -94,6 +98,7 @@ public final class UserParameters {
     @WorkerThread
     @Nullable
     public static String getPackageOverridingHome(Context context) {
+        ThreadUtils.assertWorkerThread("getPackageOverridingHome");
         return getSharedPreferences(context).getString(KEY_HOME_PACKAGE_OVERRIDE, null);
     }
 
@@ -112,6 +117,7 @@ public final class UserParameters {
     @WorkerThread
     @CurrentTimeMillisLong
     public static long getBootTimeMillis(Context context) {
+        ThreadUtils.assertWorkerThread("getBootTimeMillis");
         return getSharedPreferences(context).getLong(KEY_BOOT_TIME_MILLS, 0L);
     }
 
@@ -124,6 +130,7 @@ public final class UserParameters {
     @WorkerThread
     @CurrentTimeMillisLong
     public static long getNextCheckInTimeMillis(Context context) {
+        ThreadUtils.assertWorkerThread("getNextCheckInTimeMillis");
         return getSharedPreferences(context).getLong(KEY_NEXT_CHECK_IN_TIME_MILLIS, 0L);
     }
 
@@ -138,6 +145,7 @@ public final class UserParameters {
     @WorkerThread
     @CurrentTimeMillisLong
     public static long getResumeProvisionTimeMillis(Context context) {
+        ThreadUtils.assertWorkerThread("getResumeProvisionTimeMillis");
         return getSharedPreferences(context).getLong(KEY_RESUME_PROVISION_TIME_MILLIS, 0L);
     }
 
@@ -152,6 +160,7 @@ public final class UserParameters {
     @WorkerThread
     @CurrentTimeMillisLong
     public static long getNextProvisionFailedStepTimeMills(Context context) {
+        ThreadUtils.assertWorkerThread("getNextProvisionFailedStepTimeMills");
         return getSharedPreferences(context).getLong(KEY_NEXT_PROVISION_FAILED_STEP_TIME_MILLIS,
                 0L);
     }
@@ -167,11 +176,12 @@ public final class UserParameters {
     @WorkerThread
     @CurrentTimeMillisLong
     public static long getResetDeviceTimeMillis(Context context) {
+        ThreadUtils.assertWorkerThread("getResetDeviceTimeMillis");
         return getSharedPreferences(context).getLong(KEY_RESET_DEVICE_TIME_MILLIS, 0L);
     }
 
     /** Set the time when device should factory reset */
-    public static void setResetDeviceTImeMillis(Context context,
+    public static void setResetDeviceTimeMillis(Context context,
             @CurrentTimeMillisLong long resetDeviceTime) {
         getSharedPreferences(context).edit().putLong(KEY_RESET_DEVICE_TIME_MILLIS,
                 resetDeviceTime).apply();
@@ -180,6 +190,7 @@ public final class UserParameters {
     /** Get the number of days before device should factory reset */
     @WorkerThread
     public static int getDaysLeftUntilReset(Context context) {
+        ThreadUtils.assertWorkerThread("getDaysLeftUntilReset");
         return getSharedPreferences(context).getInt(KEY_DAYS_LEFT_UNTIL_RESET, Integer.MAX_VALUE);
     }
 
@@ -193,6 +204,7 @@ public final class UserParameters {
      */
     @WorkerThread
     public static void clear(Context context) {
+        ThreadUtils.assertWorkerThread("clear");
         if (!Build.isDebuggable()) {
             throw new SecurityException("Clear is not allowed in non-debuggable build!");
         }
@@ -203,26 +215,28 @@ public final class UserParameters {
      * Dump the current value of user parameters for the user associated with the input context.
      */
     public static void dump(Context context) {
-        LogUtil.d(TAG, String.format(Locale.US,
-                "Dumping UserParameters for user: %s ...\n"
-                        + "%s: %s\n"    // user_state:
-                        + "%s: %s\n"    // home_override_package:
-                        + "%s: %s\n"    // boot-time-mills:
-                        + "%s: %s\n"    // next-check-in-time-millis:
-                        + "%s: %s\n"    // resume-provision-time-millis:
-                        + "%s: %s\n"    // next-provision-failed-step-time-millis:
-                        + "%s: %s\n"    // reset-device-time-millis:
-                        + "%s: %s\n",    // days-left-until-reset:
-                context.getUser(),
-                KEY_PROVISION_STATE, getProvisionState(context),
-                KEY_HOME_PACKAGE_OVERRIDE, getPackageOverridingHome(context),
-                KEY_BOOT_TIME_MILLS, getBootTimeMillis(context),
-                KEY_NEXT_CHECK_IN_TIME_MILLIS, getNextCheckInTimeMillis(context),
-                KEY_RESUME_PROVISION_TIME_MILLIS, getResumeProvisionTimeMillis(context),
-                KEY_NEXT_PROVISION_FAILED_STEP_TIME_MILLIS,
-                getNextProvisionFailedStepTimeMills(context),
-                KEY_RESET_DEVICE_TIME_MILLIS, getResetDeviceTimeMillis(context),
-                KEY_DAYS_LEFT_UNTIL_RESET, getDaysLeftUntilReset(context)
-        ));
+        Executors.newSingleThreadScheduledExecutor().submit(() -> {
+            LogUtil.d(TAG, String.format(Locale.US,
+                    "Dumping UserParameters for user: %s ...\n"
+                            + "%s: %s\n"    // user_state:
+                            + "%s: %s\n"    // home_override_package:
+                            + "%s: %s\n"    // boot-time-mills:
+                            + "%s: %s\n"    // next-check-in-time-millis:
+                            + "%s: %s\n"    // resume-provision-time-millis:
+                            + "%s: %s\n"    // next-provision-failed-step-time-millis:
+                            + "%s: %s\n"    // reset-device-time-millis:
+                            + "%s: %s\n",    // days-left-until-reset:
+                    context.getUser(),
+                    KEY_PROVISION_STATE, getProvisionState(context),
+                    KEY_HOME_PACKAGE_OVERRIDE, getPackageOverridingHome(context),
+                    KEY_BOOT_TIME_MILLS, getBootTimeMillis(context),
+                    KEY_NEXT_CHECK_IN_TIME_MILLIS, getNextCheckInTimeMillis(context),
+                    KEY_RESUME_PROVISION_TIME_MILLIS, getResumeProvisionTimeMillis(context),
+                    KEY_NEXT_PROVISION_FAILED_STEP_TIME_MILLIS,
+                    getNextProvisionFailedStepTimeMills(context),
+                    KEY_RESET_DEVICE_TIME_MILLIS, getResetDeviceTimeMillis(context),
+                    KEY_DAYS_LEFT_UNTIL_RESET, getDaysLeftUntilReset(context)
+            ));
+        });
     }
 }
