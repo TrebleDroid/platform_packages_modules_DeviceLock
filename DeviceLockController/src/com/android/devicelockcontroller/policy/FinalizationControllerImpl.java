@@ -37,6 +37,7 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.Operation;
 import androidx.work.WorkManager;
 
+import com.android.devicelockcontroller.provision.grpc.DeviceFinalizeClient.ReportDeviceProgramCompleteResponse;
 import com.android.devicelockcontroller.provision.worker.ReportDeviceLockProgramCompleteWorker;
 import com.android.devicelockcontroller.receivers.LockedBootCompletedReceiver;
 import com.android.devicelockcontroller.util.LogUtil;
@@ -132,6 +133,19 @@ public final class FinalizationControllerImpl implements FinalizationController 
         return mDispatchQueue.enqueueStateChange(FINALIZED_UNREPORTED);
     }
 
+    @Override
+    public ListenableFuture<Void> notifyFinalizationReportResult(
+            ReportDeviceProgramCompleteResponse response) {
+        if (response.isSuccessful()) {
+            return mDispatchQueue.enqueueStateChange(FINALIZED);
+        } else {
+            // TODO(279517666): Determine how to handle an unrecoverable failure
+            // response from the server
+            LogUtil.e(TAG, "Unrecoverable failure in reporting finalization state: " + response);
+            return Futures.immediateVoidFuture();
+        }
+    }
+
     @WorkerThread
     private void onStateChanged(@FinalizationState int newState) {
         // TODO(279517666): Write the new state to disk.
@@ -172,30 +186,15 @@ public final class FinalizationControllerImpl implements FinalizationController 
                 new FutureCallback<>() {
                     @Override
                     public void onSuccess(Operation.State.SUCCESS result) {
-                        Futures.addCallback(mDispatchQueue.enqueueStateChange(FINALIZED),
-                                new FutureCallback<>() {
-                                    @Override
-                                    public void onSuccess(Void result) {
-                                        // no-op
-                                    }
-
-                                    @Override
-                                    public void onFailure(Throwable t) {
-                                        LogUtil.e(TAG, "Transition to finalized state failed!", t);
-                                    }
-                                },
-                                MoreExecutors.directExecutor()
-                        );
+                        // no-op
                     }
 
                     @Override
                     public void onFailure(Throwable t) {
-                        // TODO(279517666): Determine how to handle an unrecoverable failure
-                        // response from the server
-                        LogUtil.e(TAG, "Unrecoverable failure in reporting finalization state!", t);
+                        throw new RuntimeException(t);
                     }
                 },
-                mLightweightExecutor
+                MoreExecutors.directExecutor()
         );
     }
 
