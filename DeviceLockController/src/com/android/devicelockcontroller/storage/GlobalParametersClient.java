@@ -30,6 +30,7 @@ import androidx.annotation.VisibleForTesting;
 import com.android.devicelockcontroller.DeviceLockControllerApplication;
 import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
+import com.android.devicelockcontroller.policy.FinalizationControllerImpl.FinalizationState;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
@@ -228,6 +229,29 @@ public final class GlobalParametersClient extends DlcClient {
     public ListenableFuture<Void> setDeviceState(@DeviceState int state) {
         return call(() -> {
             asInterface(getService()).setDeviceState(state);
+            return null;
+        });
+    }
+
+    /**
+     * Gets the current {@link FinalizationState}.
+     *
+     * @return current finalization state
+     */
+    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
+    public ListenableFuture<@FinalizationState Integer> getFinalizationState() {
+        return call(() -> asInterface(getService()).getFinalizationState());
+    }
+
+    /**
+     * Sets the current {@link FinalizationState}.
+     *
+     * @param state new finalization state
+     */
+    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
+    public ListenableFuture<Void> setFinalizationState(@FinalizationState int state) {
+        return call(() -> {
+            asInterface(getService()).setFinalizationState(state);
             return null;
         });
     }
