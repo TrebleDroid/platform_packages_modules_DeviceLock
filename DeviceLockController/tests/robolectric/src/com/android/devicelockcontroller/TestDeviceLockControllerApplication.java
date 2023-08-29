@@ -25,8 +25,9 @@ import com.android.devicelockcontroller.policy.DevicePolicyController;
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.FinalizationController;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
-import com.android.devicelockcontroller.policy.ProvisionHelper;
 import com.android.devicelockcontroller.policy.ProvisionStateController;
+import com.android.devicelockcontroller.schedule.DeviceLockControllerScheduler;
+import com.android.devicelockcontroller.schedule.DeviceLockControllerSchedulerProvider;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.storage.GlobalParametersService;
 import com.android.devicelockcontroller.storage.SetupParametersClient;
@@ -43,13 +44,13 @@ import java.lang.reflect.Method;
  * Application class that provides mock objects for tests.
  */
 public final class TestDeviceLockControllerApplication extends Application implements
-        PolicyObjectsInterface, TestLifecycleApplication {
+        PolicyObjectsInterface, TestLifecycleApplication, DeviceLockControllerSchedulerProvider {
 
     private DevicePolicyController mPolicyController;
     private DeviceStateController mStateController;
-    private ProvisionHelper mProvisionHelper;
     private ProvisionStateController mUserStateController;
     private FinalizationController mFinalizationController;
+    private DeviceLockControllerScheduler mDeviceLockControllerScheduler;
     private SetupParametersClient mSetupParametersClient;
     private GlobalParametersClient mGlobalParametersClient;
 
@@ -94,7 +95,6 @@ public final class TestDeviceLockControllerApplication extends Application imple
     public void destroyObjects() {
         mPolicyController = null;
         mStateController = null;
-        mProvisionHelper = null;
     }
 
 
@@ -119,5 +119,13 @@ public final class TestDeviceLockControllerApplication extends Application imple
     public void afterTest(Method method) {
         GlobalParametersClient.reset();
         SetupParametersClient.reset();
+    }
+
+    @Override
+    public DeviceLockControllerScheduler getDeviceLockControllerScheduler() {
+        if (mDeviceLockControllerScheduler == null) {
+            mDeviceLockControllerScheduler = mock(DeviceLockControllerScheduler.class);
+        }
+        return mDeviceLockControllerScheduler;
     }
 }

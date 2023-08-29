@@ -38,7 +38,6 @@ import androidx.work.testing.SynchronousExecutor;
 import androidx.work.testing.TestListenableWorkerBuilder;
 import androidx.work.testing.WorkManagerTestInitHelper;
 
-import com.android.devicelockcontroller.AbstractDeviceLockControllerScheduler;
 import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.ReportDeviceProvisionStateGrpcResponse;
@@ -68,8 +67,6 @@ public final class ReportDeviceProvisionStateWorkerTest {
     private DeviceCheckInClient mClient;
     @Mock
     private ReportDeviceProvisionStateGrpcResponse mResponse;
-    @Mock
-    private AbstractDeviceLockControllerScheduler mScheduler;
     private ReportDeviceProvisionStateWorker mWorker;
     private TestDeviceLockControllerApplication mTestApp;
 
@@ -96,7 +93,7 @@ public final class ReportDeviceProvisionStateWorkerTest {
                                         ? new ReportDeviceProvisionStateWorker(context,
                                         workerParameters, mClient,
                                         MoreExecutors.listeningDecorator(
-                                                Executors.newSingleThreadExecutor()), mScheduler)
+                                                Executors.newSingleThreadExecutor()))
                                         : null;
                             }
                         }).build();
@@ -132,6 +129,6 @@ public final class ReportDeviceProvisionStateWorkerTest {
                 () -> assertThat(UserParameters.getDaysLeftUntilReset(mTestApp)).isEqualTo(
                         TEST_DAYS_LEFT_UNTIL_RESET)).get();
 
-        verify(mScheduler).scheduleNextProvisionFailedStepAlarm();
+        verify(mTestApp.getDeviceLockControllerScheduler()).scheduleNextProvisionFailedStepAlarm();
     }
 }

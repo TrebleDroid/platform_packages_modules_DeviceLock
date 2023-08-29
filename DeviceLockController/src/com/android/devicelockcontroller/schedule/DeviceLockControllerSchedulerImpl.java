@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.devicelockcontroller;
+package com.android.devicelockcontroller.schedule;
 
 import static com.android.devicelockcontroller.common.DeviceLockConstants.MANDATORY_PROVISION_DEVICE_RESET_COUNTDOWN_MINUTE;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.NON_MANDATORY_PROVISION_DEVICE_RESET_COUNTDOWN_MINUTE;
@@ -40,6 +40,7 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.OutOfQuotaPolicy;
 import androidx.work.WorkManager;
 
+import com.android.devicelockcontroller.DeviceLockControllerApplication;
 import com.android.devicelockcontroller.activities.DeviceLockNotificationManager;
 import com.android.devicelockcontroller.policy.ProvisionStateController;
 import com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState;
@@ -62,9 +63,13 @@ import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
-/** A class responsible for scheduling delayed work / alarm */
-public final class DeviceLockControllerScheduler extends AbstractDeviceLockControllerScheduler {
-    private static final String TAG = "DeviceLockControllerScheduler";
+/**
+ * Implementation of {@link DeviceLockControllerScheduler}.
+ * WARNING: Do not create an instance directly, instead you should retrieve it using the
+ * {@link DeviceLockControllerApplication#getDeviceLockControllerScheduler()} API.
+ */
+public final class DeviceLockControllerSchedulerImpl implements DeviceLockControllerScheduler {
+    private static final String TAG = "DeviceLockControllerSchedulerImpl";
     public static final String DEVICE_CHECK_IN_WORK_NAME = "device-check-in";
     private static final String PROVISION_PAUSED_MINUTES_SYS_PROPERTY_KEY =
             "debug.devicelock.paused-minutes";
@@ -82,14 +87,13 @@ public final class DeviceLockControllerScheduler extends AbstractDeviceLockContr
     private final Executor mSequentialExecutor;
     private final ProvisionStateController mProvisionStateController;
 
-
-    public DeviceLockControllerScheduler(Context context,
+    public DeviceLockControllerSchedulerImpl(Context context,
             ProvisionStateController provisionStateController) {
         this(context, Clock.systemUTC(), provisionStateController);
     }
 
     @VisibleForTesting
-    DeviceLockControllerScheduler(Context context, Clock clock,
+    DeviceLockControllerSchedulerImpl(Context context, Clock clock,
             ProvisionStateController provisionStateController) {
         mContext = context;
         mProvisionStateController = provisionStateController;
@@ -133,6 +137,10 @@ public final class DeviceLockControllerScheduler extends AbstractDeviceLockContr
                 UserParameters.setNextCheckInTimeMillis(mContext,
                         before + delta);
             }
+            // We have to reschedule (update) the check-in work, because, otherwise, if device
+            // reboots, WorkManager will reschedule the work based on the changed system clock,
+            // which will result in inaccurate schedule. (see b/285221785)
+            rescheduleRetryCheckInWork();
         } else if (currentState == PROVISION_PAUSED) {
             long before = UserParameters.getResumeProvisionTimeMillis(mContext);
             if (before > 0) {

@@ -59,8 +59,7 @@ public final class ThreadUtils {
     }
 
     /**
-     * Get the sequential executor for
-     * {@link com.android.devicelockcontroller.DeviceLockControllerScheduler}
+     * Get the sequential executor for DeviceLockControllerScheduler.
      */
     public static synchronized Executor getSequentialSchedulerExecutor() {
         if (sSequentialSchedulerExecutor == null) {

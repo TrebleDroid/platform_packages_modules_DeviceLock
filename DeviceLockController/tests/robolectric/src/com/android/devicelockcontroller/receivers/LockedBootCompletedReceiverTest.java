@@ -21,7 +21,6 @@ import static com.android.devicelockcontroller.policy.ProvisionStateController.P
 
 import static com.google.common.truth.Truth.assertThat;
 
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -31,10 +30,10 @@ import android.os.SystemClock;
 
 import androidx.test.core.app.ApplicationProvider;
 
-import com.android.devicelockcontroller.AbstractDeviceLockControllerScheduler;
 import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
 import com.android.devicelockcontroller.policy.DevicePolicyController;
 import com.android.devicelockcontroller.policy.ProvisionStateController;
+import com.android.devicelockcontroller.schedule.DeviceLockControllerScheduler;
 import com.android.devicelockcontroller.storage.UserParameters;
 
 import com.google.common.util.concurrent.Futures;
@@ -57,7 +56,7 @@ public final class LockedBootCompletedReceiverTest {
     private ProvisionStateController mProvisionStateController;
     private DevicePolicyController mDevicePolicyController;
     private LockedBootCompletedReceiver mReceiver;
-    private AbstractDeviceLockControllerScheduler mScheduler;
+    private DeviceLockControllerScheduler mScheduler;
 
     @Before
     public void setUp() {
@@ -65,9 +64,8 @@ public final class LockedBootCompletedReceiverTest {
         mDevicePolicyController = mTestApplication.getPolicyController();
         when(mProvisionStateController.getDevicePolicyController()).thenReturn(
                 mDevicePolicyController);
-        mScheduler = mock(AbstractDeviceLockControllerScheduler.class);
-        mReceiver = new LockedBootCompletedReceiver(mScheduler,
-                TestingExecutors.sameThreadScheduledExecutor());
+        mScheduler = mTestApplication.getDeviceLockControllerScheduler();
+        mReceiver = new LockedBootCompletedReceiver(TestingExecutors.sameThreadScheduledExecutor());
     }
 
     @Ignore // Figure out how to verify getUserControlDisabledPackages() result.

@@ -40,12 +40,13 @@ import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
 import com.android.devicelockcontroller.DeviceLockControllerApplication;
-import com.android.devicelockcontroller.DeviceLockControllerScheduler;
 import com.android.devicelockcontroller.activities.DeviceLockNotificationManager;
 import com.android.devicelockcontroller.activities.ProvisioningProgress;
 import com.android.devicelockcontroller.activities.ProvisioningProgressController;
 import com.android.devicelockcontroller.provision.worker.PauseProvisioningWorker;
 import com.android.devicelockcontroller.receivers.ResumeProvisionReceiver;
+import com.android.devicelockcontroller.schedule.DeviceLockControllerScheduler;
+import com.android.devicelockcontroller.schedule.DeviceLockControllerSchedulerProvider;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.storage.SetupParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
@@ -69,10 +70,14 @@ public final class ProvisionHelperImpl implements ProvisionHelper {
     private final Context mContext;
     private final ProvisionStateController mStateController;
     private static final ExecutorService sExecutor = Executors.newCachedThreadPool();
+    private final DeviceLockControllerScheduler mScheduler;
 
     public ProvisionHelperImpl(Context context, ProvisionStateController stateController) {
         mContext = context;
         mStateController = stateController;
+        DeviceLockControllerSchedulerProvider schedulerProvider =
+                (DeviceLockControllerSchedulerProvider) mContext;
+        mScheduler = schedulerProvider.getDeviceLockControllerScheduler();
     }
 
     @Override
@@ -88,8 +93,7 @@ public final class ProvisionHelperImpl implements ProvisionHelper {
                         createNotification();
                         WorkManager workManager = WorkManager.getInstance(mContext);
                         PauseProvisioningWorker.reportProvisionPausedByUser(workManager);
-                        new DeviceLockControllerScheduler(mContext,
-                                mStateController).scheduleResumeProvisionAlarm();
+                        mScheduler.scheduleResumeProvisionAlarm();
                     }
 
                     @Override
@@ -171,8 +175,7 @@ public final class ProvisionHelperImpl implements ProvisionHelper {
                         if (isMandatory) {
                             progressController.setProvisioningProgress(
                                     ProvisioningProgress.PROVISION_FAILED_MANDATORY);
-                            new DeviceLockControllerScheduler(
-                                    mContext, mStateController).scheduleMandatoryResetDeviceAlarm();
+                            mScheduler.scheduleMandatoryResetDeviceAlarm();
                         } else {
                             progressController.setProvisioningProgress(
                                     ProvisioningProgress.PROVISIONING_FAILED);
