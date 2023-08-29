@@ -137,6 +137,10 @@ public final class DeviceLockControllerSchedulerImpl implements DeviceLockContro
                 UserParameters.setNextCheckInTimeMillis(mContext,
                         before + delta);
             }
+            // We have to reschedule (update) the check-in work, because, otherwise, if device
+            // reboots, WorkManager will reschedule the work based on the changed system clock,
+            // which will result in inaccurate schedule. (see b/285221785)
+            rescheduleRetryCheckInWork();
         } else if (currentState == PROVISION_PAUSED) {
             long before = UserParameters.getResumeProvisionTimeMillis(mContext);
             if (before > 0) {
