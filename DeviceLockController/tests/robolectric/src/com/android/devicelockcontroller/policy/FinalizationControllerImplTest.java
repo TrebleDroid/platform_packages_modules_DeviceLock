@@ -20,12 +20,9 @@ import static com.android.devicelockcontroller.provision.worker.ReportDeviceLock
 
 import static com.google.common.truth.Truth.assertThat;
 
-import static org.robolectric.Shadows.shadowOf;
-
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.os.Looper;
 
 import androidx.annotation.NonNull;
 import androidx.test.core.app.ApplicationProvider;
@@ -35,6 +32,7 @@ import androidx.work.WorkManager;
 import androidx.work.WorkerParameters;
 import androidx.work.testing.WorkManagerTestInitHelper;
 
+import com.android.devicelockcontroller.provision.grpc.DeviceFinalizeClient.ReportDeviceProgramCompleteResponse;
 import com.android.devicelockcontroller.receivers.LockedBootCompletedReceiver;
 
 import com.google.common.util.concurrent.Futures;
@@ -47,7 +45,6 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -89,14 +86,18 @@ public final class FinalizationControllerImplTest {
     }
 
     @Test
-    public void reportingFinished_disablesApplication() throws Exception {
-        // WHEN restrictions are cleared and the work is reported successfully
-        Futures.getChecked(mFinalizationController.notifyRestrictionsCleared(),
-                Exception.class, TIMEOUT_MS, TimeUnit.MILLISECONDS);
-        // Wait for all executors to finish
-        shadowOf(Looper.getMainLooper()).idle();
-        waitForAllExecution(mSequentialExecutor);
-        waitForAllExecution(mLightweightExecutor);
+    public void reportingFinishedSuccessfully_disablesApplication() throws Exception {
+        // GIVEN the restrictions have been requested to clear
+        ListenableFuture<Void> clearedFuture =
+                mFinalizationController.notifyRestrictionsCleared();
+        Futures.getChecked(clearedFuture, Exception.class, TIMEOUT_MS, TimeUnit.MILLISECONDS);
+
+        // WHEN the work is reported successfully
+        ReportDeviceProgramCompleteResponse successResponse =
+                new ReportDeviceProgramCompleteResponse();
+        ListenableFuture<Void> reportedFuture =
+                mFinalizationController.notifyFinalizationReportResult(successResponse);
+        Futures.getChecked(reportedFuture, Exception.class, TIMEOUT_MS, TimeUnit.MILLISECONDS);
 
         // THEN the application is disabled
         PackageManager pm = mContext.getPackageManager();
@@ -104,12 +105,6 @@ public final class FinalizationControllerImplTest {
                 new ComponentName(mContext, LockedBootCompletedReceiver.class)))
                 .isEqualTo(PackageManager.COMPONENT_ENABLED_STATE_DISABLED);
         // TODO(279517666): Assert checks that application itself is disabled when implemented
-    }
-
-    private static void waitForAllExecution(Executor executor) throws InterruptedException {
-        final CountDownLatch latch = new CountDownLatch(1);
-        executor.execute(() -> latch.countDown());
-        latch.await(TIMEOUT_MS, TimeUnit.MILLISECONDS);
     }
 
     /**

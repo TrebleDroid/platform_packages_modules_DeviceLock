@@ -18,6 +18,7 @@ package com.android.devicelockcontroller.provision.worker;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import android.content.Context;
@@ -30,6 +31,7 @@ import androidx.work.WorkerFactory;
 import androidx.work.WorkerParameters;
 import androidx.work.testing.TestListenableWorkerBuilder;
 
+import com.android.devicelockcontroller.policy.FinalizationController;
 import com.android.devicelockcontroller.provision.grpc.DeviceFinalizeClient;
 
 import com.google.common.util.concurrent.Futures;
@@ -52,11 +54,15 @@ public final class ReportDeviceLockProgramCompleteWorkerTest {
     public final MockitoRule mMocks = MockitoJUnit.rule();
     @Mock
     private DeviceFinalizeClient mClient;
+    @Mock
+    private FinalizationController mFinalizationController;
     private ReportDeviceLockProgramCompleteWorker mWorker;
 
     @Before
     public void setUp() throws Exception {
         final Context context = ApplicationProvider.getApplicationContext();
+        when(mFinalizationController.notifyFinalizationReportResult(any()))
+                .thenReturn(Futures.immediateVoidFuture());
         mWorker = TestListenableWorkerBuilder.from(
                         context, ReportDeviceLockProgramCompleteWorker.class)
                 .setWorkerFactory(
@@ -68,7 +74,7 @@ public final class ReportDeviceLockProgramCompleteWorkerTest {
                                 return workerClassName.equals(
                                         ReportDeviceLockProgramCompleteWorker.class.getName())
                                         ? new ReportDeviceLockProgramCompleteWorker(context,
-                                        workerParameters, mClient,
+                                        workerParameters, mClient, mFinalizationController,
                                         TestingExecutors.sameThreadScheduledExecutor())
                                         : null;
                             }
