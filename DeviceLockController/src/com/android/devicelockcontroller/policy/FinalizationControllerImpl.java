@@ -39,7 +39,9 @@ import androidx.work.WorkManager;
 
 import com.android.devicelockcontroller.provision.grpc.DeviceFinalizeClient.ReportDeviceProgramCompleteResponse;
 import com.android.devicelockcontroller.provision.worker.ReportDeviceLockProgramCompleteWorker;
+import com.android.devicelockcontroller.receivers.FinalizationBootCompletedReceiver;
 import com.android.devicelockcontroller.receivers.LockedBootCompletedReceiver;
+import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import com.google.common.util.concurrent.FutureCallback;
@@ -70,7 +72,7 @@ public final class FinalizationControllerImpl implements FinalizationController 
             FINALIZED,
             UNINITIALIZED
     })
-    @interface FinalizationState {
+    public @interface FinalizationState {
         /* Not finalized */
         int UNFINALIZED = 0;
 
@@ -89,6 +91,8 @@ public final class FinalizationControllerImpl implements FinalizationController 
     private final Executor mLightweightExecutor;
     private final Context mContext;
     private final Class<? extends ListenableWorker> mReportDeviceFinalizedWorkerClass;
+    /** Future for after initial finalization state is set from disk */
+    private final ListenableFuture<Void> mStateInitializedFuture;
 
     public FinalizationControllerImpl(Context context) {
         this(context,
@@ -110,34 +114,27 @@ public final class FinalizationControllerImpl implements FinalizationController 
         mReportDeviceFinalizedWorkerClass = reportDeviceFinalizedWorkerClass;
 
         // Set the initial state
-        // TODO(279517666): Pull state from disk here instead of a constant
-        Futures.addCallback(
-                mDispatchQueue.enqueueStateChange(UNFINALIZED),
-                new FutureCallback<>() {
-                    @Override
-                    public void onSuccess(Void result) {
-                        // no-op
-                    }
-
-                    @Override
-                    public void onFailure(Throwable t) {
-                        throw new RuntimeException(t);
-                    }
-                },
-                MoreExecutors.directExecutor()
-        );
+        ListenableFuture<Integer> initialStateFuture =
+                GlobalParametersClient.getInstance().getFinalizationState();
+        mStateInitializedFuture = Futures.transformAsync(initialStateFuture,
+                mDispatchQueue::enqueueStateChange,
+                mLightweightExecutor);
     }
 
     @Override
     public ListenableFuture<Void> notifyRestrictionsCleared() {
-        return mDispatchQueue.enqueueStateChange(FINALIZED_UNREPORTED);
+        return Futures.transformAsync(mStateInitializedFuture,
+                unused -> mDispatchQueue.enqueueStateChange(FINALIZED_UNREPORTED),
+                mLightweightExecutor);
     }
 
     @Override
     public ListenableFuture<Void> notifyFinalizationReportResult(
             ReportDeviceProgramCompleteResponse response) {
         if (response.isSuccessful()) {
-            return mDispatchQueue.enqueueStateChange(FINALIZED);
+            return Futures.transformAsync(mStateInitializedFuture,
+                    unused -> mDispatchQueue.enqueueStateChange(FINALIZED),
+                    mLightweightExecutor);
         } else {
             // TODO(279517666): Determine how to handle an unrecoverable failure
             // response from the server
@@ -147,8 +144,17 @@ public final class FinalizationControllerImpl implements FinalizationController 
     }
 
     @WorkerThread
-    private void onStateChanged(@FinalizationState int newState) {
-        // TODO(279517666): Write the new state to disk.
+    private ListenableFuture<Void> onStateChanged(@FinalizationState int oldState,
+            @FinalizationState int newState) {
+        if (oldState == UNFINALIZED) {
+            // Enable boot receiver to check finalization state on disk
+            PackageManager pm = mContext.getPackageManager();
+            pm.setComponentEnabledSetting(
+                    new ComponentName(mContext,
+                            FinalizationBootCompletedReceiver.class),
+                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                    PackageManager.DONT_KILL_APP);
+        }
         switch (newState) {
             case UNFINALIZED:
                 // no-op
@@ -164,6 +170,7 @@ public final class FinalizationControllerImpl implements FinalizationController 
             default:
                 throw new IllegalArgumentException("Unknown state " + newState);
         }
+        return GlobalParametersClient.getInstance().setFinalizationState(newState);
     }
 
     /**

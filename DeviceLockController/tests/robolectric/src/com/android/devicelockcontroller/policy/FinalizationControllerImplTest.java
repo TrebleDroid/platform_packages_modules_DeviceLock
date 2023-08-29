@@ -16,6 +16,8 @@
 
 package com.android.devicelockcontroller.policy;
 
+import static com.android.devicelockcontroller.policy.FinalizationControllerImpl.FinalizationState.FINALIZED;
+import static com.android.devicelockcontroller.policy.FinalizationControllerImpl.FinalizationState.FINALIZED_UNREPORTED;
 import static com.android.devicelockcontroller.provision.worker.ReportDeviceLockProgramCompleteWorker.REPORT_DEVICE_LOCK_PROGRAM_COMPLETE_WORK_NAME;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -34,10 +36,11 @@ import androidx.work.testing.WorkManagerTestInitHelper;
 
 import com.android.devicelockcontroller.provision.grpc.DeviceFinalizeClient.ReportDeviceProgramCompleteResponse;
 import com.android.devicelockcontroller.receivers.LockedBootCompletedReceiver;
+import com.android.devicelockcontroller.storage.GlobalParametersClient;
 
+import com.google.common.util.concurrent.ExecutionSequencer;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.MoreExecutors;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -57,16 +60,17 @@ public final class FinalizationControllerImplTest {
     private Context mContext;
     private FinalizationControllerImpl mFinalizationController;
     private FinalizationStateDispatchQueue mDispatchQueue;
-    private Executor mSequentialExecutor =
-            MoreExecutors.newSequentialExecutor(Executors.newSingleThreadExecutor());
+    private ExecutionSequencer mExecutionSequencer = ExecutionSequencer.create();
     private Executor mLightweightExecutor = Executors.newCachedThreadPool();
+    private GlobalParametersClient mGlobalParametersClient;
 
     @Before
     public void setUp() {
         mContext = ApplicationProvider.getApplicationContext();
         WorkManagerTestInitHelper.initializeTestWorkManager(mContext);
 
-        mDispatchQueue = new FinalizationStateDispatchQueue(mSequentialExecutor);
+        mGlobalParametersClient = GlobalParametersClient.getInstance();
+        mDispatchQueue = new FinalizationStateDispatchQueue(mExecutionSequencer);
         mFinalizationController = new FinalizationControllerImpl(
                 mContext, mDispatchQueue, mLightweightExecutor, TestWorker.class);
     }
@@ -78,11 +82,14 @@ public final class FinalizationControllerImplTest {
                 mFinalizationController.notifyRestrictionsCleared();
         Futures.getChecked(clearedFuture, Exception.class, TIMEOUT_MS, TimeUnit.MILLISECONDS);
 
-        // THEN work manager has work scheduled to report the device is finalized
+        // THEN work manager has work scheduled to report the device is finalized and the disk
+        // value is set to unreported
         ListenableFuture<List<WorkInfo>> workInfosFuture = WorkManager.getInstance(mContext)
                 .getWorkInfosForUniqueWork(REPORT_DEVICE_LOCK_PROGRAM_COMPLETE_WORK_NAME);
         List<WorkInfo> workInfos = Futures.getChecked(workInfosFuture, Exception.class);
         assertThat(workInfos).isNotEmpty();
+        assertThat(mGlobalParametersClient.getFinalizationState().get())
+                .isEqualTo(FINALIZED_UNREPORTED);
     }
 
     @Test
@@ -99,12 +106,33 @@ public final class FinalizationControllerImplTest {
                 mFinalizationController.notifyFinalizationReportResult(successResponse);
         Futures.getChecked(reportedFuture, Exception.class, TIMEOUT_MS, TimeUnit.MILLISECONDS);
 
-        // THEN the application is disabled
+        // THEN the application is disabled and the disk value is set to finalized
         PackageManager pm = mContext.getPackageManager();
         assertThat(pm.getComponentEnabledSetting(
                 new ComponentName(mContext, LockedBootCompletedReceiver.class)))
                 .isEqualTo(PackageManager.COMPONENT_ENABLED_STATE_DISABLED);
         // TODO(279517666): Assert checks that application itself is disabled when implemented
+        assertThat(mGlobalParametersClient.getFinalizationState().get()).isEqualTo(FINALIZED);
+    }
+
+    @Test
+    public void unreportedStateInitializedFromDisk_reportsWork() throws Exception {
+        // GIVEN the state on disk is unreported
+        mGlobalParametersClient.setFinalizationState(FINALIZED_UNREPORTED);
+
+        // WHEN the controller is initialized
+        mFinalizationController = new FinalizationControllerImpl(
+                mContext, mDispatchQueue, mLightweightExecutor, TestWorker.class);
+        // Wait for execution queue to finish all state changes
+        ListenableFuture<Void> emptyQueueFuture = mExecutionSequencer.submit(() -> null,
+                mLightweightExecutor);
+        Futures.getChecked(emptyQueueFuture, Exception.class, TIMEOUT_MS, TimeUnit.MILLISECONDS);
+
+        // THEN the state from disk is used and is applied immediately, reporting the work.
+        ListenableFuture<List<WorkInfo>> workInfosFuture = WorkManager.getInstance(mContext)
+                .getWorkInfosForUniqueWork(REPORT_DEVICE_LOCK_PROGRAM_COMPLETE_WORK_NAME);
+        List<WorkInfo> workInfos = Futures.getChecked(workInfosFuture, Exception.class);
+        assertThat(workInfos).isNotEmpty();
     }
 
     /**

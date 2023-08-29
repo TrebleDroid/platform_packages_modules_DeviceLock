@@ -33,6 +33,8 @@ interface IGlobalParametersService {
     void setProvisionForced(boolean isForced);
     int getDeviceState();
     void setDeviceState(int state);
+    int getFinalizationState();
+    void setFinalizationState(int state);
     int getLastReceivedProvisionState();
     void setLastReceivedProvisionState(int provisionState);
 }

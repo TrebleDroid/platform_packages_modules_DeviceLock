@@ -21,16 +21,15 @@ import static com.android.devicelockcontroller.policy.FinalizationControllerImpl
 import static com.android.devicelockcontroller.policy.FinalizationControllerImpl.FinalizationState.UNFINALIZED;
 import static com.android.devicelockcontroller.policy.FinalizationControllerImpl.FinalizationState.UNINITIALIZED;
 
-import androidx.annotation.GuardedBy;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
-import androidx.concurrent.futures.CallbackToFutureAdapter;
 
 import com.android.devicelockcontroller.policy.FinalizationControllerImpl.FinalizationState;
 
+import com.google.common.util.concurrent.ExecutionSequencer;
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.MoreExecutors;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -42,18 +41,19 @@ import java.util.concurrent.Executors;
  * order the state changes occurred.
  */
 final class FinalizationStateDispatchQueue {
-    @GuardedBy("mSequentialExecutor")
-    private final Executor mSequentialExecutor;
+    private final ExecutionSequencer mExecutionSequencer;
+    private final Executor mBgExecutor;
     private @Nullable StateChangeCallback mCallback;
     private @FinalizationState int mState = UNINITIALIZED;
 
     FinalizationStateDispatchQueue() {
-        this(MoreExecutors.newSequentialExecutor(Executors.newSingleThreadExecutor()));
+        this(ExecutionSequencer.create());
     }
 
     @VisibleForTesting
-    FinalizationStateDispatchQueue(Executor sequentialExecutor) {
-        mSequentialExecutor = sequentialExecutor;
+    FinalizationStateDispatchQueue(ExecutionSequencer sequencer) {
+        mExecutionSequencer = sequencer;
+        mBgExecutor = Executors.newSingleThreadExecutor();
     }
 
     /**
@@ -71,44 +71,31 @@ final class FinalizationStateDispatchQueue {
      * Attempting to return to a previous state in the finalization process will no-op.
      *
      * @param newState new state to go to
-     * @return future for when state change has completed
+     * @return future for when the state changes and any callbacks are complete
      */
     ListenableFuture<Void> enqueueStateChange(@FinalizationState int newState) {
-        ListenableFuture<Void> stateChangeFuture = CallbackToFutureAdapter.getFuture(
-                completer -> {
-                    synchronized (mSequentialExecutor) {
-                        mSequentialExecutor.execute(() -> {
-                            try {
-                                handleStateChange(newState);
-                                completer.set(null);
-                            } catch (Exception e) {
-                                completer.setException(e);
-                            }
-                        });
-                    }
-                    return "Finalization state change future";
-                }
-        );
-        return stateChangeFuture;
+        return mExecutionSequencer.submitAsync(() -> handleStateChange(newState), mBgExecutor);
     }
 
     /**
      * Handles a state change.
      *
      * @param newState state to change to
+     * @return future for when the state changes and any callbacks are complete
      */
-    private void handleStateChange(@FinalizationState int newState) {
+    private ListenableFuture<Void> handleStateChange(@FinalizationState int newState) {
         final int oldState = mState;
         if (oldState == newState) {
-            return;
+            return Futures.immediateVoidFuture();
         }
         if (!isValidStateChange(oldState, newState)) {
-            return;
+            return Futures.immediateVoidFuture();
         }
         mState = newState;
-        if (mCallback != null) {
-            mCallback.onStateChanged(newState);
+        if (mCallback == null) {
+            return Futures.immediateVoidFuture();
         }
+        return mCallback.onStateChanged(oldState, newState);
     }
 
     private static boolean isValidStateChange(
@@ -127,15 +114,18 @@ final class FinalizationStateDispatchQueue {
     }
 
     /**
-     * Callback for when the state has changed. Runs on {@link #mSequentialExecutor},
+     * Callback for when the state has changed. Runs sequentially with {@link #mExecutionSequencer}.
      */
     interface StateChangeCallback {
 
         /**
          * Called when the state has changed
          *
+         * @param oldState the previous state
          * @param newState the new state
+         * @return future for when state change callback has finished
          */
-        void onStateChanged(@FinalizationState int newState);
+        ListenableFuture<Void> onStateChanged(@FinalizationState int oldState,
+                @FinalizationState int newState);
     }
 }
