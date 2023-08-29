@@ -208,7 +208,11 @@ public final class UserParameters {
         if (!Build.isDebuggable()) {
             throw new SecurityException("Clear is not allowed in non-debuggable build!");
         }
+        // We want to keep the boot time in order to reschedule works/alarms when system clock
+        // changes.
+        long bootTime = UserParameters.getBootTimeMillis(context);
         getSharedPreferences(context).edit().clear().commit();
+        UserParameters.setBootTimeMillis(context, bootTime);
     }
 
     /**

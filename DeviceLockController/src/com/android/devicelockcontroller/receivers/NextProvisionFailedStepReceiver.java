@@ -31,12 +31,12 @@ import android.content.Intent;
 import androidx.annotation.VisibleForTesting;
 import androidx.work.WorkManager;
 
-import com.android.devicelockcontroller.AbstractDeviceLockControllerScheduler;
-import com.android.devicelockcontroller.DeviceLockControllerScheduler;
 import com.android.devicelockcontroller.activities.DeviceLockNotificationManager;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
 import com.android.devicelockcontroller.policy.ProvisionStateController;
 import com.android.devicelockcontroller.provision.worker.ReportDeviceProvisionStateWorker;
+import com.android.devicelockcontroller.schedule.DeviceLockControllerScheduler;
+import com.android.devicelockcontroller.schedule.DeviceLockControllerSchedulerProvider;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.storage.UserParameters;
 import com.android.devicelockcontroller.util.LogUtil;
@@ -56,17 +56,14 @@ public final class NextProvisionFailedStepReceiver extends BroadcastReceiver {
     @VisibleForTesting
     static final String UNEXPECTED_PROVISION_STATE_ERROR_MESSAGE = "Unexpected provision state!";
     public static final String TAG = "NextProvisionFailedStepReceiver";
-    private AbstractDeviceLockControllerScheduler mScheduler;
     private Executor mExecutor;
 
     public NextProvisionFailedStepReceiver() {
-        this(null, Executors.newSingleThreadExecutor());
+        this(Executors.newSingleThreadExecutor());
     }
 
     @VisibleForTesting
-    NextProvisionFailedStepReceiver(AbstractDeviceLockControllerScheduler scheduler,
-            Executor executor) {
-        mScheduler = scheduler;
+    NextProvisionFailedStepReceiver(Executor executor) {
         mExecutor = executor;
     }
 
@@ -76,13 +73,15 @@ public final class NextProvisionFailedStepReceiver extends BroadcastReceiver {
                 intent.getComponent().getClassName())) {
             throw new IllegalArgumentException("Can not handle implicit intent!");
         }
+        Context applicationContext = context.getApplicationContext();
         ProvisionStateController provisionStateController =
-                ((PolicyObjectsInterface) context.getApplicationContext())
+                ((PolicyObjectsInterface) applicationContext)
                         .getProvisionStateController();
-        if (mScheduler == null) {
-            mScheduler = new DeviceLockControllerScheduler(context,
-                    provisionStateController);
-        }
+
+        DeviceLockControllerSchedulerProvider schedulerProvider =
+                (DeviceLockControllerSchedulerProvider) applicationContext;
+        DeviceLockControllerScheduler scheduler =
+                schedulerProvider.getDeviceLockControllerScheduler();
         GlobalParametersClient globalParameters = GlobalParametersClient.getInstance();
         ListenableFuture<Boolean> needToReportFuture = Futures.transform(
                 globalParameters.getLastReceivedProvisionState(),
@@ -105,7 +104,7 @@ public final class NextProvisionFailedStepReceiver extends BroadcastReceiver {
                                     .sendDeviceResetInOneDayOngoingNotification(context);
                             return true;
                         case PROVISION_STATE_FACTORY_RESET:
-                            mScheduler.scheduleResetDeviceAlarm();
+                            scheduler.scheduleResetDeviceAlarm();
                             return true;
                         case PROVISION_STATE_SUCCESS:
                         case PROVISION_STATE_UNSPECIFIED:

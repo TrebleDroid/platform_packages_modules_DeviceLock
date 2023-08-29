@@ -35,7 +35,6 @@ import android.text.TextUtils;
 import androidx.annotation.StringDef;
 import androidx.work.WorkManager;
 
-import com.android.devicelockcontroller.DeviceLockControllerScheduler;
 import com.android.devicelockcontroller.policy.DevicePolicyController;
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
@@ -48,6 +47,8 @@ import com.android.devicelockcontroller.provision.worker.ReportDeviceProvisionSt
 import com.android.devicelockcontroller.receivers.NextProvisionFailedStepReceiver;
 import com.android.devicelockcontroller.receivers.ResetDeviceReceiver;
 import com.android.devicelockcontroller.receivers.ResumeProvisionReceiver;
+import com.android.devicelockcontroller.schedule.DeviceLockControllerScheduler;
+import com.android.devicelockcontroller.schedule.DeviceLockControllerSchedulerProvider;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.storage.SetupParametersClient;
 import com.android.devicelockcontroller.storage.UserParameters;
@@ -134,7 +135,7 @@ public final class DeviceLockCommandReceiver extends BroadcastReceiver {
                         getSetStateCallBack(CLEARED), MoreExecutors.directExecutor());
                 break;
             case Commands.CHECK_IN:
-                tryCheckIn(appContext, provisionStateController);
+                tryCheckIn(appContext);
                 break;
             case Commands.DUMP:
                 dumpStorage(context);
@@ -163,14 +164,15 @@ public final class DeviceLockCommandReceiver extends BroadcastReceiver {
                 }, MoreExecutors.directExecutor());
     }
 
-    private static void tryCheckIn(Context appContext,
-            ProvisionStateController provisionStateController) {
+    private static void tryCheckIn(Context appContext) {
         if (!appContext.getSystemService(UserManager.class).isSystemUser()) {
             LogUtil.e(TAG, "Only system user can perform a check-in");
             return;
         }
+        DeviceLockControllerSchedulerProvider schedulerProvider =
+                (DeviceLockControllerSchedulerProvider) appContext;
         DeviceLockControllerScheduler scheduler =
-                new DeviceLockControllerScheduler(appContext, provisionStateController);
+                schedulerProvider.getDeviceLockControllerScheduler();
         Futures.addCallback(GlobalParametersClient.getInstance().needCheckIn(),
                 new FutureCallback<>() {
                     @Override

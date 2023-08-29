@@ -28,11 +28,11 @@ import android.os.UserManager;
 
 import androidx.annotation.VisibleForTesting;
 
-import com.android.devicelockcontroller.AbstractDeviceLockControllerScheduler;
-import com.android.devicelockcontroller.DeviceLockControllerScheduler;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
 import com.android.devicelockcontroller.policy.ProvisionStateController;
 import com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState;
+import com.android.devicelockcontroller.schedule.DeviceLockControllerScheduler;
+import com.android.devicelockcontroller.schedule.DeviceLockControllerSchedulerProvider;
 import com.android.devicelockcontroller.storage.UserParameters;
 import com.android.devicelockcontroller.util.LogUtil;
 
@@ -57,7 +57,6 @@ import java.util.concurrent.Executors;
  */
 public final class LockedBootCompletedReceiver extends BroadcastReceiver {
     private static final String TAG = "LockedBootCompletedReceiver";
-    private AbstractDeviceLockControllerScheduler mScheduler;
     private final Executor mExecutor;
 
     public LockedBootCompletedReceiver() {
@@ -65,9 +64,7 @@ public final class LockedBootCompletedReceiver extends BroadcastReceiver {
     }
 
     @VisibleForTesting
-    LockedBootCompletedReceiver(AbstractDeviceLockControllerScheduler scheduler,
-            Executor executor) {
-        mScheduler = scheduler;
+    LockedBootCompletedReceiver(Executor executor) {
         mExecutor = executor;
     }
 
@@ -88,21 +85,23 @@ public final class LockedBootCompletedReceiver extends BroadcastReceiver {
                 SystemClock.elapsedRealtime());
         UserParameters.setBootTimeMillis(context, bootTimeStamp.toEpochMilli());
 
-        ProvisionStateController stateController =
-                ((PolicyObjectsInterface) context.getApplicationContext())
-                        .getProvisionStateController();
+        Context applicationContext = context.getApplicationContext();
+        ProvisionStateController stateController = ((PolicyObjectsInterface) applicationContext)
+                .getProvisionStateController();
         stateController.getDevicePolicyController().enforceCurrentPolicies();
-        if (mScheduler == null) {
-            mScheduler = new DeviceLockControllerScheduler(context, stateController);
-        }
+
+        DeviceLockControllerSchedulerProvider schedulerProvider =
+                (DeviceLockControllerSchedulerProvider) applicationContext;
+        DeviceLockControllerScheduler scheduler =
+                schedulerProvider.getDeviceLockControllerScheduler();
         Futures.addCallback(stateController.getState(),
                 new FutureCallback<>() {
                     @Override
                     public void onSuccess(@ProvisionState Integer state) {
                         if (state == PROVISION_PAUSED) {
-                            mScheduler.notifyRebootWhenProvisionPaused();
+                            scheduler.notifyRebootWhenProvisionPaused();
                         } else if (state == PROVISION_FAILED) {
-                            mScheduler.notifyRebootWhenProvisionFailed();
+                            scheduler.notifyRebootWhenProvisionFailed();
                         }
                     }
 

@@ -20,9 +20,9 @@ import android.util.ArraySet;
 
 import androidx.annotation.WorkerThread;
 
-import com.android.devicelockcontroller.AbstractDeviceLockControllerScheduler;
 import com.android.devicelockcontroller.common.DeviceId;
 import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrpcResponse;
+import com.android.devicelockcontroller.schedule.DeviceLockControllerScheduler;
 
 /**
  * Base class that provides abstraction of utility APIs for device check-in.
@@ -36,5 +36,5 @@ public abstract class AbstractDeviceCheckInHelper {
     @WorkerThread
     abstract boolean handleGetDeviceCheckInStatusResponse(
             GetDeviceCheckInStatusGrpcResponse response,
-            AbstractDeviceLockControllerScheduler scheduler);
+            DeviceLockControllerScheduler scheduler);
 }

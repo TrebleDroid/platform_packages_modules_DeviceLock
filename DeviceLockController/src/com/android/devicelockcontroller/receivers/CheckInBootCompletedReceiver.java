@@ -25,10 +25,10 @@ import android.os.UserManager;
 
 import androidx.annotation.VisibleForTesting;
 
-import com.android.devicelockcontroller.AbstractDeviceLockControllerScheduler;
-import com.android.devicelockcontroller.DeviceLockControllerScheduler;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
 import com.android.devicelockcontroller.policy.ProvisionStateController;
+import com.android.devicelockcontroller.schedule.DeviceLockControllerScheduler;
+import com.android.devicelockcontroller.schedule.DeviceLockControllerSchedulerProvider;
 import com.android.devicelockcontroller.storage.UserParameters;
 import com.android.devicelockcontroller.util.LogUtil;
 
@@ -46,7 +46,6 @@ import java.util.concurrent.Executors;
 public final class CheckInBootCompletedReceiver extends BroadcastReceiver {
 
     private static final String TAG = "CheckInBootCompletedReceiver";
-    private AbstractDeviceLockControllerScheduler mScheduler;
     private final Executor mExecutor;
 
     public CheckInBootCompletedReceiver() {
@@ -54,9 +53,7 @@ public final class CheckInBootCompletedReceiver extends BroadcastReceiver {
     }
 
     @VisibleForTesting
-    CheckInBootCompletedReceiver(AbstractDeviceLockControllerScheduler scheduler,
-            Executor executor) {
-        mScheduler = scheduler;
+    CheckInBootCompletedReceiver(Executor executor) {
         mExecutor = executor;
     }
 
@@ -72,17 +69,18 @@ public final class CheckInBootCompletedReceiver extends BroadcastReceiver {
         if (isUserProfile) {
             return;
         }
+        Context applicationContext = context.getApplicationContext();
         ProvisionStateController provisionStateController =
-                ((PolicyObjectsInterface) context.getApplicationContext())
-                        .getProvisionStateController();
-        if (mScheduler == null) {
-            mScheduler = new DeviceLockControllerScheduler(context, provisionStateController);
-        }
+                ((PolicyObjectsInterface) applicationContext).getProvisionStateController();
+        DeviceLockControllerSchedulerProvider schedulerProvider =
+                (DeviceLockControllerSchedulerProvider) applicationContext;
+        DeviceLockControllerScheduler scheduler =
+                schedulerProvider.getDeviceLockControllerScheduler();
         ListenableFuture<Boolean> needReschedule = Futures.transformAsync(
                 Futures.submit(() -> UserParameters.needInitialCheckIn(context), mExecutor),
                 needCheckIn -> {
                     if (needCheckIn) {
-                        mScheduler.scheduleInitialCheckInWork();
+                        scheduler.scheduleInitialCheckInWork();
                         return Futures.immediateFuture(false);
                     } else {
                         return Futures.transform(
@@ -95,7 +93,7 @@ public final class CheckInBootCompletedReceiver extends BroadcastReceiver {
                     @Override
                     public void onSuccess(Boolean result) {
                         if (result) {
-                            mScheduler.notifyNeedRescheduleCheckIn();
+                            scheduler.notifyNeedRescheduleCheckIn();
                         }
                     }
 
