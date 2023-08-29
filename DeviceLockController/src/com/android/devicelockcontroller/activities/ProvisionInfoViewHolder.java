@@ -44,11 +44,11 @@ public final class ProvisionInfoViewHolder extends RecyclerView.ViewHolder {
         mTextView = itemView.findViewById(R.id.text_view_item_provision_info);
     }
 
-    void bind(ProvisionInfo provisionInfo, String providerName,
+    void bind(ProvisionInfo provisionInfo, @Nullable String providerName,
             @Nullable String termsAndConditionsUrl) {
         Context context = itemView.getContext();
         if (TextUtils.isEmpty(providerName)) {
-            LogUtil.e(TAG, "Device provider name is empty, should not reach here.");
+            LogUtil.i(TAG, "Device provider name is not ready");
             return;
         }
 
@@ -56,7 +56,7 @@ public final class ProvisionInfoViewHolder extends RecyclerView.ViewHolder {
         // Device Subsidy program.
         if (provisionInfo.getTextId() == R.string.restrict_device_if_dont_make_payment) {
             if (TextUtils.isEmpty(termsAndConditionsUrl)) {
-                LogUtil.e(TAG, "Terms and Conditions URL is empty, should not reach here.");
+                LogUtil.i(TAG, "Terms and Conditions URL is not ready,");
                 return;
             }
             UrlUtils.setUrlText(mTextView, String.format(
