@@ -62,6 +62,12 @@ message GetDeviceCheckinStatusRequest {
   // device provided by the Device Lock Android client. The token is only used
   // for GMS devices.
   optional string fcm_registration_token = 3;
+  // The name of the manufacturer of the device.
+  optional string device_manufacturer = 4;
+  // The name of the model of the device.
+  optional string device_model = 5;
+  // The internal name of the device.
+  optional string device_internal_name = 6;
 }
 
 message ClientDeviceIdentifier {
@@ -178,17 +184,6 @@ message PauseDeviceProvisioningRequest {
 
 // Response to a request to pause device provisioning of an eligible device.
 message PauseDeviceProvisioningResponse {}
-
-// Request to report that device provisioning of an eligible device is complete.
-message ReportDeviceProvisionCompleteRequest {
-  // The device identifier that is registered with the Device Lock server that
-  // was provisioned.
-  optional string registered_device_identifier = 1;
-}
-
-// Response to a request reporting that device provisioning of an eligible
-// device is complete.
-message ReportDeviceProvisionCompleteResponse {}
 
 // The different reasons device provisioning can fail on a device.
 enum ClientProvisionFailureReason {
