@@ -40,7 +40,7 @@ public final class IsDeviceInApprovedCountryWorker extends
     public static final String KEY_CARRIER_INFO = "carrier-info";
     public static final String KEY_IS_IN_APPROVED_COUNTRY = "is-in-approved-country";
 
-    IsDeviceInApprovedCountryWorker(@NonNull Context context,
+    public IsDeviceInApprovedCountryWorker(@NonNull Context context,
             @NonNull WorkerParameters workerParams, ListeningExecutorService executorService) {
         super(context, workerParams, null, executorService);
     }
