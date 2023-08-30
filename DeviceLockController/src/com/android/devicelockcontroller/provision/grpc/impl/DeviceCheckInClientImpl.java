@@ -43,10 +43,10 @@ import com.android.devicelockcontroller.provision.grpc.PauseDeviceProvisioningGr
 import com.android.devicelockcontroller.provision.grpc.ReportDeviceProvisionStateGrpcResponse;
 import com.android.devicelockcontroller.util.ThreadUtils;
 
-import javax.annotation.Nullable;
-
 import io.grpc.StatusRuntimeException;
 import io.grpc.okhttp.OkHttpChannelBuilder;
+
+import javax.annotation.Nullable;
 
 /**
  * A client for the {@link  com.android.devicelockcontroller.proto.DeviceLockCheckinServiceGrpc}
@@ -166,6 +166,9 @@ public final class DeviceCheckInClientImpl extends DeviceCheckInClient {
                             .setDeviceIdentifier(deviceId.getId()));
         }
         builder.setCarrierMccmnc(carrierInfo);
+        builder.setDeviceManufacturer(android.os.Build.MANUFACTURER);
+        builder.setDeviceModel(android.os.Build.MODEL);
+        builder.setDeviceInternalName(android.os.Build.DEVICE);
         return builder.build();
     }
 
