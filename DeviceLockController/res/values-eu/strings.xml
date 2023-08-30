@@ -80,7 +80,10 @@
     <string name="settings_banner_body" msgid="5814902066260202824">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> hornitzaileak gailuaren ezarpenak alda ditzake"</string>
     <string name="settings_banner_button" msgid="1831020849782670907">"Informazio gehiago"</string>
     <string name="settings_screen_title" msgid="721470080648091035">"Gailu finantzatuari buruzko informazioa"</string>
-    <string name="settings_intro" msgid="5809531331925309396">"Kreditu bidezko gailu-hornitzaileak, ezarpenak aldatu, eta gailuan kiosko-aplikazioa instala dezake.\n\nBaliteke <xliff:g id="PROVIDER_NAME_0">%1$s</xliff:g> hornitzaileak gailua murriztea beharrezko ordainketak egiten ez badituzu edo <xliff:g id="PROVIDER_NAME_1">%1$s</xliff:g> hornitzailearen SIMa erabiltzeari uzten badiozu.\n\nInformazio gehiago lortzeko, jarri <xliff:g id="PROVIDER_NAME_2">%1$s</xliff:g> hornitzailearekin harremanetan."</string>
+    <!-- no translation found for settings_intro_device_financing (2548476558131048133) -->
+    <skip />
+    <!-- no translation found for settings_intro_device_subsidy (4274945644204818702) -->
+    <skip />
     <string name="settings_intro_preference_key" msgid="6610461073400554162">"settings_intro_preference_key"</string>
     <string name="settings_restrictions_category" msgid="5746868117342406677">"Gailua guztiz ordaindu arte, ezingo dituzu egin hauek:"</string>
     <string name="settings_restrictions_category_preference_key" msgid="88318147152676512">"settings_restrictions_category_preference_key"</string>
