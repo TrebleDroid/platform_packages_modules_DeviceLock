@@ -43,15 +43,14 @@ public final class ReportDeviceLockProgramCompleteWorker extends ListenableWorke
     public static final String REPORT_DEVICE_LOCK_PROGRAM_COMPLETE_WORK_NAME =
             "report-device-lock-program-complete";
     private final ListenableFuture<DeviceFinalizeClient> mClient;
-    private final FinalizationController mFinalizationController;
+    private final PolicyObjectsInterface mPolicyObjectsInterface;
 
     public ReportDeviceLockProgramCompleteWorker(@NonNull Context context,
             @NonNull WorkerParameters workerParams, ListeningExecutorService executorService) {
         this(context,
                 workerParams,
                 null,
-                ((PolicyObjectsInterface) context.getApplicationContext())
-                        .getFinalizationController(),
+                ((PolicyObjectsInterface) context.getApplicationContext()),
                 executorService);
     }
 
@@ -59,7 +58,7 @@ public final class ReportDeviceLockProgramCompleteWorker extends ListenableWorke
     ReportDeviceLockProgramCompleteWorker(@NonNull Context context,
             @NonNull WorkerParameters workerParams,
             DeviceFinalizeClient client,
-            FinalizationController finalizationController,
+            PolicyObjectsInterface policyObjectsInterface,
             ListeningExecutorService executorService) {
         super(context, workerParams);
         if (client == null) {
@@ -80,12 +79,13 @@ public final class ReportDeviceLockProgramCompleteWorker extends ListenableWorke
         } else {
             mClient = Futures.immediateFuture(client);
         }
-        mFinalizationController = finalizationController;
+        mPolicyObjectsInterface = policyObjectsInterface;
     }
 
     @NonNull
     @Override
     public ListenableFuture<Result> startWork() {
+        FinalizationController controller = mPolicyObjectsInterface.getFinalizationController();
         return Futures.transformAsync(mClient, client -> {
             DeviceFinalizeClient.ReportDeviceProgramCompleteResponse response =
                     client.reportDeviceProgramComplete();
@@ -93,7 +93,7 @@ public final class ReportDeviceLockProgramCompleteWorker extends ListenableWorke
                 return Futures.immediateFuture(Result.retry());
             }
             ListenableFuture<Void> notifyFuture =
-                    mFinalizationController.notifyFinalizationReportResult(response);
+                    controller.notifyFinalizationReportResult(response);
             return Futures.transform(notifyFuture,
                     unused -> response.isSuccessful() ? Result.success() : Result.failure(),
                     MoreExecutors.directExecutor());
