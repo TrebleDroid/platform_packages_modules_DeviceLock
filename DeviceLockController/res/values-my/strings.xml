@@ -34,7 +34,7 @@
     <string name="control_lock_device_text" msgid="8253302484073757764">"သင် ငွေပေးချေခြင်း မပြုပါက ဤစက်ပစ္စည်းကို ကန့်သတ်နိုင်သည်"</string>
     <string name="control_download_text" msgid="8514650561843088172">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> အက်ပ်ကို ဒေါင်းလုဒ်လုပ်နိုင်၊ ထည့်သွင်းနိုင်၊ အပ်ဒိတ်လုပ်နိုင်သည်"</string>
     <string name="control_disable_debug_text" msgid="8112443250013094442">"အမှားရှာပြင်ခြင်း ဝန်ဆောင်မှုများကို ပိတ်နိုင်သည်"</string>
-    <string name="locked_section_title" msgid="2748725389334076510">"ဤစက်ကိုလော့ခ်ချထားလျှင် ဘယ်အရာကို လုပ်နိုင်မလဲ။"</string>
+    <string name="locked_section_title" msgid="2748725389334076510">"ဤစက်ကိုလော့ခ်ချထားလျှင် ဘယ်အရာတွေ အလုပ်လုပ်သလဲ။"</string>
     <string name="locked_emergency_text" msgid="3509216445555779286">"အရေးပေါ်ဖုန်းခေါ်ခြင်း ဝန်ဆောင်မှုများ"</string>
     <string name="locked_phone_usage_text" msgid="1913605870324552847">"အဝင်နှင့် အချို့သော အထွက်ခေါ်ဆိုမှုများ"</string>
     <string name="locked_settings_usage_text" msgid="8336476063187737700">"ဆက်တင်များ"</string>
