@@ -16,13 +16,11 @@
 
 package com.android.devicelockcontroller.activities;
 
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 
@@ -35,10 +33,10 @@ import com.android.devicelockcontroller.R;
 public final class ProvisionInfoListAdapter extends
         ListAdapter<ProvisionInfo, ProvisionInfoViewHolder> {
 
+    public static final String TAG = ProvisionInfoListAdapter.class.getSimpleName();
     private final ProvisionInfoViewModel mViewModel;
-    private final LifecycleOwner mLifecycleOwner;
 
-    ProvisionInfoListAdapter(ProvisionInfoViewModel viewModel, LifecycleOwner lifecycleOwner) {
+    ProvisionInfoListAdapter(ProvisionInfoViewModel viewModel) {
         super(new DiffUtil.ItemCallback<>() {
             @Override
             public boolean areItemsTheSame(@NonNull ProvisionInfo oldItem,
@@ -53,7 +51,6 @@ public final class ProvisionInfoListAdapter extends
             }
         });
         mViewModel = viewModel;
-        mLifecycleOwner = lifecycleOwner;
     }
 
     @NonNull
@@ -68,15 +65,7 @@ public final class ProvisionInfoListAdapter extends
     public void onBindViewHolder(@NonNull ProvisionInfoViewHolder provisionInfoViewHolder,
             int position) {
         String providerName = mViewModel.mProviderNameLiveData.getValue();
-        if (TextUtils.isEmpty(providerName)) {
-            mViewModel.mProviderNameLiveData.observe(mLifecycleOwner,
-                    newValue -> notifyItemChanged(position));
-            return;
-        }
-
-        // TODO(b/282248521): Refactor ProvisionInfoList, ProviderName, and TermsAndConditionsUrl
-        //  Live Data.
-        provisionInfoViewHolder.bind(getItem(position), providerName,
-                mViewModel.mTermsAndConditionsUrlLiveData.getValue());
+        String termsAndConditionsUrl = mViewModel.mTermsAndConditionsUrlLiveData.getValue();
+        provisionInfoViewHolder.bind(getItem(position), providerName, termsAndConditionsUrl);
     }
 }

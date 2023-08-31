@@ -16,9 +16,6 @@
 
 package com.android.devicelockcontroller.activities;
 
-import android.annotation.NonNull;
-import android.app.Application;
-
 import com.android.devicelockcontroller.R;
 
 import java.util.ArrayList;
@@ -43,19 +40,18 @@ public final class DeviceSubsidyProvisionInfoViewModel extends ProvisionInfoView
 
     private static final int HEADER_TEXT_ID = R.string.enroll_your_device_header;
 
-    private static final int SUBHEADER_TEXT_ID = R.string.enroll_your_device_subsidy_subheader;
+    private static final int SUB_HEADER_TEXT_ID = R.string.enroll_your_device_subsidy_subheader;
 
-    public DeviceSubsidyProvisionInfoViewModel(@NonNull Application application) {
-        super(application);
-
+    public DeviceSubsidyProvisionInfoViewModel() {
         mHeaderDrawableId = HEADER_DRAWABLE_ID;
         mMandatoryHeaderTextId = MANDATORY_HEADER_TEXT_ID;
         mHeaderTextId = HEADER_TEXT_ID;
-        mSubHeaderTextId = SUBHEADER_TEXT_ID;
+        mSubHeaderTextId = SUB_HEADER_TEXT_ID;
         List<ProvisionInfo> provisionInfoList = new ArrayList<>();
         for (int i = 0, size = DRAWABLE_IDS.length; i < size; ++i) {
             provisionInfoList.add(new ProvisionInfo(DRAWABLE_IDS[i], TEXT_IDS[i]));
         }
         mProvisionInfoList = provisionInfoList;
+        retrieveData();
     }
 }

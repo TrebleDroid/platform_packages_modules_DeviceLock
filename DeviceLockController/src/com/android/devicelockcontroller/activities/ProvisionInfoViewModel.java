@@ -16,14 +16,12 @@
 
 package com.android.devicelockcontroller.activities;
 
-import android.annotation.NonNull;
-import android.app.Application;
 import android.text.TextUtils;
 import android.util.Pair;
 
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.storage.SetupParametersClient;
@@ -40,7 +38,7 @@ import java.util.List;
  * This class provides the resources and {@link ProvisionInfo} to render the
  * {@link ProvisionInfoFragment}.
  */
-public abstract class ProvisionInfoViewModel extends AndroidViewModel {
+public abstract class ProvisionInfoViewModel extends ViewModel {
 
     public static final String TAG = "ProvisionInfoViewModel";
     int mHeaderDrawableId;
@@ -50,103 +48,65 @@ public abstract class ProvisionInfoViewModel extends AndroidViewModel {
     int mSubHeaderTextId;
     List<ProvisionInfo> mProvisionInfoList;
     final MutableLiveData<Boolean> mIsMandatoryLiveData = new MutableLiveData<>();
-    final MutableLiveData<String> mProviderNameLiveData;
-    final MutableLiveData<String> mTermsAndConditionsUrlLiveData;
-    final MutableLiveData<Boolean> mIsProvisionForcedLiveData;
+    final MutableLiveData<String> mProviderNameLiveData = new MutableLiveData<>();
+    final MutableLiveData<String> mTermsAndConditionsUrlLiveData = new MutableLiveData<>();
+    final MutableLiveData<Boolean> mIsProvisionForcedLiveData = new MutableLiveData<>();
     final MutableLiveData<Pair<Integer, String>> mHeaderTextLiveData = new MutableLiveData<>();
     final MutableLiveData<Pair<Integer, String>> mSubHeaderTextLiveData = new MutableLiveData<>();
-    final MediatorLiveData<List<ProvisionInfo>> mProvisionInfoListLiveData;
+    final MediatorLiveData<List<ProvisionInfo>> mProvisionInfoListLiveData =
+            new MediatorLiveData<>();
 
-    public ProvisionInfoViewModel(@NonNull Application application) {
-        super(application);
-        mProviderNameLiveData = new MutableLiveData<>();
-        mTermsAndConditionsUrlLiveData = new MutableLiveData<>();
-        mIsProvisionForcedLiveData = new MutableLiveData<>();
-        mProvisionInfoListLiveData = new MediatorLiveData<>();
-
+    void retrieveData() {
         SetupParametersClient setupParametersClient = SetupParametersClient.getInstance();
-        ListenableFuture<String> getKioskAppProviderNameFuture =
+        ListenableFuture<String> kioskAppProviderNameFuture =
                 setupParametersClient.getKioskAppProviderName();
         ListenableFuture<Boolean> isMandatoryFuture = setupParametersClient.isProvisionMandatory();
-        ListenableFuture<String> getTermsAndConditionsUrlFuture =
+        ListenableFuture<String> termsAndConditionsUrlFuture =
                 setupParametersClient.getTermsAndConditionsUrl();
+        ListenableFuture<Boolean> isProvisionForcedFuture =
+                GlobalParametersClient.getInstance().isProvisionForced();
 
-        Futures.addCallback(
-                getKioskAppProviderNameFuture,
-                new FutureCallback<>() {
-                    @Override
-                    public void onSuccess(String providerName) {
-                        if (TextUtils.isEmpty(providerName)) {
-                            LogUtil.e(TAG, "Device provider name is empty, should not reach here.");
-                            return;
-                        }
-                        mProviderNameLiveData.postValue(providerName);
+        mProvisionInfoListLiveData.addSource(mProviderNameLiveData,
+                unused -> mProvisionInfoListLiveData.setValue(mProvisionInfoList));
+        mProvisionInfoListLiveData.addSource(mTermsAndConditionsUrlLiveData,
+                unused -> mProvisionInfoListLiveData.setValue(mProvisionInfoList));
+        ListenableFuture<Void> result = Futures.whenAllSucceed(
+                        kioskAppProviderNameFuture,
+                        isMandatoryFuture,
+                        termsAndConditionsUrlFuture,
+                        isProvisionForcedFuture)
+                .call(() -> {
+                    String providerName = Futures.getDone(kioskAppProviderNameFuture);
+                    boolean isMandatory = Futures.getDone(isMandatoryFuture);
+                    String termsAndConditionUrl = Futures.getDone(termsAndConditionsUrlFuture);
+                    if (TextUtils.isEmpty(providerName)) {
+                        LogUtil.w(TAG, "Device provider name is empty!");
                     }
-
-                    @Override
-                    public void onFailure(Throwable t) {
-                        LogUtil.e(TAG, "Failed to get Kiosk app provider name", t);
+                    if (TextUtils.isEmpty(termsAndConditionUrl)) {
+                        LogUtil.w(TAG, "Terms and Conditions URL is empty!");
                     }
-                }, MoreExecutors.directExecutor());
-
-        Futures.whenAllSucceed(isMandatoryFuture, getKioskAppProviderNameFuture).call(
-                () -> {
-                    Boolean isMandatory = Futures.getDone(isMandatoryFuture);
-                    String kioskProviderName = Futures.getDone(getKioskAppProviderNameFuture);
-                    mHeaderTextLiveData.postValue(new Pair<>(
-                            isMandatory ? mMandatoryHeaderTextId : mHeaderTextId,
-                            kioskProviderName));
-                    mSubHeaderTextLiveData.postValue(new Pair<>(
-                            isMandatory ? mMandatorySubHeaderTextId : mSubHeaderTextId,
-                            kioskProviderName));
+                    mProviderNameLiveData.postValue(providerName);
+                    mIsMandatoryLiveData.postValue(isMandatory);
+                    mHeaderTextLiveData.postValue(
+                            new Pair<>(isMandatory ? mMandatoryHeaderTextId : mHeaderTextId,
+                                    providerName));
+                    mSubHeaderTextLiveData.postValue(
+                            new Pair<>(isMandatory ? mMandatorySubHeaderTextId : mSubHeaderTextId,
+                                    providerName));
+                    mTermsAndConditionsUrlLiveData.postValue(termsAndConditionUrl);
+                    mIsProvisionForcedLiveData.postValue(Futures.getDone(isProvisionForcedFuture));
                     return null;
                 }, MoreExecutors.directExecutor());
-        Futures.addCallback(isMandatoryFuture,
-                new FutureCallback<>() {
-                    @Override
-                    public void onSuccess(Boolean isMandatory) {
-                        mIsMandatoryLiveData.postValue(isMandatory);
-                    }
+        Futures.addCallback(result, new FutureCallback<>() {
+            @Override
+            public void onSuccess(Void result) {
+                LogUtil.i(TAG, "Successfully updated live data");
+            }
 
-                    @Override
-                    public void onFailure(Throwable t) {
-                        LogUtil.e(TAG, "Failed to know if provision is mandatory", t);
-                    }
-                }, MoreExecutors.directExecutor());
-
-        Futures.addCallback(
-                getTermsAndConditionsUrlFuture,
-                new FutureCallback<>() {
-                    @Override
-                    public void onSuccess(String termsAndConditionsUrl) {
-                        if (TextUtils.isEmpty(termsAndConditionsUrl)) {
-                            LogUtil.e(TAG,
-                                    "Terms and Conditions URL is empty, should not reach here.");
-                            return;
-                        }
-                        mTermsAndConditionsUrlLiveData.postValue(termsAndConditionsUrl);
-                    }
-
-                    @Override
-                    public void onFailure(Throwable t) {
-                        LogUtil.e(TAG, "Failed to get Terms and Conditions URL", t);
-                    }
-                }, MoreExecutors.directExecutor());
-
-        Futures.whenAllSucceed(getKioskAppProviderNameFuture, getTermsAndConditionsUrlFuture)
-                .run(() -> mProvisionInfoListLiveData.postValue(mProvisionInfoList),
-                        MoreExecutors.directExecutor());
-        Futures.addCallback(GlobalParametersClient.getInstance().isProvisionForced(),
-                new FutureCallback<>() {
-                    @Override
-                    public void onSuccess(Boolean isProvisionForced) {
-                        mIsProvisionForcedLiveData.postValue(isProvisionForced);
-                    }
-
-                    @Override
-                    public void onFailure(Throwable t) {
-                        LogUtil.e(TAG, "Failed to get if provision should be forced", t);
-                    }
-                }, MoreExecutors.directExecutor());
+            @Override
+            public void onFailure(Throwable t) {
+                throw new RuntimeException(t);
+            }
+        }, MoreExecutors.directExecutor());
     }
 }
