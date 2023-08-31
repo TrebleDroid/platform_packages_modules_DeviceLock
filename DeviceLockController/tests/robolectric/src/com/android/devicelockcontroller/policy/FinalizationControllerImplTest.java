@@ -19,12 +19,11 @@ package com.android.devicelockcontroller.policy;
 import static com.android.devicelockcontroller.policy.FinalizationControllerImpl.FinalizationState.FINALIZED;
 import static com.android.devicelockcontroller.policy.FinalizationControllerImpl.FinalizationState.FINALIZED_UNREPORTED;
 import static com.android.devicelockcontroller.provision.worker.ReportDeviceLockProgramCompleteWorker.REPORT_DEVICE_LOCK_PROGRAM_COMPLETE_WORK_NAME;
-
 import static com.google.common.truth.Truth.assertThat;
 
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.os.OutcomeReceiver;
 
 import androidx.annotation.NonNull;
 import androidx.test.core.app.ApplicationProvider;
@@ -34,8 +33,8 @@ import androidx.work.WorkManager;
 import androidx.work.WorkerParameters;
 import androidx.work.testing.WorkManagerTestInitHelper;
 
+import com.android.devicelockcontroller.SystemDeviceLockManager;
 import com.android.devicelockcontroller.provision.grpc.DeviceFinalizeClient.ReportDeviceProgramCompleteResponse;
-import com.android.devicelockcontroller.receivers.LockedBootCompletedReceiver;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
 
 import com.google.common.util.concurrent.ExecutionSequencer;
@@ -57,11 +56,12 @@ public final class FinalizationControllerImplTest {
 
     private static final int TIMEOUT_MS = 1000;
 
+    private SystemDeviceLockManager mSystemDeviceLockManager = new TestSystemDeviceLockManager();
     private Context mContext;
     private FinalizationControllerImpl mFinalizationController;
     private FinalizationStateDispatchQueue mDispatchQueue;
     private ExecutionSequencer mExecutionSequencer = ExecutionSequencer.create();
-    private Executor mLightweightExecutor = Executors.newCachedThreadPool();
+    private Executor mBgExecutor = Executors.newCachedThreadPool();
     private GlobalParametersClient mGlobalParametersClient;
 
     @Before
@@ -110,10 +110,8 @@ public final class FinalizationControllerImplTest {
 
         // THEN the application is disabled and the disk value is set to finalized
         PackageManager pm = mContext.getPackageManager();
-        assertThat(pm.getComponentEnabledSetting(
-                new ComponentName(mContext, LockedBootCompletedReceiver.class)))
+        assertThat(pm.getApplicationEnabledSetting(mContext.getPackageName()))
                 .isEqualTo(PackageManager.COMPONENT_ENABLED_STATE_DISABLED);
-        // TODO(279517666): Assert checks that application itself is disabled when implemented
         assertThat(mGlobalParametersClient.getFinalizationState().get()).isEqualTo(FINALIZED);
     }
 
@@ -138,7 +136,52 @@ public final class FinalizationControllerImplTest {
 
     private FinalizationControllerImpl makeFinalizationController() {
         return new FinalizationControllerImpl(
-                mContext, mDispatchQueue, mLightweightExecutor, TestWorker.class);
+                mContext, mDispatchQueue, mBgExecutor, TestWorker.class, mSystemDeviceLockManager);
+    }
+
+    private static final class TestSystemDeviceLockManager implements SystemDeviceLockManager {
+
+        @Override
+        public void addFinancedDeviceKioskRole(@NonNull String packageName, Executor executor,
+                @NonNull OutcomeReceiver<Void, Exception> callback) {
+
+        }
+
+        @Override
+        public void removeFinancedDeviceKioskRole(@NonNull String packageName, Executor executor,
+                @NonNull OutcomeReceiver<Void, Exception> callback) {
+
+        }
+
+        @Override
+        public void setExemptFromActivityBackgroundStartRestriction(boolean exempt,
+                Executor executor, @NonNull OutcomeReceiver<Void, Exception> callback) {
+
+        }
+
+        @Override
+        public void setExemptFromHibernation(String packageName, boolean exempt, Executor executor,
+                @NonNull OutcomeReceiver<Void, Exception> callback) {
+
+        }
+
+        @Override
+        public void enableKioskKeepalive(String packageName, Executor executor,
+                @NonNull OutcomeReceiver<Void, Exception> callback) {
+
+        }
+
+        @Override
+        public void disableKioskKeepalive(Executor executor,
+                @NonNull OutcomeReceiver<Void, Exception> callback) {
+
+        }
+
+        @Override
+        public void setDeviceFinalized(boolean finalized, Executor executor,
+                @NonNull OutcomeReceiver<Void, Exception> callback) {
+            executor.execute(() -> callback.onResult(null));
+        }
     }
 
     /**

@@ -38,6 +38,7 @@ java_library {
     ],
     static_libs: [
         "devicelockcontroller-interface",
+        "devicelockcontroller-common-lib",
     ],
     apex_available: [
         "com.android.devicelock",
