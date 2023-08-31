@@ -80,7 +80,8 @@
     <string name="settings_banner_body" msgid="5814902066260202824">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> สามารถเปลี่ยนการตั้งค่าในอุปกรณ์นี้ได้"</string>
     <string name="settings_banner_button" msgid="1831020849782670907">"ดูข้อมูลเพิ่มเติม"</string>
     <string name="settings_screen_title" msgid="721470080648091035">"ข้อมูลอุปกรณ์ที่มีการสนับสนุนทางการเงิน"</string>
-    <string name="settings_intro" msgid="5809531331925309396">"ผู้ให้บริการเครดิตจะเปลี่ยนการตั้งค่าและติดตั้งแอปคีออสก์ในอุปกรณ์ได้\n\n<xliff:g id="PROVIDER_NAME_0">%1$s</xliff:g> อาจจำกัดอุปกรณ์นี้หากคุณไม่ชำระเงินตามที่กำหนดหรือหยุดใช้ซิมของ <xliff:g id="PROVIDER_NAME_1">%1$s</xliff:g>\n\nโปรดติดต่อ <xliff:g id="PROVIDER_NAME_2">%1$s</xliff:g> หากต้องการทราบข้อมูลเพิ่มเติม"</string>
+    <string name="settings_intro_device_financing" msgid="2548476558131048133">"<xliff:g id="PROVIDER_NAME_0">%1$s</xliff:g> จะเปลี่ยนการตั้งค่าและติดตั้งแอปคีออสก์ในอุปกรณ์ได้\n\nหากคุณไม่ชำระเงิน <xliff:g id="PROVIDER_NAME_1">%1$s</xliff:g> จะจำกัดอุปกรณ์ได้\n\nโปรดติดต่อ <xliff:g id="PROVIDER_NAME_2">%1$s</xliff:g> เพื่อสอบถามข้อมูลเพิ่มเติม"</string>
+    <string name="settings_intro_device_subsidy" msgid="4274945644204818702">"<xliff:g id="PROVIDER_NAME_0">%1$s</xliff:g> จะเปลี่ยนการตั้งค่าและติดตั้งแอปคีออสก์ในอุปกรณ์ได้\n\n<xliff:g id="PROVIDER_NAME_1">%1$s</xliff:g> อาจจำกัดอุปกรณ์นี้ด้วยหากคุณไม่ชำระเงินหรือหยุดใช้ซิมของ <xliff:g id="PROVIDER_NAME_2">%1$s</xliff:g>\n\nโปรดติดต่อ <xliff:g id="PROVIDER_NAME_3">%1$s</xliff:g> เพื่อสอบถามข้อมูลเพิ่มเติม"</string>
     <string name="settings_intro_preference_key" msgid="6610461073400554162">"settings_intro_preference_key"</string>
     <string name="settings_restrictions_category" msgid="5746868117342406677">"คุณจะทำสิ่งต่อไปนี้ไม่ได้จนกว่าจะชำระเงินค่าอุปกรณ์"</string>
     <string name="settings_restrictions_category_preference_key" msgid="88318147152676512">"settings_restrictions_category_preference_key"</string>

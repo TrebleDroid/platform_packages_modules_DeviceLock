@@ -80,7 +80,10 @@
     <string name="settings_banner_body" msgid="5814902066260202824">"「<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>」可變更這部裝置的設定"</string>
     <string name="settings_banner_button" msgid="1831020849782670907">"瞭解詳情"</string>
     <string name="settings_screen_title" msgid="721470080648091035">"分期付款裝置資訊"</string>
-    <string name="settings_intro" msgid="5809531331925309396">"信貸提供者可在裝置上變更設定及安裝 Kiosk 軟體。\n\n如果你未支付必要款項，或是停止使用「<xliff:g id="PROVIDER_NAME_1">%1$s</xliff:g>」的 SIM 卡，「<xliff:g id="PROVIDER_NAME_0">%1$s</xliff:g>」可能會限制這部裝置。\n\n如要瞭解詳情，請與「<xliff:g id="PROVIDER_NAME_2">%1$s</xliff:g>」聯絡。"</string>
+    <!-- no translation found for settings_intro_device_financing (2548476558131048133) -->
+    <skip />
+    <!-- no translation found for settings_intro_device_subsidy (4274945644204818702) -->
+    <skip />
     <string name="settings_intro_preference_key" msgid="6610461073400554162">"settings_intro_preference_key"</string>
     <string name="settings_restrictions_category" msgid="5746868117342406677">"在支付裝置費用前，你無法執行下列操作："</string>
     <string name="settings_restrictions_category_preference_key" msgid="88318147152676512">"settings_restrictions_category_preference_key"</string>

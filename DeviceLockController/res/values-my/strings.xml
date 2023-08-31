@@ -34,7 +34,7 @@
     <string name="control_lock_device_text" msgid="8253302484073757764">"သင် ငွေပေးချေခြင်း မပြုပါက ဤစက်ပစ္စည်းကို ကန့်သတ်နိုင်သည်"</string>
     <string name="control_download_text" msgid="8514650561843088172">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> အက်ပ်ကို ဒေါင်းလုဒ်လုပ်နိုင်၊ ထည့်သွင်းနိုင်၊ အပ်ဒိတ်လုပ်နိုင်သည်"</string>
     <string name="control_disable_debug_text" msgid="8112443250013094442">"အမှားရှာပြင်ခြင်း ဝန်ဆောင်မှုများကို ပိတ်နိုင်သည်"</string>
-    <string name="locked_section_title" msgid="2748725389334076510">"ဤစက်ကိုလော့ခ်ချထားလျှင် ဘယ်အရာကို လုပ်နိုင်မလဲ။"</string>
+    <string name="locked_section_title" msgid="2748725389334076510">"ဤစက်ကိုလော့ခ်ချထားလျှင် ဘယ်အရာတွေ အလုပ်လုပ်သလဲ။"</string>
     <string name="locked_emergency_text" msgid="3509216445555779286">"အရေးပေါ်ဖုန်းခေါ်ခြင်း ဝန်ဆောင်မှုများ"</string>
     <string name="locked_phone_usage_text" msgid="1913605870324552847">"အဝင်နှင့် အချို့သော အထွက်ခေါ်ဆိုမှုများ"</string>
     <string name="locked_settings_usage_text" msgid="8336476063187737700">"ဆက်တင်များ"</string>
@@ -80,7 +80,8 @@
     <string name="settings_banner_body" msgid="5814902066260202824">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> သည် ဤစက်တွင် ဆက်တင်များကို ပြောင်းနိုင်သည်"</string>
     <string name="settings_banner_button" msgid="1831020849782670907">"ပိုမိုလေ့လာရန်"</string>
     <string name="settings_screen_title" msgid="721470080648091035">"အရစ်ကျပေးချေဆဲ စက်၏အချက်အလက်"</string>
-    <string name="settings_intro" msgid="5809531331925309396">"သင်၏ ခရက်ဒစ် ဝန်ဆောင်မှုပေးသူသည် ဤစက်တွင် ဆက်တင်များပြောင်းလဲပြီး Kiosk app ထည့်သွင်းနိုင်သည်။\n\nသင်သည် လိုအပ်သော ငွေပေးချေများ မပြုလုပ်ပါက (သို့) <xliff:g id="PROVIDER_NAME_1">%1$s</xliff:g> ၏ ဆင်းမ်ကတ် အသုံးပြုခြင်းကို ရပ်လိုက်ပါက <xliff:g id="PROVIDER_NAME_0">%1$s</xliff:g> သည် ဤစက်ကို ကန့်သတ်နိုင်သည်။\n\nပိုမိုလေ့လာရန် <xliff:g id="PROVIDER_NAME_2">%1$s</xliff:g> ကို ဆက်သွယ်နိုင်သည်။"</string>
+    <string name="settings_intro_device_financing" msgid="2548476558131048133">"<xliff:g id="PROVIDER_NAME_0">%1$s</xliff:g> သည် ဤစက်တွင် ဆက်တင်များပြောင်းနိုင်ပြီး Kiosk app ထည့်သွင်းနိုင်သည်။\n\nငွေပေးချေမှု မပြုလုပ်ပါက <xliff:g id="PROVIDER_NAME_1">%1$s</xliff:g> သည် သင့်စက်ကို ကန့်သတ်နိုင်သည်။\n\nပိုမိုလေ့လာရန် <xliff:g id="PROVIDER_NAME_2">%1$s</xliff:g> ကို ဆက်သွယ်နိုင်သည်။"</string>
+    <string name="settings_intro_device_subsidy" msgid="4274945644204818702">"<xliff:g id="PROVIDER_NAME_0">%1$s</xliff:g> သည် ဤစက်တွင် ဆက်တင်များပြောင်းနိုင်ပြီး Kiosk app ထည့်သွင်းနိုင်သည်။\n\nငွေပေးချေမှု မပြုလုပ်ပါက (သို့) <xliff:g id="PROVIDER_NAME_2">%1$s</xliff:g> ၏ ဆင်းမ်ကတ်ကို မသုံးတော့ပါက <xliff:g id="PROVIDER_NAME_1">%1$s</xliff:g> သည် ဤစက်ကိုလည်း ကန့်သတ်နိုင်သည်။\n\nပိုမိုလေ့လာရန် <xliff:g id="PROVIDER_NAME_3">%1$s</xliff:g> ကို ဆက်သွယ်နိုင်သည်။"</string>
     <string name="settings_intro_preference_key" msgid="6610461073400554162">"settings_intro_preference_key"</string>
     <string name="settings_restrictions_category" msgid="5746868117342406677">"စက်အတွက် ပေးချေမှုမပြီးမချင်း ဖော်ပြပါတို့ကို မလုပ်နိုင်ပါ-"</string>
     <string name="settings_restrictions_category_preference_key" msgid="88318147152676512">"settings_restrictions_category_preference_key"</string>

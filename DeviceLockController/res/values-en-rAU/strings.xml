@@ -80,7 +80,8 @@
     <string name="settings_banner_body" msgid="5814902066260202824">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> can change settings on this device"</string>
     <string name="settings_banner_button" msgid="1831020849782670907">"Learn more"</string>
     <string name="settings_screen_title" msgid="721470080648091035">"Financed device info"</string>
-    <string name="settings_intro" msgid="5809531331925309396">"Your credit provider can change settings and install the kiosk app on the device.\n\n<xliff:g id="PROVIDER_NAME_0">%1$s</xliff:g> may restrict this device if you don’t make the necessary payments or stop using <xliff:g id="PROVIDER_NAME_1">%1$s</xliff:g>’s SIM.\n\nTo learn more, contact <xliff:g id="PROVIDER_NAME_2">%1$s</xliff:g>."</string>
+    <string name="settings_intro_device_financing" msgid="2548476558131048133">"<xliff:g id="PROVIDER_NAME_0">%1$s</xliff:g> can change settings and install the kiosk app on the device.\n\nIf you miss a payment, <xliff:g id="PROVIDER_NAME_1">%1$s</xliff:g> can restrict your device.\n\nTo find out more, contact <xliff:g id="PROVIDER_NAME_2">%1$s</xliff:g>."</string>
+    <string name="settings_intro_device_subsidy" msgid="4274945644204818702">"<xliff:g id="PROVIDER_NAME_0">%1$s</xliff:g> can change settings and install the kiosk app on the device.\n\n<xliff:g id="PROVIDER_NAME_1">%1$s</xliff:g> may also restrict this device if you miss a payment or stop using <xliff:g id="PROVIDER_NAME_2">%1$s</xliff:g>’s SIM.\n\nTo find out more, contact <xliff:g id="PROVIDER_NAME_3">%1$s</xliff:g>."</string>
     <string name="settings_intro_preference_key" msgid="6610461073400554162">"settings_intro_preference_key"</string>
     <string name="settings_restrictions_category" msgid="5746868117342406677">"Until you’ve paid for your device, you can’t:"</string>
     <string name="settings_restrictions_category_preference_key" msgid="88318147152676512">"settings_restrictions_category_preference_key"</string>
