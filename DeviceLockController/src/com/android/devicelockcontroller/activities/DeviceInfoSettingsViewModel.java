@@ -58,16 +58,35 @@ public final class DeviceInfoSettingsViewModel extends ViewModel {
     final List<Pair<Integer, Integer>> mPreferenceKeyTitlePairs;
 
     final MutableLiveData<String> mProviderNameLiveData;
+    final MutableLiveData<Boolean> mInstallFromUnknownSourcesDisallowedLiveData;
 
     public DeviceInfoSettingsViewModel() {
         mPreferenceKeyTitlePairs = new ArrayList<>(PREFERENCE_KEY_TITLE_PAIRS);
         mProviderNameLiveData = new MutableLiveData<>();
+        mInstallFromUnknownSourcesDisallowedLiveData = new MutableLiveData<>();
 
         SetupParametersClient setupParametersClient = SetupParametersClient.getInstance();
         ListenableFuture<Integer> getProvisioningTypeFuture =
                 setupParametersClient.getProvisioningType();
         ListenableFuture<String> getKioskAppProviderNameFuture =
                 setupParametersClient.getKioskAppProviderName();
+        ListenableFuture<Boolean> isInstallFromUnknownSourcesDisallowedFuture =
+                setupParametersClient.isInstallingFromUnknownSourcesDisallowed();
+        Futures.addCallback(isInstallFromUnknownSourcesDisallowedFuture,
+                new FutureCallback<>() {
+                    @Override
+                    public void onSuccess(Boolean result) {
+                        mInstallFromUnknownSourcesDisallowedLiveData.postValue(result);
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+                        LogUtil.e(TAG,
+                                "Failed to get isInstallingFromUnknownSourcesDisallowed from "
+                                        + "setup parameters",
+                                t);
+                    }
+                }, MoreExecutors.directExecutor());
 
         Futures.addCallback(
                 Futures.whenAllSucceed(getProvisioningTypeFuture, getKioskAppProviderNameFuture)
