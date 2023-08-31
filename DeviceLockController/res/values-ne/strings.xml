@@ -47,8 +47,8 @@
     <string name="footer_notice" msgid="7606898520964750584"><b>"सेटिङ &gt; सुरक्षा &gt; व्यवस्थापन गरिएको डिभाइससम्बन्धी जानकारी"</b>" मा भएका व्यवस्थापनसम्बन्धी अन्य सुविधाहरू यो डिभाइसमा लागू हुँदैनन्"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"सुरक्षासम्बन्धी सेटिङअन्तर्गतको \"किस्तामा खरिद गरिएको डिभाइस\" नामक खण्डमा भएका व्यवस्थापनसम्बन्धी सुविधाहरू यो डिभाइसमा लागू हुँदैनन्।"</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ले यो डिभाइस उपलब्ध गराएको हो"</string>
-    <string name="download_kiosk_app" msgid="1845089944897502656">"किअस्क एप स्वतः डाउनलोड र इन्स्टल गरिने छ"</string>
-    <string name="install_kiosk_app_secondary_user" msgid="49911908012320834">"किअस्क एप यी प्रयोगकर्ताका हकमा इन्स्टल गरिने छ"</string>
+    <string name="download_kiosk_app" msgid="1845089944897502656">"किअस्क एप स्वतः डाउनलोड गरी इन्स्टल गरिने छ"</string>
+    <string name="install_kiosk_app_secondary_user" msgid="49911908012320834">"यी प्रयोगकर्ताका लागि किअस्क एप इन्स्टल गरिने छ"</string>
     <string name="restrict_device_if_missing_payment" msgid="5721216628714899148">"तपाईंले रकम भुक्तानी गर्नुभएन भने <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ले यो डिभाइसमाथि प्रतिबन्ध लगाउन सक्छ"</string>
     <string name="restrict_device_if_dont_make_payment" msgid="1619095674945507015">"तपाईंले तिर्नु पर्ने रकम भुक्तानी गर्नुभएन भने <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ले यो डिभाइसमाथि प्रतिबन्ध लगाउन सक्छ। विवरणहरू प्राप्त गर्न <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>सेवाका सर्तहरू<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g> हेर्नुहोस्।"</string>
     <string name="restrict_device_if_owner_doesnt_make_payment" msgid="3841412765931627895">"डिभाइसको मालिकले रकम भुक्तानी गर्नुभएन भने <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ले यो डिभाइसमाथि प्रतिबन्ध लगाउन सक्छ"</string>

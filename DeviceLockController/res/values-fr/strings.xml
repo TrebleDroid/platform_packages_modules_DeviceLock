@@ -60,7 +60,7 @@
     <string name="do_it_in_one_hour" msgid="2727777340568739453">"Dans 1 heure"</string>
     <string name="header_icon_content_description" msgid="6069602031334473195">"Infos"</string>
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"Infos de provision"</string>
-    <string name="enroll_your_device_header" msgid="2226305405591945098">"Enregistrer l\'appareil"</string>
+    <string name="enroll_your_device_header" msgid="2226305405591945098">"Enregistrer votre appareil"</string>
     <string name="enroll_your_device_financing_subheader" msgid="7378414469334757425">"Vous pouvez enregistrer votre appareil dans le programme de financement de <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"Vous pouvez à présent enregistrer votre appareil dans le programme de subvention de <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="subsidy_program_header" msgid="2321508488856303554">"Programme de subvention de <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> activé"</string>
