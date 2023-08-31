@@ -24,6 +24,7 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
@@ -48,11 +49,12 @@ public final class DeviceInfoSettingsFragment extends PreferenceFragmentCompat {
 
         DeviceInfoSettingsViewModel viewModel = new ViewModelProvider(this).get(
                 DeviceInfoSettingsViewModel.class);
-        viewModel.mProviderNameLiveData.observe(getViewLifecycleOwner(), providerName -> {
+        PreferenceManager preferenceManager = getPreferenceManager();
+        LifecycleOwner lifecycleOwner = getViewLifecycleOwner();
+        viewModel.mProviderNameLiveData.observe(lifecycleOwner, providerName -> {
             requireActivity().setTitle(
                     getString(R.string.device_provided_by_provider, providerName));
 
-            PreferenceManager preferenceManager = getPreferenceManager();
             hideIconView(preferenceManager.getPreferenceScreen());
             for (Pair<Integer, Integer> keyTitlePair : viewModel.mPreferenceKeyTitlePairs) {
                 Preference preference = preferenceManager.findPreference(
@@ -61,6 +63,13 @@ public final class DeviceInfoSettingsFragment extends PreferenceFragmentCompat {
                 preference.setTitle(getString(keyTitlePair.second, providerName));
             }
         });
+        viewModel.mInstallFromUnknownSourcesDisallowedLiveData.observe(lifecycleOwner,
+                disallowed -> {
+                    Preference preference = preferenceManager.findPreference(
+                            getString(R.string.settings_install_apps_preference_key));
+                    checkNotNull(preference);
+                    preference.setVisible(disallowed);
+                });
     }
 
     /**
