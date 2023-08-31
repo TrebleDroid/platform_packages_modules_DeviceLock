@@ -23,12 +23,16 @@ import static com.android.devicelockcontroller.policy.FinalizationControllerImpl
 import static com.android.devicelockcontroller.provision.worker.ReportDeviceLockProgramCompleteWorker.REPORT_DEVICE_LOCK_PROGRAM_COMPLETE_WORK_NAME;
 
 import android.annotation.IntDef;
+import android.app.AlarmManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.os.OutcomeReceiver;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.annotation.WorkerThread;
+import androidx.concurrent.futures.CallbackToFutureAdapter;
 import androidx.work.Constraints;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.ListenableWorker;
@@ -37,10 +41,11 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.Operation;
 import androidx.work.WorkManager;
 
+import com.android.devicelockcontroller.SystemDeviceLockManager;
+import com.android.devicelockcontroller.SystemDeviceLockManagerImpl;
 import com.android.devicelockcontroller.provision.grpc.DeviceFinalizeClient.ReportDeviceProgramCompleteResponse;
 import com.android.devicelockcontroller.provision.worker.ReportDeviceLockProgramCompleteWorker;
 import com.android.devicelockcontroller.receivers.FinalizationBootCompletedReceiver;
-import com.android.devicelockcontroller.receivers.LockedBootCompletedReceiver;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
 
@@ -88,8 +93,9 @@ public final class FinalizationControllerImpl implements FinalizationController 
 
     /** Dispatch queue to guarantee state changes occur sequentially */
     private final FinalizationStateDispatchQueue mDispatchQueue;
-    private final Executor mLightweightExecutor;
+    private final Executor mBgExecutor;
     private final Context mContext;
+    private final SystemDeviceLockManager mSystemDeviceLockManager;
     private final Class<? extends ListenableWorker> mReportDeviceFinalizedWorkerClass;
     /** Future for after initial finalization state is set from disk */
     private final ListenableFuture<Void> mStateInitializedFuture;
@@ -98,27 +104,30 @@ public final class FinalizationControllerImpl implements FinalizationController 
         this(context,
                 new FinalizationStateDispatchQueue(),
                 Executors.newCachedThreadPool(),
-                ReportDeviceLockProgramCompleteWorker.class);
+                ReportDeviceLockProgramCompleteWorker.class,
+                SystemDeviceLockManagerImpl.getInstance());
     }
 
     @VisibleForTesting
     public FinalizationControllerImpl(
             Context context,
             FinalizationStateDispatchQueue dispatchQueue,
-            Executor lightweightExecutor,
-            Class<? extends ListenableWorker> reportDeviceFinalizedWorkerClass) {
+            Executor bgExecutor,
+            Class<? extends ListenableWorker> reportDeviceFinalizedWorkerClass,
+            SystemDeviceLockManager systemDeviceLockManager) {
         mContext = context;
         mDispatchQueue = dispatchQueue;
         mDispatchQueue.init(this::onStateChanged);
-        mLightweightExecutor = lightweightExecutor;
+        mBgExecutor = bgExecutor;
         mReportDeviceFinalizedWorkerClass = reportDeviceFinalizedWorkerClass;
+        mSystemDeviceLockManager = systemDeviceLockManager;
 
         // Set the initial state
         ListenableFuture<Integer> initialStateFuture =
                 GlobalParametersClient.getInstance().getFinalizationState();
         mStateInitializedFuture = Futures.transformAsync(initialStateFuture,
                 mDispatchQueue::enqueueStateChange,
-                mLightweightExecutor);
+                mBgExecutor);
     }
 
     @VisibleForTesting
@@ -130,7 +139,7 @@ public final class FinalizationControllerImpl implements FinalizationController 
     public ListenableFuture<Void> notifyRestrictionsCleared() {
         return Futures.transformAsync(mStateInitializedFuture,
                 unused -> mDispatchQueue.enqueueStateChange(FINALIZED_UNREPORTED),
-                mLightweightExecutor);
+                mBgExecutor);
     }
 
     @Override
@@ -139,7 +148,7 @@ public final class FinalizationControllerImpl implements FinalizationController 
         if (response.isSuccessful()) {
             return Futures.transformAsync(mStateInitializedFuture,
                     unused -> mDispatchQueue.enqueueStateChange(FINALIZED),
-                    mLightweightExecutor);
+                    mBgExecutor);
         } else {
             // TODO(279517666): Determine how to handle an unrecoverable failure
             // response from the server
@@ -151,6 +160,8 @@ public final class FinalizationControllerImpl implements FinalizationController 
     @WorkerThread
     private ListenableFuture<Void> onStateChanged(@FinalizationState int oldState,
             @FinalizationState int newState) {
+        final ListenableFuture<Void> persistStateFuture =
+                GlobalParametersClient.getInstance().setFinalizationState(newState);
         if (oldState == UNFINALIZED) {
             // Enable boot receiver to check finalization state on disk
             PackageManager pm = mContext.getPackageManager();
@@ -162,20 +173,21 @@ public final class FinalizationControllerImpl implements FinalizationController 
         }
         switch (newState) {
             case UNFINALIZED:
-                // no-op
-                break;
+                return persistStateFuture;
             case FINALIZED_UNREPORTED:
                 requestWorkToReportFinalized();
-                break;
+                return persistStateFuture;
             case FINALIZED:
-                disableEntireApplication();
-                break;
+                // Ensure disabling only happens after state is written to disk in case we somehow
+                // exit the disabled state and need to disable again.
+                return Futures.transformAsync(persistStateFuture,
+                        unused -> disableEntireApplication(),
+                        mBgExecutor);
             case UNINITIALIZED:
                 throw new IllegalArgumentException("Tried to set state back to uninitialized!");
             default:
                 throw new IllegalArgumentException("Unknown state " + newState);
         }
-        return GlobalParametersClient.getInstance().setFinalizationState(newState);
     }
 
     /**
@@ -215,15 +227,43 @@ public final class FinalizationControllerImpl implements FinalizationController 
      *
      * This will remove any work, alarms, receivers, etc., and this application should never run
      * on the device again after this point.
+     *
+     * This method returns a future but it is a bit of an odd case as the application itself
+     * may end up disabled before/after the future is handled depending on when package manager
+     * enforces the application is disabled.
+     *
+     * @return future for when this is done
      */
-    private void disableEntireApplication() {
-        PackageManager pm = mContext.getPackageManager();
-        pm.setComponentEnabledSetting(
-                new ComponentName(mContext,
-                        LockedBootCompletedReceiver.class),
-                PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                0 /* flags */);
-        // TODO(279517666): Disable application and persist a boolean so that DeviceLockService
-        // does not re-enable application on boot / user switch
+    private ListenableFuture<Void> disableEntireApplication() {
+        WorkManager workManager = WorkManager.getInstance(mContext);
+        workManager.cancelAllWork();
+        AlarmManager alarmManager = mContext.getSystemService(AlarmManager.class);
+        alarmManager.cancelAll();
+        ListenableFuture<Void> disableApplicationFuture = CallbackToFutureAdapter.getFuture(
+                completer -> {
+                        mSystemDeviceLockManager.setDeviceFinalized(true, mBgExecutor,
+                                new OutcomeReceiver<>() {
+                                    @Override
+                                    public void onResult(Void result) {
+                                        // This kills and disables the app
+                                        PackageManager pm = mContext.getPackageManager();
+                                        pm.setApplicationEnabledSetting(
+                                                mContext.getPackageName(),
+                                                PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                                                0 /* flags */);
+                                        completer.set(null);
+                                    }
+
+                                    @Override
+                                    public void onError(@NonNull Exception error) {
+                                        LogUtil.e(TAG, "Failed to set device finalized in"
+                                                + "system service.", error);
+                                        completer.setException(error);
+                                    }
+                                });
+                    return "Disable application future";
+                }
+        );
+        return disableApplicationFuture;
     }
 }

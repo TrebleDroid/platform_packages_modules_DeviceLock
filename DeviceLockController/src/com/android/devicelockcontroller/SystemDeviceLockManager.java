@@ -93,4 +93,15 @@ public interface SystemDeviceLockManager {
      */
     void disableKioskKeepalive(@CallbackExecutor Executor executor,
             @NonNull OutcomeReceiver<Void, Exception> callback);
+
+    /**
+     * Set whether device is finalized so that system service knows when to keep the Device Lock
+     * Controller enabled.
+     *
+     * @param finalized true if device is finalized and DLC should not be enabled.
+     * @param executor the {@link Executor} on which to invoke the callback.
+     * @param callback callback this returns either success or an exception.
+     */
+    void setDeviceFinalized(boolean finalized, @CallbackExecutor Executor executor,
+            @NonNull OutcomeReceiver<Void, Exception> callback);
 }
