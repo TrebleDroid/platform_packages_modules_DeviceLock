@@ -80,7 +80,10 @@
     <string name="settings_banner_body" msgid="5814902066260202824">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>, इस डिवाइस की सेटिंग में बदलाव कर सकता है"</string>
     <string name="settings_banner_button" msgid="1831020849782670907">"ज़्यादा जानें"</string>
     <string name="settings_screen_title" msgid="721470080648091035">"फ़ाइनेंस किए गए डिवाइस की जानकारी"</string>
-    <string name="settings_intro" msgid="5809531331925309396">"क्रेडिट सेवा देने वाली कंपनी, डिवाइस की सेटिंग में बदलाव कर सकती है और उस पर कीऑस्क ऐप्लिकेशन इंस्टॉल कर सकती है.\n\nज़रूरी पेमेंट न करने पर या <xliff:g id="PROVIDER_NAME_1">%1$s</xliff:g> का सिम इस्तेमाल बंद करने पर, <xliff:g id="PROVIDER_NAME_0">%1$s</xliff:g> इस डिवाइस पर पाबंदी लगा सकता है.\n\nज़्यादा जानने के लिए, <xliff:g id="PROVIDER_NAME_2">%1$s</xliff:g> से संपर्क करें."</string>
+    <!-- no translation found for settings_intro_device_financing (2548476558131048133) -->
+    <skip />
+    <!-- no translation found for settings_intro_device_subsidy (4274945644204818702) -->
+    <skip />
     <string name="settings_intro_preference_key" msgid="6610461073400554162">"settings_intro_preference_key"</string>
     <string name="settings_restrictions_category" msgid="5746868117342406677">"डिवाइस के लिए पैसे न चुकाए जाने तक ये काम नहीं किए जा सकते:"</string>
     <string name="settings_restrictions_category_preference_key" msgid="88318147152676512">"settings_restrictions_category_preference_key"</string>

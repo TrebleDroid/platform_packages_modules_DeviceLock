@@ -80,7 +80,10 @@
     <string name="settings_banner_body" msgid="5814902066260202824">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> peut modifier les paramètres de cet appareil"</string>
     <string name="settings_banner_button" msgid="1831020849782670907">"En savoir plus"</string>
     <string name="settings_screen_title" msgid="721470080648091035">"Informations sur l\'appareil financé"</string>
-    <string name="settings_intro" msgid="5809531331925309396">"Votre société de crédit peut modifier les paramètres et installer l\'application kiosque sur l\'appareil.\n\n<xliff:g id="PROVIDER_NAME_0">%1$s</xliff:g> peut limiter l\'utilisation de cet appareil si vous n\'effectuez pas les paiements nécessaires ou si vous cessez d\'utiliser la carte SIM de <xliff:g id="PROVIDER_NAME_1">%1$s</xliff:g>.\n\nPour en savoir plus, contactez <xliff:g id="PROVIDER_NAME_2">%1$s</xliff:g>."</string>
+    <!-- no translation found for settings_intro_device_financing (2548476558131048133) -->
+    <skip />
+    <!-- no translation found for settings_intro_device_subsidy (4274945644204818702) -->
+    <skip />
     <string name="settings_intro_preference_key" msgid="6610461073400554162">"settings_intro_preference_key"</string>
     <string name="settings_restrictions_category" msgid="5746868117342406677">"En attendant le paiement de l\'appareil, vous ne pouvez pas :"</string>
     <string name="settings_restrictions_category_preference_key" msgid="88318147152676512">"settings_restrictions_category_preference_key"</string>
