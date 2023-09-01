@@ -22,6 +22,7 @@ import android.app.Application;
 import android.content.Context;
 
 import androidx.annotation.MainThread;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.work.Configuration;
 import androidx.work.DelegatingWorkerFactory;
@@ -38,6 +39,9 @@ import com.android.devicelockcontroller.schedule.DeviceLockControllerScheduler;
 import com.android.devicelockcontroller.schedule.DeviceLockControllerSchedulerImpl;
 import com.android.devicelockcontroller.schedule.DeviceLockControllerSchedulerProvider;
 import com.android.devicelockcontroller.util.LogUtil;
+
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Application class for Device Lock Controller.
@@ -118,6 +122,11 @@ public class DeviceLockControllerApplication extends Application implements
     @Nullable
     public Class<? extends ListenableWorker> getPlayInstallPackageTaskClass() {
         return null;
+    }
+
+    @NonNull
+    public ListenableFuture<String> getFcmRegistrationToken() {
+        return Futures.immediateFuture(null);
     }
 
     @Override

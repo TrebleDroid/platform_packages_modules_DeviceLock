@@ -35,6 +35,7 @@ import android.text.TextUtils;
 import androidx.annotation.StringDef;
 import androidx.work.WorkManager;
 
+import com.android.devicelockcontroller.DeviceLockControllerApplication;
 import com.android.devicelockcontroller.policy.DevicePolicyController;
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
@@ -82,6 +83,7 @@ public final class DeviceLockCommandReceiver extends BroadcastReceiver {
             Commands.CHECK_IN,
             Commands.CLEAR,
             Commands.DUMP,
+            Commands.FCM,
     })
     private @interface Commands {
         String RESET = "reset";
@@ -90,6 +92,7 @@ public final class DeviceLockCommandReceiver extends BroadcastReceiver {
         String CHECK_IN = "check-in";
         String CLEAR = "clear";
         String DUMP = "dump";
+        String FCM = "fcm";
     }
 
     @Override
@@ -139,6 +142,9 @@ public final class DeviceLockCommandReceiver extends BroadcastReceiver {
                 break;
             case Commands.DUMP:
                 dumpStorage(context);
+                break;
+            case Commands.FCM:
+                logFcmToken(appContext);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported command: " + command);
@@ -245,6 +251,22 @@ public final class DeviceLockCommandReceiver extends BroadcastReceiver {
                         throw new RuntimeException(t);
                     }
                 }, MoreExecutors.directExecutor());
+    }
+
+    private static void logFcmToken(Context appContext) {
+        final ListenableFuture<String> fcmRegistrationToken =
+                ((DeviceLockControllerApplication) appContext).getFcmRegistrationToken();
+        Futures.addCallback(fcmRegistrationToken, new FutureCallback<>() {
+            @Override
+            public void onSuccess(String token) {
+                LogUtil.i(TAG, "FCM Registration Token: " + (token == null ? "Not set" : token));
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                LogUtil.e(TAG, "Unable to get FCM registration token", t);
+            }
+        }, MoreExecutors.directExecutor());
     }
 
     private static FutureCallback<Void> getSetStateCallBack(@DeviceState int state) {

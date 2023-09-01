@@ -22,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.work.WorkerParameters;
 
+import com.android.devicelockcontroller.DeviceLockControllerApplication;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrpcResponse;
 import com.android.devicelockcontroller.schedule.DeviceLockControllerScheduler;
@@ -68,10 +69,17 @@ public final class DeviceCheckInWorker extends AbstractCheckInWorker {
                         return Futures.immediateFuture(Result.failure());
                     }
                     String carrierInfo = mCheckInHelper.getCarrierInfo();
-                    return Futures.transform(mClient, client -> {
+                    Context applicationContext = mContext.getApplicationContext();
+                    ListenableFuture<String> fcmRegistrationToken =
+                            ((DeviceLockControllerApplication) applicationContext)
+                                    .getFcmRegistrationToken();
+                    return Futures.whenAllSucceed(mClient, fcmRegistrationToken).call(() -> {
+                        DeviceCheckInClient client = Futures.getDone(mClient);
+                        String fcmToken = Futures.getDone(fcmRegistrationToken);
+
                         GetDeviceCheckInStatusGrpcResponse response =
                                 client.getDeviceCheckInStatus(
-                                        deviceIds, carrierInfo, /* fcmRegistrationToken= */ null);
+                                        deviceIds, carrierInfo, fcmToken);
                         if (response.hasRecoverableError()) {
                             return Result.retry();
                         }
