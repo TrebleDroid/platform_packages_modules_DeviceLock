@@ -192,17 +192,20 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
      *      required for essential services to work.
      *   2. Find the default app used as dialer (should be a System App).
      *   3. Find the default app used for Settings (should be a System App).
-     *   4. Find the default InputMethod.
-     *   5. DLC or Kiosk app depending on the input.
-     *   6. Append the packages allow-listed through setup parameters if applicable.
+     *   4. Find the default app used for permissions (should be a System App).
+     *   5. Find the default InputMethod.
+     *   6. DLC or Kiosk app depending on the input.
+     *   7. Append the packages allow-listed through setup parameters if applicable.
      */
     private ListenableFuture<ArraySet<String>> composeAllowlist(boolean includeController) {
         return Futures.submit(() -> {
             String[] allowlistArray =
-                    mContext.getResources().getStringArray(R.array.lock_task_allowlist);
+                mContext.getResources().getStringArray(R.array.lock_task_allowlist);
             ArraySet<String> allowlistPackages = new ArraySet<>(allowlistArray);
             allowlistSystemAppForAction(Intent.ACTION_DIAL, allowlistPackages);
             allowlistSystemAppForAction(Settings.ACTION_SETTINGS, allowlistPackages);
+            allowlistSystemAppForAction(PackageManager.ACTION_REQUEST_PERMISSIONS,
+                    allowlistPackages);
             allowlistInputMethod(allowlistPackages);
             allowlistCellBroadcastReceiver(allowlistPackages);
             if (includeController) {
