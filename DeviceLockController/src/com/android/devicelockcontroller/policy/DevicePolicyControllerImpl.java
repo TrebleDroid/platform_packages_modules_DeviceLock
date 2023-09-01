@@ -140,7 +140,9 @@ public final class DevicePolicyControllerImpl implements DevicePolicyController 
     private ListenableFuture<@ProvisionState Integer> enforcePoliciesForProvisionState(
             @ProvisionState Integer currentEnforcedState,
             @ProvisionState int stateToEnforce) {
-        LogUtil.i(TAG, "Enforcing policies for provision state: " + stateToEnforce);
+        LogUtil.i(TAG,
+                "Enforcing policies for provision state: " + stateToEnforce + ", "
+                        + "current state: " + currentEnforcedState);
         if (stateToEnforce == UNPROVISIONED) {
             return Futures.immediateFuture(UNPROVISIONED);
         } else if (stateToEnforce == PROVISION_SUCCEEDED) {
@@ -155,9 +157,6 @@ public final class DevicePolicyControllerImpl implements DevicePolicyController 
                 return Futures.transform(mCurrentEnforcedDeviceStateFuture,
                         unused -> stateToEnforce, MoreExecutors.directExecutor());
             }
-        }
-        if (currentEnforcedState != null && currentEnforcedState == stateToEnforce) {
-            return Futures.immediateFuture(stateToEnforce);
         }
         List<ListenableFuture<Boolean>> futures = new ArrayList<>();
         for (int i = 0, policyLen = mPolicyList.size(); i < policyLen; i++) {
@@ -201,10 +200,8 @@ public final class DevicePolicyControllerImpl implements DevicePolicyController 
     private ListenableFuture<@ProvisionState Integer> enforcePoliciesForDeviceState(
             @DeviceState Integer currentEnforcedState,
             @DeviceState int stateToEnforce) {
-        LogUtil.i(TAG, "Enforcing policies for device state: " + stateToEnforce);
-        if (currentEnforcedState != null && currentEnforcedState == stateToEnforce) {
-            return Futures.immediateFuture(stateToEnforce);
-        }
+        LogUtil.i(TAG, "Enforcing policies for device state: " + stateToEnforce + ", "
+                + "current state:" + currentEnforcedState);
         List<ListenableFuture<Boolean>> futures = new ArrayList<>();
         for (int i = 0, policyLen = mPolicyList.size(); i < policyLen; i++) {
             PolicyHandler policy = mPolicyList.get(i);
