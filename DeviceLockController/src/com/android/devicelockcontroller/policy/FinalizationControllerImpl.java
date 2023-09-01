@@ -121,6 +121,11 @@ public final class FinalizationControllerImpl implements FinalizationController 
                 mLightweightExecutor);
     }
 
+    @VisibleForTesting
+    ListenableFuture<Void> getStateInitializedFuture() {
+        return mStateInitializedFuture;
+    }
+
     @Override
     public ListenableFuture<Void> notifyRestrictionsCleared() {
         return Futures.transformAsync(mStateInitializedFuture,

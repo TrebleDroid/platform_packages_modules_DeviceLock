@@ -71,12 +71,12 @@ public final class FinalizationControllerImplTest {
 
         mGlobalParametersClient = GlobalParametersClient.getInstance();
         mDispatchQueue = new FinalizationStateDispatchQueue(mExecutionSequencer);
-        mFinalizationController = new FinalizationControllerImpl(
-                mContext, mDispatchQueue, mLightweightExecutor, TestWorker.class);
     }
 
     @Test
     public void notifyRestrictionsCleared_startsReportingWork() throws Exception {
+        mFinalizationController = makeFinalizationController();
+
         // WHEN restrictions are cleared
         ListenableFuture<Void> clearedFuture =
                 mFinalizationController.notifyRestrictionsCleared();
@@ -94,6 +94,8 @@ public final class FinalizationControllerImplTest {
 
     @Test
     public void reportingFinishedSuccessfully_disablesApplication() throws Exception {
+        mFinalizationController = makeFinalizationController();
+
         // GIVEN the restrictions have been requested to clear
         ListenableFuture<Void> clearedFuture =
                 mFinalizationController.notifyRestrictionsCleared();
@@ -118,21 +120,25 @@ public final class FinalizationControllerImplTest {
     @Test
     public void unreportedStateInitializedFromDisk_reportsWork() throws Exception {
         // GIVEN the state on disk is unreported
-        mGlobalParametersClient.setFinalizationState(FINALIZED_UNREPORTED);
+        Futures.getChecked(
+                mGlobalParametersClient.setFinalizationState(FINALIZED_UNREPORTED),
+                Exception.class);
 
         // WHEN the controller is initialized
-        mFinalizationController = new FinalizationControllerImpl(
-                mContext, mDispatchQueue, mLightweightExecutor, TestWorker.class);
-        // Wait for execution queue to finish all state changes
-        ListenableFuture<Void> emptyQueueFuture = mExecutionSequencer.submit(() -> null,
-                mLightweightExecutor);
-        Futures.getChecked(emptyQueueFuture, Exception.class, TIMEOUT_MS, TimeUnit.MILLISECONDS);
+        mFinalizationController = makeFinalizationController();
+        Futures.getChecked(mFinalizationController.getStateInitializedFuture(), Exception.class,
+                TIMEOUT_MS, TimeUnit.MILLISECONDS);
 
         // THEN the state from disk is used and is applied immediately, reporting the work.
         ListenableFuture<List<WorkInfo>> workInfosFuture = WorkManager.getInstance(mContext)
                 .getWorkInfosForUniqueWork(REPORT_DEVICE_LOCK_PROGRAM_COMPLETE_WORK_NAME);
         List<WorkInfo> workInfos = Futures.getChecked(workInfosFuture, Exception.class);
         assertThat(workInfos).isNotEmpty();
+    }
+
+    private FinalizationControllerImpl makeFinalizationController() {
+        return new FinalizationControllerImpl(
+                mContext, mDispatchQueue, mLightweightExecutor, TestWorker.class);
     }
 
     /**
