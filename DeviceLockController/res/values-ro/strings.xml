@@ -80,10 +80,8 @@
     <string name="settings_banner_body" msgid="5814902066260202824">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> poate schimba setările pe acest dispozitiv"</string>
     <string name="settings_banner_button" msgid="1831020849782670907">"Află mai multe"</string>
     <string name="settings_screen_title" msgid="721470080648091035">"Informații privind dispozitivul finanțat"</string>
-    <!-- no translation found for settings_intro_device_financing (2548476558131048133) -->
-    <skip />
-    <!-- no translation found for settings_intro_device_subsidy (4274945644204818702) -->
-    <skip />
+    <string name="settings_intro_device_financing" msgid="2548476558131048133">"<xliff:g id="PROVIDER_NAME_0">%1$s</xliff:g> poate să modifice setările și să instaleze aplicația chioșc pe dispozitiv.\n\nDacă nu faci o plată, <xliff:g id="PROVIDER_NAME_1">%1$s</xliff:g> îți poate restricționa dispozitivul.\n\nCa să afli mai multe, contactează <xliff:g id="PROVIDER_NAME_2">%1$s</xliff:g>."</string>
+    <string name="settings_intro_device_subsidy" msgid="4274945644204818702">"<xliff:g id="PROVIDER_NAME_0">%1$s</xliff:g> poate să modifice setările și să instaleze aplicația chioșc pe dispozitiv.\n\n<xliff:g id="PROVIDER_NAME_1">%1$s</xliff:g> îți poate restricționa dispozitivul dacă nu faci o plată sau nu mai folosești cardul SIM de la <xliff:g id="PROVIDER_NAME_2">%1$s</xliff:g>.\n\nCa să afli mai multe, contactează <xliff:g id="PROVIDER_NAME_3">%1$s</xliff:g>."</string>
     <string name="settings_intro_preference_key" msgid="6610461073400554162">"settings_intro_preference_key"</string>
     <string name="settings_restrictions_category" msgid="5746868117342406677">"Înainte să plătești pentru dispozitiv, nu poți:"</string>
     <string name="settings_restrictions_category_preference_key" msgid="88318147152676512">"settings_restrictions_category_preference_key"</string>
