@@ -19,7 +19,6 @@ package com.android.devicelockcontroller.receivers;
 import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState.PROVISION_FAILED;
 import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState.PROVISION_PAUSED;
 
-import android.app.admin.DevicePolicyManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -41,8 +40,6 @@ import com.google.common.util.concurrent.Futures;
 
 import java.time.Clock;
 import java.time.Instant;
-import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -51,9 +48,8 @@ import java.util.concurrent.Executors;
  * (singleUser="false").
  * <p>
  * This receiver does the following:
- * 1. Enforce policies for the current device state;
- * 2. Record device boot timestamp
- * 3. Reschedule alarms if needed.
+ * 1. Record device boot timestamp
+ * 2. Reschedule alarms if needed.
  */
 public final class LockedBootCompletedReceiver extends BroadcastReceiver {
     private static final String TAG = "LockedBootCompletedReceiver";
@@ -88,7 +84,6 @@ public final class LockedBootCompletedReceiver extends BroadcastReceiver {
         Context applicationContext = context.getApplicationContext();
         ProvisionStateController stateController = ((PolicyObjectsInterface) applicationContext)
                 .getProvisionStateController();
-        stateController.getDevicePolicyController().enforceCurrentPolicies();
 
         DeviceLockControllerSchedulerProvider schedulerProvider =
                 (DeviceLockControllerSchedulerProvider) applicationContext;
@@ -110,10 +105,5 @@ public final class LockedBootCompletedReceiver extends BroadcastReceiver {
                         throw new RuntimeException(t);
                     }
                 }, mExecutor);
-
-        DevicePolicyManager dpm = context.getSystemService(DevicePolicyManager.class);
-        Objects.requireNonNull(dpm).setUserControlDisabledPackages(/* admin= */ null,
-                List.of(context.getPackageName()));
     }
-
 }

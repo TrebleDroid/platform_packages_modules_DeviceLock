@@ -56,14 +56,17 @@ public interface ProvisionStateController {
      */
     ListenableFuture<Void> setNextStateForEvent(@ProvisionEvent int event);
 
-    /** Initialize provision state during first boot */
-    void initState();
-
     /** Get the instance for {@link DeviceStateController} */
     DeviceStateController getDeviceStateController();
 
     /** Get the instance for {@link DevicePolicyController} */
     DevicePolicyController getDevicePolicyController();
+
+    /**
+     * Called by {@link com.android.devicelockcontroller.DeviceLockControllerService} to trigger
+     * provision or enforce policies.
+     */
+    ListenableFuture<Void> onUserStarting();
 
     /**
      * State definitions related to provisioning flow.
