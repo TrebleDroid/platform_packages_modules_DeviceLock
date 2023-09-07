@@ -25,12 +25,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 
 import androidx.annotation.NonNull;
-import androidx.work.BackoffPolicy;
-import androidx.work.ExistingWorkPolicy;
 import androidx.work.ListenableWorker;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.OutOfQuotaPolicy;
-import androidx.work.WorkManager;
 import androidx.work.WorkerParameters;
 
 import com.android.devicelockcontroller.storage.UserParameters;
@@ -56,20 +51,6 @@ public final class StartLockTaskModeWorker extends ListenableWorker {
     static final Duration START_LOCK_TASK_MODE_WORKER_RETRY_INTERVAL_SECONDS =
             Duration.ofSeconds(30);
     private final DevicePolicyManager mDpm;
-
-    /** Enqueue this worker to start lock task mode */
-    public static void startLockTaskMode(WorkManager workManager) {
-        OneTimeWorkRequest startLockTask = new OneTimeWorkRequest.Builder(
-                StartLockTaskModeWorker.class)
-                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-                .setBackoffCriteria(BackoffPolicy.LINEAR,
-                        START_LOCK_TASK_MODE_WORKER_RETRY_INTERVAL_SECONDS)
-                .build();
-        workManager.enqueueUniqueWork(
-                START_LOCK_TASK_MODE_WORK_NAME,
-                ExistingWorkPolicy.REPLACE,
-                startLockTask);
-    }
 
     public StartLockTaskModeWorker(
             @NonNull Context context,

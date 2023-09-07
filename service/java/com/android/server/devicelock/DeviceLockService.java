@@ -86,6 +86,13 @@ public final class DeviceLockService extends SystemService {
     }
 
     @Override
+    public void onUserUnlocked(@NonNull TargetUser user) {
+        Slog.d(TAG, "onUserUnlocked: " + user);
+        final UserHandle userHandle = user.getUserHandle();
+        mImpl.onUserUnlocked(userHandle);
+    }
+
+    @Override
     public void onUserStopping(@NonNull TargetUser user) {
         Slog.d(TAG, "onUserStopping: " + user);
     }
