@@ -109,14 +109,25 @@ public final class ProvisionStateControllerImpl implements ProvisionStateControl
     @Override
     public ListenableFuture<Void> setNextStateForEvent(@ProvisionEvent int event) {
         synchronized (this) {
-            mCurrentStateFuture = Futures.transform(getState(),
-                    currentState -> {
-                        int newState = getNextState(currentState, event);
-                        UserParameters.setProvisionState(mContext, newState);
-                        handleNewState(newState);
-                        return newState;
-                    }, mBgExecutor);
-            return Futures.transformAsync(mCurrentStateFuture,
+            // getState() must be called here and assigned to a local variable, otherwise, if
+            // retrieved down the execution flow, it will be returning the new state after
+            // execution.
+            ListenableFuture<@ProvisionState Integer> currentStateFuture = getState();
+            ListenableFuture<@ProvisionState Integer> stateTransitionFuture =
+                    Futures.transform(
+                            currentStateFuture,
+                            currentState -> {
+                                int newState = getNextState(currentState, event);
+                                UserParameters.setProvisionState(mContext, newState);
+                                handleNewState(newState);
+                                return newState;
+                            }, mBgExecutor);
+            // To prevent exception propagate to future state transitions, catch any exceptions
+            // that might happen during the execution and fallback to previous state if exception
+            // happens.
+            mCurrentStateFuture = Futures.catchingAsync(stateTransitionFuture, Exception.class,
+                    input -> currentStateFuture, mBgExecutor);
+            return Futures.transformAsync(stateTransitionFuture,
                     newState -> mPolicyController.enforceCurrentPolicies(), mBgExecutor);
         }
     }

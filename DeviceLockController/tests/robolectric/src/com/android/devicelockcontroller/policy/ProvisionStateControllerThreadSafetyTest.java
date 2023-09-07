@@ -62,7 +62,7 @@ public class ProvisionStateControllerThreadSafetyTest {
         DevicePolicyController policyController = testApplication.getPolicyController();
         mProvisionStateController = new ProvisionStateControllerImpl(testApplication,
                 policyController, testApplication.getDeviceStateController(),
-                Executors.newSingleThreadExecutor());
+                Executors.newCachedThreadPool());
         when(policyController.enforceCurrentPolicies()).thenReturn(Futures.immediateVoidFuture());
     }
 
