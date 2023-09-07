@@ -31,15 +31,15 @@
     <string name="try_again" msgid="5964839819170927721">"Réessayer"</string>
     <string name="reset_phone" msgid="1161657350311160627">"Réinitialiser le téléphone"</string>
     <string name="control_section_title" msgid="2213476068991045785">"Que peut faire <xliff:g id="CREDITOR_APP">%1$s</xliff:g> ?"</string>
-    <string name="control_lock_device_text" msgid="8253302484073757764">"Limitation de l\'utilisation de cet appareil si vous n\'effectuez pas un paiement"</string>
-    <string name="control_download_text" msgid="8514650561843088172">"Téléchargement, installation et mise à jour de l\'appli <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
-    <string name="control_disable_debug_text" msgid="8112443250013094442">"Désactivation des fonctionnalités de débogage"</string>
+    <string name="control_lock_device_text" msgid="8253302484073757764">"Limiter l\'utilisation de cet appareil si vous n\'effectuez pas un paiement"</string>
+    <string name="control_download_text" msgid="8514650561843088172">"Télécharger, installer et mettre à jour l\'appli <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
+    <string name="control_disable_debug_text" msgid="8112443250013094442">"Désactiver les fonctionnalités de débogage"</string>
     <string name="locked_section_title" msgid="2748725389334076510">"Fonctionnalités opérationnelles en cas de verrouillage de l\'appareil"</string>
     <string name="locked_emergency_text" msgid="3509216445555779286">"Services d\'appels d\'urgence"</string>
     <string name="locked_phone_usage_text" msgid="1913605870324552847">"Appels entrants et certains appels sortants"</string>
     <string name="locked_settings_usage_text" msgid="8336476063187737700">"Paramètres"</string>
     <string name="locked_backup_and_restore_text" msgid="104616318625243429">"&lt;a href=https://support.google.com/android/answer/2819582&gt;Sauvegarder et restaurer&lt;/a&gt; vos données"</string>
-    <string name="exposure_section_title" msgid="2329122144337528752">"Quelles informations sont visibles par <xliff:g id="CREDITOR_APP">%1$s</xliff:g> ?"</string>
+    <string name="exposure_section_title" msgid="2329122144337528752">"Quelles sont les informations que <xliff:g id="CREDITOR_APP">%1$s</xliff:g> peut voir ?"</string>
     <string name="exposure_install_text" msgid="2631074166447765453">"Lorsque l\'appli <xliff:g id="CREDITOR_APP">%1$s</xliff:g> est installée ou désinstallée"</string>
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Les demandes de verrouillage ou de déverrouillage de <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Si l\'appli <xliff:g id="CREDITOR_APP">%1$s</xliff:g> n\'est pas disponible"</string>
@@ -80,10 +80,8 @@
     <string name="settings_banner_body" msgid="5814902066260202824">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> peut modifier les paramètres de cet appareil"</string>
     <string name="settings_banner_button" msgid="1831020849782670907">"En savoir plus"</string>
     <string name="settings_screen_title" msgid="721470080648091035">"Informations sur l\'appareil financé"</string>
-    <!-- no translation found for settings_intro_device_financing (2548476558131048133) -->
-    <skip />
-    <!-- no translation found for settings_intro_device_subsidy (4274945644204818702) -->
-    <skip />
+    <string name="settings_intro_device_financing" msgid="2548476558131048133">"<xliff:g id="PROVIDER_NAME_0">%1$s</xliff:g> peut modifier les paramètres et installer l\'application kiosque sur l\'appareil.\n\nEn cas de manquement de paiement, <xliff:g id="PROVIDER_NAME_1">%1$s</xliff:g> peut limiter l\'utilisation de votre appareil.\n\nPour en savoir plus, contactez <xliff:g id="PROVIDER_NAME_2">%1$s</xliff:g>."</string>
+    <string name="settings_intro_device_subsidy" msgid="4274945644204818702">"<xliff:g id="PROVIDER_NAME_0">%1$s</xliff:g> peut modifier les paramètres et installer l\'application kiosque sur l\'appareil.\n\n<xliff:g id="PROVIDER_NAME_1">%1$s</xliff:g> peut également limiter l\'utilisation de cet appareil en cas de manquement de paiement ou si vous cessez d\'utiliser la carte SIM de <xliff:g id="PROVIDER_NAME_2">%1$s</xliff:g>.\n\nPour en savoir plus, contactez <xliff:g id="PROVIDER_NAME_3">%1$s</xliff:g>."</string>
     <string name="settings_intro_preference_key" msgid="6610461073400554162">"settings_intro_preference_key"</string>
     <string name="settings_restrictions_category" msgid="5746868117342406677">"En attendant le paiement de l\'appareil, vous ne pouvez pas :"</string>
     <string name="settings_restrictions_category_preference_key" msgid="88318147152676512">"settings_restrictions_category_preference_key"</string>

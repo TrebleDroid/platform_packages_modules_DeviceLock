@@ -80,10 +80,8 @@
     <string name="settings_banner_body" msgid="5814902066260202824">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>에서 이 기기의 설정을 변경할 수 있습니다."</string>
     <string name="settings_banner_button" msgid="1831020849782670907">"자세히 알아보기"</string>
     <string name="settings_screen_title" msgid="721470080648091035">"할부 기기 정보"</string>
-    <!-- no translation found for settings_intro_device_financing (2548476558131048133) -->
-    <skip />
-    <!-- no translation found for settings_intro_device_subsidy (4274945644204818702) -->
-    <skip />
+    <string name="settings_intro_device_financing" msgid="2548476558131048133">"<xliff:g id="PROVIDER_NAME_0">%1$s</xliff:g>은(는) 이 기기의 설정을 변경하고 키오스크 앱을 설치할 수 있습니다.\n\n결제를 놓치면 <xliff:g id="PROVIDER_NAME_1">%1$s</xliff:g>에서 기기를 제한할 수 있습니다.\n\n자세한 내용은 <xliff:g id="PROVIDER_NAME_2">%1$s</xliff:g>에 문의하세요."</string>
+    <string name="settings_intro_device_subsidy" msgid="4274945644204818702">"<xliff:g id="PROVIDER_NAME_0">%1$s</xliff:g>은(는) 이 기기의 설정을 변경하고 키오스크 앱을 설치할 수 있습니다.\n\n결제를 놓치거나 <xliff:g id="PROVIDER_NAME_2">%1$s</xliff:g>의 SIM 사용을 중지하면 <xliff:g id="PROVIDER_NAME_1">%1$s</xliff:g>에서 이 기기를 제한할 수도 있습니다.\n\n자세한 내용은 <xliff:g id="PROVIDER_NAME_3">%1$s</xliff:g>에 문의하세요."</string>
     <string name="settings_intro_preference_key" msgid="6610461073400554162">"settings_intro_preference_key"</string>
     <string name="settings_restrictions_category" msgid="5746868117342406677">"기기 대금을 결제하지 않으면 다음 작업을 할 수 없습니다."</string>
     <string name="settings_restrictions_category_preference_key" msgid="88318147152676512">"settings_restrictions_category_preference_key"</string>

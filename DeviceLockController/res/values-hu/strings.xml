@@ -80,10 +80,8 @@
     <string name="settings_banner_body" msgid="5814902066260202824">"A(z) <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> megváltoztathatja a beállításokat ezen az eszközön"</string>
     <string name="settings_banner_button" msgid="1831020849782670907">"További információ"</string>
     <string name="settings_screen_title" msgid="721470080648091035">"Információk a finanszírozott eszközről"</string>
-    <!-- no translation found for settings_intro_device_financing (2548476558131048133) -->
-    <skip />
-    <!-- no translation found for settings_intro_device_subsidy (4274945644204818702) -->
-    <skip />
+    <string name="settings_intro_device_financing" msgid="2548476558131048133">"A(z) <xliff:g id="PROVIDER_NAME_0">%1$s</xliff:g> módosíthatja az eszköz beállításait, és kioszkalkalmazást telepíthet rá.\n\nHa elmulaszt egy befizetést, a(z) <xliff:g id="PROVIDER_NAME_1">%1$s</xliff:g> korlátozhatja az eszközt.\n\nTovábbi információért forduljon a szolgáltatóhoz (<xliff:g id="PROVIDER_NAME_2">%1$s</xliff:g>)."</string>
+    <string name="settings_intro_device_subsidy" msgid="4274945644204818702">"A(z) <xliff:g id="PROVIDER_NAME_0">%1$s</xliff:g> módosíthatja az eszköz beállításait, és kioszkalkalmazást telepíthet rá.\n\nA(z) <xliff:g id="PROVIDER_NAME_1">%1$s</xliff:g> korlátozhatja is az alkalmazást, ha Ön elmulaszt egy befizetést, vagy nem a(z) <xliff:g id="PROVIDER_NAME_2">%1$s</xliff:g> SIM-kártyáját használja.\n\nTovábbi információért forduljon a szolgáltatóhoz (<xliff:g id="PROVIDER_NAME_3">%1$s</xliff:g>)."</string>
     <string name="settings_intro_preference_key" msgid="6610461073400554162">"settings_intro_preference_key"</string>
     <string name="settings_restrictions_category" msgid="5746868117342406677">"Amíg nem fizet eszközéért, nem képes a következőkre:"</string>
     <string name="settings_restrictions_category_preference_key" msgid="88318147152676512">"settings_restrictions_category_preference_key"</string>

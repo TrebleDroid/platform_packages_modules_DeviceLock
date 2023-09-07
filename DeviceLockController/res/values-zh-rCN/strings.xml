@@ -80,10 +80,8 @@
     <string name="settings_banner_body" msgid="5814902066260202824">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>可更改此设备的设置"</string>
     <string name="settings_banner_button" msgid="1831020849782670907">"了解详情"</string>
     <string name="settings_screen_title" msgid="721470080648091035">"分期付款设备信息"</string>
-    <!-- no translation found for settings_intro_device_financing (2548476558131048133) -->
-    <skip />
-    <!-- no translation found for settings_intro_device_subsidy (4274945644204818702) -->
-    <skip />
+    <string name="settings_intro_device_financing" msgid="2548476558131048133">"<xliff:g id="PROVIDER_NAME_0">%1$s</xliff:g>可更改此设备的设置并在此设备上安装自助服务终端应用。\n\n如果您未按时支付款项，<xliff:g id="PROVIDER_NAME_1">%1$s</xliff:g>可能会限制您使用此设备。\n\n如需了解详情，请与<xliff:g id="PROVIDER_NAME_2">%1$s</xliff:g>联系。"</string>
+    <string name="settings_intro_device_subsidy" msgid="4274945644204818702">"<xliff:g id="PROVIDER_NAME_0">%1$s</xliff:g>可更改此设备的设置并在此设备上安装自助服务终端应用。\n\n如果您未按时支付款项或停止使用<xliff:g id="PROVIDER_NAME_2">%1$s</xliff:g>的 SIM 卡，<xliff:g id="PROVIDER_NAME_1">%1$s</xliff:g>也可能会限制您使用此设备。\n\n如需了解详情，请与<xliff:g id="PROVIDER_NAME_3">%1$s</xliff:g>联系。"</string>
     <string name="settings_intro_preference_key" msgid="6610461073400554162">"settings_intro_preference_key"</string>
     <string name="settings_restrictions_category" msgid="5746868117342406677">"在支付设备款项之前，您无法执行以下操作："</string>
     <string name="settings_restrictions_category_preference_key" msgid="88318147152676512">"settings_restrictions_category_preference_key"</string>

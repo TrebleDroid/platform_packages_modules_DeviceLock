@@ -80,10 +80,8 @@
     <string name="settings_banner_body" msgid="5814902066260202824">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> या डिव्हाइसवर सेटिंग्ज बदलू शकतो"</string>
     <string name="settings_banner_button" msgid="1831020849782670907">"अधिक जाणून घ्या"</string>
     <string name="settings_screen_title" msgid="721470080648091035">"कर्जावर घेतलेल्या डिव्हाइसची माहिती"</string>
-    <!-- no translation found for settings_intro_device_financing (2548476558131048133) -->
-    <skip />
-    <!-- no translation found for settings_intro_device_subsidy (4274945644204818702) -->
-    <skip />
+    <string name="settings_intro_device_financing" msgid="2548476558131048133">"<xliff:g id="PROVIDER_NAME_0">%1$s</xliff:g> हा सेटिंग्ज बदलून डिव्हाइसवर कियोस्क ॲप इंस्टॉल करू शकतो.\n\nतुम्ही एखादे पेमेंट न केल्यास, <xliff:g id="PROVIDER_NAME_1">%1$s</xliff:g> हा तुमचे डिव्हाइस प्रतिबंधित करू शकतो.\n\nअधिक जाणून घेण्यासाठी, <xliff:g id="PROVIDER_NAME_2">%1$s</xliff:g> शी संपर्क साधा."</string>
+    <string name="settings_intro_device_subsidy" msgid="4274945644204818702">"<xliff:g id="PROVIDER_NAME_0">%1$s</xliff:g> हा सेटिंग्ज बदलून डिव्हाइसवर कियोस्क ॲप इंस्टॉल करू शकतो.\n\nतुम्ही एखादे पेमेंट न केल्यास किंवा <xliff:g id="PROVIDER_NAME_2">%1$s</xliff:g> चे सिम वापरणे थांबवल्यास, <xliff:g id="PROVIDER_NAME_1">%1$s</xliff:g> हा हे डिव्हाइस प्रतिबंधितदेखील करू शकतो.\n\nअधिक जाणून घेण्यासाठी, <xliff:g id="PROVIDER_NAME_3">%1$s</xliff:g> शी संपर्क साधा."</string>
     <string name="settings_intro_preference_key" msgid="6610461073400554162">"settings_intro_preference_key"</string>
     <string name="settings_restrictions_category" msgid="5746868117342406677">"तुम्ही डिव्हाइससाठी पैसे देईपर्यंत पुढील गोष्टी करू शकत नाही:"</string>
     <string name="settings_restrictions_category_preference_key" msgid="88318147152676512">"settings_restrictions_category_preference_key"</string>

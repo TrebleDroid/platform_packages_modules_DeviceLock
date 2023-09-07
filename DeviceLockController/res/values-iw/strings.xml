@@ -80,10 +80,8 @@
     <string name="settings_banner_body" msgid="5814902066260202824">"יש ל-<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> אפשרות לשנות את ההגדרות במכשיר הזה"</string>
     <string name="settings_banner_button" msgid="1831020849782670907">"מידע נוסף"</string>
     <string name="settings_screen_title" msgid="721470080648091035">"פרטי המכשיר הממומן"</string>
-    <!-- no translation found for settings_intro_device_financing (2548476558131048133) -->
-    <skip />
-    <!-- no translation found for settings_intro_device_subsidy (4274945644204818702) -->
-    <skip />
+    <string name="settings_intro_device_financing" msgid="2548476558131048133">"הספק <xliff:g id="PROVIDER_NAME_0">%1$s</xliff:g> יכול לשנות הגדרות ולהתקין את אפליקציית \"קיוסק\" במכשיר.\n\nאם פספסת תשלום, <xliff:g id="PROVIDER_NAME_1">%1$s</xliff:g> יכול להגביל את המכשיר.\n\nלמידע נוסף אפשר לפנות אל <xliff:g id="PROVIDER_NAME_2">%1$s</xliff:g>."</string>
+    <string name="settings_intro_device_subsidy" msgid="4274945644204818702">"הספק <xliff:g id="PROVIDER_NAME_0">%1$s</xliff:g> יכול לשנות הגדרות ולהתקין את אפליקציית \"קיוסק\" במכשיר.\n\nל-<xliff:g id="PROVIDER_NAME_1">%1$s</xliff:g> יש גם אפשרות להגביל את המכשיר אם פספסת תשלום או הפסקת להשתמש בכרטיס ה-SIM של<xliff:g id="PROVIDER_NAME_2">%1$s</xliff:g>.\n\nלמידע נוסף, אפשר לפנות אל <xliff:g id="PROVIDER_NAME_3">%1$s</xliff:g>."</string>
     <string name="settings_intro_preference_key" msgid="6610461073400554162">"settings_intro_preference_key"</string>
     <string name="settings_restrictions_category" msgid="5746868117342406677">"לפני שמשלמים עבור המכשיר, לא ניתן:"</string>
     <string name="settings_restrictions_category_preference_key" msgid="88318147152676512">"settings_restrictions_category_preference_key"</string>
