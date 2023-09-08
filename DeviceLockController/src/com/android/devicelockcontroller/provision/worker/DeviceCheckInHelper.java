@@ -42,6 +42,7 @@ import androidx.annotation.WorkerThread;
 
 import com.android.devicelockcontroller.R;
 import com.android.devicelockcontroller.common.DeviceId;
+import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
 import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrpcResponse;
 import com.android.devicelockcontroller.provision.grpc.ProvisioningConfiguration;
 import com.android.devicelockcontroller.receivers.CheckInBootCompletedReceiver;
@@ -51,7 +52,10 @@ import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.storage.SetupParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
 
+import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.MoreExecutors;
 
 import java.time.DateTimeException;
 import java.time.Duration;
@@ -142,6 +146,25 @@ public final class DeviceCheckInHelper extends AbstractDeviceCheckInHelper {
                     return false;
                 }
             case STOP_CHECK_IN:
+                // TODO(b/299956824): Remove main thread requirement for getting controller
+                mAppContext.getMainExecutor().execute(() -> {
+                    final ListenableFuture<Void> clearRestrictionsFuture =
+                            ((PolicyObjectsInterface) mAppContext).getFinalizationController()
+                                    .notifyRestrictionsCleared();
+                    Futures.addCallback(clearRestrictionsFuture,
+                            new FutureCallback<>() {
+                                @Override
+                                public void onSuccess(Void result) {
+                                    // no-op
+                                }
+
+                                @Override
+                                public void onFailure(Throwable t) {
+                                    LogUtil.e(TAG, "Failed to clear restrictions", t);
+                                }
+                            }, MoreExecutors.directExecutor()
+                    );
+                });
                 disableCheckInBootCompletedReceiver();
                 return true;
             case STATUS_UNSPECIFIED:
