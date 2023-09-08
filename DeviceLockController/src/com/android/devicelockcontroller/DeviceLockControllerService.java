@@ -92,6 +92,13 @@ public final class DeviceLockControllerService extends Service {
                             remoteCallbackWrapper(remoteCallback, KEY_ON_USER_SWITCHING_RESULT),
                             MoreExecutors.directExecutor());
                 }
+
+                @Override
+                public void onUserUnlocked(RemoteCallback remoteCallback) {
+                    Futures.addCallback(mPolicyController.onUserUnlocked(),
+                            remoteCallbackWrapper(remoteCallback, KEY_ON_USER_UNLOCKED_RESULT),
+                            MoreExecutors.directExecutor());
+                }
             };
 
     @NonNull

@@ -40,4 +40,7 @@ oneway interface IDeviceLockControllerService {
 
     const String KEY_ON_USER_SWITCHING_RESULT = "KEY_ON_USER_SWITCHING_RESULT";
     void onUserSwitching(in RemoteCallback callback);
+
+    const String KEY_ON_USER_UNLOCKED_RESULT = "KEY_ON_USER_UNLOCKED_RESULT";
+    void onUserUnlocked(in RemoteCallback callback);
 }
