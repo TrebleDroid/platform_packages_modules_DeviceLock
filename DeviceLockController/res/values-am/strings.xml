@@ -80,10 +80,8 @@
     <string name="settings_banner_body" msgid="5814902066260202824">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> በዚህ መሣሪያ ላይ ያሉ ቅንብሮችን መለወጥ ይችላሉ"</string>
     <string name="settings_banner_button" msgid="1831020849782670907">"የበለጠ ለመረዳት"</string>
     <string name="settings_screen_title" msgid="721470080648091035">"የፋይናንስ ድጋፍ የተደረገለት መሣሪያ መረጃ"</string>
-    <!-- no translation found for settings_intro_device_financing (2548476558131048133) -->
-    <skip />
-    <!-- no translation found for settings_intro_device_subsidy (4274945644204818702) -->
-    <skip />
+    <string name="settings_intro_device_financing" msgid="2548476558131048133">"<xliff:g id="PROVIDER_NAME_0">%1$s</xliff:g> ቅንብሮችን መለወጥ እና የkiosk መተግበሪያውን በመሣሪያው ላይ መጫን ይችላሉ።\n\nክፍያ ካመለጠዎት <xliff:g id="PROVIDER_NAME_1">%1$s</xliff:g> መሣሪያዎን መገደብ ይችላሉ።\n\nየበለጠ ለመረዳት <xliff:g id="PROVIDER_NAME_2">%1$s</xliff:g>ን ያነጋግሩ።"</string>
+    <string name="settings_intro_device_subsidy" msgid="4274945644204818702">"<xliff:g id="PROVIDER_NAME_0">%1$s</xliff:g> ቅንብሮችን መለወጥ እና የkiosk መተግበሪያውን በመሣሪያው ላይ መጫን ይችላሉ።\n\nእንዲሁም ክፍያ ካመለጠዎት ወይም የ<xliff:g id="PROVIDER_NAME_2">%1$s</xliff:g> ሲምን መጠቀም ካቆሙ <xliff:g id="PROVIDER_NAME_1">%1$s</xliff:g> ይህን መሣሪያ ሊገድቡ ይችላሉ።\n\nየበለጠ ለመረዳት <xliff:g id="PROVIDER_NAME_3">%1$s</xliff:g>ን ያነጋግሩ።"</string>
     <string name="settings_intro_preference_key" msgid="6610461073400554162">"settings_intro_preference_key"</string>
     <string name="settings_restrictions_category" msgid="5746868117342406677">"ለመሣሪያዎ እስከከፈሉ ድረስ የሚከተለውን ማድረግ አይችሉም፦"</string>
     <string name="settings_restrictions_category_preference_key" msgid="88318147152676512">"settings_restrictions_category_preference_key"</string>
