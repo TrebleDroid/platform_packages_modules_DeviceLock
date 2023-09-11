@@ -79,7 +79,8 @@ public final class ReportDeviceProvisionStateWorkerTest {
                         .setExecutor(new SynchronousExecutor())
                         .build());
 
-        when(mClient.reportDeviceProvisionState(anyInt(), anyBoolean())).thenReturn(mResponse);
+        when(mClient.reportDeviceProvisionState(anyInt(), anyBoolean(), anyInt())).thenReturn(
+                mResponse);
         mWorker = TestListenableWorkerBuilder.from(
                         mTestApp, ReportDeviceProvisionStateWorker.class)
                 .setWorkerFactory(

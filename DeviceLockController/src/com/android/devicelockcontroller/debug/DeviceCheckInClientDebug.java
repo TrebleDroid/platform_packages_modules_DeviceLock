@@ -29,6 +29,7 @@ import androidx.annotation.Nullable;
 import com.android.devicelockcontroller.common.DeviceId;
 import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceCheckInStatus;
 import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState;
+import com.android.devicelockcontroller.common.DeviceLockConstants.ProvisionFailureReason;
 import com.android.devicelockcontroller.common.DeviceLockConstants.ProvisioningType;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrpcResponse;
@@ -154,7 +155,8 @@ public final class DeviceCheckInClientDebug extends DeviceCheckInClient {
      */
     @Override
     public ReportDeviceProvisionStateGrpcResponse reportDeviceProvisionState(
-            int lastReceivedProvisionState, boolean isSuccessful) {
+            int lastReceivedProvisionState, boolean isSuccessful,
+            @ProvisionFailureReason int reason) {
         return new ReportDeviceProvisionStateGrpcResponse() {
             @Override
             @DeviceProvisionState

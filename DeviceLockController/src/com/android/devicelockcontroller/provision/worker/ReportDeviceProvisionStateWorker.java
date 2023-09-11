@@ -28,6 +28,7 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.WorkerParameters;
 
+import com.android.devicelockcontroller.common.DeviceLockConstants.ProvisionFailureReason;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.ReportDeviceProvisionStateGrpcResponse;
 import com.android.devicelockcontroller.schedule.DeviceLockControllerScheduler;
@@ -44,6 +45,7 @@ import com.google.common.util.concurrent.ListeningExecutorService;
  */
 public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorker {
     public static final String KEY_IS_PROVISION_SUCCESSFUL = "is-provision-successful";
+    public static final String KEY_PROVISION_FAILURE_REASON = "provision-failure-reason";
     public static final String REPORT_PROVISION_STATE_WORK_NAME = "report-provision-state";
 
     /** Report provision failure and get next failed step */
@@ -109,10 +111,13 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
         return Futures.whenAllSucceed(mClient, lastState).call(() -> {
             boolean isSuccessful = getInputData().getBoolean(
                     KEY_IS_PROVISION_SUCCESSFUL, /* defaultValue= */ false);
+            int failureReason = getInputData().getInt(KEY_PROVISION_FAILURE_REASON,
+                    ProvisionFailureReason.UNKNOWN_REASON);
             ReportDeviceProvisionStateGrpcResponse response =
                     Futures.getDone(mClient).reportDeviceProvisionState(
                             Futures.getDone(lastState),
-                            isSuccessful);
+                            isSuccessful,
+                            failureReason);
             if (response.hasRecoverableError()) return Result.retry();
             if (response.hasFatalError()) return Result.failure();
             int daysLeftUntilReset = response.getDaysLeftUntilReset();
