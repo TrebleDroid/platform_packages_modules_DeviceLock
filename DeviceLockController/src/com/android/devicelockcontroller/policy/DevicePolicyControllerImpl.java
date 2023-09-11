@@ -164,7 +164,7 @@ public final class DevicePolicyControllerImpl implements DevicePolicyController 
         LogUtil.i(TAG,
                 "Enforcing policies for provision state: " + stateToEnforce);
         if (stateToEnforce == UNPROVISIONED) {
-            return Futures.immediateFuture(null);
+            return Futures.immediateFuture(LockTaskType.NOT_IN_LOCK_TASK);
         } else if (stateToEnforce == PROVISION_SUCCEEDED) {
             return Futures.transformAsync(
                     GlobalParametersClient.getInstance().getDeviceState(),
