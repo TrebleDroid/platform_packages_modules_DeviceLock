@@ -132,22 +132,6 @@ public final class ProvisionStateControllerImpl implements ProvisionStateControl
         }
     }
 
-    @Override
-    public void initState() {
-        Futures.addCallback(
-                Futures.transformAsync(GlobalParametersClient.getInstance().isProvisionReady(),
-                        isReady -> {
-                            if (isReady) {
-                                return setNextStateForEvent(PROVISION_READY);
-                            } else {
-                                return Futures.immediateVoidFuture();
-                            }
-                        },
-                        mBgExecutor),
-                getFutureCallback("Init provision state on first boot"),
-                MoreExecutors.directExecutor());
-    }
-
     @NonNull
     private FutureCallback<Void> getFutureCallback(String message) {
         return new FutureCallback<>() {
@@ -233,7 +217,23 @@ public final class ProvisionStateControllerImpl implements ProvisionStateControl
         return mPolicyController;
     }
 
-    /** A RuntimeException thrown when state transition is  not allowed */
+    @Override
+    public ListenableFuture<Void> onUserStarting() {
+        GlobalParametersClient globalParametersClient = GlobalParametersClient.getInstance();
+        return Futures.transformAsync(getState(),
+                state -> state == UNPROVISIONED
+                        ? Futures.transformAsync(globalParametersClient.isProvisionReady(),
+                            isReady -> isReady
+                                ? setNextStateForEvent(PROVISION_READY)
+                                : Futures.immediateVoidFuture(),
+                        mBgExecutor)
+                        : mPolicyController.enforceCurrentPolicies(),
+                mBgExecutor);
+    }
+
+    /**
+     * A RuntimeException thrown when state transition is  not allowed
+     */
     public static class StateTransitionException extends RuntimeException {
         public StateTransitionException(@ProvisionState int currentState,
                 @ProvisionEvent int event) {

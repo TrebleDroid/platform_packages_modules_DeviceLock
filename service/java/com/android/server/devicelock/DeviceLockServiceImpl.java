@@ -239,6 +239,21 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
         }
     }
 
+    void onUserStarting(@NonNull UserHandle userHandle) {
+        getDeviceLockControllerConnector(userHandle).onUserStarting(
+                new OutcomeReceiver<>() {
+                    @Override
+                    public void onResult(Void ignored) {
+                        Slog.i(TAG, "User switching reported for: " + userHandle);
+                    }
+
+                    @Override
+                    public void onError(Exception ex) {
+                        Slog.e(TAG, "Exception reporting user switching for: " + userHandle, ex);
+                    }
+                });
+    }
+
     void onUserSwitching(@NonNull UserHandle userHandle) {
         getDeviceLockControllerConnector(userHandle).onUserSwitching(
                 new OutcomeReceiver<>() {
