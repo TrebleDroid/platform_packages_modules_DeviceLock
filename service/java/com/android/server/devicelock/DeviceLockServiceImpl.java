@@ -665,16 +665,17 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
             boolean bound = bind();
 
             if (bound) {
-                getDeviceLockControllerConnector(mUserHandle).lockDevice(new OutcomeReceiver<>() {
-                    @Override
-                    public void onResult(Void result) {
-                        Slog.i(TAG, "Lock task mode started");
-                    }
+                getDeviceLockControllerConnector(mUserHandle)
+                        .onKioskAppCrashed(new OutcomeReceiver<>() {
+                            @Override
+                            public void onResult(Void result) {
+                                Slog.i(TAG, "Notified controller about kiosk app crash");
+                            }
 
-                    @Override
-                    public void onError(Exception ex) {
-                        Slog.e(TAG, "Start lock task mode error: ", ex);
-                    }
+                            @Override
+                            public void onError(Exception ex) {
+                                Slog.e(TAG, "On kiosk app crashed error: ", ex);
+                            }
                 });
             }
 

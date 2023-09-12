@@ -115,6 +115,14 @@ public final class DeviceLockControllerService extends Service {
                             remoteCallbackWrapper(remoteCallback, KEY_ON_USER_UNLOCKED_RESULT),
                             MoreExecutors.directExecutor());
                 }
+
+                @Override
+                public void onKioskAppCrashed(RemoteCallback remoteCallback) {
+                    Futures.addCallback(mPolicyController.onKioskAppCrashed(),
+                            remoteCallbackWrapper(remoteCallback,
+                                    KEY_ON_KIOSK_APP_CRASHED_RESULT),
+                            MoreExecutors.directExecutor());
+                }
             };
 
     @NonNull

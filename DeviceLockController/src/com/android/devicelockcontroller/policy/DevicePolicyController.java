@@ -59,6 +59,12 @@ public interface DevicePolicyController {
      */
     ListenableFuture<Void> onUserUnlocked();
 
+    /**
+     * Called by {@link com.android.devicelockcontroller.DeviceLockControllerService} when the
+     * kiosk app crashed.
+     */
+    ListenableFuture<Void> onKioskAppCrashed();
+
     @Target(ElementType.TYPE_USE)
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({

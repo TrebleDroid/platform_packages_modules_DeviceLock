@@ -368,6 +368,13 @@ public final class DevicePolicyControllerImpl implements DevicePolicyController 
                 mBgExecutor);
     }
 
+    @Override
+    public ListenableFuture<Void> onKioskAppCrashed() {
+        return Futures.transformAsync(getCurrentEnforcedLockTaskType(),
+                this::startLockTaskModeIfNeeded,
+                mBgExecutor);
+    }
+
     private ListenableFuture<Void> startLockTaskModeIfNeeded(@LockTaskType Integer type) {
         if (type == LockTaskType.NOT_IN_LOCK_TASK || !mUserManager.isUserUnlocked()) {
             return Futures.immediateVoidFuture();
