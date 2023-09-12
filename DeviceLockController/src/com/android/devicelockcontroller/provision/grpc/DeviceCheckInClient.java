@@ -61,14 +61,9 @@ public abstract class DeviceCheckInClient {
             try {
                 boolean createRequired =
                         (sClient == null || sUseDebugClient != useDebugClient)
-                                ? true
-                                : (registeredId != null && !registeredId.equals(sRegisteredId))
-                                        ? true
-                                        : (hostName != null && !hostName.equals(sHostName))
-                                                ? true
-                                                : (apiKey != null && !apiKey.equals(sApiKey))
-                                                        ? true
-                                                        : false;
+                                || (registeredId != null && !registeredId.equals(sRegisteredId))
+                                || (hostName != null && !hostName.equals(sHostName))
+                                || (apiKey != null && !apiKey.equals(sApiKey));
 
                 if (createRequired) {
                     sHostName = hostName;
