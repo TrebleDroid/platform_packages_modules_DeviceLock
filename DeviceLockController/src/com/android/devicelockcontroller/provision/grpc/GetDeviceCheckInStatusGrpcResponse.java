@@ -22,9 +22,9 @@ import androidx.annotation.Nullable;
 import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceCheckInStatus;
 import com.android.devicelockcontroller.common.DeviceLockConstants.ProvisioningType;
 
-import java.time.Instant;
-
 import io.grpc.Status;
+
+import java.time.Instant;
 
 /**
  * An abstract class that is used to encapsulate the response for getting device check in status.

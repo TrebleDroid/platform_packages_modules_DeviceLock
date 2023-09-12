@@ -36,9 +36,9 @@ import com.android.devicelockcontroller.provision.grpc.ProvisioningConfiguration
 
 import com.google.protobuf.Timestamp;
 
-import java.time.Instant;
-
 import io.grpc.Status;
+
+import java.time.Instant;
 
 /**
  * Wrapper for response and status objects for a GetDeviceCheckinStatusResponse.
