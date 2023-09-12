@@ -84,13 +84,24 @@ public final class ProvisioningProgressViewModel extends ViewModel implements
         }, MoreExecutors.directExecutor());
 
         mProvisioningProgressLiveData = new MutableLiveData<>();
-        Futures.whenAllSucceed(getKioskAppProviderNameFuture, getSupportUrlFuture).run(
-                () -> {
+        ListenableFuture<?> result = Futures.whenAllSucceed(getKioskAppProviderNameFuture,
+                getSupportUrlFuture).run(() -> {
                     mAreProviderNameAndSupportUrlReady = true;
                     if (mProvisioningProgress != null) {
                         mProvisioningProgressLiveData.postValue(mProvisioningProgress);
                     }
                 }, MoreExecutors.directExecutor());
+        Futures.addCallback(result, new FutureCallback<Object>() {
+            @Override
+            public void onSuccess(Object result) {
+                LogUtil.i(TAG, "Successfully updated provisioning progress live data");
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                throw new RuntimeException(t);
+            }
+        }, MoreExecutors.directExecutor());
     }
 
     /**
