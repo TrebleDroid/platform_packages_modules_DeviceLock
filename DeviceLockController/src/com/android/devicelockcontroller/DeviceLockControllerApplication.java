@@ -47,7 +47,10 @@ import com.google.common.util.concurrent.ListenableFuture;
  * Application class for Device Lock Controller.
  */
 public class DeviceLockControllerApplication extends Application implements
-        PolicyObjectsInterface, Configuration.Provider, DeviceLockControllerSchedulerProvider {
+        PolicyObjectsInterface,
+        Configuration.Provider,
+        DeviceLockControllerSchedulerProvider,
+        FcmRegistrationTokenProvider {
     private static final String TAG = "DeviceLockControllerApplication";
 
     private static Context sApplicationContext;
@@ -124,6 +127,7 @@ public class DeviceLockControllerApplication extends Application implements
         return null;
     }
 
+    @Override
     @NonNull
     public ListenableFuture<String> getFcmRegistrationToken() {
         return Futures.immediateFuture(null);

@@ -21,6 +21,8 @@ import static org.mockito.Mockito.when;
 
 import android.app.Application;
 
+import androidx.annotation.NonNull;
+
 import com.android.devicelockcontroller.policy.DevicePolicyController;
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.FinalizationController;
@@ -33,6 +35,8 @@ import com.android.devicelockcontroller.storage.GlobalParametersService;
 import com.android.devicelockcontroller.storage.SetupParametersClient;
 import com.android.devicelockcontroller.storage.SetupParametersService;
 
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.testing.TestingExecutors;
 
 import org.robolectric.Robolectric;
@@ -44,7 +48,10 @@ import java.lang.reflect.Method;
  * Application class that provides mock objects for tests.
  */
 public final class TestDeviceLockControllerApplication extends Application implements
-        PolicyObjectsInterface, TestLifecycleApplication, DeviceLockControllerSchedulerProvider {
+        PolicyObjectsInterface,
+        TestLifecycleApplication,
+        DeviceLockControllerSchedulerProvider,
+        FcmRegistrationTokenProvider {
 
     private DevicePolicyController mPolicyController;
     private DeviceStateController mStateController;
@@ -89,6 +96,12 @@ public final class TestDeviceLockControllerApplication extends Application imple
             mFinalizationController = mock(FinalizationController.class);
         }
         return mFinalizationController;
+    }
+
+    @Override
+    @NonNull
+    public ListenableFuture<String> getFcmRegistrationToken() {
+        return Futures.immediateFuture(null);
     }
 
     @Override

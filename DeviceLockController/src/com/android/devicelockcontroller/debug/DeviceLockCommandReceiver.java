@@ -34,7 +34,7 @@ import android.text.TextUtils;
 import androidx.annotation.StringDef;
 import androidx.work.WorkManager;
 
-import com.android.devicelockcontroller.DeviceLockControllerApplication;
+import com.android.devicelockcontroller.FcmRegistrationTokenProvider;
 import com.android.devicelockcontroller.policy.DevicePolicyController;
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
@@ -254,7 +254,7 @@ public final class DeviceLockCommandReceiver extends BroadcastReceiver {
 
     private static void logFcmToken(Context appContext) {
         final ListenableFuture<String> fcmRegistrationToken =
-                ((DeviceLockControllerApplication) appContext).getFcmRegistrationToken();
+                ((FcmRegistrationTokenProvider) appContext).getFcmRegistrationToken();
         Futures.addCallback(fcmRegistrationToken, new FutureCallback<>() {
             @Override
             public void onSuccess(String token) {
