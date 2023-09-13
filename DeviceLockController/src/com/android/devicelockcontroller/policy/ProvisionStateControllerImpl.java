@@ -33,9 +33,13 @@ import static com.android.devicelockcontroller.policy.ProvisionStateController.P
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.database.ContentObserver;
+import android.net.Uri;
+import android.provider.Settings;
 
 import androidx.annotation.GuardedBy;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.work.WorkManager;
 
@@ -132,6 +136,16 @@ public final class ProvisionStateControllerImpl implements ProvisionStateControl
         }
     }
 
+    @Override
+    public void notifyProvisioningReady() {
+        if (isUserSetupComplete()) {
+            postSetNextStateForEventRequest(PROVISION_READY);
+        } else {
+            registerUserSetupCompleteListener(
+                    () -> postSetNextStateForEventRequest(PROVISION_READY));
+        }
+    }
+
     @NonNull
     private FutureCallback<Void> getFutureCallback(String message) {
         return new FutureCallback<>() {
@@ -221,14 +235,40 @@ public final class ProvisionStateControllerImpl implements ProvisionStateControl
     public ListenableFuture<Void> onUserStarting() {
         GlobalParametersClient globalParametersClient = GlobalParametersClient.getInstance();
         return Futures.transformAsync(getState(),
-                state -> state == UNPROVISIONED
-                        ? Futures.transformAsync(globalParametersClient.isProvisionReady(),
-                            isReady -> isReady
-                                ? setNextStateForEvent(PROVISION_READY)
-                                : Futures.immediateVoidFuture(),
-                        mBgExecutor)
-                        : mPolicyController.enforceCurrentPolicies(),
+                state -> {
+                    if (state == UNPROVISIONED) {
+                        return Futures.transformAsync(globalParametersClient.isProvisionReady(),
+                                isReady -> {
+                                    if (isReady) {
+                                        notifyProvisioningReady();
+                                    }
+                                    return Futures.immediateVoidFuture();
+                                },
+                                mBgExecutor);
+                    } else {
+                        return mPolicyController.enforceCurrentPolicies();
+                    }
+                },
                 mBgExecutor);
+    }
+
+    private void registerUserSetupCompleteListener(Runnable listener) {
+        Uri setupCompleteUri = Settings.Secure.getUriFor(Settings.Secure.USER_SETUP_COMPLETE);
+        mContext.getContentResolver().registerContentObserver(setupCompleteUri,
+                false /* notifyForDescendants */, new ContentObserver(null /* handler */) {
+                    @Override
+                    public void onChange(boolean selfChange, @Nullable Uri uri) {
+                        if (setupCompleteUri.equals(uri) && isUserSetupComplete()) {
+                            mContext.getContentResolver().unregisterContentObserver(this);
+                            listener.run();
+                        }
+                    }
+                });
+    }
+
+    private boolean isUserSetupComplete() {
+        return Settings.Secure.getInt(
+                mContext.getContentResolver(), Settings.Secure.USER_SETUP_COMPLETE, 0) != 0;
     }
 
     /**

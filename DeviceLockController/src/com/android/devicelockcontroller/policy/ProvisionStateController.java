@@ -56,6 +56,11 @@ public interface ProvisionStateController {
      */
     ListenableFuture<Void> setNextStateForEvent(@ProvisionEvent int event);
 
+    /**
+     * Notify that the device is ready for provisioning.
+     */
+    void notifyProvisioningReady();
+
     /** Get the instance for {@link DeviceStateController} */
     DeviceStateController getDeviceStateController();
 
