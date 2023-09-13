@@ -96,9 +96,4 @@ oneway interface IDeviceLockService {
      * Disable kiosk keepalive.
      */
      void disableKioskKeepalive(in RemoteCallback remoteCallback);
-
-    /**
-     * Set device finalized.
-     */
-     void setDeviceFinalized(in boolean finalized, in RemoteCallback remoteCallback);
 }
