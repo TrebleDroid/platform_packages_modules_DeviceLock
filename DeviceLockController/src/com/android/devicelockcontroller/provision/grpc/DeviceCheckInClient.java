@@ -27,6 +27,7 @@ import androidx.annotation.WorkerThread;
 import com.android.devicelockcontroller.common.DeviceId;
 import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState;
 import com.android.devicelockcontroller.common.DeviceLockConstants.PauseDeviceProvisioningReason;
+import com.android.devicelockcontroller.common.DeviceLockConstants.ProvisionFailureReason;
 import com.android.devicelockcontroller.util.LogUtil;
 
 /**
@@ -140,5 +141,5 @@ public abstract class DeviceCheckInClient {
     @WorkerThread
     public abstract ReportDeviceProvisionStateGrpcResponse reportDeviceProvisionState(
             @DeviceProvisionState int lastReceivedProvisionState,
-            boolean isSuccessful);
+            boolean isSuccessful, @ProvisionFailureReason int failureReason);
 }

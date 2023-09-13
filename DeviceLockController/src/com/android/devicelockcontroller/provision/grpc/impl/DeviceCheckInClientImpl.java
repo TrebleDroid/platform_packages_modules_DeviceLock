@@ -16,17 +16,24 @@
 
 package com.android.devicelockcontroller.provision.grpc.impl;
 
-import static com.android.devicelockcontroller.proto.ClientProvisionFailureReason.CLIENT_PROVISION_FAILURE_REASON_SETUP_FAILED;
+import static com.android.devicelockcontroller.proto.ClientProvisionFailureReason.PROVISION_FAILURE_REASON_COUNTRY_INFO_UNAVAILABLE;
+import static com.android.devicelockcontroller.proto.ClientProvisionFailureReason.PROVISION_FAILURE_REASON_NOT_IN_ELIGIBLE_COUNTRY;
+import static com.android.devicelockcontroller.proto.ClientProvisionFailureReason.PROVISION_FAILURE_REASON_PLAY_INSTALLATION_FAILED;
+import static com.android.devicelockcontroller.proto.ClientProvisionFailureReason.PROVISION_FAILURE_REASON_PLAY_TASK_UNAVAILABLE;
+import static com.android.devicelockcontroller.proto.ClientProvisionFailureReason.PROVISION_FAILURE_REASON_UNSPECIFIED;
 
 import android.util.ArraySet;
 
 import androidx.annotation.Keep;
+import androidx.annotation.Nullable;
 
 import com.android.devicelockcontroller.common.DeviceId;
 import com.android.devicelockcontroller.common.DeviceLockConstants;
 import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceIdType;
 import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState;
+import com.android.devicelockcontroller.common.DeviceLockConstants.ProvisionFailureReason;
 import com.android.devicelockcontroller.proto.ClientDeviceIdentifier;
+import com.android.devicelockcontroller.proto.ClientProvisionFailureReason;
 import com.android.devicelockcontroller.proto.ClientProvisionState;
 import com.android.devicelockcontroller.proto.DeviceIdentifierType;
 import com.android.devicelockcontroller.proto.DeviceLockCheckinServiceGrpc;
@@ -45,8 +52,6 @@ import com.android.devicelockcontroller.util.ThreadUtils;
 
 import io.grpc.StatusRuntimeException;
 import io.grpc.okhttp.OkHttpChannelBuilder;
-
-import javax.annotation.Nullable;
 
 /**
  * A client for the {@link  com.android.devicelockcontroller.proto.DeviceLockCheckinServiceGrpc}
@@ -129,13 +134,14 @@ public final class DeviceCheckInClientImpl extends DeviceCheckInClient {
      */
     @Override
     public ReportDeviceProvisionStateGrpcResponse reportDeviceProvisionState(
-            int lastReceivedProvisionState, boolean isSuccessful) {
+            int lastReceivedProvisionState, boolean isSuccessful,
+            @ProvisionFailureReason int reason) {
         ThreadUtils.assertWorkerThread("reportDeviceProvisionState");
         try {
             return new ReportDeviceProvisionStateGrpcResponseWrapper(
                     mBlockingStub.reportDeviceProvisionState(
                             createReportDeviceProvisionStateRequest(lastReceivedProvisionState,
-                                    isSuccessful, sRegisteredId)));
+                                    isSuccessful, sRegisteredId, reason)));
         } catch (StatusRuntimeException e) {
             return new ReportDeviceProvisionStateGrpcResponseWrapper(e.getStatus());
         }
@@ -193,7 +199,8 @@ public final class DeviceCheckInClientImpl extends DeviceCheckInClient {
     private static ReportDeviceProvisionStateRequest createReportDeviceProvisionStateRequest(
             @DeviceProvisionState int lastReceivedProvisionState,
             boolean isSuccessful,
-            String registeredId) {
+            String registeredId,
+            @ProvisionFailureReason int reason) {
         ClientProvisionState state;
         switch (lastReceivedProvisionState) {
             case DeviceProvisionState.PROVISION_STATE_UNSPECIFIED:
@@ -218,13 +225,31 @@ public final class DeviceCheckInClientImpl extends DeviceCheckInClient {
                 throw new IllegalStateException(
                         "Unexpected value: " + lastReceivedProvisionState);
         }
+        ClientProvisionFailureReason reasonProto;
+        switch (reason) {
+            case ProvisionFailureReason.UNKNOWN_REASON:
+                reasonProto = PROVISION_FAILURE_REASON_UNSPECIFIED;
+                break;
+            case ProvisionFailureReason.PLAY_TASK_UNAVAILABLE:
+                reasonProto = PROVISION_FAILURE_REASON_PLAY_TASK_UNAVAILABLE;
+                break;
+            case ProvisionFailureReason.PLAY_INSTALLATION_FAILED:
+                reasonProto = PROVISION_FAILURE_REASON_PLAY_INSTALLATION_FAILED;
+                break;
+            case ProvisionFailureReason.COUNTRY_INFO_UNAVAILABLE:
+                reasonProto = PROVISION_FAILURE_REASON_COUNTRY_INFO_UNAVAILABLE;
+                break;
+            case ProvisionFailureReason.NOT_IN_ELIGIBLE_COUNTRY:
+                reasonProto = PROVISION_FAILURE_REASON_NOT_IN_ELIGIBLE_COUNTRY;
+                break;
+            default:
+                throw new IllegalArgumentException("Unexpected value: " + reason);
+        }
         return ReportDeviceProvisionStateRequest.newBuilder()
-                .setClientProvisionFailureReason(
-                        isSuccessful ? null : CLIENT_PROVISION_FAILURE_REASON_SETUP_FAILED)
+                .setClientProvisionFailureReason(isSuccessful ? null : reasonProto)
                 .setPreviousClientProvisionState(state)
                 .setProvisionSuccess(isSuccessful)
                 .setRegisteredDeviceIdentifier(registeredId)
                 .build();
     }
-
 }

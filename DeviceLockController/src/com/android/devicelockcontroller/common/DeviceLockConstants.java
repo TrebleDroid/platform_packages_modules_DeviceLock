@@ -90,6 +90,22 @@ public final class DeviceLockConstants {
         int TYPE_SUBSIDY = 2;
     }
 
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef(value = {
+            ProvisionFailureReason.UNKNOWN_REASON,
+            ProvisionFailureReason.PLAY_TASK_UNAVAILABLE,
+            ProvisionFailureReason.PLAY_INSTALLATION_FAILED,
+            ProvisionFailureReason.COUNTRY_INFO_UNAVAILABLE,
+            ProvisionFailureReason.NOT_IN_ELIGIBLE_COUNTRY,
+    })
+    public @interface ProvisionFailureReason {
+        int UNKNOWN_REASON = 0;
+        int PLAY_TASK_UNAVAILABLE = 1;
+        int PLAY_INSTALLATION_FAILED = 2;
+        int COUNTRY_INFO_UNAVAILABLE = 3;
+        int NOT_IN_ELIGIBLE_COUNTRY = 4;
+    }
+
     public static final String EXTRA_KIOSK_PACKAGE =
             "com.android.devicelockcontroller.KIOSK_PACKAGE";
     public static final String EXTRA_KIOSK_DISABLE_OUTGOING_CALLS =
@@ -119,10 +135,6 @@ public final class DeviceLockConstants {
 
     public static final String ACTION_START_DEVICE_FINANCING_PROVISIONING =
             "com.android.devicelockcontroller.action.START_DEVICE_FINANCING_PROVISIONING";
-
-    public static final String ACTION_START_DEVICE_FINANCING_SECONDARY_USER_PROVISIONING =
-            "com.android.devicelockcontroller.action"
-                    + ".START_DEVICE_FINANCING_SECONDARY_USER_PROVISIONING";
 
     public static final String ACTION_START_DEVICE_SUBSIDY_PROVISIONING =
             "com.android.devicelockcontroller.action.START_DEVICE_SUBSIDY_PROVISIONING";
@@ -159,7 +171,7 @@ public final class DeviceLockConstants {
         int PROVISION_STATE_SUCCESS = 5;
     }
 
-    /** Restrict instantiation. */
+    /** Prevent instantiation. */
     private DeviceLockConstants() {
     }
 }

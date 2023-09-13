@@ -187,11 +187,15 @@ message PauseDeviceProvisioningResponse {}
 
 // The different reasons device provisioning can fail on a device.
 enum ClientProvisionFailureReason {
-  CLIENT_PROVISION_FAILURE_REASON_UNSPECIFIED = 0;
-  // Setup failed to complete on the device.
-  CLIENT_PROVISION_FAILURE_REASON_SETUP_FAILED = 1;
-  // Failed to install the creditor apk.
-  CLIENT_PROVISION_FAILURE_REASON_INSTALL_FAILED = 2;
+  PROVISION_FAILURE_REASON_UNSPECIFIED = 0;
+  // Provision failed due to play installation task class is unavailable.
+  PROVISION_FAILURE_REASON_PLAY_TASK_UNAVAILABLE = 1;
+  // Provision failed due to play installation failed.
+  PROVISION_FAILURE_REASON_PLAY_INSTALLATION_FAILED = 2;
+  // Provision failed due to country eligibility information unavailable.
+  PROVISION_FAILURE_REASON_COUNTRY_INFO_UNAVAILABLE = 3;
+  // Provision failed due to device is not in an eligible country or region.
+  PROVISION_FAILURE_REASON_NOT_IN_ELIGIBLE_COUNTRY = 4;
 }
 
 // The different provision states of a device.
