@@ -92,8 +92,6 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
     private final ArrayMap<Integer, KioskKeepaliveServiceConnection>
             mKioskKeepaliveServiceConnections;
 
-    private final DeviceLockPersistentStore mPersistentStore;
-
     // The following should be a SystemApi on AppOpsManager.
     private static final String OPSTR_SYSTEM_EXEMPT_FROM_ACTIVITY_BG_START_RESTRICTION =
             "android:system_exempt_from_activity_bg_start_restriction";
@@ -187,8 +185,6 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
 
         mPackageUtils = new DeviceLockControllerPackageUtils(context);
 
-        mPersistentStore = new DeviceLockPersistentStore();
-
         final StringBuilder errorMessage = new StringBuilder();
         mServiceInfo = mPackageUtils.findService(errorMessage);
 
@@ -197,7 +193,8 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
         }
 
         if (!mServiceInfo.applicationInfo.enabled) {
-            enableDeviceLockControllerIfNeeded(UserHandle.SYSTEM);
+            Slog.w(TAG, "Device Lock Controller is disabled");
+            setDeviceLockControllerPackageDefaultEnabledState(UserHandle.SYSTEM);
         }
 
         final ComponentName componentName = new ComponentName(mServiceInfo.packageName,
@@ -211,15 +208,7 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
                 Context.RECEIVER_EXPORTED);
     }
 
-    void enableDeviceLockControllerIfNeeded(@NonNull UserHandle userHandle) {
-        mPersistentStore.readFinalizedState(isFinalized -> {
-            if (!isFinalized) {
-                setDeviceLockControllerPackageDefaultEnabledState(userHandle);
-            }
-        }, mContext.getMainExecutor());
-    }
-
-    private void setDeviceLockControllerPackageDefaultEnabledState(UserHandle userHandle) {
+    void setDeviceLockControllerPackageDefaultEnabledState(@NonNull UserHandle userHandle) {
         final String controllerPackageName = mServiceInfo.packageName;
 
         Context controllerContext;
@@ -758,15 +747,6 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
 
         final Bundle result = new Bundle();
         result.putBoolean(KEY_REMOTE_CALLBACK_RESULT, serviceConnection != null);
-        remoteCallback.sendResult(result);
-    }
-
-    @Override
-    public void setDeviceFinalized(boolean finalized, @NonNull RemoteCallback remoteCallback) {
-        mPersistentStore.scheduleWrite(finalized);
-
-        final Bundle result = new Bundle();
-        result.putBoolean(KEY_REMOTE_CALLBACK_RESULT, true);
         remoteCallback.sendResult(result);
     }
 }
