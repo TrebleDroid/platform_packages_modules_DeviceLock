@@ -29,7 +29,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 
 @RunWith(RobolectricTestRunner.class)
-public class ThreadUtilsTest {
+public class ThreadAssertsTest {
     @Before
     public void setUp() {
         ApplicationProvider.getApplicationContext();
@@ -37,25 +37,25 @@ public class ThreadUtilsTest {
 
     @Test
     public void assertWorkerThread_workThread() throws Exception {
-        runOnWorkThread(() -> ThreadUtils.assertWorkerThread(
+        runOnWorkThread(() -> ThreadAsserts.assertWorkerThread(
                 "assertWorkerThread_workThread"));
     }
 
     @Test
     public void assertWorkerThread_mainThread_shouldThrowException() {
         assertThrows(IllegalStateException.class,
-                () -> ThreadUtils.assertWorkerThread("assertWorkerThread_workThread"));
+                () -> ThreadAsserts.assertWorkerThread("assertWorkerThread_workThread"));
     }
 
     @Test
     public void assertMainThread_mainThread() {
-        ThreadUtils.assertMainThread("assertMainThread_mainThread");
+        ThreadAsserts.assertMainThread("assertMainThread_mainThread");
     }
 
     @Test
     public void assertMainThread_workThread_shouldThrowException() throws Exception {
         runOnWorkThread(() -> assertThrows(IllegalStateException.class,
-                () -> ThreadUtils.assertMainThread("assertWorkerThread_workThread")));
+                () -> ThreadAsserts.assertMainThread("assertWorkerThread_workThread")));
     }
 
     private static void runOnWorkThread(Runnable task)

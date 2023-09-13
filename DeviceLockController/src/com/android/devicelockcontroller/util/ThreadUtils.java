@@ -16,8 +16,6 @@
 
 package com.android.devicelockcontroller.util;
 
-import android.os.Looper;
-
 import com.google.common.util.concurrent.MoreExecutors;
 
 import java.util.concurrent.Executor;
@@ -29,33 +27,6 @@ public final class ThreadUtils {
 
     // Prevent instantiation
     private ThreadUtils() {
-    }
-
-    /**
-     * Assert that calling thread is not the main thread. If the calling thread is main thread, an
-     * {@link IllegalStateException} will be thrown.
-     *
-     * @param methodName The name of the method which will show up in the log if an exception is
-     *                   thrown.
-     */
-    public static void assertWorkerThread(String methodName) {
-        if (Looper.getMainLooper().isCurrentThread()) {
-            throw new IllegalStateException("Can not invoke " + methodName + " on the main thread");
-        }
-    }
-
-    /**
-     * Assert that calling thread is the main thread. If the calling thread is not the main thread,
-     * an {@link IllegalStateException} will be thrown.
-     *
-     * @param methodName The name of the method which will show up in the log if an exception is
-     *                   thrown.
-     */
-    public static void assertMainThread(String methodName) {
-        if (!Looper.getMainLooper().isCurrentThread()) {
-            throw new IllegalStateException(
-                    "Can not invoke " + methodName + " on a background thread");
-        }
     }
 
     /**

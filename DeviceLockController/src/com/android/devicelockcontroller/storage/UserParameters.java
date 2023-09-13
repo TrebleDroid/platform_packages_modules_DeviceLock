@@ -26,7 +26,7 @@ import androidx.annotation.WorkerThread;
 
 import com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState;
 import com.android.devicelockcontroller.util.LogUtil;
-import com.android.devicelockcontroller.util.ThreadUtils;
+import com.android.devicelockcontroller.util.ThreadAsserts;
 
 import java.util.Locale;
 import java.util.concurrent.Executors;
@@ -65,7 +65,7 @@ public final class UserParameters {
     @WorkerThread
     @ProvisionState
     public static int getProvisionState(Context context) {
-        ThreadUtils.assertWorkerThread("getProvisionState");
+        ThreadAsserts.assertWorkerThread("getProvisionState");
         return getSharedPreferences(context).getInt(KEY_PROVISION_STATE,
                 ProvisionState.UNPROVISIONED);
     }
@@ -80,7 +80,7 @@ public final class UserParameters {
     /** Check if initial check-in is required. */
     @WorkerThread
     public static boolean needInitialCheckIn(Context context) {
-        ThreadUtils.assertWorkerThread("needInitialCheckIn");
+        ThreadAsserts.assertWorkerThread("needInitialCheckIn");
         return getSharedPreferences(context).getBoolean(KEY_NEED_INITIAL_CHECK_IN, true);
     }
 
@@ -98,7 +98,7 @@ public final class UserParameters {
     @WorkerThread
     @Nullable
     public static String getPackageOverridingHome(Context context) {
-        ThreadUtils.assertWorkerThread("getPackageOverridingHome");
+        ThreadAsserts.assertWorkerThread("getPackageOverridingHome");
         return getSharedPreferences(context).getString(KEY_HOME_PACKAGE_OVERRIDE, null);
     }
 
@@ -117,7 +117,7 @@ public final class UserParameters {
     @WorkerThread
     @CurrentTimeMillisLong
     public static long getBootTimeMillis(Context context) {
-        ThreadUtils.assertWorkerThread("getBootTimeMillis");
+        ThreadAsserts.assertWorkerThread("getBootTimeMillis");
         return getSharedPreferences(context).getLong(KEY_BOOT_TIME_MILLS, 0L);
     }
 
@@ -130,7 +130,7 @@ public final class UserParameters {
     @WorkerThread
     @CurrentTimeMillisLong
     public static long getNextCheckInTimeMillis(Context context) {
-        ThreadUtils.assertWorkerThread("getNextCheckInTimeMillis");
+        ThreadAsserts.assertWorkerThread("getNextCheckInTimeMillis");
         return getSharedPreferences(context).getLong(KEY_NEXT_CHECK_IN_TIME_MILLIS, 0L);
     }
 
@@ -145,7 +145,7 @@ public final class UserParameters {
     @WorkerThread
     @CurrentTimeMillisLong
     public static long getResumeProvisionTimeMillis(Context context) {
-        ThreadUtils.assertWorkerThread("getResumeProvisionTimeMillis");
+        ThreadAsserts.assertWorkerThread("getResumeProvisionTimeMillis");
         return getSharedPreferences(context).getLong(KEY_RESUME_PROVISION_TIME_MILLIS, 0L);
     }
 
@@ -160,7 +160,7 @@ public final class UserParameters {
     @WorkerThread
     @CurrentTimeMillisLong
     public static long getNextProvisionFailedStepTimeMills(Context context) {
-        ThreadUtils.assertWorkerThread("getNextProvisionFailedStepTimeMills");
+        ThreadAsserts.assertWorkerThread("getNextProvisionFailedStepTimeMills");
         return getSharedPreferences(context).getLong(KEY_NEXT_PROVISION_FAILED_STEP_TIME_MILLIS,
                 0L);
     }
@@ -176,7 +176,7 @@ public final class UserParameters {
     @WorkerThread
     @CurrentTimeMillisLong
     public static long getResetDeviceTimeMillis(Context context) {
-        ThreadUtils.assertWorkerThread("getResetDeviceTimeMillis");
+        ThreadAsserts.assertWorkerThread("getResetDeviceTimeMillis");
         return getSharedPreferences(context).getLong(KEY_RESET_DEVICE_TIME_MILLIS, 0L);
     }
 
@@ -190,7 +190,7 @@ public final class UserParameters {
     /** Get the number of days before device should factory reset */
     @WorkerThread
     public static int getDaysLeftUntilReset(Context context) {
-        ThreadUtils.assertWorkerThread("getDaysLeftUntilReset");
+        ThreadAsserts.assertWorkerThread("getDaysLeftUntilReset");
         return getSharedPreferences(context).getInt(KEY_DAYS_LEFT_UNTIL_RESET, Integer.MAX_VALUE);
     }
 
@@ -204,7 +204,7 @@ public final class UserParameters {
      */
     @WorkerThread
     public static void clear(Context context) {
-        ThreadUtils.assertWorkerThread("clear");
+        ThreadAsserts.assertWorkerThread("clear");
         if (!Build.isDebuggable()) {
             throw new SecurityException("Clear is not allowed in non-debuggable build!");
         }
