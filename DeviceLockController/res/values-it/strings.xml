@@ -31,9 +31,9 @@
     <string name="try_again" msgid="5964839819170927721">"Riprova"</string>
     <string name="reset_phone" msgid="1161657350311160627">"Resetta lo smartphone"</string>
     <string name="control_section_title" msgid="2213476068991045785">"Che cosa può fare l\'app <xliff:g id="CREDITOR_APP">%1$s</xliff:g>?"</string>
-    <string name="control_lock_device_text" msgid="8253302484073757764">"Limita questo dispositivo se non effettui un pagamento"</string>
-    <string name="control_download_text" msgid="8514650561843088172">"Scarica, installa e aggiorna l\'app <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
-    <string name="control_disable_debug_text" msgid="8112443250013094442">"Disattiva le funzionalità di debug"</string>
+    <string name="control_lock_device_text" msgid="8253302484073757764">"Limitare questo dispositivo se non effettui un pagamento"</string>
+    <string name="control_download_text" msgid="8514650561843088172">"Scaricare, installare e aggiornare l\'app <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
+    <string name="control_disable_debug_text" msgid="8112443250013094442">"Disattivare le funzionalità di debug"</string>
     <string name="locked_section_title" msgid="2748725389334076510">"Cosa funziona se questo dispositivo viene bloccato?"</string>
     <string name="locked_emergency_text" msgid="3509216445555779286">"Servizi di chiamate di emergenza"</string>
     <string name="locked_phone_usage_text" msgid="1913605870324552847">"Chiamate in arrivo e alcune chiamate in uscita"</string>
