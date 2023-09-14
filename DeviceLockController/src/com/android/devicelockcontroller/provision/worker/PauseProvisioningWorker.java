@@ -91,7 +91,6 @@ public final class PauseProvisioningWorker extends AbstractCheckInWorker {
                 return Result.retry();
             }
             if (response.isSuccessful()) {
-
                 return Result.success();
             }
             LogUtil.w(TAG, "Pause provisioning request failed: " + response);

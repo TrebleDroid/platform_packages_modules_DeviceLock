@@ -35,6 +35,7 @@ import com.android.devicelockcontroller.schedule.DeviceLockControllerScheduler;
 import com.android.devicelockcontroller.schedule.DeviceLockControllerSchedulerProvider;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.storage.UserParameters;
+import com.android.devicelockcontroller.util.LogUtil;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -48,7 +49,9 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
     public static final String KEY_PROVISION_FAILURE_REASON = "provision-failure-reason";
     public static final String REPORT_PROVISION_STATE_WORK_NAME = "report-provision-state";
 
-    /** Report provision failure and get next failed step */
+    /**
+     * Report provision failure and get next failed step
+     */
     public static void reportSetupFailed(WorkManager workManager) {
         Data inputData = new Data.Builder()
                 .putBoolean(KEY_IS_PROVISION_SUCCESSFUL, false)
@@ -56,7 +59,9 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
         enqueueReportWork(inputData, workManager);
     }
 
-    /** Report provision success */
+    /**
+     * Report provision success
+     */
     public static void reportSetupCompleted(WorkManager workManager) {
         Data inputData = new Data.Builder()
                 .putBoolean(KEY_IS_PROVISION_SUCCESSFUL, true)
@@ -119,7 +124,12 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
                             isSuccessful,
                             failureReason);
             if (response.hasRecoverableError()) return Result.retry();
-            if (response.hasFatalError()) return Result.failure();
+            if (response.hasFatalError()) {
+                LogUtil.w(TAG,
+                        "Report provision state failed: " + response + "\nRetry current step");
+                scheduler.scheduleNextProvisionFailedStepAlarm();
+                return Result.failure();
+            }
             int daysLeftUntilReset = response.getDaysLeftUntilReset();
             if (daysLeftUntilReset > 0) {
                 UserParameters.setDaysLeftUntilReset(mContext, daysLeftUntilReset);
