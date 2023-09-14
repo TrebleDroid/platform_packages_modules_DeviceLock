@@ -146,25 +146,22 @@ public final class DeviceCheckInHelper extends AbstractDeviceCheckInHelper {
                     return false;
                 }
             case STOP_CHECK_IN:
-                // TODO(b/299956824): Remove main thread requirement for getting controller
-                mAppContext.getMainExecutor().execute(() -> {
-                    final ListenableFuture<Void> clearRestrictionsFuture =
-                            ((PolicyObjectsInterface) mAppContext).getFinalizationController()
-                                    .notifyRestrictionsCleared();
-                    Futures.addCallback(clearRestrictionsFuture,
-                            new FutureCallback<>() {
-                                @Override
-                                public void onSuccess(Void result) {
-                                    // no-op
-                                }
+                final ListenableFuture<Void> clearRestrictionsFuture =
+                        ((PolicyObjectsInterface) mAppContext).getFinalizationController()
+                                .notifyRestrictionsCleared();
+                Futures.addCallback(clearRestrictionsFuture,
+                        new FutureCallback<>() {
+                            @Override
+                            public void onSuccess(Void result) {
+                                // no-op
+                            }
 
-                                @Override
-                                public void onFailure(Throwable t) {
-                                    LogUtil.e(TAG, "Failed to clear restrictions", t);
-                                }
-                            }, MoreExecutors.directExecutor()
-                    );
-                });
+                            @Override
+                            public void onFailure(Throwable t) {
+                                LogUtil.e(TAG, "Failed to clear restrictions", t);
+                            }
+                        }, MoreExecutors.directExecutor()
+                );
                 disableCheckInBootCompletedReceiver();
                 return true;
             case STATUS_UNSPECIFIED:
