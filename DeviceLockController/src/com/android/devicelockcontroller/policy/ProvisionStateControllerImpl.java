@@ -41,9 +41,7 @@ import androidx.annotation.GuardedBy;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
-import androidx.work.WorkManager;
 
-import com.android.devicelockcontroller.provision.worker.ReportDeviceProvisionStateWorker;
 import com.android.devicelockcontroller.receivers.LockedBootCompletedReceiver;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.storage.UserParameters;
@@ -162,18 +160,10 @@ public final class ProvisionStateControllerImpl implements ProvisionStateControl
     }
 
     private void handleNewState(@ProvisionState int state) {
-        if (state == PROVISION_SUCCEEDED) {
-            ReportDeviceProvisionStateWorker.reportSetupCompleted(
-                    WorkManager.getInstance(mContext));
-        } else if (state == PROVISION_FAILED) {
-            ReportDeviceProvisionStateWorker.reportSetupFailed(
-                    WorkManager.getInstance(mContext));
-        } else if (state == PROVISION_IN_PROGRESS) {
+        if (state == PROVISION_IN_PROGRESS) {
             mContext.getPackageManager().setComponentEnabledSetting(
                     new ComponentName(mContext, LockedBootCompletedReceiver.class),
                     PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
-        } else if (state == PROVISION_PAUSED) {
-            LogUtil.i(TAG, "Successfully handled new state");
         }
     }
 

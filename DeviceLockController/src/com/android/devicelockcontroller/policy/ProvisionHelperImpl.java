@@ -18,9 +18,11 @@ package com.android.devicelockcontroller.policy;
 
 import static androidx.work.WorkInfo.State.FAILED;
 import static androidx.work.WorkInfo.State.SUCCEEDED;
+
 import static com.android.devicelockcontroller.common.DeviceLockConstants.EXTRA_KIOSK_PACKAGE;
 import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionEvent.PROVISION_KIOSK;
 import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionEvent.PROVISION_PAUSE;
+import static com.android.devicelockcontroller.provision.worker.ReportDeviceProvisionStateWorker.KEY_PROVISION_FAILURE_REASON;
 
 import android.app.PendingIntent;
 import android.content.Context;
@@ -44,8 +46,10 @@ import com.android.devicelockcontroller.DeviceLockControllerApplication;
 import com.android.devicelockcontroller.activities.DeviceLockNotificationManager;
 import com.android.devicelockcontroller.activities.ProvisioningProgress;
 import com.android.devicelockcontroller.activities.ProvisioningProgressController;
+import com.android.devicelockcontroller.common.DeviceLockConstants.ProvisionFailureReason;
 import com.android.devicelockcontroller.provision.worker.IsDeviceInApprovedCountryWorker;
 import com.android.devicelockcontroller.provision.worker.PauseProvisioningWorker;
+import com.android.devicelockcontroller.provision.worker.ReportDeviceProvisionStateWorker;
 import com.android.devicelockcontroller.receivers.ResumeProvisionReceiver;
 import com.android.devicelockcontroller.schedule.DeviceLockControllerScheduler;
 import com.android.devicelockcontroller.schedule.DeviceLockControllerSchedulerProvider;
@@ -65,9 +69,6 @@ import java.util.concurrent.Executors;
  * An implementation of {@link ProvisionHelper}.
  */
 public final class ProvisionHelperImpl implements ProvisionHelper {
-
-    private static final String SETUP_PLAY_INSTALL_TASKS_NAME =
-            "devicelock_setup_play_install_tasks";
     private static final String TAG = "ProvisionHelperImpl";
 
     private final Context mContext;
@@ -79,7 +80,7 @@ public final class ProvisionHelperImpl implements ProvisionHelper {
         mContext = context;
         mStateController = stateController;
         DeviceLockControllerSchedulerProvider schedulerProvider =
-                (DeviceLockControllerSchedulerProvider) mContext;
+                (DeviceLockControllerSchedulerProvider) mContext.getApplicationContext();
         mScheduler = schedulerProvider.getDeviceLockControllerScheduler();
     }
 
@@ -141,8 +142,11 @@ public final class ProvisionHelperImpl implements ProvisionHelper {
                         final Class<? extends ListenableWorker> playInstallTaskClass =
                                 ((DeviceLockControllerApplication) applicationContext)
                                         .getPlayInstallPackageTaskClass();
+                        WorkManager workManager = WorkManager.getInstance(mContext);
                         if (playInstallTaskClass == null) {
-                            onFailure(new Throwable("Play installation not supported!"));
+                            LogUtil.w(TAG, "Play installation not supported!");
+                            handleFailure(ProvisionFailureReason.PLAY_TASK_UNAVAILABLE);
+                            return;
                         }
                         String carrierInfo = Objects.requireNonNull(
                                 applicationContext.getSystemService(
@@ -151,7 +155,6 @@ public final class ProvisionHelperImpl implements ProvisionHelper {
                                 getIsDeviceInApprovedCountryWork(carrierInfo);
                         OneTimeWorkRequest playInstallPackageTask =
                                 getPlayInstallPackageTask(playInstallTaskClass, kioskPackage);
-                        WorkManager workManager = WorkManager.getInstance(mContext);
                         workManager.beginWith(isDeviceInApprovedCountryWork).then(
                                 playInstallPackageTask).enqueue();
                         mContext.getMainExecutor().execute(
@@ -164,13 +167,16 @@ public final class ProvisionHelperImpl implements ProvisionHelper {
                                             if (state == SUCCEEDED) {
                                                 progressController.setProvisioningProgress(
                                                         ProvisioningProgress.OPENING_KIOSK_APP);
+                                                ReportDeviceProvisionStateWorker
+                                                        .reportSetupCompleted(workManager);
                                                 mStateController.postSetNextStateForEventRequest(
                                                         PROVISION_KIOSK);
                                             } else if (state == FAILED) {
-                                                // TODO(b/298194590): Should be able to tell the
-                                                //  failure reason.
-                                                onFailure(new RuntimeException(
-                                                        "Play install failed!"));
+                                                int reason = workInfo.getOutputData().getInt(
+                                                        KEY_PROVISION_FAILURE_REASON,
+                                                        ProvisionFailureReason.UNKNOWN_REASON);
+                                                LogUtil.w(TAG, "Play installation failed!");
+                                                handleFailure(reason);
                                             }
                                         }));
                     }
@@ -191,6 +197,12 @@ public final class ProvisionHelperImpl implements ProvisionHelper {
                     @Override
                     public void onFailure(Throwable t) {
                         LogUtil.w(TAG, "Failed to install kiosk app!", t);
+                        handleFailure(ProvisionFailureReason.UNKNOWN_REASON);
+                    }
+
+                    private void handleFailure(@ProvisionFailureReason int reason) {
+                        ReportDeviceProvisionStateWorker.reportSetupFailed(
+                                WorkManager.getInstance(mContext), reason);
                         if (isMandatory) {
                             progressController.setProvisioningProgress(
                                     ProvisioningProgress.PROVISION_FAILED_MANDATORY);

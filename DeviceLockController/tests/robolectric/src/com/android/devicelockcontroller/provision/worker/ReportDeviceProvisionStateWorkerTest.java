@@ -22,6 +22,7 @@ import static com.google.common.truth.Truth.assertThat;
 
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -112,7 +113,8 @@ public final class ReportDeviceProvisionStateWorkerTest {
         when(mResponse.hasFatalError()).thenReturn(true);
 
         assertThat(Futures.getUnchecked(mWorker.startWork())).isEqualTo(Result.failure());
-        verify(mTestApp.getDeviceLockControllerScheduler()).scheduleNextProvisionFailedStepAlarm();
+        verify(mTestApp.getDeviceLockControllerScheduler()).scheduleNextProvisionFailedStepAlarm(
+                /* shouldGoOffImmediately= */ eq(false));
     }
 
     @Test
@@ -131,6 +133,7 @@ public final class ReportDeviceProvisionStateWorkerTest {
                 () -> assertThat(UserParameters.getDaysLeftUntilReset(mTestApp)).isEqualTo(
                         TEST_DAYS_LEFT_UNTIL_RESET)).get();
 
-        verify(mTestApp.getDeviceLockControllerScheduler()).scheduleNextProvisionFailedStepAlarm();
+        verify(mTestApp.getDeviceLockControllerScheduler()).scheduleNextProvisionFailedStepAlarm(
+                /* shouldGoOffImmediately= */ eq(true));
     }
 }

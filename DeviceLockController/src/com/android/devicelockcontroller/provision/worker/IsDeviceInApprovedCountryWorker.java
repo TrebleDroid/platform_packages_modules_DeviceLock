@@ -23,6 +23,7 @@ import androidx.annotation.VisibleForTesting;
 import androidx.work.Data;
 import androidx.work.WorkerParameters;
 
+import com.android.devicelockcontroller.common.DeviceLockConstants.ProvisionFailureReason;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.IsDeviceInApprovedCountryGrpcResponse;
 
@@ -62,11 +63,14 @@ public final class IsDeviceInApprovedCountryWorker extends
             if (response.hasRecoverableError()) {
                 return Result.retry();
             }
+            Data.Builder builder = new Data.Builder();
             if (response.isSuccessful()) {
-                return Result.success(new Data.Builder().putBoolean(KEY_IS_IN_APPROVED_COUNTRY,
+                return Result.success(builder.putBoolean(KEY_IS_IN_APPROVED_COUNTRY,
                         response.isDeviceInApprovedCountry()).build());
             }
-            return Result.failure();
+            return Result.failure(builder.putInt(
+                    ReportDeviceProvisionStateWorker.KEY_PROVISION_FAILURE_REASON,
+                    ProvisionFailureReason.COUNTRY_INFO_UNAVAILABLE).build());
         }, MoreExecutors.directExecutor());
     }
 }

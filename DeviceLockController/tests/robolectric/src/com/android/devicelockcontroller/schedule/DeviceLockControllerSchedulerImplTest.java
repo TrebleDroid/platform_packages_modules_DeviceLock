@@ -286,7 +286,7 @@ public final class DeviceLockControllerSchedulerImplTest {
     }
 
     @Test
-    public void rescheduleRetryCheckInWork() throws Exception {
+    public void rescheduleRetryCheckInWork() {
         // GIVEN check-in work is scheduled with original delay
         OneTimeWorkRequest request =
                 new OneTimeWorkRequest.Builder(DeviceCheckInWorker.class)
@@ -315,6 +315,37 @@ public final class DeviceLockControllerSchedulerImplTest {
     }
 
     @Test
+    public void scheduleNextProvisionFailedStepAlarm_initialStep_defaultDelay() {
+        // GIVEN no alarm is scheduled
+        ShadowAlarmManager alarmManager = Shadows.shadowOf(
+                mTestApp.getSystemService(AlarmManager.class));
+        assertThat(alarmManager.peekNextScheduledAlarm()).isNull();
+
+        // GIVEN no existing timestamp
+        runBySequentialExecutor(() -> assertThat(
+                UserParameters.getNextProvisionFailedStepTimeMills(mTestApp)).isEqualTo(0));
+
+        // WHEN schedule next provision failed step alarm
+        runBySequentialExecutor(
+                () -> mScheduler.scheduleNextProvisionFailedStepAlarm(
+                        /* shouldGoOffImmediately= */ false));
+
+        // THEN correct alarm should be scheduled
+        PendingIntent actualPendingIntent = alarmManager.peekNextScheduledAlarm().operation;
+        assertThat(actualPendingIntent.isBroadcast()).isTrue();
+
+        // THEN alarm should be scheduled at correct time
+        long actualTriggerTime = alarmManager.peekNextScheduledAlarm().triggerAtTime;
+        assertThat(actualTriggerTime).isEqualTo(
+                SystemClock.elapsedRealtime() + PROVISION_STATE_REPORT_INTERVAL_MILLIS);
+
+        // THEN expected trigger time should be stored in storage
+        runBySequentialExecutor(() -> assertThat(
+                UserParameters.getNextProvisionFailedStepTimeMills(mTestApp)).isEqualTo(
+                TEST_CURRENT_TIME_MILLIS + PROVISION_STATE_REPORT_INTERVAL_MILLIS));
+    }
+
+    @Test
     public void scheduleNextProvisionFailedStepAlarm_initialStep_noDelay() {
         // GIVEN no alarm is scheduled
         ShadowAlarmManager alarmManager = Shadows.shadowOf(
@@ -326,7 +357,9 @@ public final class DeviceLockControllerSchedulerImplTest {
                 UserParameters.getNextProvisionFailedStepTimeMills(mTestApp)).isEqualTo(0));
 
         // WHEN schedule next provision failed step alarm
-        runBySequentialExecutor(mScheduler::scheduleNextProvisionFailedStepAlarm);
+        runBySequentialExecutor(
+                () -> mScheduler.scheduleNextProvisionFailedStepAlarm(
+                        /* shouldGoOffImmediately= */ true));
 
         // THEN correct alarm should be scheduled
         PendingIntent actualPendingIntent = alarmManager.peekNextScheduledAlarm().operation;
@@ -349,12 +382,14 @@ public final class DeviceLockControllerSchedulerImplTest {
                 mTestApp.getSystemService(AlarmManager.class));
         assertThat(alarmManager.peekNextScheduledAlarm()).isNull();
 
-        // GIVEN timestamp exits for last performed step.
+        // GIVEN timestamp exists for last performed step.
         UserParameters.setNextProvisionFailedStepTimeMills(mTestApp,
                 TEST_NEXT_PROVISION_FAILED_STEP_TIME_MILLIS);
 
         // WHEN schedule next provision failed step alarm
-        runBySequentialExecutor(mScheduler::scheduleNextProvisionFailedStepAlarm);
+        runBySequentialExecutor(
+                () -> mScheduler.scheduleNextProvisionFailedStepAlarm(
+                        /* shouldGoOffImmediately= */ false));
 
         // THEN correct alarm should be scheduled
         PendingIntent actualPendingIntent = alarmManager.peekNextScheduledAlarm().operation;
@@ -373,6 +408,40 @@ public final class DeviceLockControllerSchedulerImplTest {
                 UserParameters.getNextProvisionFailedStepTimeMills(mTestApp)).isEqualTo(
                 TEST_NEXT_PROVISION_FAILED_STEP_TIME_MILLIS
                         + PROVISION_STATE_REPORT_INTERVAL_MILLIS));
+    }
+
+    @Test
+    public void scheduleNextProvisionFailedStepAlarm_followUpStep_noDelay() {
+        // GIVEN no alarm is scheduled
+        ShadowAlarmManager alarmManager = Shadows.shadowOf(
+                mTestApp.getSystemService(AlarmManager.class));
+        assertThat(alarmManager.peekNextScheduledAlarm()).isNull();
+
+        // GIVEN timestamp exists for last performed step.
+        UserParameters.setNextProvisionFailedStepTimeMills(mTestApp,
+                TEST_NEXT_PROVISION_FAILED_STEP_TIME_MILLIS);
+
+        // WHEN schedule next provision failed step alarm
+        runBySequentialExecutor(
+                () -> mScheduler.scheduleNextProvisionFailedStepAlarm(
+                        /* shouldGoOffImmediately= */ true));
+
+        // THEN correct alarm should be scheduled
+        PendingIntent actualPendingIntent = alarmManager.peekNextScheduledAlarm().operation;
+        assertThat(actualPendingIntent.isBroadcast()).isTrue();
+
+        // THEN alarm should be scheduled at correct time
+        long actualTriggerTime = alarmManager.peekNextScheduledAlarm().triggerAtTime;
+        long expectedTriggerTime =
+                TEST_NEXT_PROVISION_FAILED_STEP_TIME_MILLIS - TEST_CURRENT_TIME_MILLIS
+                        + SystemClock.elapsedRealtime();
+        assertThat(actualTriggerTime).isEqualTo(expectedTriggerTime);
+
+
+        // THEN expected trigger time should be stored in storage
+        runBySequentialExecutor(() -> assertThat(
+                UserParameters.getNextProvisionFailedStepTimeMills(mTestApp)).isEqualTo(
+                TEST_NEXT_PROVISION_FAILED_STEP_TIME_MILLIS));
     }
 
     @Test

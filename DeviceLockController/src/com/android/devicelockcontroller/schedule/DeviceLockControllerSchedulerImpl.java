@@ -216,30 +216,24 @@ public final class DeviceLockControllerSchedulerImpl implements DeviceLockContro
     }
 
     @Override
-    public void scheduleNextProvisionFailedStepAlarm() {
+    public void scheduleNextProvisionFailedStepAlarm(boolean shouldRunImmediately) {
         long lastTimestamp = UserParameters.getNextProvisionFailedStepTimeMills(mContext);
         long nextTimestamp;
         if (lastTimestamp == 0) {
-            // This is the first provision failed step, trigger the alarm
-            // immediately.
-            nextTimestamp = Instant.now(mClock).toEpochMilli();
-            scheduleNextProvisionFailedStepAlarm(Duration.ZERO);
-        } else {
-            // This is not the first provision failed step, schedule with
-            // default delay.
-            Duration delay = Duration.ofMinutes(
-                    PROVISION_STATE_REPORT_INTERVAL_DEFAULT_MINUTES);
-            if (Build.isDebuggable()) {
-                long minutes = SystemProperties.getLong(
-                        KEY_PROVISION_REPORT_INTERVAL_MINUTES,
-                        PROVISION_STATE_REPORT_INTERVAL_DEFAULT_MINUTES);
-                delay = Duration.ofMinutes(minutes);
-            }
-            nextTimestamp = lastTimestamp + delay.toMillis();
-            scheduleNextProvisionFailedStepAlarm(
-                    Duration.between(Instant.now(mClock),
-                            Instant.ofEpochMilli(nextTimestamp)));
+            lastTimestamp = Instant.now(mClock).toEpochMilli();
         }
+        Duration delay = shouldRunImmediately
+                ? Duration.ZERO
+                : Duration.ofMinutes(PROVISION_STATE_REPORT_INTERVAL_DEFAULT_MINUTES);
+        if (Build.isDebuggable()) {
+            long minutes = SystemProperties.getLong(
+                    KEY_PROVISION_REPORT_INTERVAL_MINUTES,
+                    PROVISION_STATE_REPORT_INTERVAL_DEFAULT_MINUTES);
+            delay = Duration.ofMinutes(minutes);
+        }
+        nextTimestamp = lastTimestamp + delay.toMillis();
+        scheduleNextProvisionFailedStepAlarm(
+                Duration.between(Instant.now(mClock), Instant.ofEpochMilli(nextTimestamp)));
         UserParameters.setNextProvisionFailedStepTimeMills(mContext, nextTimestamp);
     }
 

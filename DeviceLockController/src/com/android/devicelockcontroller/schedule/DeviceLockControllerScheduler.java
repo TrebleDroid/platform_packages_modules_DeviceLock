@@ -57,9 +57,12 @@ public interface DeviceLockControllerScheduler {
     void scheduleRetryCheckInWork(Duration delay);
 
     /**
-     * Schedule an alarm to perform next provision failed step with the default delay.
+     * Schedule an alarm to perform next provision failed step.
+     *
+     * @param shouldRunImmediately true, if the alarm should go off immediately; false, if the
+     *                             alarm should go off after a default delay.
      */
-    void scheduleNextProvisionFailedStepAlarm();
+    void scheduleNextProvisionFailedStepAlarm(boolean shouldRunImmediately);
 
     /**
      * Notify the scheduler that device reboot when provision has failed.
