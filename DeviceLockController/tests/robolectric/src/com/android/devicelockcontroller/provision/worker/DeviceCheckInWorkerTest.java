@@ -17,6 +17,7 @@
 package com.android.devicelockcontroller.provision.worker;
 
 import static com.android.devicelockcontroller.common.DeviceLockConstants.DeviceIdType.DEVICE_ID_TYPE_IMEI;
+import static com.android.devicelockcontroller.provision.worker.DeviceCheckInWorker.RETRY_ON_FAILURE_DELAY;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -39,9 +40,11 @@ import androidx.work.WorkerFactory;
 import androidx.work.WorkerParameters;
 import androidx.work.testing.TestListenableWorkerBuilder;
 
+import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
 import com.android.devicelockcontroller.common.DeviceId;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrpcResponse;
+import com.android.devicelockcontroller.schedule.DeviceLockControllerScheduler;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.testing.TestingExecutors;
@@ -148,7 +151,7 @@ public class DeviceCheckInWorkerTest {
         setDeviceIdAvailability(/* isAvailable= */ true);
         setCarrierInfoAvailability(/* isAvailable= */ true);
 
-        // GIVEN check-in response has recoverable failure.
+        // GIVEN check-in response has non-recoverable failure.
         setUpFailedCheckInResponse(/* isRecoverable= */ false);
 
         // WHEN work runs
@@ -156,6 +159,12 @@ public class DeviceCheckInWorkerTest {
 
         // THEN work succeeded
         assertThat(result).isEqualTo(Result.failure());
+
+        // THEN scheduled retry work
+        DeviceLockControllerScheduler scheduler =
+                ((TestDeviceLockControllerApplication) ApplicationProvider.getApplicationContext())
+                        .getDeviceLockControllerScheduler();
+        verify(scheduler).scheduleRetryCheckInWork(eq(RETRY_ON_FAILURE_DELAY));
     }
 
     @Test

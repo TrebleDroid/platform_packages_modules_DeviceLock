@@ -112,6 +112,7 @@ public final class ReportDeviceProvisionStateWorkerTest {
         when(mResponse.hasFatalError()).thenReturn(true);
 
         assertThat(Futures.getUnchecked(mWorker.startWork())).isEqualTo(Result.failure());
+        verify(mTestApp.getDeviceLockControllerScheduler()).scheduleNextProvisionFailedStepAlarm();
     }
 
     @Test
