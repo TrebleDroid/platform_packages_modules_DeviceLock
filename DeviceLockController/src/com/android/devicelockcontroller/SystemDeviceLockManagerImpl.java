@@ -219,4 +219,21 @@ public final class SystemDeviceLockManagerImpl implements SystemDeviceLockManage
             executor.execute(() -> callback.onError(new RuntimeException(e)));
         }
     }
+
+    @Override
+    @RequiresPermission(MANAGE_DEVICE_LOCK_SERVICE_FROM_CONTROLLER)
+    public void setDeviceFinalized(boolean finalized, Executor executor,
+            @NonNull OutcomeReceiver<Void, Exception> callback) {
+        Objects.requireNonNull(executor);
+        Objects.requireNonNull(callback);
+
+        try {
+            mIDeviceLockService.setDeviceFinalized(finalized,
+                    new RemoteCallback(result -> executor.execute(() -> {
+                        callback.onResult(null /* result */);
+                    }), new Handler(Looper.getMainLooper())));
+        } catch (RemoteException e) {
+            executor.execute(() -> callback.onError(new RuntimeException(e)));
+        }
+    }
 }
