@@ -21,7 +21,7 @@ import androidx.annotation.Keep;
 import com.android.devicelockcontroller.proto.DeviceLockFinalizeServiceGrpc;
 import com.android.devicelockcontroller.proto.ReportDeviceProgramCompleteRequest;
 import com.android.devicelockcontroller.provision.grpc.DeviceFinalizeClient;
-import com.android.devicelockcontroller.util.ThreadUtils;
+import com.android.devicelockcontroller.util.ThreadAsserts;
 
 import io.grpc.StatusRuntimeException;
 import io.grpc.okhttp.OkHttpChannelBuilder;
@@ -46,7 +46,7 @@ public final class DeviceFinalizeClientImpl extends DeviceFinalizeClient {
      */
     @Override
     public ReportDeviceProgramCompleteResponse reportDeviceProgramComplete() {
-        ThreadUtils.assertWorkerThread("reportDeviceProgramComplete");
+        ThreadAsserts.assertWorkerThread("reportDeviceProgramComplete");
         try {
             mBlockingStub.reportDeviceProgramComplete(
                     ReportDeviceProgramCompleteRequest.newBuilder().setRegisteredDeviceIdentifier(

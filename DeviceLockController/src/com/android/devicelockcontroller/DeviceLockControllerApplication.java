@@ -16,7 +16,7 @@
 
 package com.android.devicelockcontroller;
 
-import static com.android.devicelockcontroller.util.ThreadUtils.assertMainThread;
+import static com.android.devicelockcontroller.util.ThreadAsserts.assertMainThread;
 
 import android.app.Application;
 import android.content.Context;

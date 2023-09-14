@@ -22,6 +22,8 @@ import android.util.AtomicFile;
 import android.util.Slog;
 import android.util.Xml;
 
+import com.android.devicelockcontroller.util.ThreadAsserts;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlSerializer;
@@ -83,7 +85,7 @@ public final class DeviceLockPersistentStore {
 
     @WorkerThread
     private void writeState(boolean finalized) {
-        // TODO(b/300319081): Assert worker thread
+        ThreadAsserts.assertWorkerThread("writeState");
         synchronized (this) {
             AtomicFile atomicFile = new AtomicFile(mFile);
 
@@ -115,7 +117,7 @@ public final class DeviceLockPersistentStore {
 
     @WorkerThread
     private boolean readState() {
-        // TODO(b/300319081): Assert worker thread
+        ThreadAsserts.assertWorkerThread("readState");
         synchronized (this) {
             if (!mFile.exists()) {
                 return false;

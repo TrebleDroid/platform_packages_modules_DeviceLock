@@ -52,6 +52,19 @@ java_library {
 }
 
 java_library {
+    name: "devicelockcontroller-thread-asserts-lib",
+    srcs: [
+        "src/com/android/devicelockcontroller/util/ThreadAsserts.java",
+    ],
+    sdk_version: "module_current",
+    min_sdk_version: "UpsideDownCake",
+    apex_available: ["com.android.devicelock"],
+    visibility: [
+        "//packages/modules/DeviceLock:__subpackages__",
+    ],
+}
+
+java_library {
     name: "devicelockcontroller-common-lib",
     srcs: [
         "src/com/android/devicelockcontroller/common/*.java",
