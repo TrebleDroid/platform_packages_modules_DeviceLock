@@ -19,6 +19,7 @@ package com.android.devicelockcontroller.receivers;
 import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState.PROVISION_FAILED;
 import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState.PROVISION_PAUSED;
 
+import android.app.admin.DevicePolicyManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -40,6 +41,8 @@ import com.google.common.util.concurrent.Futures;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -48,20 +51,23 @@ import java.util.concurrent.Executors;
  * (singleUser="false").
  * <p>
  * This receiver does the following:
- * 1. Record device boot timestamp
- * 2. Reschedule alarms if needed.
+ * 1. Disable user control over this package.
+ * 2. Record device boot timestamp.
+ * 3. Reschedule alarms if needed.
  */
 public final class LockedBootCompletedReceiver extends BroadcastReceiver {
     private static final String TAG = "LockedBootCompletedReceiver";
     private final Executor mExecutor;
+    private final Clock mClock;
 
     public LockedBootCompletedReceiver() {
-        mExecutor = Executors.newSingleThreadExecutor();
+        this(Executors.newSingleThreadExecutor(), Clock.systemUTC());
     }
 
     @VisibleForTesting
-    LockedBootCompletedReceiver(Executor executor) {
+    LockedBootCompletedReceiver(Executor executor, Clock clock) {
         mExecutor = executor;
+        mClock = clock;
     }
 
     @Override
@@ -77,8 +83,12 @@ public final class LockedBootCompletedReceiver extends BroadcastReceiver {
             return;
         }
 
-        Instant bootTimeStamp = Instant.now(Clock.systemUTC()).minusMillis(
-                SystemClock.elapsedRealtime());
+        // This is necessary for disabling user control through adb command.
+        DevicePolicyManager dpm = context.getSystemService(DevicePolicyManager.class);
+        Objects.requireNonNull(dpm).setUserControlDisabledPackages(/* admin= */ null,
+                List.of(context.getPackageName()));
+
+        Instant bootTimeStamp = Instant.now(mClock).minusMillis(SystemClock.elapsedRealtime());
         UserParameters.setBootTimeMillis(context, bootTimeStamp.toEpochMilli());
 
         Context applicationContext = context.getApplicationContext();

@@ -149,7 +149,6 @@
         <receiver
             android:name="com.android.devicelockcontroller.receivers.LockedBootCompletedReceiver"
             android:directBootAware="true"
-            android:enabled="false"
             android:exported="false"
             android:singleUser="false">
             <intent-filter>

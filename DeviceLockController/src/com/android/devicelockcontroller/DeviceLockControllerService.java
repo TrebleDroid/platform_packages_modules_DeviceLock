@@ -17,7 +17,6 @@
 package com.android.devicelockcontroller;
 
 import android.app.Service;
-import android.app.admin.DevicePolicyManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -36,9 +35,6 @@ import com.android.devicelockcontroller.util.LogUtil;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.MoreExecutors;
-
-import java.util.List;
-import java.util.Objects;
 
 /**
  * Device Lock Controller Service. This is hosted in an APK and is bound
@@ -94,9 +90,6 @@ public final class DeviceLockControllerService extends Service {
 
                 @Override
                 public void onUserStarting(RemoteCallback remoteCallback) {
-                    DevicePolicyManager dpm = getSystemService(DevicePolicyManager.class);
-                    Objects.requireNonNull(dpm).setUserControlDisabledPackages(/* admin= */ null,
-                            List.of(getPackageName()));
                     Futures.addCallback(mProvisionStateController.onUserStarting(),
                             remoteCallbackWrapper(remoteCallback, KEY_ON_USER_STARTING_RESULT),
                             MoreExecutors.directExecutor());
