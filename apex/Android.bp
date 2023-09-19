@@ -96,7 +96,10 @@ apex {
 }
 
 sdk {
-    name: "devicelock-sdk",
-    bootclasspath_fragments: ["com.android.devicelock-bootclasspath-fragment"],
-    systemserverclasspath_fragments: ["com.android.devicelock-systemserverclasspath-fragment"],
+    name: "devicelock-module-sdk",
+    apexes: [
+        // Adds exportable dependencies of the APEX to the sdk,
+        // e.g. *classpath_fragments.
+        "com.android.devicelock",
+    ],
 }
