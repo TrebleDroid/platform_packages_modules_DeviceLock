@@ -41,7 +41,6 @@ import java.time.Duration;
 public final class DeviceCheckInWorker extends AbstractCheckInWorker {
 
     private final AbstractDeviceCheckInHelper mCheckInHelper;
-    private final ListeningExecutorService mListeningExecutorService;
 
     @VisibleForTesting
     static final Duration RETRY_ON_FAILURE_DELAY = Duration.ofDays(1);
@@ -57,7 +56,6 @@ public final class DeviceCheckInWorker extends AbstractCheckInWorker {
             ListeningExecutorService executorService) {
         super(context, workerParameters, client, executorService);
         mCheckInHelper = helper;
-        mListeningExecutorService = executorService;
     }
 
     @NonNull
@@ -99,7 +97,7 @@ public final class DeviceCheckInWorker extends AbstractCheckInWorker {
                                 + RETRY_ON_FAILURE_DELAY);
                         scheduler.scheduleRetryCheckInWork(RETRY_ON_FAILURE_DELAY);
                         return Result.failure();
-                    }, mListeningExecutorService);
-                }, mListeningExecutorService);
+                    }, mExecutorService);
+                }, mExecutorService);
     }
 }
