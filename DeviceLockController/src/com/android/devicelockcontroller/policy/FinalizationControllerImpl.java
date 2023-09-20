@@ -97,8 +97,9 @@ public final class FinalizationControllerImpl implements FinalizationController 
     private final Context mContext;
     private final SystemDeviceLockManager mSystemDeviceLockManager;
     private final Class<? extends ListenableWorker> mReportDeviceFinalizedWorkerClass;
+    private final Object mLock = new Object();
     /** Future for after initial finalization state is set from disk */
-    private final ListenableFuture<Void> mStateInitializedFuture;
+    private volatile ListenableFuture<Void> mStateInitializedFuture;
 
     public FinalizationControllerImpl(Context context) {
         this(context,
@@ -121,23 +122,34 @@ public final class FinalizationControllerImpl implements FinalizationController 
         mBgExecutor = bgExecutor;
         mReportDeviceFinalizedWorkerClass = reportDeviceFinalizedWorkerClass;
         mSystemDeviceLockManager = systemDeviceLockManager;
-
-        // Set the initial state
-        ListenableFuture<Integer> initialStateFuture =
-                GlobalParametersClient.getInstance().getFinalizationState();
-        mStateInitializedFuture = Futures.transformAsync(initialStateFuture,
-                mDispatchQueue::enqueueStateChange,
-                mBgExecutor);
     }
 
-    @VisibleForTesting
-    ListenableFuture<Void> getStateInitializedFuture() {
-        return mStateInitializedFuture;
+    @Override
+    public ListenableFuture<Void> enforceInitialState() {
+        ListenableFuture<Void> initializedFuture = mStateInitializedFuture;
+        if (initializedFuture == null) {
+            synchronized (mLock) {
+                initializedFuture = mStateInitializedFuture;
+                if (initializedFuture == null) {
+                    ListenableFuture<Integer> initialStateFuture =
+                            GlobalParametersClient.getInstance().getFinalizationState();
+                    initializedFuture = Futures.transformAsync(initialStateFuture,
+                            initialState -> {
+                                LogUtil.d(TAG, "Enforcing initial state: " + initialState);
+                                return mDispatchQueue.enqueueStateChange(initialState);
+                            },
+                            mBgExecutor);
+                    mStateInitializedFuture = initializedFuture;
+                }
+            }
+        }
+        return initializedFuture;
     }
 
     @Override
     public ListenableFuture<Void> notifyRestrictionsCleared() {
-        return Futures.transformAsync(mStateInitializedFuture,
+        LogUtil.d(TAG, "Clearing restrictions");
+        return Futures.transformAsync(enforceInitialState(),
                 unused -> mDispatchQueue.enqueueStateChange(FINALIZED_UNREPORTED),
                 mBgExecutor);
     }
@@ -146,11 +158,12 @@ public final class FinalizationControllerImpl implements FinalizationController 
     public ListenableFuture<Void> notifyFinalizationReportResult(
             ReportDeviceProgramCompleteResponse response) {
         if (response.isSuccessful()) {
-            return Futures.transformAsync(mStateInitializedFuture,
+            LogUtil.d(TAG, "Successfully reported finalization to server. Finalizing...");
+            return Futures.transformAsync(enforceInitialState(),
                     unused -> mDispatchQueue.enqueueStateChange(FINALIZED),
                     mBgExecutor);
         } else {
-            // TODO(279517666): Determine how to handle an unrecoverable failure
+            // TODO(301320235): Determine how to handle an unrecoverable failure
             // response from the server
             LogUtil.e(TAG, "Unrecoverable failure in reporting finalization state: " + response);
             return Futures.immediateVoidFuture();
