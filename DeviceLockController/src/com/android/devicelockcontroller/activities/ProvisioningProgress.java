@@ -34,7 +34,12 @@ public final class ProvisioningProgress {
     public static final ProvisioningProgress PROVISIONING_FAILED = new ProvisioningProgress(
             R.drawable.ic_warning_24px, R.string.provisioning_failed,
             R.string.click_to_contact_financier, /* progressBarVisible=*/ false,
-            /* bottomViewVisible= */ true);
+            /* bottomViewVisible= */ true, /* countTimerVisible= */ false);
+
+    public static final ProvisioningProgress PROVISION_FAILED_MANDATORY = new ProvisioningProgress(
+            R.drawable.ic_warning_24px, R.string.provisioning_failed,
+            R.string.click_to_contact_financier, /* progressBarVisible=*/ false,
+            /* bottomViewVisible= */ false, /* countTimerVisible= */ true);
 
     final int mIconId;
     final int mHeaderId;
@@ -42,22 +47,24 @@ public final class ProvisioningProgress {
     final boolean mProgressBarVisible;
     final boolean mBottomViewVisible;
 
+    final boolean mCountDownTimerVisible;
+
     ProvisioningProgress(int iconId, int headerId) {
         this(iconId, headerId, 0);
     }
 
     ProvisioningProgress(int iconId, int headerId, int subheaderId) {
         this(iconId, headerId, subheaderId, /* progressBarVisible= */ true,
-                /* bottomViewVisible= */ false);
+                /* bottomViewVisible= */ false, /* countTimerVisible= */ false);
     }
 
     ProvisioningProgress(int iconId, int headerId, int subheaderId, boolean progressBarVisible,
-            boolean bottomViewVisible) {
+            boolean bottomViewVisible, boolean countTimerVisible) {
         mHeaderId = headerId;
         mIconId = iconId;
         mSubheaderId = subheaderId;
         mProgressBarVisible = progressBarVisible;
         mBottomViewVisible = bottomViewVisible;
+        mCountDownTimerVisible = countTimerVisible;
     }
-
 }

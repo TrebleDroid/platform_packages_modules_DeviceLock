@@ -48,9 +48,8 @@
     <string name="device_provided_by_provider" msgid="290593329676291991">"ይህ መሣሪያ በ<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> የሚቀርብ ነው"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"የKiosk መተግበሪያ በራስ ሰር ይወርዳል እና ይጫናል"</string>
     <string name="install_kiosk_app_secondary_user" msgid="49911908012320834">"የKiosk መተግበሪያ ለዚህ ተጠቃሚ ይጫናል"</string>
-    <string name="restrict_device_if_missing_payment" msgid="5721216628714899148">"ክፍያ ካለፈብዎት <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ይህን መሣሪያ ሊገድብ ይችላል"</string>
+    <string name="restrict_device_if_missing_payment" msgid="2907880869705064855">"እርስዎ ክፍያ ካሳለፉ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> መሣሪያውን መገደብ ይችላሉ"</string>
     <string name="restrict_device_if_dont_make_payment" msgid="1619095674945507015">"እርስዎ አስፈላጊዎቹን ክፍያዎች ካልፈጸሙ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ይህን መሣሪያ ሊገድብ ይችላል። ለዝርዝሮች <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>የአገልግሎት ውል<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g> ይመልከቱ።"</string>
-    <string name="restrict_device_if_owner_doesnt_make_payment" msgid="3841412765931627895">"ባለቤቱ ክፍያዎችን ካልፈጸመ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ይህን መሣሪያ ሊገድብ ይችላል"</string>
     <string name="previous" msgid="5241891780917802570">"ቀዳሚ"</string>
     <string name="next" msgid="8248291863254324326">"ቀጣይ"</string>
     <string name="start" msgid="2842214844667658537">"ጀምር"</string>
@@ -60,7 +59,7 @@
     <string name="header_icon_content_description" msgid="6069602031334473195">"መረጃ"</string>
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"የአቅርቦት መረጃ"</string>
     <string name="enroll_your_device_header" msgid="2226305405591945098">"መሣሪያዎን ያስመዝግቡ"</string>
-    <string name="enroll_your_device_financing_subheader" msgid="7378414469334757425">"አሁን መሣሪያዎን በ<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> የፋይናንስ ፕሮግራም ውስጥ መመዝገብ ይችላሉ"</string>
+    <string name="enroll_your_device_financing_subheader" msgid="8810608106273097451">"አሁን መሣሪያዎን በ<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> የፋይናንስ ፕሮግራም ውስጥ ማስመዝገብ ይችላሉ"</string>
     <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"አሁን መሣሪያዎን በ<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> የድጎማ ፕሮግራም ውስጥ መመዝገብ ይችላሉ"</string>
     <string name="subsidy_program_header" msgid="2321508488856303554">"የ<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> የድጋፍ ፕሮግራም ላይ ነዎት"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"የመሣሪያ ምዝገባ"</string>
@@ -81,7 +80,8 @@
     <string name="settings_banner_body" msgid="5814902066260202824">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> በዚህ መሣሪያ ላይ ያሉ ቅንብሮችን መለወጥ ይችላሉ"</string>
     <string name="settings_banner_button" msgid="1831020849782670907">"የበለጠ ለመረዳት"</string>
     <string name="settings_screen_title" msgid="721470080648091035">"የፋይናንስ ድጋፍ የተደረገለት መሣሪያ መረጃ"</string>
-    <string name="settings_intro" msgid="5809531331925309396">"የእርስዎ ክሬዲት አቅራቢ ቅንብሮችን መለወጥ እና የkiosk መተግበሪያውን በመሣሪያው ላይ መጫን ይችላል።\n\nአግባብ ክፍያዎችን የማይፈጽሙ ወይም የ<xliff:g id="PROVIDER_NAME_1">%1$s</xliff:g> ሲምን መጠቀም የሚያቆሙ ከሆነ <xliff:g id="PROVIDER_NAME_0">%1$s</xliff:g> ይህን መሣሪያ ሊገድብ ይችላል።\n\nየበለጠ ለመረዳት <xliff:g id="PROVIDER_NAME_2">%1$s</xliff:g>ን ያግኙ።"</string>
+    <string name="settings_intro_device_financing" msgid="2548476558131048133">"<xliff:g id="PROVIDER_NAME_0">%1$s</xliff:g> ቅንብሮችን መለወጥ እና የkiosk መተግበሪያውን በመሣሪያው ላይ መጫን ይችላሉ።\n\nክፍያ ካመለጠዎት <xliff:g id="PROVIDER_NAME_1">%1$s</xliff:g> መሣሪያዎን መገደብ ይችላሉ።\n\nየበለጠ ለመረዳት <xliff:g id="PROVIDER_NAME_2">%1$s</xliff:g>ን ያነጋግሩ።"</string>
+    <string name="settings_intro_device_subsidy" msgid="4274945644204818702">"<xliff:g id="PROVIDER_NAME_0">%1$s</xliff:g> ቅንብሮችን መለወጥ እና የkiosk መተግበሪያውን በመሣሪያው ላይ መጫን ይችላሉ።\n\nእንዲሁም ክፍያ ካመለጠዎት ወይም የ<xliff:g id="PROVIDER_NAME_2">%1$s</xliff:g> ሲምን መጠቀም ካቆሙ <xliff:g id="PROVIDER_NAME_1">%1$s</xliff:g> ይህን መሣሪያ ሊገድቡ ይችላሉ።\n\nየበለጠ ለመረዳት <xliff:g id="PROVIDER_NAME_3">%1$s</xliff:g>ን ያነጋግሩ።"</string>
     <string name="settings_intro_preference_key" msgid="6610461073400554162">"settings_intro_preference_key"</string>
     <string name="settings_restrictions_category" msgid="5746868117342406677">"ለመሣሪያዎ እስከከፈሉ ድረስ የሚከተለውን ማድረግ አይችሉም፦"</string>
     <string name="settings_restrictions_category_preference_key" msgid="88318147152676512">"settings_restrictions_category_preference_key"</string>
@@ -89,8 +89,6 @@
     <string name="settings_install_apps_preference_key" msgid="27542314345238427">"settings_install_apps_preference_key"</string>
     <string name="settings_safe_mode" msgid="3035228015586375153">"መሣሪያዎን በሚያስተማምን ሁነታ ዳግም ያስነሱት"</string>
     <string name="settings_safe_mode_preference_key" msgid="2106617747358027424">"settings_safe_mode_preference_key"</string>
-    <string name="settings_config_date_time" msgid="3406612829802458778">"ቀን፣ ሰዓት እና የሰዓት ሰቆችን ይቀይሩ"</string>
-    <string name="settings_config_date_time_preference_key" msgid="1838160765185598823">"settings_config_date_time_preference_key"</string>
     <string name="settings_developer_options" msgid="880701002025216672">"የገንቢ አማራጮችን ይጠቀሙ"</string>
     <string name="settings_developer_options_preference_key" msgid="6807036808722582954">"settings_developer_options_preference_key"</string>
     <string name="settings_credit_provider_capabilities_category" msgid="1274440595211820868">"መሣሪያዎ ላይ ችግር ከተፈጠረ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> የሚከተሉትን ማድረግ ይችላል፦"</string>
@@ -121,7 +119,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{መሣሪያ በ1 ቀን ውስጥ ዳግም ይጀምራል}one{መሣሪያ በ# ቀን ውስጥ ዳግም ይጀምራል}other{መሣሪያ በ# ቀናት ውስጥ ዳግም ይጀምራል}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"መሣሪያ <xliff:g id="TIMER">%s</xliff:g> ውስጥ ዳግም ይጀምራል"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"ሁሉም የመሣሪያ ውሂብ ይሰረዛል። መሣሪያዎን መመዝገብ ላይ እገዛ ለማግኘት <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>ን ያግኙ"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"የመሣሪያውን ምዝገባ መላክ ለመቀጠል እባክዎ ከDeviceLock ማሳወቂያ ይፍቀዱ።"</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"የፋይናንስ አቅርቦት አልተሳካም"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"የፋይናንስ አስተዳዳሪዎን የሚያገኙባቸውን መንገዶች ለማግኘት እባክዎ እዚህ ጠቅ ያድርጉ። <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>የበለጠ ለመረዳት<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"ውጣ"</string>

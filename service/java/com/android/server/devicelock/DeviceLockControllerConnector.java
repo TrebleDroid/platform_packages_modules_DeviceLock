@@ -384,6 +384,28 @@ final class DeviceLockControllerConnector {
         }, callback);
     }
 
+    public void onUserStarting(OutcomeReceiver<Void, Exception> callback) {
+        RemoteCallback remoteCallback = new RemoteCallback(checkTimeout(callback, result -> {
+            final boolean success =
+                    result.getBoolean(IDeviceLockControllerService.KEY_ON_USER_STARTING_RESULT);
+            if (success) {
+                mHandler.post(() -> callback.onResult(null));
+            } else {
+                mHandler.post(
+                        () -> callback.onError(new Exception("Failed to report user starting")));
+            }
+        }));
+
+        callControllerApi(new Callable<Void>() {
+            @Override
+            @SuppressWarnings("GuardedBy") // mLock already held in callControllerApi (error prone).
+            public Void call() throws Exception {
+                mDeviceLockControllerService.onUserStarting(remoteCallback);
+                return null;
+            }
+        }, callback);
+    }
+
     public void onUserSwitching(OutcomeReceiver<Void, Exception> callback) {
         RemoteCallback remoteCallback = new RemoteCallback(checkTimeout(callback, result -> {
             final boolean success =
@@ -401,6 +423,50 @@ final class DeviceLockControllerConnector {
             @SuppressWarnings("GuardedBy") // mLock already held in callControllerApi (error prone).
             public Void call() throws Exception {
                 mDeviceLockControllerService.onUserSwitching(remoteCallback);
+                return null;
+            }
+        }, callback);
+    }
+
+    public void onUserUnlocked(OutcomeReceiver<Void, Exception> callback) {
+        RemoteCallback remoteCallback = new RemoteCallback(checkTimeout(callback, result -> {
+            final boolean success =
+                    result.getBoolean(IDeviceLockControllerService.KEY_ON_USER_UNLOCKED_RESULT);
+            if (success) {
+                mHandler.post(() -> callback.onResult(null));
+            } else {
+                mHandler.post(
+                        () -> callback.onError(new Exception("Failed to report user unlocked")));
+            }
+        }));
+
+        callControllerApi(new Callable<Void>() {
+            @Override
+            @SuppressWarnings("GuardedBy") // mLock already held in callControllerApi (error prone).
+            public Void call() throws Exception {
+                mDeviceLockControllerService.onUserUnlocked(remoteCallback);
+                return null;
+            }
+        }, callback);
+    }
+
+    public void onKioskAppCrashed(OutcomeReceiver<Void, Exception> callback) {
+        RemoteCallback remoteCallback = new RemoteCallback(checkTimeout(callback, result -> {
+            final boolean success = result.getBoolean(
+                    IDeviceLockControllerService.KEY_ON_KIOSK_APP_CRASHED_RESULT);
+            if (success) {
+                mHandler.post(() -> callback.onResult(null));
+            } else {
+                mHandler.post(() -> callback.onError(new Exception("Failed to notify controller "
+                        + "about kiosk app crash")));
+            }
+        }));
+
+        callControllerApi(new Callable<Void>() {
+            @Override
+            @SuppressWarnings("GuardedBy") // mLock already held in callControllerApi (error prone).
+            public Void call() throws Exception {
+                mDeviceLockControllerService.onKioskAppCrashed(remoteCallback);
                 return null;
             }
         }, callback);

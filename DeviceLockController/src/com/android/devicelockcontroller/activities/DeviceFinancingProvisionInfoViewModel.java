@@ -16,9 +16,6 @@
 
 package com.android.devicelockcontroller.activities;
 
-import android.annotation.NonNull;
-import android.app.Application;
-
 import com.android.devicelockcontroller.R;
 
 import java.util.ArrayList;
@@ -31,7 +28,7 @@ public class DeviceFinancingProvisionInfoViewModel extends ProvisionInfoViewMode
 
     private static final int HEADER_DRAWABLE_ID = R.drawable.ic_info_24px;
 
-    private static final int HEADER_TEXT_ID = R.string.device_provided_by_provider;
+    private static final int MANDATORY_HEADER_TEXT_ID = R.string.device_provided_by_provider;
 
     private static final Integer[] DRAWABLE_IDS = new Integer[]{
             R.drawable.ic_file_download_24px, R.drawable.ic_lock_outline_24px,
@@ -41,16 +38,21 @@ public class DeviceFinancingProvisionInfoViewModel extends ProvisionInfoViewMode
             R.string.download_kiosk_app, R.string.restrict_device_if_missing_payment,
     };
 
-    public DeviceFinancingProvisionInfoViewModel(@NonNull Application application) {
-        super(application);
+    private static final int HEADER_TEXT_ID = R.string.enroll_your_device_header;
 
+    private static final int SUB_HEADER_TEXT_ID =
+            R.string.enroll_your_device_financing_subheader;
+
+    public DeviceFinancingProvisionInfoViewModel() {
         mHeaderDrawableId = HEADER_DRAWABLE_ID;
+        mMandatoryHeaderTextId = MANDATORY_HEADER_TEXT_ID;
         mHeaderTextId = HEADER_TEXT_ID;
-
+        mSubHeaderTextId = SUB_HEADER_TEXT_ID;
         List<ProvisionInfo> provisionInfoList = new ArrayList<>();
         for (int i = 0, size = DRAWABLE_IDS.length; i < size; ++i) {
             provisionInfoList.add(new ProvisionInfo(DRAWABLE_IDS[i], TEXT_IDS[i]));
         }
         mProvisionInfoList = provisionInfoList;
+        retrieveData();
     }
 }

@@ -18,18 +18,20 @@ package com.android.devicelockcontroller.policy;
 
 import android.content.Intent;
 
+import androidx.annotation.IntDef;
+
 import com.google.common.util.concurrent.ListenableFuture;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Interface for the policy controller that is responsible for applying policies based
  * on state.
  */
 public interface DevicePolicyController {
-
-    /**
-     * Get the intent to launch the locked activity for the current device state asynchronously.
-     */
-    ListenableFuture<Intent> getLaunchIntentForCurrentLockedActivity();
 
     /**
      * Factory resets the device when the setup has failed and cannot continue.
@@ -42,7 +44,49 @@ public interface DevicePolicyController {
     boolean wipeDevice();
 
     /**
-     * Get the State Controller associated with this Policy Controller.
+     * Enforce current policies.
      */
-    DeviceStateController getStateController();
+    ListenableFuture<Void> enforceCurrentPolicies();
+
+    /**
+     * Get the launch intent for current enforced state.
+     */
+    ListenableFuture<Intent> getLaunchIntentForCurrentState();
+
+    /**
+     * Called by {@link com.android.devicelockcontroller.DeviceLockControllerService} to call
+     * encryption-aware components.
+     */
+    ListenableFuture<Void> onUserUnlocked();
+
+    /**
+     * Called by {@link com.android.devicelockcontroller.DeviceLockControllerService} when the
+     * kiosk app crashed.
+     */
+    ListenableFuture<Void> onKioskAppCrashed();
+
+    @Target(ElementType.TYPE_USE)
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({
+            LockTaskType.UNDEFINED,
+            LockTaskType.NOT_IN_LOCK_TASK,
+            LockTaskType.LANDING_ACTIVITY,
+            LockTaskType.KIOSK_SETUP_ACTIVITY,
+            LockTaskType.KIOSK_LOCK_ACTIVITY
+    })
+    @interface LockTaskType {
+
+        int UNDEFINED = -1;
+        /* Not in lock task mode */
+        int NOT_IN_LOCK_TASK = 0;
+
+        /* Device lock controller landing activity */
+        int LANDING_ACTIVITY = 1;
+
+        /* Kiosk app setup activity */
+        int KIOSK_SETUP_ACTIVITY = 2;
+
+        /* Kiosk app lock activity */
+        int KIOSK_LOCK_ACTIVITY = 3;
+    }
 }

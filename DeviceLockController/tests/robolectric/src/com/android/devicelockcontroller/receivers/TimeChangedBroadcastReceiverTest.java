@@ -16,60 +16,36 @@
 
 package com.android.devicelockcontroller.receivers;
 
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import android.content.Intent;
-import android.os.SystemClock;
 
 import androidx.test.core.app.ApplicationProvider;
 
-import com.android.devicelockcontroller.AbstractDeviceLockControllerScheduler;
 import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
-import com.android.devicelockcontroller.storage.GlobalParametersClient;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 
-import java.time.Clock;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.ZoneOffset;
-
 @RunWith(RobolectricTestRunner.class)
 public final class TimeChangedBroadcastReceiverTest {
-
-    private static final long TEST_BOOT_TIME_MILLIS = Duration.ofDays(1).toMillis();
-    private static final long TEST_CURRENT_TIME_AFTER_CHANGE_MILLIS = Duration.ofDays(2).toMillis();
     private TestDeviceLockControllerApplication mTestApp;
-    private GlobalParametersClient mClient;
-    private AbstractDeviceLockControllerScheduler mScheduler;
     private TimeChangedBroadcastReceiver mReceiver;
 
     @Before
     public void setUp() {
         mTestApp = ApplicationProvider.getApplicationContext();
-        mClient = GlobalParametersClient.getInstance();
-        mScheduler = mock(AbstractDeviceLockControllerScheduler.class);
-        mReceiver = new TimeChangedBroadcastReceiver(mScheduler, Clock.fixed(
-                Instant.ofEpochMilli(TEST_CURRENT_TIME_AFTER_CHANGE_MILLIS),
-                ZoneOffset.UTC));
+        mReceiver = new TimeChangedBroadcastReceiver();
     }
 
     @Test
-    public void onReceive() throws Exception {
-        // GIVEN boot time
-        mClient.setBootTimeMillis(TEST_BOOT_TIME_MILLIS).get();
-
+    public void onReceive_shouldNotifySchedulerTimeChanged() {
         // WHEN time changed broadcast received
         mReceiver.onReceive(mTestApp, new Intent(Intent.ACTION_TIME_CHANGED));
 
-        // THEN should correct scheduler expected to run time
-        long expectedDelta = TEST_CURRENT_TIME_AFTER_CHANGE_MILLIS - (TEST_BOOT_TIME_MILLIS
-                + SystemClock.elapsedRealtime());
-        verify(mScheduler).correctExpectedToRunTime(eq(Duration.ofMillis(expectedDelta)));
+        // THEN should should notify scheduler time changed.
+        verify(mTestApp.getDeviceLockControllerScheduler()).notifyTimeChanged();
     }
 }

@@ -16,7 +16,6 @@
 
 package com.android.devicelockcontroller.storage;
 
-import android.annotation.CurrentTimeMillisLong;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -24,6 +23,8 @@ import android.os.Build;
 import androidx.annotation.Nullable;
 
 import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState;
+import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
+import com.android.devicelockcontroller.policy.FinalizationControllerImpl.FinalizationState;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import java.util.Locale;
@@ -40,17 +41,11 @@ final class GlobalParameters {
     private static final String KEY_NEED_CHECK_IN = "need_check_in";
     private static final String KEY_REGISTERED_DEVICE_ID = "registered_device_id";
     private static final String KEY_FORCED_PROVISION = "forced_provision";
-    private static final String KEY_ENROLLMENT_TOKEN = "enrollment_token";
     private static final String KEY_LAST_RECEIVED_PROVISION_STATE = "last-received-provision-state";
-    public static final String TAG = "GlobalParameters";
-    public static final String KEY_BOOT_TIME_MILLS = "boot-time-mills";
-    public static final String KEY_NEXT_CHECK_IN_TIME_MILLIS = "next-check-in-time-millis";
-    public static final String KEY_RESUME_PROVISION_TIME_MILLIS =
-            "resume-provision-time-millis";
-    public static final String KEY_NEXT_PROVISION_FAILED_STEP_TIME_MILLIS =
-            "next-provision-failed-step-time-millis";
-    public static final String KEY_DAYS_LEFT_UNTIL_RESET = "days-left-until-reset";
-    public static final String KEY_RESET_DEVICE_TIME_MILLIS = "reset-device-time-millis";
+    private static final String TAG = "GlobalParameters";
+    private static final String KEY_DEVICE_STATE = "device_state";
+    private static final String KEY_FINALIZATION_STATE = "finalization_state";
+    public static final String KEY_IS_PROVISION_READY = "key-is-provision-ready";
 
 
     private GlobalParameters() {
@@ -83,6 +78,15 @@ final class GlobalParameters {
                 .edit()
                 .putBoolean(KEY_NEED_CHECK_IN, needCheckIn)
                 .apply();
+    }
+
+    static boolean isProvisionReady(Context context) {
+        return getSharedPreferences(context).getBoolean(KEY_IS_PROVISION_READY, false);
+    }
+
+    static void setProvisionReady(Context context, boolean isProvisionReady) {
+        getSharedPreferences(context).edit().putBoolean(KEY_IS_PROVISION_READY,
+                isProvisionReady).apply();
     }
 
     /**
@@ -122,6 +126,37 @@ final class GlobalParameters {
     }
 
     /**
+     * Gets the current device state.
+     */
+    @DeviceState
+    static int getDeviceState(Context context) {
+        return getSharedPreferences(context).getInt(KEY_DEVICE_STATE, DeviceState.UNLOCKED);
+    }
+
+    /**
+     * Sets the current device state.
+     */
+    static void setDeviceState(Context context, @DeviceState int state) {
+        getSharedPreferences(context).edit().putInt(KEY_DEVICE_STATE, state).apply();
+    }
+
+    /**
+     * Gets the current {@link FinalizationState}.
+     */
+    @FinalizationState
+    static int getFinalizationState(Context context) {
+        return getSharedPreferences(context).getInt(
+                KEY_FINALIZATION_STATE, FinalizationState.UNFINALIZED);
+    }
+
+    /**
+     * Sets the current {@link FinalizationState}.
+     */
+    static void setFinalizationState(Context context, @FinalizationState int state) {
+        getSharedPreferences(context).edit().putInt(KEY_FINALIZATION_STATE, state).apply();
+    }
+
+    /**
      * Set provision is forced
      *
      * @param context  Context used to get the shared preferences.
@@ -131,30 +166,6 @@ final class GlobalParameters {
         getSharedPreferences(context)
                 .edit()
                 .putBoolean(KEY_FORCED_PROVISION, isForced)
-                .apply();
-    }
-
-    /**
-     * Get the enrollment token assigned by the Device Lock backend server.
-     *
-     * @param context Context used to get the shared preferences.
-     * @return A string value of the enrollment token.
-     */
-    @Nullable
-    static String getEnrollmentToken(Context context) {
-        return getSharedPreferences(context).getString(KEY_ENROLLMENT_TOKEN, null);
-    }
-
-    /**
-     * Set the enrollment token assigned by the Device Lock backend server.
-     *
-     * @param context Context used to get the shared preferences.
-     * @param token   The string value of the enrollment token.
-     */
-    static void setEnrollmentToken(Context context, String token) {
-        getSharedPreferences(context)
-                .edit()
-                .putString(KEY_ENROLLMENT_TOKEN, token)
                 .apply();
     }
 
@@ -172,68 +183,6 @@ final class GlobalParameters {
                 .apply();
     }
 
-    static int getDaysLeftUntilReset(Context context) {
-        return getSharedPreferences(context).getInt(KEY_DAYS_LEFT_UNTIL_RESET, Integer.MAX_VALUE);
-    }
-
-    static void setDaysLeftUntilReset(Context context, int days) {
-        getSharedPreferences(context).edit().putInt(KEY_DAYS_LEFT_UNTIL_RESET, days).apply();
-    }
-
-    @CurrentTimeMillisLong
-    static long getBootTimeMillis(Context context) {
-        return getSharedPreferences(context).getLong(KEY_BOOT_TIME_MILLS, 0L);
-    }
-
-    static void setBootTimeMillis(Context context, @CurrentTimeMillisLong long bootTime) {
-        getSharedPreferences(context).edit().putLong(KEY_BOOT_TIME_MILLS, bootTime).apply();
-    }
-
-    @CurrentTimeMillisLong
-    static long getNextCheckInTimeMillis(Context context) {
-        return getSharedPreferences(context).getLong(KEY_NEXT_CHECK_IN_TIME_MILLIS, 0L);
-    }
-
-    static void setNextCheckInTimeMillis(Context context,
-            @CurrentTimeMillisLong long nextCheckInTime) {
-        getSharedPreferences(context).edit().putLong(KEY_NEXT_CHECK_IN_TIME_MILLIS,
-                nextCheckInTime).apply();
-    }
-
-    @CurrentTimeMillisLong
-    static long getResumeProvisionTimeMillis(Context context) {
-        return getSharedPreferences(context).getLong(KEY_RESUME_PROVISION_TIME_MILLIS, 0L);
-    }
-
-    static void setResumeProvisionTimeMillis(Context context,
-            @CurrentTimeMillisLong long resumeProvisionTime) {
-        getSharedPreferences(context).edit().putLong(KEY_RESUME_PROVISION_TIME_MILLIS,
-                resumeProvisionTime).apply();
-    }
-
-    @CurrentTimeMillisLong
-    static long getNextProvisionFailedStepTimeMills(Context context) {
-        return getSharedPreferences(context).getLong(KEY_NEXT_PROVISION_FAILED_STEP_TIME_MILLIS,
-                0L);
-    }
-
-    static void setNextProvisionFailedStepTimeMills(Context context,
-            @CurrentTimeMillisLong long nextProvisionFailedStep) {
-        getSharedPreferences(context).edit().putLong(KEY_NEXT_PROVISION_FAILED_STEP_TIME_MILLIS,
-                nextProvisionFailedStep).apply();
-    }
-
-    @CurrentTimeMillisLong
-    static long getResetDeviceTimeMillis(Context context) {
-        return getSharedPreferences(context).getLong(KEY_RESET_DEVICE_TIME_MILLIS, 0L);
-    }
-
-    static void setResetDeviceTImeMillis(Context context,
-            @CurrentTimeMillisLong long resetDeviceTime) {
-        getSharedPreferences(context).edit().putLong(KEY_RESET_DEVICE_TIME_MILLIS,
-                resetDeviceTime).apply();
-    }
-
     static void clear(Context context) {
         if (!Build.isDebuggable()) {
             throw new SecurityException("Clear is not allowed in non-debuggable build!");
@@ -247,22 +196,15 @@ final class GlobalParameters {
                         + "%s: %s\n"    // need_check_in:
                         + "%s: %s\n"    // registered_device_id:
                         + "%s: %s\n"    // forced_provision:
-                        + "%s: %s\n"    // enrollment_token:
                         + "%s: %s\n"    // last-received-provision-state:
-                        + "%s: %s\n"    // boot-time-mills:
-                        + "%s: %s\n"    // next-check-in-time-millis:
-                        + "%s: %s\n"    // resume-provision-time-millis:
-                        + "%s: %s\n",    // next-provision-failed-step-time-millis:
+                        + "%s: %s\n"    // device_state:
+                        + "%s: %s\n",    // is-provision-ready:
                 KEY_NEED_CHECK_IN, needCheckIn(context),
                 KEY_REGISTERED_DEVICE_ID, getRegisteredDeviceId(context),
                 KEY_FORCED_PROVISION, isProvisionForced(context),
-                KEY_ENROLLMENT_TOKEN, getEnrollmentToken(context),
                 KEY_LAST_RECEIVED_PROVISION_STATE, getLastReceivedProvisionState(context),
-                KEY_BOOT_TIME_MILLS, getBootTimeMillis(context),
-                KEY_NEXT_CHECK_IN_TIME_MILLIS, getNextCheckInTimeMillis(context),
-                KEY_RESUME_PROVISION_TIME_MILLIS, getResumeProvisionTimeMillis(context),
-                KEY_NEXT_PROVISION_FAILED_STEP_TIME_MILLIS,
-                getNextProvisionFailedStepTimeMills(context)
+                KEY_DEVICE_STATE, getDeviceState(context),
+                KEY_IS_PROVISION_READY, isProvisionReady(context)
         ));
     }
 }

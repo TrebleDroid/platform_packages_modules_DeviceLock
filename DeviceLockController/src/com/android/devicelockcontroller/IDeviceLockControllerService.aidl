@@ -38,6 +38,15 @@ oneway interface IDeviceLockControllerService {
     const String KEY_CLEAR_DEVICE_RESULT = "KEY_CLEAR_DEVICE_RESULT";
     void clearDeviceRestrictions(in RemoteCallback callback);
 
+    const String KEY_ON_USER_STARTING_RESULT = "KEY_ON_USER_STARTING_RESULT";
+    void onUserStarting(in RemoteCallback callback);
+
     const String KEY_ON_USER_SWITCHING_RESULT = "KEY_ON_USER_SWITCHING_RESULT";
     void onUserSwitching(in RemoteCallback callback);
+
+    const String KEY_ON_USER_UNLOCKED_RESULT = "KEY_ON_USER_UNLOCKED_RESULT";
+    void onUserUnlocked(in RemoteCallback callback);
+
+    const String KEY_ON_KIOSK_APP_CRASHED_RESULT = "KEY_ON_KIOSK_APP_CRASHED_RESULT";
+    void onKioskAppCrashed(in RemoteCallback callback);
 }

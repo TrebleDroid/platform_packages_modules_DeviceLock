@@ -16,6 +16,8 @@
 
 package com.android.devicelockcontroller.storage;
 
+import static com.android.devicelockcontroller.policy.FinalizationControllerImpl.FinalizationState.FINALIZED;
+
 import static com.google.common.truth.Truth.assertThat;
 
 import android.content.Context;
@@ -65,15 +67,6 @@ public final class GlobalParametersTest extends AbstractGlobalParametersTestBase
     }
 
     @Test
-    public void getEnrollmentToken_shouldReturnExpectedResult() {
-        assertThat(GlobalParameters.getEnrollmentToken(mContext)).isNull();
-
-        GlobalParameters.setEnrollmentToken(mContext, ENROLLMENT_TOKEN);
-
-        assertThat(GlobalParameters.getEnrollmentToken(mContext)).isEqualTo(ENROLLMENT_TOKEN);
-    }
-
-    @Test
     public void getLastReceivedProvisionState_shouldReturnExpectedResult() {
         assertThat(GlobalParameters.getLastReceivedProvisionState(mContext)).isNotEqualTo(
                 LAST_RECEIVED_PROVISION_STATE);
@@ -85,43 +78,11 @@ public final class GlobalParametersTest extends AbstractGlobalParametersTestBase
     }
 
     @Test
-    public void getBootTimeMillis_returnTestTimestamp() {
-        assertThat(GlobalParameters.getBootTimeMillis(mContext)).isNotEqualTo(TEST_TIMESTAMP);
+    public void getFinalizationState_shouldReturnExpectedResult() {
+        assertThat(GlobalParameters.getFinalizationState(mContext)).isNotEqualTo(FINALIZED);
 
-        GlobalParameters.setBootTimeMillis(mContext, TEST_TIMESTAMP);
+        GlobalParameters.setFinalizationState(mContext, FINALIZED);
 
-        assertThat(GlobalParameters.getBootTimeMillis(mContext)).isEqualTo(TEST_TIMESTAMP);
-    }
-
-    @Test
-    public void getNextCheckInTimeMillis_returnTestTimestamp() {
-        assertThat(GlobalParameters.getNextCheckInTimeMillis(mContext)).isNotEqualTo(
-                TEST_TIMESTAMP);
-
-        GlobalParameters.setNextCheckInTimeMillis(mContext, TEST_TIMESTAMP);
-
-        assertThat(GlobalParameters.getNextCheckInTimeMillis(mContext)).isEqualTo(TEST_TIMESTAMP);
-    }
-
-    @Test
-    public void getResumeProvisionTimeMillis_returnTestTimestamp() {
-        assertThat(GlobalParameters.getResumeProvisionTimeMillis(mContext)).isNotEqualTo(
-                TEST_TIMESTAMP);
-
-        GlobalParameters.setResumeProvisionTimeMillis(mContext, TEST_TIMESTAMP);
-
-        assertThat(GlobalParameters.getResumeProvisionTimeMillis(mContext)).isEqualTo(
-                TEST_TIMESTAMP);
-    }
-
-    @Test
-    public void getNextProvisionFailedStepTimeMills_returnTestTimestamp() {
-        assertThat(GlobalParameters.getNextProvisionFailedStepTimeMills(mContext)).isNotEqualTo(
-                TEST_TIMESTAMP);
-
-        GlobalParameters.setNextProvisionFailedStepTimeMills(mContext, TEST_TIMESTAMP);
-
-        assertThat(GlobalParameters.getNextProvisionFailedStepTimeMills(mContext)).isEqualTo(
-                TEST_TIMESTAMP);
+        assertThat(GlobalParameters.getFinalizationState(mContext)).isEqualTo(FINALIZED);
     }
 }

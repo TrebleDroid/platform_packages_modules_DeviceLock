@@ -16,20 +16,6 @@
 
 package com.android.devicelockcontroller.policy;
 
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.CLEARED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.KIOSK_PROVISIONED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.LOCKED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PROVISION_FAILED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PROVISION_IN_PROGRESS;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PROVISION_PAUSED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PROVISION_SUCCEEDED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PSEUDO_LOCKED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PSEUDO_UNLOCKED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNLOCKED;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNPROVISIONED;
-
-import android.content.Context;
 import android.os.OutcomeReceiver;
 
 import androidx.concurrent.futures.CallbackToFutureAdapter;
@@ -43,37 +29,38 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 
+import java.util.concurrent.Executor;
+
 /** Handles kiosk app role. */
 public final class RolePolicyHandler implements PolicyHandler {
     private static final String TAG = "RolePolicyHandler";
 
-    private final Context mContext;
     private final SystemDeviceLockManager mSystemDeviceLockManager;
     private final SetupParametersClientInterface mSetupParametersClient;
+    private final Executor mBgExecutor;
 
-    RolePolicyHandler(Context context, SystemDeviceLockManager systemDeviceLockManager) {
-        mContext = context;
+    RolePolicyHandler(SystemDeviceLockManager systemDeviceLockManager, Executor bgExecutor) {
         mSystemDeviceLockManager = systemDeviceLockManager;
+        mBgExecutor = bgExecutor;
         mSetupParametersClient = SetupParametersClient.getInstance();
     }
 
-    private ListenableFuture<@ResultType Integer>
-            getAddFinancedDeviceLockKioskRoleFuture(String packageName) {
+    private ListenableFuture<Boolean> getAddFinancedDeviceLockKioskRoleFuture(String packageName) {
         return CallbackToFutureAdapter.getFuture(
                 completer -> {
                     mSystemDeviceLockManager.addFinancedDeviceKioskRole(packageName,
-                            mContext.getMainExecutor(),
+                            mBgExecutor,
                             new OutcomeReceiver<>() {
                                 @Override
                                 public void onResult(Void result) {
-                                    completer.set(SUCCESS);
+                                    completer.set(true);
                                 }
 
                                 @Override
                                 public void onError(Exception ex) {
                                     LogUtil.e(TAG, "Failed to add financed device kiosk role",
                                             ex);
-                                    completer.set(FAILURE);
+                                    completer.set(false);
                                 }
                             });
                     // Used only for debugging.
@@ -81,32 +68,31 @@ public final class RolePolicyHandler implements PolicyHandler {
                 });
     }
 
-    private ListenableFuture<@ResultType Integer>
-            getAddFinancedDeviceLockKioskRoleFuture() {
+    private ListenableFuture<Boolean> getAddFinancedDeviceLockKioskRoleFuture() {
         return Futures.transformAsync(mSetupParametersClient.getKioskPackage(),
                 kioskPackageName -> kioskPackageName == null
-                        ? Futures.immediateFuture(FAILURE)
+                        ? Futures.immediateFuture(false)
                         : getAddFinancedDeviceLockKioskRoleFuture(kioskPackageName),
                 MoreExecutors.directExecutor());
     }
 
-    private ListenableFuture<@ResultType Integer>
-            getRemoveFinancedDeviceLockKioskRoleFuture(String packageName) {
+    private ListenableFuture<Boolean> getRemoveFinancedDeviceLockKioskRoleFuture(
+            String packageName) {
         return CallbackToFutureAdapter.getFuture(
                 completer -> {
                     mSystemDeviceLockManager.removeFinancedDeviceKioskRole(packageName,
-                            mContext.getMainExecutor(),
+                            mBgExecutor,
                             new OutcomeReceiver<>() {
                                 @Override
                                 public void onResult(Void result) {
-                                    completer.set(SUCCESS);
+                                    completer.set(true);
                                 }
 
                                 @Override
                                 public void onError(Exception ex) {
                                     LogUtil.e(TAG, "Failed to remove financed device kiosk role",
                                             ex);
-                                    completer.set(FAILURE);
+                                    completer.set(false);
                                 }
                             });
                     // Used only for debugging.
@@ -114,35 +100,21 @@ public final class RolePolicyHandler implements PolicyHandler {
                 });
     }
 
-    private ListenableFuture<@ResultType Integer>
-            getRemoveFinancedDeviceLockKioskRoleFuture() {
+    private ListenableFuture<Boolean> getRemoveFinancedDeviceLockKioskRoleFuture() {
         return Futures.transformAsync(mSetupParametersClient.getKioskPackage(),
                 kioskPackageName -> kioskPackageName == null
-                        ? Futures.immediateFuture(FAILURE)
+                        ? Futures.immediateFuture(false)
                         : getRemoveFinancedDeviceLockKioskRoleFuture(kioskPackageName),
                 MoreExecutors.directExecutor());
     }
 
     @Override
-    public ListenableFuture<@ResultType Integer> setPolicyForState(@DeviceState int state) {
-        switch (state) {
-            case UNPROVISIONED:
-            case KIOSK_PROVISIONED:
-            case UNLOCKED:
-            case LOCKED:
-            case PROVISION_IN_PROGRESS:
-            case PROVISION_PAUSED:
-            case PROVISION_FAILED:
-            case PSEUDO_LOCKED:
-            case PSEUDO_UNLOCKED:
-                return Futures.immediateFuture(SUCCESS);
-            case PROVISION_SUCCEEDED:
-                return getAddFinancedDeviceLockKioskRoleFuture();
-            case CLEARED:
-                return getRemoveFinancedDeviceLockKioskRoleFuture();
-            default:
-                return Futures.immediateFailedFuture(
-                        new IllegalStateException(String.valueOf(state)));
-        }
+    public ListenableFuture<Boolean> onProvisioned() {
+        return getAddFinancedDeviceLockKioskRoleFuture();
+    }
+
+    @Override
+    public ListenableFuture<Boolean> onCleared() {
+        return getRemoveFinancedDeviceLockKioskRoleFuture();
     }
 }

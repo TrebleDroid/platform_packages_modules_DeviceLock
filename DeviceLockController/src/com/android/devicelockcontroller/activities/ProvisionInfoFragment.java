@@ -16,16 +16,11 @@
 
 package com.android.devicelockcontroller.activities;
 
-import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_FINANCING_DEFERRED_PROVISIONING;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_FINANCING_PROVISIONING;
-import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_FINANCING_SECONDARY_USER_PROVISIONING;
-import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_SUBSIDY_DEFERRED_PROVISIONING;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_SUBSIDY_PROVISIONING;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import android.Manifest;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -48,12 +43,11 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.devicelockcontroller.R;
-import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
-import com.android.devicelockcontroller.receivers.ResumeProvisionReceiver;
+import com.android.devicelockcontroller.policy.ProvisionHelper;
+import com.android.devicelockcontroller.policy.ProvisionHelperImpl;
 import com.android.devicelockcontroller.util.LogUtil;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
@@ -62,16 +56,7 @@ import java.util.Objects;
 public final class ProvisionInfoFragment extends Fragment {
 
     private static final String TAG = "ProvisionInfoFragment";
-
-    private ActivityResultLauncher<String> mRequestPermissionLauncher =
-            registerForActivityResult(new ActivityResultContracts.RequestPermission(),
-                    isGranted -> {
-                        // According to b/289520962#comment3, we just let the scheduled work resume
-                        // the enrollment when the time is up, and don't show the notification, if
-                        // the user doesn't grant the permission to the app.
-                        createNotificationAndCloseActivity();
-                    }
-            );
+    private ActivityResultLauncher<String> mResultLauncher;
 
     @Nullable
     @Override
@@ -86,29 +71,13 @@ public final class ProvisionInfoFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ProvisionInfoViewModel viewModel;
-        boolean isDeferredProvisioning = false;
+        ViewModelProvider viewModelProvider = new ViewModelProvider(this);
         switch (Objects.requireNonNull(getActivity()).getIntent().getAction()) {
             case ACTION_START_DEVICE_FINANCING_PROVISIONING:
-                viewModel = new ViewModelProvider(this).get(
-                        DeviceFinancingProvisionInfoViewModel.class);
-                break;
-            case ACTION_START_DEVICE_FINANCING_DEFERRED_PROVISIONING:
-                viewModel = new ViewModelProvider(this).get(
-                        DeviceFinancingDeferredProvisionInfoViewModel.class);
-                isDeferredProvisioning = true;
-                break;
-            case ACTION_START_DEVICE_FINANCING_SECONDARY_USER_PROVISIONING:
-                viewModel = new ViewModelProvider(this).get(
-                        DeviceFinancingSecondaryUserProvisionInfoViewModel.class);
+                viewModel = viewModelProvider.get(DeviceFinancingProvisionInfoViewModel.class);
                 break;
             case ACTION_START_DEVICE_SUBSIDY_PROVISIONING:
-                viewModel = new ViewModelProvider(this).get(
-                        DeviceSubsidyProvisionInfoViewModel.class);
-                break;
-            case ACTION_START_DEVICE_SUBSIDY_DEFERRED_PROVISIONING:
-                viewModel = new ViewModelProvider(this).get(
-                        DeviceSubsidyDeferredProvisionInfoViewModel.class);
-                isDeferredProvisioning = true;
+                viewModel = viewModelProvider.get(DeviceSubsidyProvisionInfoViewModel.class);
                 break;
             default:
                 LogUtil.e(TAG, "Unknown action is received, exiting");
@@ -120,8 +89,7 @@ public final class ProvisionInfoFragment extends Fragment {
             LogUtil.e(TAG, "Could not find provision info RecyclerView, should not reach here.");
             return;
         }
-        ProvisionInfoListAdapter adapter = new ProvisionInfoListAdapter(viewModel,
-                getViewLifecycleOwner());
+        ProvisionInfoListAdapter adapter = new ProvisionInfoListAdapter(viewModel);
         viewModel.mProvisionInfoListLiveData.observe(getViewLifecycleOwner(),
                 adapter::submitList);
         recyclerView.setAdapter(adapter);
@@ -157,69 +125,57 @@ public final class ProvisionInfoFragment extends Fragment {
                 });
         Button next = view.findViewById(R.id.button_next);
         checkNotNull(next);
-        if (isDeferredProvisioning) {
-            next.setText(R.string.start);
-            DeviceLockNotificationManager.cancelDeferredProvisioningNotification(requireContext());
-            viewModel.mDeviceState.observe(getViewLifecycleOwner(),
-                    deviceState -> {
-                        LogUtil.d(TAG, "DeviceState observer, deviceState:" + deviceState);
-                        if (DeviceState.PROVISION_PAUSED == deviceState) {
-                            int notificationPermission =
-                                    ContextCompat.checkSelfPermission(requireContext(),
-                                            Manifest.permission.POST_NOTIFICATIONS);
-                            if (PackageManager.PERMISSION_GRANTED == notificationPermission) {
-                                createNotificationAndCloseActivity();
-                            } else {
-                                mRequestPermissionLauncher.launch(
-                                        Manifest.permission.POST_NOTIFICATIONS);
-                            }
-                        }
-                    });
-        }
-        next.setOnClickListener(
-                v -> {
-                    startActivity(new Intent(getContext(), ProvisioningActivity.class));
+        Context context = requireContext().getApplicationContext();
+        viewModel.mIsMandatoryLiveData.observe(this,
+                isMandatory -> {
+                    if (!isMandatory) {
+                        next.setText(R.string.start);
+                        DeviceLockNotificationManager.cancelDeferredProvisioningNotification(
+                                context);
+                    }
+                    next.setVisibility(View.VISIBLE);
                 });
+        next.setOnClickListener(
+                v -> startActivity(new Intent(context, ProvisioningActivity.class)));
+
+        ProvisionHelper provisionHelper = new ProvisionHelperImpl(context,
+                ((PolicyObjectsInterface) context).getProvisionStateController());
+        mResultLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(),
+                isGranted -> provisionHelper.pauseProvision());
         updatePreviousButton(checkNotNull(view.findViewById(R.id.button_previous)), viewModel,
-                isDeferredProvisioning);
+                provisionHelper);
     }
 
     private void updatePreviousButton(Button previous, ProvisionInfoViewModel viewModel,
-            boolean isDeferredProvisioning) {
-        if (!isDeferredProvisioning) {
-            previous.setVisibility(View.GONE);
-            return;
-        }
-        previous.setText(R.string.do_it_in_one_hour);
-        previous.setVisibility(View.VISIBLE);
+            ProvisionHelper provisionHelper) {
+        viewModel.mIsMandatoryLiveData.observe(this,
+                isMandatory -> {
+                    if (!isMandatory) {
+                        previous.setText(R.string.do_it_in_one_hour);
+                        previous.setVisibility(View.VISIBLE);
+                    }
+                });
+
 
         viewModel.mIsProvisionForcedLiveData.observe(getViewLifecycleOwner(),
                 isProvisionForced -> {
                     // Allow the user to defer provisioning only when provisioning is not forced.
                     previous.setEnabled(!isProvisionForced);
                     if (!isProvisionForced) {
-                        previous.setOnClickListener(getOnClickListener());
+                        previous.setOnClickListener(
+                                v -> {
+                                    int notificationPermission =
+                                            ContextCompat.checkSelfPermission(requireContext(),
+                                                    Manifest.permission.POST_NOTIFICATIONS);
+                                    if (PackageManager.PERMISSION_GRANTED
+                                            == notificationPermission) {
+                                        provisionHelper.pauseProvision();
+                                    } else {
+                                        mResultLauncher.launch(
+                                                Manifest.permission.POST_NOTIFICATIONS);
+                                    }
+                                });
                     }
                 });
-    }
-
-    private View.OnClickListener getOnClickListener() {
-        return v -> ((PolicyObjectsInterface) requireContext().getApplicationContext())
-                .getSetupController().delaySetup();
-    }
-
-    private void createNotificationAndCloseActivity() {
-        LogUtil.d(TAG, "createNotificationAndCloseActivity");
-        Context context = requireContext();
-
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                context,
-                /* requestCode= */ 0,
-                new Intent(context, ResumeProvisionReceiver.class),
-                PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
-        LocalDateTime resumeDateTime = LocalDateTime.now().plusHours(1);
-        DeviceLockNotificationManager.sendDeferredProvisioningNotification(context, resumeDateTime,
-                pendingIntent);
-        getActivity().finish();
     }
 }

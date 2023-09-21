@@ -16,24 +16,17 @@
 
 package com.android.devicelockcontroller.receivers;
 
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent.PROVISION_RESUME;
-import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.PROVISION_IN_PROGRESS;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
-import com.android.devicelockcontroller.util.LogUtil;
-
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.MoreExecutors;
+import com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionEvent;
+import com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState;
 
 /**
- * A broadcast receiver to trigger {@link DeviceStateController.DeviceEvent#PROVISION_RESUME} and
- * change state to {@link DeviceStateController.DeviceState#PROVISION_IN_PROGRESS}
+ * A broadcast receiver to trigger {@link ProvisionEvent#PROVISION_RESUME} and change state to
+ * {@link ProvisionState#PROVISION_IN_PROGRESS}
  */
 public final class ResumeProvisionReceiver extends BroadcastReceiver {
 
@@ -45,27 +38,7 @@ public final class ResumeProvisionReceiver extends BroadcastReceiver {
                 intent.getComponent().getClassName())) {
             throw new IllegalArgumentException("Can not handle implicit intent!");
         }
-        DeviceStateController stateController =
-                ((PolicyObjectsInterface) context.getApplicationContext()).getStateController();
-        Futures.addCallback(stateController.setNextStateForEvent(PROVISION_RESUME),
-                new FutureCallback<>() {
-                    @Override
-                    public void onSuccess(Integer newState) {
-                        LogUtil.v(TAG, "DeviceState is: " + newState);
-                        if (PROVISION_IN_PROGRESS != newState) {
-                            onFailure(new IllegalStateException(
-                                    "New state is not PROVISION_IN_PROGRESS. New state is: "
-                                            + newState));
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Throwable t) {
-                        throw new RuntimeException(
-                                "Failed to transit state from PROVISION_PAUSED to "
-                                        + "PROVISION_IN_PROGRESS",
-                                t);
-                    }
-                }, MoreExecutors.directExecutor());
+        ((PolicyObjectsInterface) context.getApplicationContext()).getProvisionStateController()
+                .postSetNextStateForEventRequest(ProvisionEvent.PROVISION_RESUME);
     }
 }

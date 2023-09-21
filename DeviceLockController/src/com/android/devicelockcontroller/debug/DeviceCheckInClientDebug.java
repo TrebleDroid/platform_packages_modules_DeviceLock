@@ -29,6 +29,7 @@ import androidx.annotation.Nullable;
 import com.android.devicelockcontroller.common.DeviceId;
 import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceCheckInStatus;
 import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState;
+import com.android.devicelockcontroller.common.DeviceLockConstants.ProvisionFailureReason;
 import com.android.devicelockcontroller.common.DeviceLockConstants.ProvisioningType;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrpcResponse;
@@ -153,8 +154,9 @@ public final class DeviceCheckInClientDebug extends DeviceCheckInClient {
      * Reports the current provision state of the device.
      */
     @Override
-    public ReportDeviceProvisionStateGrpcResponse reportDeviceProvisionState(int reasonOfFailure,
-            int lastReceivedProvisionState, boolean isSuccessful) {
+    public ReportDeviceProvisionStateGrpcResponse reportDeviceProvisionState(
+            int lastReceivedProvisionState, boolean isSuccessful,
+            @ProvisionFailureReason int reason) {
         return new ReportDeviceProvisionStateGrpcResponse() {
             @Override
             @DeviceProvisionState
@@ -162,13 +164,6 @@ public final class DeviceCheckInClientDebug extends DeviceCheckInClient {
                 return DebugLogUtil.logAndReturn(TAG, SystemProperties.getInt(
                         "debug.devicelock.checkin.next-provision-state",
                         PROVISION_STATE_UNSPECIFIED));
-            }
-
-            @Nullable
-            @Override
-            public String getEnrollmentToken() {
-                // Not useful in local testing setup.
-                return null;
             }
 
             @Override

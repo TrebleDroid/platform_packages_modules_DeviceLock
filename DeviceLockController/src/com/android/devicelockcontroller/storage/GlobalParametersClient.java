@@ -18,7 +18,6 @@ package com.android.devicelockcontroller.storage;
 
 import static com.android.devicelockcontroller.storage.IGlobalParametersService.Stub.asInterface;
 
-import android.annotation.CurrentTimeMillisLong;
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
@@ -30,6 +29,8 @@ import androidx.annotation.VisibleForTesting;
 
 import com.android.devicelockcontroller.DeviceLockControllerApplication;
 import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState;
+import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
+import com.android.devicelockcontroller.policy.FinalizationControllerImpl.FinalizationState;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
@@ -139,6 +140,29 @@ public final class GlobalParametersClient extends DlcClient {
     }
 
     /**
+     * Checks if provision is ready.
+     *
+     * @return true if device is ready to be provisioned.
+     */
+    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
+    public ListenableFuture<Boolean> isProvisionReady() {
+        return call(() -> asInterface(getService()).isProvisionReady());
+    }
+
+    /**
+     * Sets the value of whether this device is ready for provision.
+     *
+     * @param isProvisionReady new state of whether the device is ready for provision.
+     */
+    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
+    public ListenableFuture<Void> setProvisionReady(boolean isProvisionReady) {
+        return call(() -> {
+            asInterface(getService()).setProvisionReady(isProvisionReady);
+            return null;
+        });
+    }
+
+    /**
      * Gets the unique identifier that is registered to DeviceLock backend server.
      *
      * @return The registered device unique identifier; null if device has never checked in with
@@ -187,25 +211,47 @@ public final class GlobalParametersClient extends DlcClient {
     }
 
     /**
-     * Get the enrollment token assigned by the Device Lock backend server.
+     * Gets the current device state.
      *
-     * @return A string value of the enrollment token.
+     * @return current device state
      */
-    @Nullable
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
-    public ListenableFuture<String> getEnrollmentToken() {
-        return call(() -> asInterface(getService()).getEnrollmentToken());
+    public ListenableFuture<@DeviceState Integer> getDeviceState() {
+        return call(() -> asInterface(getService()).getDeviceState());
     }
 
     /**
-     * Set the enrollment token assigned by the Device Lock backend server.
+     * Sets the current device state.
      *
-     * @param token The string value of the enrollment token.
+     * @param state New state.
      */
     @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
-    public ListenableFuture<Void> setEnrollmentToken(String token) {
+    public ListenableFuture<Void> setDeviceState(@DeviceState int state) {
         return call(() -> {
-            asInterface(getService()).setEnrollmentToken(token);
+            asInterface(getService()).setDeviceState(state);
+            return null;
+        });
+    }
+
+    /**
+     * Gets the current {@link FinalizationState}.
+     *
+     * @return current finalization state
+     */
+    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
+    public ListenableFuture<@FinalizationState Integer> getFinalizationState() {
+        return call(() -> asInterface(getService()).getFinalizationState());
+    }
+
+    /**
+     * Sets the current {@link FinalizationState}.
+     *
+     * @param state new finalization state
+     */
+    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
+    public ListenableFuture<Void> setFinalizationState(@FinalizationState int state) {
+        return call(() -> {
+            asInterface(getService()).setFinalizationState(state);
             return null;
         });
     }
@@ -231,144 +277,4 @@ public final class GlobalParametersClient extends DlcClient {
             return null;
         });
     }
-
-    /**
-     * Get the number of days until device reset due to provision failure. The default value is
-     * {@link Integer#MAX_VALUE} when device is not expected to reset.
-     */
-    public ListenableFuture<Integer> getDaysLeftUntilReset() {
-        return call(() -> asInterface(getService()).getDaysLeftUntilReset());
-    }
-
-    /**
-     * Set the number of days until device reset due to provision failure.
-     *
-     * @param days the number of days.
-     */
-    public ListenableFuture<Void> setDaysLeftUntilReset(int days) {
-        return call(() -> {
-            asInterface(getService()).setDaysLeftUntilReset(days);
-            return null;
-        });
-    }
-
-    /**
-     * Get the time when device boots.
-     *
-     * @return the difference, measured in milliseconds, between device boots and midnight,
-     * January 1, 1970 UTC.
-     */
-    public ListenableFuture<Long> getBootTimeMillis() {
-        return call(() -> asInterface(getService()).getBootTimeMillis());
-    }
-
-    /**
-     * Set the time when device boots.
-     *
-     * @param bootTime the difference, measured in milliseconds, between device boots and
-     *                 midnight, January 1, 1970 UTC.
-     */
-    public ListenableFuture<Void> setBootTimeMillis(@CurrentTimeMillisLong long bootTime) {
-        return call(() -> {
-            asInterface(getService()).setBootTimeMillis(bootTime);
-            return null;
-        });
-    }
-
-    /**
-     * Get the next check-in time.
-     *
-     * @return the difference, measured in milliseconds, between next check-in and midnight, January
-     * 1, 1970 UTC.
-     */
-    public ListenableFuture<Long> getNextCheckInTimeMillis() {
-        return call(() -> asInterface(getService()).getNextCheckInTimeMillis());
-    }
-
-    /**
-     * Set the next check-in time.
-     *
-     * @param nextCheckInTime the difference, measured in milliseconds, between next check-in and
-     *                        midnight, January 1, 1970 UTC.
-     */
-    public ListenableFuture<Void> setNextCheckInTimeMillis(
-            @CurrentTimeMillisLong long nextCheckInTime) {
-        return call(() -> {
-            asInterface(getService()).setNextCheckInTimeMillis(nextCheckInTime);
-            return null;
-        });
-    }
-
-    /**
-     * Get the time when provision should be resumed.
-     *
-     * @return the difference, measured in milliseconds, between provision should be resumed and
-     * midnight, January 1, 1970 UTC.
-     */
-    public ListenableFuture<Long> getResumeProvisionTimeMillis() {
-        return call(() -> asInterface(getService()).getResumeProvisionTimeMillis());
-    }
-
-    /**
-     * Set the time when provision should be resumed.
-     *
-     * @param resumeProvisionTime the difference, measured in milliseconds, between provision should
-     *                            be resumed and midnight, January 1, 1970 UTC.
-     */
-    public ListenableFuture<Void> setResumeProvisionTimeMillis(
-            @CurrentTimeMillisLong long resumeProvisionTime) {
-        return call(() -> {
-            asInterface(getService()).setResumeProvisionTimeMillis(resumeProvisionTime);
-            return null;
-        });
-    }
-
-    /**
-     * Get the time when next step in the provision failure flow should happen.
-     *
-     * @return the difference, measured in milliseconds, between next step in failure flow
-     * happens and midnight, January 1, 1970 UTC.
-     */
-    public ListenableFuture<Long> getNextProvisionFailedStepTimeMills() {
-        return call(() -> asInterface(getService()).getNextProvisionFailedStepTimeMills());
-    }
-
-    /**
-     * Set the time when next step in the provision failure flow should happen.
-     *
-     * @param nextProvisionFailedStep the difference, measured in milliseconds, between next step in
-     *                                failure flow happens and midnight, January 1, 1970 UTC.
-     */
-    public ListenableFuture<Void> setNextProvisionFailedStepTimeMills(
-            @CurrentTimeMillisLong long nextProvisionFailedStep) {
-        return call(() -> {
-            asInterface(getService()).setNextProvisionFailedStepTimeMills(nextProvisionFailedStep);
-            return null;
-        });
-    }
-
-    /**
-     * Get the time when factory reset device should happen.
-     *
-     * @return the difference, measured in milliseconds, between device factory reset happens and
-     * midnight, January 1, 1970 UTC.
-     */
-    public ListenableFuture<Long> getResetDeviceTimeMillis() {
-        return call(() -> asInterface(getService()).getResetDeviceTimeMillis());
-    }
-
-    /**
-     * Set the time when factory reset device should happen.
-     *
-     * @param resetDeviceTime the difference, measured in milliseconds, between device factory reset
-     *                        happens and midnight, January 1, 1970 UTC.
-     */
-    public ListenableFuture<Void> setResetDeviceTImeMillis(
-            @CurrentTimeMillisLong long resetDeviceTime) {
-        return call(() -> {
-            asInterface(getService()).setResetDeviceTImeMillis(resetDeviceTime);
-            return null;
-        });
-    }
-
 }

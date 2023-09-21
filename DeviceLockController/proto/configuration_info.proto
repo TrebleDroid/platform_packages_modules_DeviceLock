@@ -21,12 +21,6 @@ package devicelockcontroller;
 option java_package = "com.android.devicelockcontroller.proto";
 option java_multiple_files = true;
 
-enum ConfigurationType {
-  CONFIGURATION_TYPE_UNSPECIFIED = 0;
-  CONFIGURATION_TYPE_FINANCED = 1;
-  CONFIGURATION_TYPE_SUBSIDY = 2;
-}
-
 enum ConfigurationStatus {
   CONFIGURATION_STATUS_UNSPECIFIED = 0;
   // The configuration created by a user passed all validation checks and was

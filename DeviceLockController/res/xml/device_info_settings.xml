@@ -18,8 +18,7 @@
                   android:title="@string/settings_screen_title">
 
     <com.android.settingslib.widget.TopIntroPreference
-        android:key="@string/settings_intro_preference_key"
-        android:title="@string/settings_intro"/>
+        android:key="@string/settings_intro_preference_key"/>
 
     <PreferenceCategory android:key="@string/settings_restrictions_category_preference_key"
                         android:order="100"
@@ -34,11 +33,6 @@
                     android:order="120"
                     android:layout_height="wrap_content"
                     android:title="@string/settings_safe_mode"
-                    android:selectable="false" />
-        <Preference android:key="@string/settings_config_date_time_preference_key"
-                    android:order="130"
-                    android:layout_height="wrap_content"
-                    android:title="@string/settings_config_date_time"
                     android:selectable="false" />
         <Preference android:key="@string/settings_developer_options_preference_key"
                     android:order="140"

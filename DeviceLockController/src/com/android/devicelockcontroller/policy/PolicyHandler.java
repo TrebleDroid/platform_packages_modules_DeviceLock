@@ -16,35 +16,39 @@
 
 package com.android.devicelockcontroller.policy;
 
-import androidx.annotation.IntDef;
-
-import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
-
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 /**
- * Interface used for setting policies for a given state.
+ * A PolicyHandler class is responsible for setting certain policy for a certain state.
  */
-public interface PolicyHandler {
-    /** Result Type for operation */
-    @Target(ElementType.TYPE_USE)
-    @IntDef(value = {SUCCESS, FAILURE})
-    @Retention(RetentionPolicy.SOURCE)
-    @interface ResultType {
+interface PolicyHandler {
+
+    default ListenableFuture<Boolean> onProvisioned() {
+        return Futures.immediateFuture(true);
     }
 
-    int SUCCESS = 0;
-    int FAILURE = 1;
+    default ListenableFuture<Boolean> onProvisionInProgress() {
+        return Futures.immediateFuture(true);
+    }
 
-    /**
-     * Sets the policy state based on the new state. Throws SecurityException when the app is not
-     * privileged.
-     */
-    @ResultType
-    ListenableFuture<@ResultType Integer> setPolicyForState(@DeviceState int state);
+    default ListenableFuture<Boolean> onProvisionPaused() {
+        return Futures.immediateFuture(true);
+    }
+
+    default ListenableFuture<Boolean> onProvisionFailed() {
+        return Futures.immediateFuture(true);
+    }
+
+    default ListenableFuture<Boolean> onLocked() {
+        return Futures.immediateFuture(true);
+    }
+
+    default ListenableFuture<Boolean> onUnlocked() {
+        return Futures.immediateFuture(true);
+    }
+
+    default ListenableFuture<Boolean> onCleared() {
+        return Futures.immediateFuture(true);
+    }
 }

@@ -22,6 +22,8 @@ import android.content.Intent;
 import android.os.IBinder;
 
 import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState;
+import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
+import com.android.devicelockcontroller.policy.FinalizationControllerImpl.FinalizationState;
 import com.android.devicelockcontroller.util.LogUtil;
 
 /**
@@ -55,6 +57,16 @@ public final class GlobalParametersService extends Service {
                 }
 
                 @Override
+                public boolean isProvisionReady() {
+                    return GlobalParameters.isProvisionReady(mContext);
+                }
+
+                @Override
+                public void setProvisionReady(boolean isProvisionReady) {
+                    GlobalParameters.setProvisionReady(mContext, isProvisionReady);
+                }
+
+                @Override
                 public String getRegisteredDeviceId() {
                     return GlobalParameters.getRegisteredDeviceId(mContext);
                 }
@@ -75,13 +87,23 @@ public final class GlobalParametersService extends Service {
                 }
 
                 @Override
-                public String getEnrollmentToken() {
-                    return GlobalParameters.getEnrollmentToken(mContext);
+                public int getDeviceState() {
+                    return GlobalParameters.getDeviceState(mContext);
                 }
 
                 @Override
-                public void setEnrollmentToken(String token) {
-                    GlobalParameters.setEnrollmentToken(mContext, token);
+                public void setDeviceState(@DeviceState int state) {
+                    GlobalParameters.setDeviceState(mContext, state);
+                }
+
+                @Override
+                public @FinalizationState int getFinalizationState() {
+                    return GlobalParameters.getFinalizationState(mContext);
+                }
+
+                @Override
+                public void setFinalizationState(@FinalizationState int state) {
+                    GlobalParameters.setFinalizationState(mContext, state);
                 }
 
                 @Override
@@ -94,68 +116,6 @@ public final class GlobalParametersService extends Service {
                 public void setLastReceivedProvisionState(
                         @DeviceProvisionState int provisionState) {
                     GlobalParameters.setLastReceivedProvisionState(mContext, provisionState);
-                }
-
-                @Override
-                public int getDaysLeftUntilReset() {
-                    return GlobalParameters.getDaysLeftUntilReset(mContext);
-                }
-
-                @Override
-                public void setDaysLeftUntilReset(int days) {
-                    GlobalParameters.setDaysLeftUntilReset(mContext, days);
-                }
-
-                @Override
-                public long getBootTimeMillis() {
-                    return GlobalParameters.getBootTimeMillis(mContext);
-                }
-
-                @Override
-                public void setBootTimeMillis(long bootTime) {
-                    GlobalParameters.setBootTimeMillis(mContext, bootTime);
-                }
-
-                @Override
-                public long getNextCheckInTimeMillis() {
-                    return GlobalParameters.getNextCheckInTimeMillis(mContext);
-                }
-
-                @Override
-                public void setNextCheckInTimeMillis(long nextCheckInTimeMillis) {
-                    GlobalParameters.setNextCheckInTimeMillis(mContext, nextCheckInTimeMillis);
-                }
-
-                @Override
-                public long getResumeProvisionTimeMillis() {
-                    return GlobalParameters.getResumeProvisionTimeMillis(mContext);
-                }
-
-                @Override
-                public void setResumeProvisionTimeMillis(long resumeProvisionTimeMillis) {
-                    GlobalParameters.setResumeProvisionTimeMillis(mContext,
-                            resumeProvisionTimeMillis);
-                }
-
-                @Override
-                public long getNextProvisionFailedStepTimeMills() {
-                    return GlobalParameters.getNextProvisionFailedStepTimeMills(mContext);
-                }
-
-                @Override
-                public void setNextProvisionFailedStepTimeMills(
-                        long nextProvisionFailedStepTimeMills) {
-                    GlobalParameters.setNextProvisionFailedStepTimeMills(mContext,
-                            nextProvisionFailedStepTimeMills);
-                }
-
-                @Override
-                public long getResetDeviceTimeMillis() {
-                    return GlobalParameters.getResetDeviceTimeMillis(mContext);
-                }
-
-                public void setResetDeviceTImeMillis(long resetDeviceTime) {
-                    GlobalParameters.setResetDeviceTImeMillis(mContext, resetDeviceTime);
                 }
             };
 

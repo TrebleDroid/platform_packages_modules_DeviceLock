@@ -34,6 +34,7 @@ import androidx.work.WorkerFactory;
 import androidx.work.WorkerParameters;
 import androidx.work.testing.TestListenableWorkerBuilder;
 
+import com.android.devicelockcontroller.common.DeviceLockConstants;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.IsDeviceInApprovedCountryGrpcResponse;
 
@@ -109,7 +110,9 @@ public final class IsDeviceInApprovedCountryWorkerTest {
     public void doWork_responseIsNotSuccessful_failureResult() {
         when(mResponse.isSuccessful()).thenReturn(false);
         when(mResponse.isDeviceInApprovedCountry()).thenReturn(false);
-        Result expected = Result.failure();
+        Result expected = Result.failure(new Data.Builder().putInt(
+                ReportDeviceProvisionStateWorker.KEY_PROVISION_FAILURE_REASON,
+                DeviceLockConstants.ProvisionFailureReason.COUNTRY_INFO_UNAVAILABLE).build());
 
         Result actual = Futures.getUnchecked(mWorker.startWork());
 

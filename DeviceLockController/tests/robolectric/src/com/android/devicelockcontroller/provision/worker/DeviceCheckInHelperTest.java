@@ -16,21 +16,20 @@
 
 package com.android.devicelockcontroller.provision.worker;
 
+import static android.os.Looper.getMainLooper;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.DeviceIdType.DEVICE_ID_TYPE_IMEI;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.DeviceIdType.DEVICE_ID_TYPE_MEID;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.READY_FOR_PROVISION;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.RETRY_CHECK_IN;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.STOP_CHECK_IN;
-
 import static com.google.common.truth.Truth.assertThat;
-
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.robolectric.annotation.LooperMode.Mode.LEGACY;
 
+import android.content.Intent;
 import android.os.SystemClock;
 import android.telephony.TelephonyManager;
 import android.util.ArraySet;
@@ -41,16 +40,14 @@ import androidx.work.Configuration;
 import androidx.work.testing.SynchronousExecutor;
 import androidx.work.testing.WorkManagerTestInitHelper;
 
-import com.android.devicelockcontroller.AbstractDeviceLockControllerScheduler;
-import com.android.devicelockcontroller.DeviceLockControllerScheduler;
 import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
 import com.android.devicelockcontroller.common.DeviceId;
 import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceCheckInStatus;
-import com.android.devicelockcontroller.policy.DeviceStateController;
-import com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent;
-import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
+import com.android.devicelockcontroller.policy.FinalizationController;
 import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrpcResponse;
 import com.android.devicelockcontroller.provision.grpc.ProvisioningConfiguration;
+import com.android.devicelockcontroller.receivers.ProvisionReadyReceiver;
+import com.android.devicelockcontroller.schedule.DeviceLockControllerScheduler;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
 
 import com.google.common.util.concurrent.Futures;
@@ -102,16 +99,21 @@ public final class DeviceCheckInHelperTest {
     );
     static final int DEVICE_ID_TYPE_BITMAP =
             (1 << DEVICE_ID_TYPE_IMEI) | (1 << DEVICE_ID_TYPE_MEID);
+
+    private FinalizationController mFinalizationController;
     private DeviceCheckInHelper mHelper;
 
     private ShadowTelephonyManager mTelephonyManager;
     private GlobalParametersClient mGlobalParametersClient;
-    private AbstractDeviceLockControllerScheduler mScheduler;
+    private DeviceLockControllerScheduler mScheduler;
 
     @Before
     public void setUp() {
         mTestApplication = ApplicationProvider.getApplicationContext();
-        mScheduler = mock(AbstractDeviceLockControllerScheduler.class);
+        mScheduler = mTestApplication.getDeviceLockControllerScheduler();
+        mFinalizationController = mTestApplication.getFinalizationController();
+        when(mFinalizationController.notifyRestrictionsCleared()).thenReturn(
+                Futures.immediateVoidFuture());
 
         mTelephonyManager = Shadows.shadowOf(
                 mTestApplication.getSystemService(TelephonyManager.class));
@@ -138,38 +140,38 @@ public final class DeviceCheckInHelperTest {
     }
 
     @Test
-    public void testHandleGetDeviceCheckInStatusResponse_stopCheckIn_shouldSetNeedCheckInFalse() {
+    public void testHandleGetDeviceCheckInStatusResponse_stopCheckIn_clearsRestrictions() {
         final GetDeviceCheckInStatusGrpcResponse response = createStopResponse();
 
         assertThat(mHelper.handleGetDeviceCheckInStatusResponse(response,
-                new DeviceLockControllerScheduler(mTestApplication))).isTrue();
-        assertThat(Futures.getUnchecked(mGlobalParametersClient.needCheckIn())).isFalse();
+                mock(DeviceLockControllerScheduler.class))).isTrue();
+        Shadows.shadowOf(getMainLooper()).idle();
+        verify(mFinalizationController).notifyRestrictionsCleared();
     }
 
     @Test
-    public void
-            handleProvisionReadyResponse_validConfiguration_shouldSetStateAndStartLockTaskMode() {
+    public void handleProvisionReadyResponse_validConfiguration_shouldSendBroadcast() {
         GetDeviceCheckInStatusGrpcResponse response = createReadyResponse(TEST_CONFIGURATION);
-        DeviceStateController stateController = mTestApplication.getStateController();
-        when(stateController.setNextStateForEvent(DeviceEvent.PROVISION_READY)).thenReturn(
-                Futures.immediateFuture(DeviceState.PROVISION_SUCCEEDED));
 
-        assertThat(mHelper.handleProvisionReadyResponse(response, stateController)).isTrue();
+        assertThat(mHelper.handleProvisionReadyResponse(response)).isTrue();
 
-        verify(stateController).setNextStateForEvent(eq(DeviceEvent.PROVISION_READY));
-        assertThat(Futures.getUnchecked(mGlobalParametersClient.needCheckIn())).isFalse();
+        assertThat(Futures.getUnchecked(mGlobalParametersClient.isProvisionReady())).isTrue();
+        List<Intent> intents = Shadows.shadowOf(mTestApplication).getBroadcastIntents();
+        assertThat(intents.size()).isEqualTo(1);
+        assertThat(intents.get(0).getComponent().getClassName()).isEqualTo(
+                ProvisionReadyReceiver.class.getName());
     }
 
     @Test
-    public void testHandleProvisionReadyResponse_invalidConfiguration_shouldNotSetState() {
+    public void testHandleProvisionReadyResponse_invalidConfiguration_shouldNotSendBroadcast() {
         GetDeviceCheckInStatusGrpcResponse response = createReadyResponse(
                 /* configuration= */ null);
-        DeviceStateController stateController = mTestApplication.getStateController();
 
-        assertThat(mHelper.handleProvisionReadyResponse(
-                response, stateController)).isFalse();
+        assertThat(mHelper.handleProvisionReadyResponse(response)).isFalse();
 
-        verify(stateController, never()).setNextStateForEvent(eq(DeviceEvent.PROVISION_READY));
+        assertThat(Futures.getUnchecked(mGlobalParametersClient.isProvisionReady())).isFalse();
+        List<Intent> intents = Shadows.shadowOf(mTestApplication).getBroadcastIntents();
+        assertThat(intents.size()).isEqualTo(0);
     }
 
     @Test

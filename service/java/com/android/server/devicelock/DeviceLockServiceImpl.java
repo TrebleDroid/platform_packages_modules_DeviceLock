@@ -72,7 +72,14 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
     private static final String ACTION_DEVICE_LOCK_KIOSK_KEEPALIVE =
             "com.android.devicelock.action.KEEPALIVE";
 
+    // Workaround for timeout while adding the kiosk app as role holder for financing.
+    private static final int MAX_ADD_ROLE_HOLDER_TRIES = 4;
+
     private final Context mContext;
+
+    private final RoleManager mRoleManager;
+    private final TelephonyManager mTelephonyManager;
+    private final AppOpsManager mAppOpsManager;
 
     // Map user id -> DeviceLockControllerConnector
     private final ArrayMap<Integer, DeviceLockControllerConnector> mDeviceLockControllerConnectors;
@@ -84,6 +91,8 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
     // Map user id -> ServiceConnection for kiosk keepalive.
     private final ArrayMap<Integer, KioskKeepaliveServiceConnection>
             mKioskKeepaliveServiceConnections;
+
+    private final DeviceLockPersistentStore mPersistentStore;
 
     // The following should be a SystemApi on AppOpsManager.
     private static final String OPSTR_SYSTEM_EXEMPT_FROM_ACTIVITY_BG_START_RESTRICTION =
@@ -168,11 +177,17 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
     DeviceLockServiceImpl(@NonNull Context context) {
         mContext = context;
 
+        mRoleManager = context.getSystemService(RoleManager.class);
+        mTelephonyManager = context.getSystemService(TelephonyManager.class);
+        mAppOpsManager = context.getSystemService(AppOpsManager.class);
+
         mDeviceLockControllerConnectors = new ArrayMap<>();
 
         mKioskKeepaliveServiceConnections = new ArrayMap<>();
 
         mPackageUtils = new DeviceLockControllerPackageUtils(context);
+
+        mPersistentStore = new DeviceLockPersistentStore();
 
         final StringBuilder errorMessage = new StringBuilder();
         mServiceInfo = mPackageUtils.findService(errorMessage);
@@ -182,8 +197,7 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
         }
 
         if (!mServiceInfo.applicationInfo.enabled) {
-            Slog.w(TAG, "Device Lock Controller is disabled");
-            setDeviceLockControllerPackageDefaultEnabledState(UserHandle.SYSTEM);
+            enableDeviceLockControllerIfNeeded(UserHandle.SYSTEM);
         }
 
         final ComponentName componentName = new ComponentName(mServiceInfo.packageName,
@@ -197,7 +211,15 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
                 Context.RECEIVER_EXPORTED);
     }
 
-    void setDeviceLockControllerPackageDefaultEnabledState(@NonNull UserHandle userHandle) {
+    void enableDeviceLockControllerIfNeeded(@NonNull UserHandle userHandle) {
+        mPersistentStore.readFinalizedState(isFinalized -> {
+            if (!isFinalized) {
+                setDeviceLockControllerPackageDefaultEnabledState(userHandle);
+            }
+        }, mContext.getMainExecutor());
+    }
+
+    private void setDeviceLockControllerPackageDefaultEnabledState(UserHandle userHandle) {
         final String controllerPackageName = mServiceInfo.packageName;
 
         Context controllerContext;
@@ -228,6 +250,21 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
         }
     }
 
+    void onUserStarting(@NonNull UserHandle userHandle) {
+        getDeviceLockControllerConnector(userHandle).onUserStarting(
+                new OutcomeReceiver<>() {
+                    @Override
+                    public void onResult(Void ignored) {
+                        Slog.i(TAG, "User starting reported for: " + userHandle);
+                    }
+
+                    @Override
+                    public void onError(Exception ex) {
+                        Slog.e(TAG, "Exception reporting user starting for: " + userHandle, ex);
+                    }
+                });
+    }
+
     void onUserSwitching(@NonNull UserHandle userHandle) {
         getDeviceLockControllerConnector(userHandle).onUserSwitching(
                 new OutcomeReceiver<>() {
@@ -239,6 +276,21 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
                     @Override
                     public void onError(Exception ex) {
                         Slog.e(TAG, "Exception reporting user switching for: " + userHandle, ex);
+                    }
+                });
+    }
+
+    void onUserUnlocked(@NonNull UserHandle userHandle) {
+        getDeviceLockControllerConnector(userHandle).onUserUnlocked(
+                new OutcomeReceiver<>() {
+                    @Override
+                    public void onResult(Void ignored) {
+                        Slog.i(TAG, "User unlocked reported for: " + userHandle);
+                    }
+
+                    @Override
+                    public void onError(Exception ex) {
+                        Slog.e(TAG, "Exception reporting user unlocked for: " + userHandle, ex);
                     }
                 });
     }
@@ -353,14 +405,13 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
             Slog.e(TAG, "getDeviceId() - Unable to send result to the callback", e);
         }
 
-        final TelephonyManager telephonyManager = mContext.getSystemService(TelephonyManager.class);
-        int activeModemCount = telephonyManager.getActiveModemCount();
+        int activeModemCount = mTelephonyManager.getActiveModemCount();
         List<String> imeiList = new ArrayList<String>();
         List<String> meidList = new ArrayList<String>();
 
         if ((deviceIdTypeBitmap & (1 << DEVICE_ID_TYPE_IMEI)) != 0) {
             for (int i = 0; i < activeModemCount; i++) {
-                String imei = telephonyManager.getImei(i);
+                String imei = mTelephonyManager.getImei(i);
                 if (!TextUtils.isEmpty(imei)) {
                     imeiList.add(imei);
                 }
@@ -369,7 +420,7 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
 
         if ((deviceIdTypeBitmap & (1 << DEVICE_ID_TYPE_MEID)) != 0) {
             for (int i = 0; i < activeModemCount; i++) {
-                String meid = telephonyManager.getMeid(i);
+                String meid = mTelephonyManager.getMeid(i);
                 if (!TextUtils.isEmpty(meid)) {
                     meidList.add(meid);
                 }
@@ -445,10 +496,9 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
         final ArrayMap kioskApps = new ArrayMap<Integer, String>();
 
         final UserHandle userHandle = Binder.getCallingUserHandle();
-        final RoleManager roleManager = mContext.getSystemService(RoleManager.class);
         final long identity = Binder.clearCallingIdentity();
         try {
-            List<String> roleHolders = roleManager.getRoleHoldersAsUser(
+            List<String> roleHolders = mRoleManager.getRoleHoldersAsUser(
                     RoleManager.ROLE_FINANCED_DEVICE_KIOSK, userHandle);
 
             if (!roleHolders.isEmpty()) {
@@ -490,6 +540,24 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
         remoteCallback.sendResult(result);
     }
 
+    private void addFinancedDeviceKioskRoleInternal(@NonNull String packageName,
+            @NonNull RemoteCallback remoteCallback, @NonNull UserHandle userHandle, long identity,
+            int remainingTries) {
+        mRoleManager.addRoleHolderAsUser(RoleManager.ROLE_FINANCED_DEVICE_KIOSK, packageName,
+                MANAGE_HOLDERS_FLAG_DONT_KILL_APP, userHandle,
+                mContext.getMainExecutor(), accepted -> {
+                    if (accepted || remainingTries == 1) {
+                        reportResult(accepted, identity, remoteCallback);
+                    } else {
+                        final int retryNumber = MAX_ADD_ROLE_HOLDER_TRIES - remainingTries + 1;
+                        Slog.w(TAG, "Retrying adding financed device role to kiosk app (retry "
+                                + retryNumber + ")");
+                        addFinancedDeviceKioskRoleInternal(packageName, remoteCallback, userHandle,
+                                identity, remainingTries - 1);
+                    }
+            });
+    }
+
     @Override
     public void addFinancedDeviceKioskRole(@NonNull String packageName,
             @NonNull RemoteCallback remoteCallback) {
@@ -498,12 +566,10 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
         }
 
         final UserHandle userHandle = Binder.getCallingUserHandle();
-        final RoleManager roleManager = mContext.getSystemService(RoleManager.class);
         final long identity = Binder.clearCallingIdentity();
 
-        roleManager.addRoleHolderAsUser(RoleManager.ROLE_FINANCED_DEVICE_KIOSK, packageName,
-                MANAGE_HOLDERS_FLAG_DONT_KILL_APP, userHandle, mContext.getMainExecutor(),
-                accepted -> reportResult(accepted, identity, remoteCallback));
+        addFinancedDeviceKioskRoleInternal(packageName, remoteCallback, userHandle,
+                identity, MAX_ADD_ROLE_HOLDER_TRIES);
 
         Binder.restoreCallingIdentity(identity);
     }
@@ -516,10 +582,9 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
         }
 
         final UserHandle userHandle = Binder.getCallingUserHandle();
-        final RoleManager roleManager = mContext.getSystemService(RoleManager.class);
         final long identity = Binder.clearCallingIdentity();
 
-        roleManager.removeRoleHolderAsUser(RoleManager.ROLE_FINANCED_DEVICE_KIOSK, packageName,
+        mRoleManager.removeRoleHolderAsUser(RoleManager.ROLE_FINANCED_DEVICE_KIOSK, packageName,
                 MANAGE_HOLDERS_FLAG_DONT_KILL_APP, userHandle, mContext.getMainExecutor(),
                 accepted -> reportResult(accepted, identity, remoteCallback));
 
@@ -528,12 +593,11 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
 
     private void setExemption(String packageName, int uid, String appOp, boolean exempt,
             @NonNull RemoteCallback remoteCallback) {
-        final AppOpsManager appOpsManager = mContext.getSystemService(AppOpsManager.class);
         final long identity = Binder.clearCallingIdentity();
 
         final int mode = exempt ? AppOpsManager.MODE_ALLOWED : AppOpsManager.MODE_DEFAULT;
 
-        appOpsManager.setMode(appOp, uid, packageName, mode);
+        mAppOpsManager.setMode(appOp, uid, packageName, mode);
 
         Binder.restoreCallingIdentity(identity);
 
@@ -601,16 +665,17 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
             boolean bound = bind();
 
             if (bound) {
-                getDeviceLockControllerConnector(mUserHandle).lockDevice(new OutcomeReceiver<>() {
-                    @Override
-                    public void onResult(Void result) {
-                        Slog.i(TAG, "Lock task mode started");
-                    }
+                getDeviceLockControllerConnector(mUserHandle)
+                        .onKioskAppCrashed(new OutcomeReceiver<>() {
+                            @Override
+                            public void onResult(Void result) {
+                                Slog.i(TAG, "Notified controller about kiosk app crash");
+                            }
 
-                    @Override
-                    public void onError(Exception ex) {
-                        Slog.e(TAG, "Start lock task mode error: ", ex);
-                    }
+                            @Override
+                            public void onError(Exception ex) {
+                                Slog.e(TAG, "On kiosk app crashed error: ", ex);
+                            }
                 });
             }
 
@@ -693,6 +758,15 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
 
         final Bundle result = new Bundle();
         result.putBoolean(KEY_REMOTE_CALLBACK_RESULT, serviceConnection != null);
+        remoteCallback.sendResult(result);
+    }
+
+    @Override
+    public void setDeviceFinalized(boolean finalized, @NonNull RemoteCallback remoteCallback) {
+        mPersistentStore.scheduleWrite(finalized);
+
+        final Bundle result = new Bundle();
+        result.putBoolean(KEY_REMOTE_CALLBACK_RESULT, true);
         remoteCallback.sendResult(result);
     }
 }

@@ -147,8 +147,10 @@
     <string name="settings_banner_button">Learn more</string>
     <!-- Title of the settings screen. This screen summarize what would happen on the device under a finance program. [CHAR_LIMIT=40]-->
     <string name="settings_screen_title">Financed device info</string>
-    <!-- Top introduction on the Settings screen, summarizing the changes a device provider can make to this device. [CHAR LIMIT=NONE] -->
-    <string name="settings_intro">Your credit provider can change settings and install the Kiosk app on the device.\n\n<xliff:g id="provider name">%1$s</xliff:g> may restrict this device if you don\u2019t make the necessary payments or stop using <xliff:g id="provider name">%1$s</xliff:g>\u2019s SIM.\n\nTo learn more, contact <xliff:g id="provider name">%1$s</xliff:g>.</string>
+    <!-- Top introduction on the Settings screen for device financing use case, summarizing the changes a device provider can make to this device. [CHAR LIMIT=NONE] -->
+    <string name="settings_intro_device_financing"><xliff:g id="provider name">%1$s</xliff:g> can change settings and install the Kiosk app on the device.\n\nIf you miss a payment, <xliff:g id="provider name">%1$s</xliff:g> can restrict your device.\n\nTo learn more, contact <xliff:g id="provider name">%1$s</xliff:g>.</string>
+    <!-- Top introduction on the Settings screen for device subsidy use case, summarizing the changes a credit provider can make to this device. [CHAR LIMIT=NONE] -->
+    <string name="settings_intro_device_subsidy"><xliff:g id="provider name">%1$s</xliff:g> can change settings and install the Kiosk app on the device.\n\n<xliff:g id="provider name">%1$s</xliff:g> may also restrict this device if you miss a payment or stop using <xliff:g id="provider name">%1$s</xliff:g>\u2019s SIM.\n\nTo learn more, contact <xliff:g id="provider name">%1$s</xliff:g>.</string>
     <!-- Key of the settings_intro Preference. translatable="false" -->
     <string name="settings_intro_preference_key">settings_intro_preference_key</string>
     <!-- Section header. This section shows what restrictions will be enforced on the device when it is financed / subsidized. [CHAR LIMIT=60] -->
@@ -163,10 +165,6 @@
     <string name="settings_safe_mode">Reboot your device into safe mode</string>
     <!-- Key of the settings_safe_mode Preference. translatable="false" -->
     <string name="settings_safe_mode_preference_key">settings_safe_mode_preference_key</string>
-    <!-- Label explaining that updating the date and time on the device. [CHAR LIMIT=60] -->
-    <string name="settings_config_date_time">Change date, time, and time zones</string>
-    <!-- Key of the settings_config_date_time Preference. translatable="false" -->
-    <string name="settings_config_date_time_preference_key">settings_config_date_time_preference_key</string>
     <!-- Label explaining that turning on the developer options on the device. [CHAR LIMIT=40]-->
     <string name="settings_developer_options">Use developer options</string>
     <!-- Key of the settings_developer_options Preference. translatable="false" -->

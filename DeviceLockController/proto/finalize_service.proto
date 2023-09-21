@@ -35,9 +35,6 @@ message ReportDeviceProgramCompleteRequest {
   // The device identifier that is registered with the Device Lock server
   // obtained from the Device Lock Check-in service.
   optional string registered_device_identifier = 1;
-  // The enrollment token provided by the Device Lock Check-in service for
-  // future communication post-provisioning.
-  optional string enrollment_token = 2;
 }
 
 message ReportDeviceProgramCompleteResponse {}

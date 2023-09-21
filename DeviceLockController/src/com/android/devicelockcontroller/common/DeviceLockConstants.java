@@ -16,8 +16,6 @@
 
 package com.android.devicelockcontroller.common;
 
-import android.content.Context;
-
 import androidx.annotation.IntDef;
 
 import java.lang.annotation.ElementType;
@@ -27,8 +25,10 @@ import java.lang.annotation.Target;
 
 /** Constants being used by more than one class in the Device Lock application. */
 public final class DeviceLockConstants {
-
-    public static final String KEY_KIOSK_APP_INSTALLED = "devicelock_kiosk_app_installed";
+    /** Device reset count down minute when mandatory provision fails */
+    public static final int MANDATORY_PROVISION_DEVICE_RESET_COUNTDOWN_MINUTE = 2;
+    /** Device reset count down minute when non-mandatory provision fails */
+    public static final int NON_MANDATORY_PROVISION_DEVICE_RESET_COUNTDOWN_MINUTE = 30;
 
     // Constants related to unique device identifiers.
     @Retention(RetentionPolicy.SOURCE)
@@ -90,6 +90,22 @@ public final class DeviceLockConstants {
         int TYPE_SUBSIDY = 2;
     }
 
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef(value = {
+            ProvisionFailureReason.UNKNOWN_REASON,
+            ProvisionFailureReason.PLAY_TASK_UNAVAILABLE,
+            ProvisionFailureReason.PLAY_INSTALLATION_FAILED,
+            ProvisionFailureReason.COUNTRY_INFO_UNAVAILABLE,
+            ProvisionFailureReason.NOT_IN_ELIGIBLE_COUNTRY,
+    })
+    public @interface ProvisionFailureReason {
+        int UNKNOWN_REASON = 0;
+        int PLAY_TASK_UNAVAILABLE = 1;
+        int PLAY_INSTALLATION_FAILED = 2;
+        int COUNTRY_INFO_UNAVAILABLE = 3;
+        int NOT_IN_ELIGIBLE_COUNTRY = 4;
+    }
+
     public static final String EXTRA_KIOSK_PACKAGE =
             "com.android.devicelockcontroller.KIOSK_PACKAGE";
     public static final String EXTRA_KIOSK_DISABLE_OUTGOING_CALLS =
@@ -119,38 +135,9 @@ public final class DeviceLockConstants {
 
     public static final String ACTION_START_DEVICE_FINANCING_PROVISIONING =
             "com.android.devicelockcontroller.action.START_DEVICE_FINANCING_PROVISIONING";
-    public static final String ACTION_START_DEVICE_FINANCING_DEFERRED_PROVISIONING =
-            "com.android.devicelockcontroller.action.START_DEVICE_FINANCING_DEFERRED_PROVISIONING";
-
-    public static final String ACTION_START_DEVICE_FINANCING_SECONDARY_USER_PROVISIONING =
-            "com.android.devicelockcontroller.action"
-            + ".START_DEVICE_FINANCING_SECONDARY_USER_PROVISIONING";
 
     public static final String ACTION_START_DEVICE_SUBSIDY_PROVISIONING =
             "com.android.devicelockcontroller.action.START_DEVICE_SUBSIDY_PROVISIONING";
-
-    public static final String ACTION_START_DEVICE_SUBSIDY_DEFERRED_PROVISIONING =
-            "com.android.devicelockcontroller.action.START_DEVICE_SUBSIDY_DEFERRED_PROVISIONING";
-
-    /** Uses the package name of {@link Context#getPackageName()} to return the landing activity. */
-    public static String getLandingActivity(Context context) {
-        return context.getPackageName() + "/"
-               + "com.android.devicelockcontroller.activities.LandingActivity";
-    }
-
-    /** Definitions for setup failure types. */
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef(
-            value = {
-                    SetupFailureReason.SETUP_FAILED,
-                    SetupFailureReason.INSTALL_FAILED,
-            })
-    public @interface SetupFailureReason {
-        /** Setup failed to complete */
-        int SETUP_FAILED = 0;
-        /** Failed to install the creditor apk. */
-        int INSTALL_FAILED = 1;
-    }
 
     /** Definitions for device provision states. */
     @Retention(RetentionPolicy.SOURCE)
@@ -184,7 +171,7 @@ public final class DeviceLockConstants {
         int PROVISION_STATE_SUCCESS = 5;
     }
 
-    /** Restrict instantiation. */
+    /** Prevent instantiation. */
     private DeviceLockConstants() {
     }
 }

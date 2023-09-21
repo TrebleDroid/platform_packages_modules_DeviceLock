@@ -22,6 +22,7 @@ import "google/protobuf/timestamp.proto";
 import "configuration_info.proto";
 import "device_checkin_info.proto";
 import "device_info.proto";
+import "enrollment_info.proto";
 
 option java_package = "com.android.devicelockcontroller.proto";
 option java_multiple_files = true;
@@ -61,6 +62,12 @@ message GetDeviceCheckinStatusRequest {
   // device provided by the Device Lock Android client. The token is only used
   // for GMS devices.
   optional string fcm_registration_token = 3;
+  // The name of the manufacturer of the device.
+  optional string device_manufacturer = 4;
+  // The name of the model of the device.
+  optional string device_model = 5;
+  // The internal name of the device.
+  optional string device_internal_name = 6;
 }
 
 message ClientDeviceIdentifier {
@@ -121,10 +128,10 @@ message NextCheckinInformation {
 message DeviceProvisioningInformation {
   // The configuration information assigned to the device.
   optional ConfigurationInfo configuration_information = 1;
-  // The type of configuration assigned to the device. This is used by the
+  // The type of enrollment assigned to the device. This is used by the
   // Device Lock Android client to determine what type of strings should be
   // shown to the user.
-  optional ConfigurationType configuration_type = 2;
+  optional EnrollmentType enrollment_type = 2;
   // The provision type selected when enrolling the device into a locking
   // program. The Device Lock Android client would use this to determine which
   // provision approach should be used to provision the device.
@@ -178,28 +185,17 @@ message PauseDeviceProvisioningRequest {
 // Response to a request to pause device provisioning of an eligible device.
 message PauseDeviceProvisioningResponse {}
 
-// Request to report that device provisioning of an eligible device is complete.
-message ReportDeviceProvisionCompleteRequest {
-  // The device identifier that is registered with the Device Lock server that
-  // was provisioned.
-  optional string registered_device_identifier = 1;
-}
-
-// Response to a request reporting that device provisioning of an eligible
-// device is complete.
-message ReportDeviceProvisionCompleteResponse {
-  // An enrollment token the Device Lock Android client can use for future
-  // communication with the Device Lock server post-provisioning.
-  optional string enrollment_token = 1;
-}
-
 // The different reasons device provisioning can fail on a device.
 enum ClientProvisionFailureReason {
-  CLIENT_PROVISION_FAILURE_REASON_UNSPECIFIED = 0;
-  // Setup failed to complete on the device.
-  CLIENT_PROVISION_FAILURE_REASON_SETUP_FAILED = 1;
-  // Failed to install the creditor apk.
-  CLIENT_PROVISION_FAILURE_REASON_INSTALL_FAILED = 2;
+  PROVISION_FAILURE_REASON_UNSPECIFIED = 0;
+  // Provision failed due to play installation task class is unavailable.
+  PROVISION_FAILURE_REASON_PLAY_TASK_UNAVAILABLE = 1;
+  // Provision failed due to play installation failed.
+  PROVISION_FAILURE_REASON_PLAY_INSTALLATION_FAILED = 2;
+  // Provision failed due to country eligibility information unavailable.
+  PROVISION_FAILURE_REASON_COUNTRY_INFO_UNAVAILABLE = 3;
+  // Provision failed due to device is not in an eligible country or region.
+  PROVISION_FAILURE_REASON_NOT_IN_ELIGIBLE_COUNTRY = 4;
 }
 
 // The different provision states of a device.
@@ -243,12 +239,8 @@ message ReportDeviceProvisionStateResponse {
   // this provision state would be used as the previous provision state in the
   // request.
   optional ClientProvisionState next_client_provision_state = 1;
-  // An enrollment token the Device Lock Android client can use for future
-  // communication with the Device Lock server post-provisioning. This is only
-  // provided if device provisioning was a success.
-  optional string enrollment_token = 2;
   // The number of days left until the device should factory reset because of a failed provision.
   // This number should only be used when next_client_provision_state is
   // CLIENT_PROVISION_STATE_DISMISSIBLE_UI
-  optional uint32 days_left_until_reset = 3;
+  optional uint32 days_left_until_reset = 2;
 }

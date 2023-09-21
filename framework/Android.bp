@@ -40,7 +40,7 @@ filegroup {
 
 java_sdk_library {
     name: "framework-devicelock",
-    srcs: [":framework-devicelock-sources" ],
+    srcs: [":framework-devicelock-sources"],
     defaults: ["framework-module-defaults"],
     permitted_packages: ["android.devicelock"],
     impl_library_visibility: ["//packages/modules/DeviceLock:__subpackages__"],
@@ -48,5 +48,6 @@ java_sdk_library {
         "com.android.devicelock",
     ],
     sdk_version: "module_current",
+    min_sdk_version: "UpsideDownCake",
     libs: ["framework-annotations-lib"],
 }

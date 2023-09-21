@@ -32,8 +32,8 @@
     <string name="reset_phone" msgid="1161657350311160627">"Endurstilla síma"</string>
     <string name="control_section_title" msgid="2213476068991045785">"Hvað getur <xliff:g id="CREDITOR_APP">%1$s</xliff:g> gert?"</string>
     <string name="control_lock_device_text" msgid="8253302484073757764">"Sett takmarkanir á þetta tæki ef þú greiðir ekki"</string>
-    <string name="control_download_text" msgid="8514650561843088172">"Sækja, setja upp og uppfæra <xliff:g id="CREDITOR_APP">%1$s</xliff:g>-forritið"</string>
-    <string name="control_disable_debug_text" msgid="8112443250013094442">"Slökkva á villuleitareiginleikum"</string>
+    <string name="control_download_text" msgid="8514650561843088172">"Sótt, sett upp og uppfært <xliff:g id="CREDITOR_APP">%1$s</xliff:g>-forritið"</string>
+    <string name="control_disable_debug_text" msgid="8112443250013094442">"Slökkt á villuleitareiginleikum"</string>
     <string name="locked_section_title" msgid="2748725389334076510">"Hvað virkar ef þetta tæki er læst?"</string>
     <string name="locked_emergency_text" msgid="3509216445555779286">"Neyðarsímtalaþjónusta"</string>
     <string name="locked_phone_usage_text" msgid="1913605870324552847">"Móttekin símtöl og sum hringd símtöl"</string>
@@ -48,9 +48,8 @@
     <string name="device_provided_by_provider" msgid="290593329676291991">"Þetta tæki er frá <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Sjálfsalaforritið verður sótt og sett upp sjálfkrafa"</string>
     <string name="install_kiosk_app_secondary_user" msgid="49911908012320834">"Sjálfsalaforritið verður sett upp fyrir þennan notanda"</string>
-    <string name="restrict_device_if_missing_payment" msgid="5721216628714899148">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> getur sett takmarkanir á þetta tæki ef þú missir úr greiðslu"</string>
+    <string name="restrict_device_if_missing_payment" msgid="2907880869705064855">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> getur sett takmarkanir á tækið ef þú missir úr greiðslu"</string>
     <string name="restrict_device_if_dont_make_payment" msgid="1619095674945507015">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> getur sett takmarkanir á þetta tæki ef þú greiðir ekki áskildar greiðslur. Frekari upplýsingar má finna í <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>skilmálunum<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g>."</string>
-    <string name="restrict_device_if_owner_doesnt_make_payment" msgid="3841412765931627895">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> getur sett takmarkanir á þetta tæki ef eigandinn greiðir ekki"</string>
     <string name="previous" msgid="5241891780917802570">"Til baka"</string>
     <string name="next" msgid="8248291863254324326">"Áfram"</string>
     <string name="start" msgid="2842214844667658537">"Byrja"</string>
@@ -60,7 +59,7 @@
     <string name="header_icon_content_description" msgid="6069602031334473195">"Upplýsingar"</string>
     <string name="provision_info_item_icon_content_description" msgid="2306298178610632507">"Úthlutunarupplýsingar"</string>
     <string name="enroll_your_device_header" msgid="2226305405591945098">"Skráðu tækið þitt"</string>
-    <string name="enroll_your_device_financing_subheader" msgid="7378414469334757425">"Nú geturðu skráð tækið þitt í fjármögnunarkerfi <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
+    <string name="enroll_your_device_financing_subheader" msgid="8810608106273097451">"Nú geturðu skráð tækið þitt í fjármögnunarkerfi <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="enroll_your_device_subsidy_subheader" msgid="8598730780370624995">"Nú geturðu skráð tækið þitt í niðurgreiðslukerfi <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="subsidy_program_header" msgid="2321508488856303554">"Þú ert í niðurgreiðslukerfi <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="device_enrollment_header_text" msgid="5283341102404741658">"Skráning tækis"</string>
@@ -81,7 +80,8 @@
     <string name="settings_banner_body" msgid="5814902066260202824">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> getur breytt stillingum í þessu tæki"</string>
     <string name="settings_banner_button" msgid="1831020849782670907">"Nánar"</string>
     <string name="settings_screen_title" msgid="721470080648091035">"Upplýsingar um fjármögnuð tæki"</string>
-    <string name="settings_intro" msgid="5809531331925309396">"Lánveitandi þinn getur breytt stillingum og sett upp sjálfsalaforritið í þessu tæki.\n\n<xliff:g id="PROVIDER_NAME_0">%1$s</xliff:g> kann að setja takmarkanir á þetta tæki ef þú greiðir ekki áskildar greiðslur eða hættir að nota SIM frá <xliff:g id="PROVIDER_NAME_1">%1$s</xliff:g>.\n\nTil að fá frekari upplýsingar skaltu hafa samband við <xliff:g id="PROVIDER_NAME_2">%1$s</xliff:g>."</string>
+    <string name="settings_intro_device_financing" msgid="2548476558131048133">"<xliff:g id="PROVIDER_NAME_0">%1$s</xliff:g> getur breytt stillingum og sett upp sjálfsalaforritið í þessu tæki.\n\nEf þú missir úr greiðslu getur <xliff:g id="PROVIDER_NAME_1">%1$s</xliff:g> sett takmarkanir á tækið þitt.\n\nTil að fá frekari upplýsingar skaltu hafa samband við <xliff:g id="PROVIDER_NAME_2">%1$s</xliff:g>."</string>
+    <string name="settings_intro_device_subsidy" msgid="4274945644204818702">"<xliff:g id="PROVIDER_NAME_0">%1$s</xliff:g> getur breytt stillingum og sett upp sjálfsalaforritið í þessu tæki.\n\n<xliff:g id="PROVIDER_NAME_1">%1$s</xliff:g> kann einnig að setja takmarkanir á þetta tæki ef þú missir úr greiðslu eða hættir að nota SIM frá <xliff:g id="PROVIDER_NAME_2">%1$s</xliff:g>.\n\nTil að fá frekari upplýsingar skaltu hafa samband við <xliff:g id="PROVIDER_NAME_3">%1$s</xliff:g>."</string>
     <string name="settings_intro_preference_key" msgid="6610461073400554162">"settings_intro_preference_key"</string>
     <string name="settings_restrictions_category" msgid="5746868117342406677">"Þar til þú greiðir fyrir tækið geturðu ekki:"</string>
     <string name="settings_restrictions_category_preference_key" msgid="88318147152676512">"settings_restrictions_category_preference_key"</string>
@@ -89,8 +89,6 @@
     <string name="settings_install_apps_preference_key" msgid="27542314345238427">"settings_install_apps_preference_key"</string>
     <string name="settings_safe_mode" msgid="3035228015586375153">"Endurræstu tækið þitt í öruggri stillingu"</string>
     <string name="settings_safe_mode_preference_key" msgid="2106617747358027424">"settings_safe_mode_preference_key"</string>
-    <string name="settings_config_date_time" msgid="3406612829802458778">"Breytt dagsetningu, tíma og tímabeltum"</string>
-    <string name="settings_config_date_time_preference_key" msgid="1838160765185598823">"settings_config_date_time_preference_key"</string>
     <string name="settings_developer_options" msgid="880701002025216672">"Notað forritunarkosti"</string>
     <string name="settings_developer_options_preference_key" msgid="6807036808722582954">"settings_developer_options_preference_key"</string>
     <string name="settings_credit_provider_capabilities_category" msgid="1274440595211820868">"Ef eitthvað fer úrskeiðis með tækið getur <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>:"</string>
@@ -121,7 +119,6 @@
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{Tæki verður endurstillt eftir 1 dag}one{Tæki verður endurstillt eftir # dag}other{Tæki verður endurstillt eftir # daga}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"Tækið verður endurstillt eftir <xliff:g id="TIMER">%s</xliff:g>"</string>
     <string name="device_reset_notification_content" msgid="7642367488663440437">"Öllum gögnum tækis verður eytt. Hafðu samband við <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> til að fá aðstoð við að skrá tækið"</string>
-    <string name="toast_message_grant_notification_permission" msgid="1902770796685661160">"Leyfðu tilkynningu frá DeviceLock til að halda áfram að fresta skráningu tækisins."</string>
     <string name="provisioning_failed" msgid="5350252817004028300">"Fjármögnunarúthlutun mistókst"</string>
     <string name="click_to_contact_financier" msgid="9107827438262930445">"Smelltu hér til að sjá leiðir til að ná sambandi við fjármögnunarþjónustuna. <xliff:g id="SUPPORT_URL_START">&lt;a href=%1$s&gt;</xliff:g>Nánar<xliff:g id="SUPPORT_URL_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="exit" msgid="645084771882733921">"Hætta"</string>

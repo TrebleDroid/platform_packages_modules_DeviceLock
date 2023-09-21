@@ -16,14 +16,18 @@
 
 package com.android.devicelockcontroller.activities;
 
+import static com.android.devicelockcontroller.common.DeviceLockConstants.MANDATORY_PROVISION_DEVICE_RESET_COUNTDOWN_MINUTE;
+import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionEvent.PROVISION_FAILURE;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import android.app.admin.DevicePolicyManager;
+import android.content.Context;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -34,8 +38,12 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.android.devicelockcontroller.R;
 import com.android.devicelockcontroller.activities.util.UrlUtils;
-import com.android.devicelockcontroller.policy.LockTaskModeHelper;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
+import com.android.devicelockcontroller.policy.ProvisionHelper;
+import com.android.devicelockcontroller.policy.ProvisionHelperImpl;
+import com.android.devicelockcontroller.policy.ProvisionStateController;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * A screen which always displays a progress bar.
@@ -65,6 +73,9 @@ public final class ProgressFragment extends Fragment {
         View bottomView = v.findViewById(R.id.bottom);
         checkNotNull(bottomView);
 
+        Chronometer countDownTimeView = v.findViewById(R.id.countdown_text);
+        checkNotNull(countDownTimeView);
+
         ProvisioningProgressViewModel provisioningProgressViewModel =
                 new ViewModelProvider(requireActivity()).get(ProvisioningProgressViewModel.class);
         provisioningProgressViewModel.getProvisioningProgressLiveData().observe(
@@ -72,15 +83,16 @@ public final class ProgressFragment extends Fragment {
                     if (provisioningProgress.mIconId != 0) {
                         headerIconImageView.setImageResource(provisioningProgress.mIconId);
                     }
+                    Context context = requireContext();
                     if (provisioningProgress.mHeaderId != 0) {
                         headerTextView.setText(
-                                requireContext().getString(provisioningProgress.mHeaderId,
+                                context.getString(provisioningProgress.mHeaderId,
                                         provisioningProgressViewModel
                                                 .mProviderNameLiveData.getValue()));
                     }
                     if (provisioningProgress.mSubheaderId != 0) {
                         UrlUtils.setUrlText(subheaderTextView,
-                                requireContext().getString(provisioningProgress.mSubheaderId,
+                                context.getString(provisioningProgress.mSubheaderId,
                                         provisioningProgressViewModel
                                                 .mSupportUrlLiveData
                                                 .getValue()));
@@ -95,27 +107,36 @@ public final class ProgressFragment extends Fragment {
                         Button retryButton = bottomView.findViewById(R.id.button_retry);
                         checkNotNull(retryButton);
                         PolicyObjectsInterface policyObjects =
-                                (PolicyObjectsInterface) getActivity().getApplicationContext();
-
+                                (PolicyObjectsInterface) context.getApplicationContext();
+                        ProvisionStateController provisionStateController =
+                                policyObjects.getProvisionStateController();
+                        ProvisionHelper provisionHelper = new ProvisionHelperImpl(
+                                context,
+                                provisionStateController);
                         retryButton.setOnClickListener(
-                                view -> provisioningProgressViewModel.retrySetupFlow(
-                                        policyObjects.getSetupController(),
-                                        policyObjects.getStateController(),
-                                        getActivity()));
+                                view -> provisionHelper.scheduleKioskAppInstallation(
+                                        requireActivity(),
+                                        provisioningProgressViewModel,
+                                        /* isProvisionMandatory= */ false));
 
                         Button exitButton = bottomView.findViewById(R.id.button_exit);
                         checkNotNull(exitButton);
-                        exitButton.setOnClickListener(view -> {
-                            DevicePolicyManager dpm = getContext().getSystemService(
-                                    DevicePolicyManager.class);
-                            LockTaskModeHelper.disableLockTaskMode(getContext(), dpm);
-                        });
+                        exitButton.setOnClickListener(
+                                view -> provisionStateController.postSetNextStateForEventRequest(
+                                        PROVISION_FAILURE));
                     } else {
                         bottomView.setVisibility(View.GONE);
                     }
+                    if (provisioningProgress.mCountDownTimerVisible) {
+                        countDownTimeView.setBase(
+                                SystemClock.elapsedRealtime() + TimeUnit.MINUTES.toMillis(
+                                        MANDATORY_PROVISION_DEVICE_RESET_COUNTDOWN_MINUTE));
+                        countDownTimeView.start();
+                        countDownTimeView.setVisibility(View.VISIBLE);
+                    } else {
+                        countDownTimeView.setVisibility(View.GONE);
+                    }
                 });
-
         return v;
     }
-
 }

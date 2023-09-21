@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 The Android Open Source Project
+ * Copyright (C) 2023 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,20 @@
  * limitations under the License.
  */
 
-package com.android.devicelockcontroller.policy;
+syntax = "proto2";
 
-import com.android.devicelockcontroller.policy.DeviceStateController.DeviceEvent;
-import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
+package devicelockcontroller;
 
-/** Exception caused when a DeviceEvent cannot be handled for a DeviceState. */
-public final class StateTransitionException extends Exception {
+option java_package = "com.android.devicelockcontroller.proto";
+option java_multiple_files = true;
 
-    public StateTransitionException(@DeviceState int state, @DeviceEvent int event) {
-        super("Cannot handle event " + event + " in state " + state);
-    }
+// The different Device Lock programs in which a device can be enrolled.
+enum EnrollmentType {
+  ENROLLMENT_TYPE_UNSPECIFIED = 0;
+  // Device Lock Financing program.
+  ENROLLMENT_TYPE_FINANCE = 1;
+  // Device Lock Subsidy program.
+  ENROLLMENT_TYPE_SUBSIDY = 2;
 }
 
+message EnrollmentInfo {}
