@@ -338,7 +338,7 @@ public final class DeviceLockControllerSchedulerImpl implements DeviceLockContro
                                         NetworkType.CONNECTED).build())
                         .setInitialDelay(delay)
                         .setBackoffCriteria(BackoffPolicy.LINEAR,
-                                Duration.ofHours(CHECK_IN_INTERVAL_MINUTE));
+                                Duration.ofMinutes(CHECK_IN_INTERVAL_MINUTE));
         if (isExpedited) builder.setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST);
         WorkManager.getInstance(mContext).enqueueUniqueWork(DEVICE_CHECK_IN_WORK_NAME,
                 ExistingWorkPolicy.REPLACE, builder.build());
