@@ -42,6 +42,6 @@ public final class FinalizationBootCompletedReceiver extends BroadcastReceiver {
 
         // Initialize finalization controller to apply device finalization state
         ((PolicyObjectsInterface) context.getApplicationContext())
-                .getFinalizationController();
+                .getFinalizationController().enforceInitialState();
     }
 }

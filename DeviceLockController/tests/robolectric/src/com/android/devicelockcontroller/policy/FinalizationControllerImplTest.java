@@ -125,7 +125,7 @@ public final class FinalizationControllerImplTest {
 
         // WHEN the controller is initialized
         mFinalizationController = makeFinalizationController();
-        Futures.getChecked(mFinalizationController.getStateInitializedFuture(), Exception.class,
+        Futures.getChecked(mFinalizationController.enforceInitialState(), Exception.class,
                 TIMEOUT_MS, TimeUnit.MILLISECONDS);
 
         // THEN the state from disk is used and is applied immediately, reporting the work.

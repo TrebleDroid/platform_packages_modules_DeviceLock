@@ -25,8 +25,16 @@ import com.google.common.util.concurrent.ListenableFuture;
  * should no longer be financed.
  */
 public interface FinalizationController {
+
     /**
-     * Notify the controller that the device restrictions have been cleared and that the device
+     * Initializes the controller and enforces the initial state.
+     *
+     * @return future for when the state has been enforced
+     */
+    ListenableFuture<Void> enforceInitialState();
+
+    /**
+     * Notifies the controller that the device restrictions have been cleared and that the device
      * should start the finalization process.
      *
      * @return future for when the clear has been handled
@@ -34,7 +42,7 @@ public interface FinalizationController {
     ListenableFuture<Void> notifyRestrictionsCleared();
 
     /**
-     * Notify the controller of the result of reporting the finalization state to the server
+     * Notifies the controller of the result of reporting the finalization state to the server
      *
      * @param response from the server
      * @return future for when the report has been handled

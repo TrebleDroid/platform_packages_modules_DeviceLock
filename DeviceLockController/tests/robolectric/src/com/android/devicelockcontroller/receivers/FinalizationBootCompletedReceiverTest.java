@@ -16,20 +16,17 @@
 
 package com.android.devicelockcontroller.receivers;
 
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import android.content.Intent;
-import android.os.UserManager;
 
-import com.android.devicelockcontroller.DeviceLockControllerApplication;
+import androidx.test.core.app.ApplicationProvider;
+
+import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
@@ -37,22 +34,19 @@ public final class FinalizationBootCompletedReceiverTest {
 
     public static final Intent INTENT = new Intent(Intent.ACTION_BOOT_COMPLETED);
 
-    @Mock
-    private DeviceLockControllerApplication mApp;
+    private TestDeviceLockControllerApplication mTestApplication;
     private FinalizationBootCompletedReceiver mReceiver;
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
-        when(mApp.getSystemService(UserManager.class)).thenReturn(mock(UserManager.class));
-        when(mApp.getApplicationContext()).thenReturn(mApp);
+        mTestApplication = ApplicationProvider.getApplicationContext();
         mReceiver = new FinalizationBootCompletedReceiver();
     }
 
     @Test
     public void onReceive_initializeFinalizationController() {
-        mReceiver.onReceive(mApp, INTENT);
+        mReceiver.onReceive(mTestApplication, INTENT);
 
-        verify(mApp).getFinalizationController();
+        verify(mTestApplication.getFinalizationController()).enforceInitialState();
     }
 }
