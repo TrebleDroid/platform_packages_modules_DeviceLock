@@ -16,10 +16,8 @@
 
 package com.android.devicelockcontroller.receivers;
 
-import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState.UNPROVISIONED;
-
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import android.content.Intent;
 import android.os.Handler;
@@ -29,9 +27,9 @@ import androidx.test.core.app.ApplicationProvider;
 
 import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
 import com.android.devicelockcontroller.schedule.DeviceLockControllerScheduler;
+import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.storage.UserParameters;
 
-import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.MoreExecutors;
 
 import org.junit.Before;
@@ -65,13 +63,22 @@ public final class CheckInBootCompletedReceiverTest {
     @Test
     public void onReceive_initialCheckInScheduled_shouldRescheduleRetry() {
         UserParameters.initialCheckInScheduled(mTestApp);
-        when(mTestApp.getProvisionStateController().getState()).thenReturn(
-                Futures.immediateFuture(UNPROVISIONED));
 
         mReceiver.onReceive(mTestApp, INTENT);
 
         mShadowLooper.idle();
         verify(mScheduler).notifyNeedRescheduleCheckIn();
+    }
+
+    @Test
+    public void onReceive_checkInSucceeded_noCheckInScheduled() throws Exception {
+        UserParameters.initialCheckInScheduled(mTestApp);
+        GlobalParametersClient.getInstance().setProvisionReady(true).get();
+
+        mReceiver.onReceive(mTestApp, INTENT);
+
+        mShadowLooper.idle();
+        verifyNoMoreInteractions(mScheduler);
     }
 
     @Test
