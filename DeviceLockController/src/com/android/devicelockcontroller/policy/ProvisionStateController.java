@@ -68,10 +68,9 @@ public interface ProvisionStateController {
     DevicePolicyController getDevicePolicyController();
 
     /**
-     * Called by {@link com.android.devicelockcontroller.DeviceLockControllerService} to trigger
-     * provision or enforce policies.
+     * Called after user has unlocked to trigger provision or enforce policies.
      */
-    ListenableFuture<Void> onUserStarting();
+    ListenableFuture<Void> onUserUnlocked();
 
     /**
      * State definitions related to provisioning flow.
