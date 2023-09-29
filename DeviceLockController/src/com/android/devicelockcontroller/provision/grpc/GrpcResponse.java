@@ -52,6 +52,10 @@ abstract class GrpcResponse {
                 && mStatus.getCode() != Code.UNAVAILABLE;
     }
 
+    public boolean isInterrupted() {
+        return mStatus != null && (mStatus.getCause() instanceof InterruptedException);
+    }
+
     @Override
     public String toString() {
         return "mStatus: " + mStatus;
