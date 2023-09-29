@@ -16,25 +16,22 @@
 
 package com.android.devicelockcontroller.receivers;
 
-import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState.UNPROVISIONED;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.UserManager;
 
 import androidx.annotation.VisibleForTesting;
 
-import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
-import com.android.devicelockcontroller.policy.ProvisionStateController;
 import com.android.devicelockcontroller.schedule.DeviceLockControllerScheduler;
 import com.android.devicelockcontroller.schedule.DeviceLockControllerSchedulerProvider;
+import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.storage.UserParameters;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.MoreExecutors;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -42,6 +39,8 @@ import java.util.concurrent.Executors;
 /**
  * Boot completed broadcast receiver to enqueue the check-in work for provision when device boots
  * for the first time.
+ *
+ * Only runs on system user and is disabled after check-in completes successfully.
  */
 public final class CheckInBootCompletedReceiver extends BroadcastReceiver {
 
@@ -63,15 +62,11 @@ public final class CheckInBootCompletedReceiver extends BroadcastReceiver {
 
         LogUtil.i(TAG, "Received boot completed intent");
 
-        final boolean isUserProfile =
-                context.getSystemService(UserManager.class).isProfile();
-
-        if (isUserProfile) {
-            return;
+        if (!context.getUser().isSystem()) {
+            throw new IllegalStateException(
+                    "This receiver should not run on anything besides the system user");
         }
         Context applicationContext = context.getApplicationContext();
-        ProvisionStateController provisionStateController =
-                ((PolicyObjectsInterface) applicationContext).getProvisionStateController();
         DeviceLockControllerSchedulerProvider schedulerProvider =
                 (DeviceLockControllerSchedulerProvider) applicationContext;
         DeviceLockControllerScheduler scheduler =
@@ -84,8 +79,8 @@ public final class CheckInBootCompletedReceiver extends BroadcastReceiver {
                         return Futures.immediateFuture(false);
                     } else {
                         return Futures.transform(
-                                provisionStateController.getState(),
-                                state -> state == UNPROVISIONED, mExecutor);
+                                GlobalParametersClient.getInstance().isProvisionReady(),
+                                ready -> !ready, MoreExecutors.directExecutor());
                     }
                 }, mExecutor);
         Futures.addCallback(needReschedule,
