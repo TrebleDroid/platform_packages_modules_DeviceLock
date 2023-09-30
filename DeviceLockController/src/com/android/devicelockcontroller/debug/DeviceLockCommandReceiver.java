@@ -20,6 +20,7 @@ import static com.android.devicelockcontroller.policy.DeviceStateController.Devi
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.LOCKED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNLOCKED;
 import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState.PROVISION_SUCCEEDED;
+
 import static java.lang.annotation.RetentionPolicy.SOURCE;
 
 import android.app.AlarmManager;

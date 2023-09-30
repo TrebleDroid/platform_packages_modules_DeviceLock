@@ -93,6 +93,12 @@ public final class DeviceCheckInWorker extends AbstractCheckInWorker {
                                     ? Result.success()
                                     : Result.retry();
                         }
+
+                        if (response.isInterrupted()) {
+                            LogUtil.d(TAG, "Check-in interrupted");
+                            return Result.failure();
+                        }
+
                         LogUtil.w(TAG, "CheckIn failed: " + response + "\nRetry check-in in: "
                                 + RETRY_ON_FAILURE_DELAY);
                         scheduler.scheduleRetryCheckInWork(RETRY_ON_FAILURE_DELAY);

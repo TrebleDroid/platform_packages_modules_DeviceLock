@@ -18,6 +18,7 @@ package com.android.devicelockcontroller.activities;
 
 import static com.android.devicelockcontroller.common.DeviceLockConstants.MANDATORY_PROVISION_DEVICE_RESET_COUNTDOWN_MINUTE;
 import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionEvent.PROVISION_FAILURE;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import android.content.Context;

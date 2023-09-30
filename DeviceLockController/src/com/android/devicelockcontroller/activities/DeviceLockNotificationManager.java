@@ -17,6 +17,7 @@
 package com.android.devicelockcontroller.activities;
 
 import static com.android.devicelockcontroller.activities.ProvisioningActivity.EXTRA_SHOW_PROVISION_FAILED_UI_ON_START;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import android.annotation.SuppressLint;
