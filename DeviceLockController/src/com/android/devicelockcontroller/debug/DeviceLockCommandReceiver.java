@@ -179,23 +179,24 @@ public final class DeviceLockCommandReceiver extends BroadcastReceiver {
                 (DeviceLockControllerSchedulerProvider) appContext;
         DeviceLockControllerScheduler scheduler =
                 schedulerProvider.getDeviceLockControllerScheduler();
-        Futures.addCallback(GlobalParametersClient.getInstance().needCheckIn(),
+
+        Futures.addCallback(GlobalParametersClient.getInstance().isProvisionReady(),
                 new FutureCallback<>() {
                     @Override
-                    public void onSuccess(Boolean needCheckIn) {
-                        if (needCheckIn) {
+                    public void onSuccess(Boolean provisioningInfoReady) {
+                        if (!provisioningInfoReady) {
                             scheduler.scheduleInitialCheckInWork();
                         } else {
                             LogUtil.e(TAG,
-                                    "Can not check in at current state!\n"
-                                            + "Use reset command to reset DLC first.");
+                                    "Can not check in when provisioning info has already been "
+                                            + "received. Use the \"reset\" command to reset "
+                                            + "DLC first.");
                         }
                     }
 
                     @Override
                     public void onFailure(Throwable t) {
-                        LogUtil.e(TAG, "Failed to know if we need to perform check-in!",
-                                t);
+                        LogUtil.e(TAG, "Failed to determine if provisioning info is ready", t);
                     }
                 }, MoreExecutors.directExecutor());
     }

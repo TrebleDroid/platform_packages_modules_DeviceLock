@@ -19,7 +19,6 @@ package com.android.devicelockcontroller.storage;
 import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState;
 
 abstract class AbstractGlobalParametersTestBase {
-    static final boolean NEED_CHECK_IN = false;
     static final String REGISTERED_DEVICE_ID = "test_id";
     static final boolean FORCED_PROVISION = true;
 

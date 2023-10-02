@@ -117,29 +117,6 @@ public final class GlobalParametersClient extends DlcClient {
     }
 
     /**
-     * Checks if a check-in request needs to be performed.
-     *
-     * @return true if check-in request needs to be performed.
-     */
-    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
-    public ListenableFuture<Boolean> needCheckIn() {
-        return call(() -> asInterface(getService()).needCheckIn());
-    }
-
-    /**
-     * Sets the value of whether this device needs to perform check-in request.
-     *
-     * @param needCheckIn new state of whether the device needs to perform check-in request.
-     */
-    @SuppressWarnings("GuardedBy") // mLock already held in "call" (error prone).
-    public ListenableFuture<Void> setNeedCheckIn(boolean needCheckIn) {
-        return call(() -> {
-            asInterface(getService()).setNeedCheckIn(needCheckIn);
-            return null;
-        });
-    }
-
-    /**
      * Checks if provision is ready.
      *
      * @return true if device is ready to be provisioned.

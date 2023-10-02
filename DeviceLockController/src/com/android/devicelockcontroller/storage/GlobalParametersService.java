@@ -47,16 +47,6 @@ public final class GlobalParametersService extends Service {
                 }
 
                 @Override
-                public boolean needCheckIn() {
-                    return GlobalParameters.needCheckIn(mContext);
-                }
-
-                @Override
-                public void setNeedCheckIn(boolean needCheckIn) {
-                    GlobalParameters.setNeedCheckIn(mContext, needCheckIn);
-                }
-
-                @Override
                 public boolean isProvisionReady() {
                     return GlobalParameters.isProvisionReady(mContext);
                 }
