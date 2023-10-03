@@ -363,8 +363,10 @@ public final class DevicePolicyControllerImpl implements DevicePolicyController 
 
     @Override
     public ListenableFuture<Void> onUserUnlocked() {
-        return Futures.transformAsync(getCurrentEnforcedLockTaskType(),
-                this::startLockTaskModeIfNeeded,
+        return Futures.transformAsync(mProvisionStateController.onUserUnlocked(),
+                unused -> Futures.transformAsync(getCurrentEnforcedLockTaskType(),
+                        this::startLockTaskModeIfNeeded,
+                        mBgExecutor),
                 mBgExecutor);
     }
 

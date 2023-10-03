@@ -222,7 +222,7 @@ public final class ProvisionStateControllerImpl implements ProvisionStateControl
     }
 
     @Override
-    public ListenableFuture<Void> onUserStarting() {
+    public ListenableFuture<Void> onUserUnlocked() {
         GlobalParametersClient globalParametersClient = GlobalParametersClient.getInstance();
         return Futures.transformAsync(getState(),
                 state -> {
