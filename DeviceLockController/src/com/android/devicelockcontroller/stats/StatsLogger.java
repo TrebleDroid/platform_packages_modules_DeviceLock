@@ -25,23 +25,30 @@ import com.android.devicelockcontroller.DevicelockStatsLog;
  */
 public interface StatsLogger {
     /**
-     * Log to statistics the event of successfully getting device check in status from the server.
+     * Logs the analytics event of successfully getting device check in status from the server.
      */
     void logGetDeviceCheckInStatus();
 
     /**
-     * Log to statistics the event of successfully pausing the device provisioning.
+     * Logs the analytics event of successfully pausing the device provisioning.
      */
     void logPauseDeviceProvisioning();
 
     /**
-     * Log to statistics the event of successfully completing the device provisioning.
+     * Logs the analytics event of successfully completing the device provisioning.
      */
     void logReportDeviceProvisioningComplete();
 
     /**
-     * Log to statistics the event of successfully reporting the device provisioning state to the
+     * Logs the analytics event of successfully reporting the device provisioning state to the
      * server.
      */
     void logReportDeviceProvisionState();
+
+    /**
+     * Logs the analytics event of receiving a request from the Kisok app.
+     *
+     * @param uid The UID of the Kiosk app, which can be acquired from the PackageManager.
+     */
+    void logKioskAppRequest(int uid);
 }
