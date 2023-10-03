@@ -46,7 +46,7 @@
     <string name="open_source_licenses" msgid="6464389386262455443">"Opensource-licenties"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"De beheermogelijkheden in het gedeelte voor gefinancierde apparaten van de beveiligingsinstellingen zijn niet van toepassing op dit apparaat."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"Dit apparaat wordt geleverd door <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
-    <string name="download_kiosk_app" msgid="1845089944897502656">"De Kiosk-app wordt automatisch gedownload en geïnstalleerd"</string>
+    <string name="download_kiosk_app" msgid="1845089944897502656">"De kiosk-app wordt automatisch gedownload en geïnstalleerd"</string>
     <string name="install_kiosk_app_secondary_user" msgid="49911908012320834">"De Kiosk-app wordt geïnstalleerd voor deze gebruiker"</string>
     <string name="restrict_device_if_missing_payment" msgid="2907880869705064855">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> kan het apparaat beperken als je een betaling mist"</string>
     <string name="restrict_device_if_dont_make_payment" msgid="1619095674945507015">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> kan dit apparaat beperken als je de nodige betalingen niet doet. Bekijk voor meer informatie de <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>Algemene Voorwaarden<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g>."</string>
