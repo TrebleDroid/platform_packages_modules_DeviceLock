@@ -41,7 +41,7 @@ filegroup {
 java_library {
     name: "devicelockcontroller-interface",
     sdk_version: "module_current",
-    min_sdk_version: "33", // AIDL compiler does not know about UpsideDownCake
+    min_sdk_version: "UpsideDownCake",
     srcs: ["src/**/*.aidl"],
     apex_available: [
         "com.android.devicelock",
