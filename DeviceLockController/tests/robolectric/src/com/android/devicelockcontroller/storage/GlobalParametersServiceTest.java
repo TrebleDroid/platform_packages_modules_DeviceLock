@@ -43,15 +43,6 @@ public class GlobalParametersServiceTest extends AbstractGlobalParametersTestBas
     }
 
     @Test
-    public void needCheckIn_shouldReturnExpectedResult() throws RemoteException {
-        assertThat(mIGlobalParametersService.needCheckIn()).isNotEqualTo(NEED_CHECK_IN);
-
-        mIGlobalParametersService.setNeedCheckIn(NEED_CHECK_IN);
-
-        assertThat(mIGlobalParametersService.needCheckIn()).isEqualTo(NEED_CHECK_IN);
-    }
-
-    @Test
     public void getRegisteredId_shouldReturnExpectedResult() throws RemoteException {
         assertThat(mIGlobalParametersService.getRegisteredDeviceId()).isNull();
 

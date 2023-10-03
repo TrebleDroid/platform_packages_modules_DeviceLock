@@ -38,7 +38,6 @@ import java.util.Locale;
  */
 final class GlobalParameters {
     private static final String FILENAME = "global-params";
-    private static final String KEY_NEED_CHECK_IN = "need_check_in";
     private static final String KEY_REGISTERED_DEVICE_ID = "registered_device_id";
     private static final String KEY_FORCED_PROVISION = "forced_provision";
     private static final String KEY_LAST_RECEIVED_PROVISION_STATE = "last-received-provision-state";
@@ -55,29 +54,6 @@ final class GlobalParameters {
         final Context deviceContext = context.createDeviceProtectedStorageContext();
 
         return deviceContext.getSharedPreferences(FILENAME, Context.MODE_PRIVATE);
-    }
-
-    /**
-     * Checks if a check-in request needs to be performed.
-     *
-     * @param context Context used to get the shared preferences.
-     * @return true if check-in request needs to be performed.
-     */
-    static boolean needCheckIn(Context context) {
-        return getSharedPreferences(context).getBoolean(KEY_NEED_CHECK_IN, /* defValue= */ true);
-    }
-
-    /**
-     * Sets the value of whether this device needs to perform check-in request.
-     *
-     * @param context     Context used to get the shared preferences.
-     * @param needCheckIn new state of whether the device needs to perform check-in request.
-     */
-    static void setNeedCheckIn(Context context, boolean needCheckIn) {
-        getSharedPreferences(context)
-                .edit()
-                .putBoolean(KEY_NEED_CHECK_IN, needCheckIn)
-                .apply();
     }
 
     static boolean isProvisionReady(Context context) {
@@ -193,13 +169,11 @@ final class GlobalParameters {
     static void dump(Context context) {
         LogUtil.d(TAG, String.format(Locale.US,
                 "Dumping GlobalParameters ...\n"
-                        + "%s: %s\n"    // need_check_in:
                         + "%s: %s\n"    // registered_device_id:
                         + "%s: %s\n"    // forced_provision:
                         + "%s: %s\n"    // last-received-provision-state:
                         + "%s: %s\n"    // device_state:
                         + "%s: %s\n",    // is-provision-ready:
-                KEY_NEED_CHECK_IN, needCheckIn(context),
                 KEY_REGISTERED_DEVICE_ID, getRegisteredDeviceId(context),
                 KEY_FORCED_PROVISION, isProvisionForced(context),
                 KEY_LAST_RECEIVED_PROVISION_STATE, getLastReceivedProvisionState(context),
