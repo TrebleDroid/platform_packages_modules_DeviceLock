@@ -44,10 +44,10 @@ import java.util.concurrent.TimeoutException;
 /**
  * This class is used to establish a connection (bind) to the Device Lock Controller APK.
  */
-final class DeviceLockControllerConnector {
+final class DeviceLockControllerConnectorImpl implements DeviceLockControllerConnectorInterface {
     private final Object mLock = new Object();
 
-    private static final String TAG = "DeviceLockControllerConnector";
+    private static final String TAG = "DeviceLockControllerConnectorImpl";
 
     @GuardedBy("mLock")
     private IDeviceLockControllerService mDeviceLockControllerService;
@@ -211,7 +211,7 @@ final class DeviceLockControllerConnector {
      * @param context       the context for this call.
      * @param componentName Device Lock Controller service component name.
      */
-    DeviceLockControllerConnector(@NonNull Context context,
+    DeviceLockControllerConnectorImpl(@NonNull Context context,
             @NonNull ComponentName componentName, @NonNull UserHandle userHandle) {
         mContext = context;
         mComponentName = componentName;
@@ -263,24 +263,14 @@ final class DeviceLockControllerConnector {
         mServiceConnection = null;
     }
 
-    /**
-     * Bind to the Device Lock Controller service.
-     */
-    public boolean bind() {
-        synchronized (mLock) {
-            return bindLocked();
-        }
-    }
-
-    /**
-     * Unbind the Device Lock Controller service.
-     */
+    @Override
     public void unbind() {
         synchronized (mLock) {
             unbindLocked();
         }
     }
 
+    @Override
     public void lockDevice(OutcomeReceiver<Void, Exception> callback) {
         RemoteCallback remoteCallback = new RemoteCallback(checkTimeout(callback, result -> {
             final boolean success =
@@ -300,9 +290,9 @@ final class DeviceLockControllerConnector {
                 return null;
             }
         }, callback);
-
     }
 
+    @Override
     public void unlockDevice(OutcomeReceiver<Void, Exception> callback) {
         RemoteCallback remoteCallback = new RemoteCallback(checkTimeout(callback, result -> {
             final boolean success =
@@ -324,6 +314,7 @@ final class DeviceLockControllerConnector {
         }, callback);
     }
 
+    @Override
     public void isDeviceLocked(OutcomeReceiver<Boolean, Exception> callback) {
         RemoteCallback remoteCallback = new RemoteCallback(checkTimeout(callback, result -> {
             final boolean isLocked =
@@ -341,6 +332,7 @@ final class DeviceLockControllerConnector {
         }, callback);
     }
 
+    @Override
     public void getDeviceId(OutcomeReceiver<String, Exception> callback) {
         RemoteCallback remoteCallback = new RemoteCallback(checkTimeout(callback, result -> {
             final String deviceId =
@@ -363,6 +355,7 @@ final class DeviceLockControllerConnector {
         }, callback);
     }
 
+    @Override
     public void clearDeviceRestrictions(OutcomeReceiver<Void, Exception> callback) {
         RemoteCallback remoteCallback = new RemoteCallback(checkTimeout(callback, result -> {
             final boolean success =
@@ -384,6 +377,7 @@ final class DeviceLockControllerConnector {
         }, callback);
     }
 
+    @Override
     public void onUserSwitching(OutcomeReceiver<Void, Exception> callback) {
         RemoteCallback remoteCallback = new RemoteCallback(checkTimeout(callback, result -> {
             final boolean success =
@@ -406,6 +400,7 @@ final class DeviceLockControllerConnector {
         }, callback);
     }
 
+    @Override
     public void onUserUnlocked(OutcomeReceiver<Void, Exception> callback) {
         RemoteCallback remoteCallback = new RemoteCallback(checkTimeout(callback, result -> {
             final boolean success =
@@ -428,6 +423,7 @@ final class DeviceLockControllerConnector {
         }, callback);
     }
 
+    @Override
     public void onKioskAppCrashed(OutcomeReceiver<Void, Exception> callback) {
         RemoteCallback remoteCallback = new RemoteCallback(checkTimeout(callback, result -> {
             final boolean success = result.getBoolean(

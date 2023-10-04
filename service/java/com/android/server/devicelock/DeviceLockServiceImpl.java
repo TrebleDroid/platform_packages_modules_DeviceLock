@@ -59,6 +59,7 @@ import android.text.TextUtils;
 import android.util.ArrayMap;
 import android.util.Slog;
 
+import com.android.internal.annotations.GuardedBy;
 import com.android.internal.annotations.VisibleForTesting;
 
 import java.util.ArrayList;
@@ -82,8 +83,13 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
     private final TelephonyManager mTelephonyManager;
     private final AppOpsManager mAppOpsManager;
 
-    // Map user id -> DeviceLockControllerConnector
-    private final ArrayMap<Integer, DeviceLockControllerConnector> mDeviceLockControllerConnectors;
+    // Map user id -> DeviceLockControllerConnectorInterface
+    @GuardedBy("this")
+    private final ArrayMap<Integer, DeviceLockControllerConnectorInterface>
+            mDeviceLockControllerConnectors;
+
+    private final DeviceLockControllerConnectorStub mDeviceLockControllerConnectorStub =
+            new DeviceLockControllerConnectorStub();
 
     private final DeviceLockControllerPackageUtils mPackageUtils;
 
@@ -94,6 +100,8 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
             mKioskKeepaliveServiceConnections;
 
     private final DeviceLockPersistentStore mPersistentStore;
+
+    private boolean mUseStubConnector = false;
 
     // The following should be a SystemApi on AppOpsManager.
     private static final String OPSTR_SYSTEM_EXEMPT_FROM_ACTIVITY_BG_START_RESTRICTION =
@@ -151,26 +159,30 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
                     + "MANAGE_DEVICE_LOCK_SERVICE_FROM_CONTROLLER";
 
     @NonNull
-    private DeviceLockControllerConnector getDeviceLockControllerConnector(UserHandle userHandle) {
-        final int userId = userHandle.getIdentifier();
-
+    private DeviceLockControllerConnectorInterface getDeviceLockControllerConnector(
+            UserHandle userHandle) {
         synchronized (this) {
-            DeviceLockControllerConnector deviceLockControllerConnector =
-                    mDeviceLockControllerConnectors.get(userId);
-            if (deviceLockControllerConnector == null) {
-                final ComponentName componentName = new ComponentName(mServiceInfo.packageName,
-                        mServiceInfo.name);
-                deviceLockControllerConnector = new DeviceLockControllerConnector(mContext,
-                        componentName, userHandle);
-                mDeviceLockControllerConnectors.put(userId, deviceLockControllerConnector);
-            }
+            if (mUseStubConnector) {
+                return mDeviceLockControllerConnectorStub;
+            } else {
+                final int userId = userHandle.getIdentifier();
+                DeviceLockControllerConnectorInterface deviceLockControllerConnector =
+                        mDeviceLockControllerConnectors.get(userId);
+                if (deviceLockControllerConnector == null) {
+                    final ComponentName componentName = new ComponentName(mServiceInfo.packageName,
+                            mServiceInfo.name);
+                    deviceLockControllerConnector = new DeviceLockControllerConnectorImpl(mContext,
+                            componentName, userHandle);
+                    mDeviceLockControllerConnectors.put(userId, deviceLockControllerConnector);
+                }
 
-            return deviceLockControllerConnector;
+                return deviceLockControllerConnector;
+            }
         }
     }
 
     @NonNull
-    private DeviceLockControllerConnector getDeviceLockControllerConnector() {
+    private DeviceLockControllerConnectorInterface getDeviceLockControllerConnector() {
         final UserHandle userHandle = Binder.getCallingUserHandle();
         return getDeviceLockControllerConnector(userHandle);
     }
@@ -244,6 +256,12 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
             // Note: the exception description thrown by
             // PackageManager.setApplicationEnabledSetting() is somehow misleading because it says
             // that a protected package cannot be disabled (but we're actually trying to enable it).
+        }
+        if (!enabled) {
+            synchronized (this) {
+                mUseStubConnector = true;
+                mDeviceLockControllerConnectors.clear();
+            }
         }
     }
 
