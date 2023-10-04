@@ -252,18 +252,13 @@ public final class FinalizationControllerImpl implements FinalizationController 
         workManager.cancelAllWork();
         AlarmManager alarmManager = mContext.getSystemService(AlarmManager.class);
         alarmManager.cancelAll();
+        // This kills and disables the app
         ListenableFuture<Void> disableApplicationFuture = CallbackToFutureAdapter.getFuture(
                 completer -> {
                         mSystemDeviceLockManager.setDeviceFinalized(true, mBgExecutor,
                                 new OutcomeReceiver<>() {
                                     @Override
                                     public void onResult(Void result) {
-                                        // This kills and disables the app
-                                        PackageManager pm = mContext.getPackageManager();
-                                        pm.setApplicationEnabledSetting(
-                                                mContext.getPackageName(),
-                                                PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                                                0 /* flags */);
                                         completer.set(null);
                                     }
 

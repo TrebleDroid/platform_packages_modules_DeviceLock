@@ -20,6 +20,7 @@ import static android.app.AppOpsManager.OPSTR_SYSTEM_EXEMPT_FROM_HIBERNATION;
 import static android.app.role.RoleManager.MANAGE_HOLDERS_FLAG_DONT_KILL_APP;
 import static android.content.IntentFilter.SYSTEM_HIGH_PRIORITY;
 import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DEFAULT;
+import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
 import static android.content.pm.PackageManager.DONT_KILL_APP;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.devicelock.DeviceId.DEVICE_ID_TYPE_IMEI;
@@ -196,12 +197,7 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
             throw new RuntimeException(errorMessage.toString());
         }
 
-        if (!mServiceInfo.applicationInfo.enabled) {
-            enableDeviceLockControllerIfNeeded(UserHandle.SYSTEM);
-        }
-
-        final ComponentName componentName = new ComponentName(mServiceInfo.packageName,
-                mServiceInfo.name);
+        enforceDeviceLockControllerPackageEnabledState(UserHandle.SYSTEM);
 
         final IntentFilter intentFilter = new IntentFilter(DeviceLockClearReceiver.ACTION_CLEAR);
         // Run before any eventual app receiver (there should be none).
@@ -211,15 +207,14 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
                 Context.RECEIVER_EXPORTED);
     }
 
-    void enableDeviceLockControllerIfNeeded(@NonNull UserHandle userHandle) {
-        mPersistentStore.readFinalizedState(isFinalized -> {
-            if (!isFinalized) {
-                setDeviceLockControllerPackageDefaultEnabledState(userHandle);
-            }
-        }, mContext.getMainExecutor());
+    void enforceDeviceLockControllerPackageEnabledState(@NonNull UserHandle userHandle) {
+        mPersistentStore.readFinalizedState(
+                isFinalized -> setDeviceLockControllerPackageEnabledState(userHandle, !isFinalized),
+                mContext.getMainExecutor());
     }
 
-    private void setDeviceLockControllerPackageDefaultEnabledState(UserHandle userHandle) {
+    private void setDeviceLockControllerPackageEnabledState(UserHandle userHandle,
+            boolean enabled) {
         final String controllerPackageName = mServiceInfo.packageName;
 
         Context controllerContext;
@@ -234,13 +229,15 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
 
         final PackageManager controllerPackageManager = controllerContext.getPackageManager();
 
+        final int enableState = enabled ? COMPONENT_ENABLED_STATE_DEFAULT
+                : COMPONENT_ENABLED_STATE_DISABLED;
         // We cannot check if user control is disabled since
         // DevicePolicyManager.getUserControlDisabledPackages() acts on the calling user.
         // Additionally, we would have to catch SecurityException anyways to avoid TOCTOU bugs
         // since checking and setting is not atomic.
         try {
             controllerPackageManager.setApplicationEnabledSetting(controllerPackageName,
-                    COMPONENT_ENABLED_STATE_DEFAULT, DONT_KILL_APP);
+                    enableState, enabled ? DONT_KILL_APP : 0);
         } catch (SecurityException ex) {
             // This exception is thrown when Device Lock Controller has already enabled
             // package protection for itself. This is an expected behaviour.
@@ -749,6 +746,7 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
     @Override
     public void setDeviceFinalized(boolean finalized, @NonNull RemoteCallback remoteCallback) {
         mPersistentStore.scheduleWrite(finalized);
+        setDeviceLockControllerPackageEnabledState(getCallingUserHandle(), false /* enabled */);
 
         final Bundle result = new Bundle();
         result.putBoolean(KEY_REMOTE_CALLBACK_RESULT, true);
