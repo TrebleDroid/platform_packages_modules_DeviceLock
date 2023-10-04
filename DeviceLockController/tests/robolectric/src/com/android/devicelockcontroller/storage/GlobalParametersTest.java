@@ -39,15 +39,6 @@ public final class GlobalParametersTest extends AbstractGlobalParametersTestBase
     }
 
     @Test
-    public void needCheckIn_shouldReturnExpectedResult() {
-        assertThat(GlobalParameters.needCheckIn(mContext)).isNotEqualTo(NEED_CHECK_IN);
-
-        GlobalParameters.setNeedCheckIn(mContext, NEED_CHECK_IN);
-
-        assertThat(GlobalParameters.needCheckIn(mContext)).isEqualTo(NEED_CHECK_IN);
-    }
-
-    @Test
     public void getRegisteredId_shouldReturnExpectedResult() {
         assertThat(GlobalParameters.getRegisteredDeviceId(mContext)).isNull();
 

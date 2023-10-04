@@ -72,12 +72,6 @@ public final class DeviceLockService extends SystemService {
     }
 
     @Override
-    public void onUserStarting(@NonNull TargetUser user) {
-        Slog.d(TAG, "onUserStarting: " + user);
-        mImpl.onUserStarting(user.getUserHandle());
-    }
-
-    @Override
     public void onUserSwitching(@NonNull TargetUser from, @NonNull TargetUser to) {
         Objects.requireNonNull(to);
         Slog.d(TAG, "onUserSwitching from: " + from + " to: " + to);

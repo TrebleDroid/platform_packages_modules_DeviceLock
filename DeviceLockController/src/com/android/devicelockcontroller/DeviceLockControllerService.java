@@ -29,7 +29,6 @@ import com.android.devicelockcontroller.policy.DevicePolicyController;
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.FinalizationController;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
-import com.android.devicelockcontroller.policy.ProvisionStateController;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
 
@@ -49,7 +48,6 @@ public final class DeviceLockControllerService extends Service {
     private DeviceStateController mDeviceStateController;
     private DevicePolicyController mPolicyController;
     private FinalizationController mFinalizationController;
-    private ProvisionStateController mProvisionStateController;
 
     private final IDeviceLockControllerService.Stub mBinder =
             new IDeviceLockControllerService.Stub() {
@@ -93,16 +91,6 @@ public final class DeviceLockControllerService extends Service {
                 }
 
                 @Override
-                public void onUserStarting(RemoteCallback remoteCallback) {
-                    DevicePolicyManager dpm = getSystemService(DevicePolicyManager.class);
-                    Objects.requireNonNull(dpm).setUserControlDisabledPackages(/* admin= */ null,
-                            List.of(getPackageName()));
-                    Futures.addCallback(mProvisionStateController.onUserStarting(),
-                            remoteCallbackWrapper(remoteCallback, KEY_ON_USER_STARTING_RESULT),
-                            MoreExecutors.directExecutor());
-                }
-
-                @Override
                 public void onUserSwitching(RemoteCallback remoteCallback) {
                     Futures.addCallback(mPolicyController.enforceCurrentPolicies(),
                             remoteCallbackWrapper(remoteCallback, KEY_ON_USER_SWITCHING_RESULT),
@@ -111,6 +99,10 @@ public final class DeviceLockControllerService extends Service {
 
                 @Override
                 public void onUserUnlocked(RemoteCallback remoteCallback) {
+                    DevicePolicyManager dpm = getSystemService(DevicePolicyManager.class);
+                    Objects.requireNonNull(dpm).setUserControlDisabledPackages(
+                            /* admin= */ null,
+                            List.of(getPackageName()));
                     Futures.addCallback(mPolicyController.onUserUnlocked(),
                             remoteCallbackWrapper(remoteCallback, KEY_ON_USER_UNLOCKED_RESULT),
                             MoreExecutors.directExecutor());
@@ -162,7 +154,6 @@ public final class DeviceLockControllerService extends Service {
         LogUtil.d(TAG, "onCreate");
 
         final PolicyObjectsInterface policyObjects = (PolicyObjectsInterface) getApplication();
-        mProvisionStateController = policyObjects.getProvisionStateController();
         mDeviceStateController = policyObjects.getDeviceStateController();
         mPolicyController = policyObjects.getPolicyController();
         mFinalizationController = policyObjects.getFinalizationController();

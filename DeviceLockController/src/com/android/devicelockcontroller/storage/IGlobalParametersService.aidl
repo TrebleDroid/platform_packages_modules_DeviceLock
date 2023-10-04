@@ -23,8 +23,6 @@ package com.android.devicelockcontroller.storage;
 interface IGlobalParametersService {
     void clear();
     void dump();
-    boolean needCheckIn();
-    void setNeedCheckIn(boolean needCheckIn);
     boolean isProvisionReady();
     void setProvisionReady(boolean isProvisionReady);
     String getRegisteredDeviceId();
