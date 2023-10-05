@@ -21,7 +21,7 @@ import android.os.OutcomeReceiver;
 /**
  * Connector class that acts as the interface between the system service and the DLC service.
  */
-public interface DeviceLockControllerConnectorInterface {
+public interface DeviceLockControllerConnector {
 
     /**
      * Unbinds the Device Lock Controller service.

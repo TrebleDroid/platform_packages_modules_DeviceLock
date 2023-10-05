@@ -22,7 +22,7 @@ import android.os.OutcomeReceiver;
  * Stub implementation of the connector that is used when the device has had its restrictions
  * cleared so that we don't try to bind to a disabled package.
  */
-public class DeviceLockControllerConnectorStub implements DeviceLockControllerConnectorInterface {
+public class DeviceLockControllerConnectorStub implements DeviceLockControllerConnector {
 
     @Override
     public void unbind() {}

@@ -83,10 +83,9 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
     private final TelephonyManager mTelephonyManager;
     private final AppOpsManager mAppOpsManager;
 
-    // Map user id -> DeviceLockControllerConnectorInterface
+    // Map user id -> DeviceLockControllerConnector
     @GuardedBy("this")
-    private final ArrayMap<Integer, DeviceLockControllerConnectorInterface>
-            mDeviceLockControllerConnectors;
+    private final ArrayMap<Integer, DeviceLockControllerConnector> mDeviceLockControllerConnectors;
 
     private final DeviceLockControllerConnectorStub mDeviceLockControllerConnectorStub =
             new DeviceLockControllerConnectorStub();
@@ -159,14 +158,13 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
                     + "MANAGE_DEVICE_LOCK_SERVICE_FROM_CONTROLLER";
 
     @NonNull
-    private DeviceLockControllerConnectorInterface getDeviceLockControllerConnector(
-            UserHandle userHandle) {
+    private DeviceLockControllerConnector getDeviceLockControllerConnector(UserHandle userHandle) {
         synchronized (this) {
             if (mUseStubConnector) {
                 return mDeviceLockControllerConnectorStub;
             } else {
                 final int userId = userHandle.getIdentifier();
-                DeviceLockControllerConnectorInterface deviceLockControllerConnector =
+                DeviceLockControllerConnector deviceLockControllerConnector =
                         mDeviceLockControllerConnectors.get(userId);
                 if (deviceLockControllerConnector == null) {
                     final ComponentName componentName = new ComponentName(mServiceInfo.packageName,
@@ -182,7 +180,7 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
     }
 
     @NonNull
-    private DeviceLockControllerConnectorInterface getDeviceLockControllerConnector() {
+    private DeviceLockControllerConnector getDeviceLockControllerConnector() {
         final UserHandle userHandle = Binder.getCallingUserHandle();
         return getDeviceLockControllerConnector(userHandle);
     }

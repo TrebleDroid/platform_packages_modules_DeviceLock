@@ -44,7 +44,7 @@ import java.util.concurrent.TimeoutException;
 /**
  * This class is used to establish a connection (bind) to the Device Lock Controller APK.
  */
-final class DeviceLockControllerConnectorImpl implements DeviceLockControllerConnectorInterface {
+final class DeviceLockControllerConnectorImpl implements DeviceLockControllerConnector {
     private final Object mLock = new Object();
 
     private static final String TAG = "DeviceLockControllerConnectorImpl";
