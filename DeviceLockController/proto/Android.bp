@@ -43,6 +43,7 @@ genrule {
     cmd: LITE_PROTO_CMD,
     srcs: [
         "*.proto",
+        ":libprotobuf-internal-protos",
     ],
     out: [
         "protos.srcjar",
