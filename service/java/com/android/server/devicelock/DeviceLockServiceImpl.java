@@ -20,6 +20,7 @@ import static android.app.AppOpsManager.OPSTR_SYSTEM_EXEMPT_FROM_HIBERNATION;
 import static android.app.role.RoleManager.MANAGE_HOLDERS_FLAG_DONT_KILL_APP;
 import static android.content.IntentFilter.SYSTEM_HIGH_PRIORITY;
 import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DEFAULT;
+import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
 import static android.content.pm.PackageManager.DONT_KILL_APP;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.devicelock.DeviceId.DEVICE_ID_TYPE_IMEI;
@@ -58,6 +59,7 @@ import android.text.TextUtils;
 import android.util.ArrayMap;
 import android.util.Slog;
 
+import com.android.internal.annotations.GuardedBy;
 import com.android.internal.annotations.VisibleForTesting;
 
 import java.util.ArrayList;
@@ -82,7 +84,11 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
     private final AppOpsManager mAppOpsManager;
 
     // Map user id -> DeviceLockControllerConnector
+    @GuardedBy("this")
     private final ArrayMap<Integer, DeviceLockControllerConnector> mDeviceLockControllerConnectors;
+
+    private final DeviceLockControllerConnectorStub mDeviceLockControllerConnectorStub =
+            new DeviceLockControllerConnectorStub();
 
     private final DeviceLockControllerPackageUtils mPackageUtils;
 
@@ -93,6 +99,8 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
             mKioskKeepaliveServiceConnections;
 
     private final DeviceLockPersistentStore mPersistentStore;
+
+    private boolean mUseStubConnector = false;
 
     // The following should be a SystemApi on AppOpsManager.
     private static final String OPSTR_SYSTEM_EXEMPT_FROM_ACTIVITY_BG_START_RESTRICTION =
@@ -151,20 +159,23 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
 
     @NonNull
     private DeviceLockControllerConnector getDeviceLockControllerConnector(UserHandle userHandle) {
-        final int userId = userHandle.getIdentifier();
-
         synchronized (this) {
-            DeviceLockControllerConnector deviceLockControllerConnector =
-                    mDeviceLockControllerConnectors.get(userId);
-            if (deviceLockControllerConnector == null) {
-                final ComponentName componentName = new ComponentName(mServiceInfo.packageName,
-                        mServiceInfo.name);
-                deviceLockControllerConnector = new DeviceLockControllerConnector(mContext,
-                        componentName, userHandle);
-                mDeviceLockControllerConnectors.put(userId, deviceLockControllerConnector);
-            }
+            if (mUseStubConnector) {
+                return mDeviceLockControllerConnectorStub;
+            } else {
+                final int userId = userHandle.getIdentifier();
+                DeviceLockControllerConnector deviceLockControllerConnector =
+                        mDeviceLockControllerConnectors.get(userId);
+                if (deviceLockControllerConnector == null) {
+                    final ComponentName componentName = new ComponentName(mServiceInfo.packageName,
+                            mServiceInfo.name);
+                    deviceLockControllerConnector = new DeviceLockControllerConnectorImpl(mContext,
+                            componentName, userHandle);
+                    mDeviceLockControllerConnectors.put(userId, deviceLockControllerConnector);
+                }
 
-            return deviceLockControllerConnector;
+                return deviceLockControllerConnector;
+            }
         }
     }
 
@@ -196,12 +207,7 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
             throw new RuntimeException(errorMessage.toString());
         }
 
-        if (!mServiceInfo.applicationInfo.enabled) {
-            enableDeviceLockControllerIfNeeded(UserHandle.SYSTEM);
-        }
-
-        final ComponentName componentName = new ComponentName(mServiceInfo.packageName,
-                mServiceInfo.name);
+        enforceDeviceLockControllerPackageEnabledState(UserHandle.SYSTEM);
 
         final IntentFilter intentFilter = new IntentFilter(DeviceLockClearReceiver.ACTION_CLEAR);
         // Run before any eventual app receiver (there should be none).
@@ -211,15 +217,14 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
                 Context.RECEIVER_EXPORTED);
     }
 
-    void enableDeviceLockControllerIfNeeded(@NonNull UserHandle userHandle) {
-        mPersistentStore.readFinalizedState(isFinalized -> {
-            if (!isFinalized) {
-                setDeviceLockControllerPackageDefaultEnabledState(userHandle);
-            }
-        }, mContext.getMainExecutor());
+    void enforceDeviceLockControllerPackageEnabledState(@NonNull UserHandle userHandle) {
+        mPersistentStore.readFinalizedState(
+                isFinalized -> setDeviceLockControllerPackageEnabledState(userHandle, !isFinalized),
+                mContext.getMainExecutor());
     }
 
-    private void setDeviceLockControllerPackageDefaultEnabledState(UserHandle userHandle) {
+    private void setDeviceLockControllerPackageEnabledState(UserHandle userHandle,
+            boolean enabled) {
         final String controllerPackageName = mServiceInfo.packageName;
 
         Context controllerContext;
@@ -234,19 +239,27 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
 
         final PackageManager controllerPackageManager = controllerContext.getPackageManager();
 
+        final int enableState = enabled ? COMPONENT_ENABLED_STATE_DEFAULT
+                : COMPONENT_ENABLED_STATE_DISABLED;
         // We cannot check if user control is disabled since
         // DevicePolicyManager.getUserControlDisabledPackages() acts on the calling user.
         // Additionally, we would have to catch SecurityException anyways to avoid TOCTOU bugs
         // since checking and setting is not atomic.
         try {
             controllerPackageManager.setApplicationEnabledSetting(controllerPackageName,
-                    COMPONENT_ENABLED_STATE_DEFAULT, DONT_KILL_APP);
+                    enableState, enabled ? DONT_KILL_APP : 0);
         } catch (SecurityException ex) {
             // This exception is thrown when Device Lock Controller has already enabled
             // package protection for itself. This is an expected behaviour.
             // Note: the exception description thrown by
             // PackageManager.setApplicationEnabledSetting() is somehow misleading because it says
             // that a protected package cannot be disabled (but we're actually trying to enable it).
+        }
+        if (!enabled) {
+            synchronized (this) {
+                mUseStubConnector = true;
+                mDeviceLockControllerConnectors.clear();
+            }
         }
     }
 
@@ -749,6 +762,7 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
     @Override
     public void setDeviceFinalized(boolean finalized, @NonNull RemoteCallback remoteCallback) {
         mPersistentStore.scheduleWrite(finalized);
+        setDeviceLockControllerPackageEnabledState(getCallingUserHandle(), false /* enabled */);
 
         final Bundle result = new Bundle();
         result.putBoolean(KEY_REMOTE_CALLBACK_RESULT, true);

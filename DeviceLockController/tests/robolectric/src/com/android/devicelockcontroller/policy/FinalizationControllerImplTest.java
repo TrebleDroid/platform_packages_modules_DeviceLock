@@ -94,7 +94,7 @@ public final class FinalizationControllerImplTest {
     }
 
     @Test
-    public void reportingFinishedSuccessfully_disablesApplication() throws Exception {
+    public void reportingFinishedSuccessfully_fullyFinalizes() throws Exception {
         mFinalizationController = makeFinalizationController();
 
         // GIVEN the restrictions have been requested to clear
@@ -109,10 +109,8 @@ public final class FinalizationControllerImplTest {
                 mFinalizationController.notifyFinalizationReportResult(successResponse);
         Futures.getChecked(reportedFuture, Exception.class, TIMEOUT_MS, TimeUnit.MILLISECONDS);
 
-        // THEN the application is disabled and the disk value is set to finalized
+        // THEN the disk value is set to finalized
         PackageManager pm = mContext.getPackageManager();
-        assertThat(pm.getApplicationEnabledSetting(mContext.getPackageName()))
-                .isEqualTo(PackageManager.COMPONENT_ENABLED_STATE_DISABLED);
         assertThat(mGlobalParametersClient.getFinalizationState().get()).isEqualTo(FINALIZED);
     }
 
