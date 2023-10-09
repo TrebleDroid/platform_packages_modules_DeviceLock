@@ -157,6 +157,18 @@
             </intent-filter>
         </receiver>
 
+        <!-- Multi users locked boot completed broadcast receiver. This receiver records the boot
+         timestamp -->
+        <receiver
+            android:name="com.android.devicelockcontroller.receivers.RecordBootTimestampReceiver"
+            android:directBootAware="true"
+            android:exported="false"
+            android:singleUser="false">
+            <intent-filter>
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
         <!-- Multi users time changed broadcast receiver -->
         <receiver
             android:name="com.android.devicelockcontroller.receivers.TimeChangedBroadcastReceiver"

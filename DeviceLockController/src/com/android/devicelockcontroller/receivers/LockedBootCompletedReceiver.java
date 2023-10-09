@@ -22,7 +22,6 @@ import static com.android.devicelockcontroller.policy.ProvisionStateController.P
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.SystemClock;
 import android.os.UserManager;
 
 import androidx.annotation.VisibleForTesting;
@@ -32,14 +31,11 @@ import com.android.devicelockcontroller.policy.ProvisionStateController;
 import com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState;
 import com.android.devicelockcontroller.schedule.DeviceLockControllerScheduler;
 import com.android.devicelockcontroller.schedule.DeviceLockControllerSchedulerProvider;
-import com.android.devicelockcontroller.storage.UserParameters;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 
-import java.time.Clock;
-import java.time.Instant;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -47,9 +43,7 @@ import java.util.concurrent.Executors;
  * Handle {@link  Intent#ACTION_LOCKED_BOOT_COMPLETED}. This receiver runs for any user
  * (singleUser="false").
  * <p>
- * This receiver does the following:
- * 1. Record device boot timestamp
- * 2. Reschedule alarms if needed.
+ * This receiver reschedules alarms if needed.
  */
 public final class LockedBootCompletedReceiver extends BroadcastReceiver {
     private static final String TAG = "LockedBootCompletedReceiver";
@@ -76,10 +70,6 @@ public final class LockedBootCompletedReceiver extends BroadcastReceiver {
         if (isUserProfile) {
             return;
         }
-
-        Instant bootTimeStamp = Instant.now(Clock.systemUTC()).minusMillis(
-                SystemClock.elapsedRealtime());
-        UserParameters.setBootTimeMillis(context, bootTimeStamp.toEpochMilli());
 
         Context applicationContext = context.getApplicationContext();
         ProvisionStateController stateController = ((PolicyObjectsInterface) applicationContext)
