@@ -28,7 +28,7 @@ android_robolectric_test {
         "androidx.test.core",
         "androidx.work_work-testing",
         "mockito-robolectric-prebuilt",
-        "truth-prebuilt",
+        "truth",
         "guava-android-testlib",
     ],
     test_suites: ["general-tests"],
