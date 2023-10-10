@@ -26,7 +26,7 @@ android_test {
         "services.core",
         "androidx.test.runner",
         "mockito-target-extended-minus-junit4",
-        "truth-prebuilt",
+        "truth",
     ],
     libs: [
         "android.test.mock",
