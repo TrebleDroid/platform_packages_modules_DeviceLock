@@ -87,6 +87,11 @@
             tools:replace="android:exported" />
 
         <receiver
+            android:name="com.android.devicelockcontroller.receivers.RecordBootTimestampReceiver"
+            android:exported="true"
+            tools:replace="android:exported" />
+
+        <receiver
             android:name="com.android.devicelockcontroller.receivers.TimeChangedBroadcastReceiver"
             android:exported="true"
             tools:replace="android:exported" />
