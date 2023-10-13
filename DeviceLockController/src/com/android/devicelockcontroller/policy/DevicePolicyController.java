@@ -49,6 +49,12 @@ public interface DevicePolicyController {
     ListenableFuture<Void> enforceCurrentPolicies();
 
     /**
+     * Enforce current policies. This is only used in an attempts to restore previous enforced
+     * policies in the case enforceCurrentPolicies() fails.
+     */
+    ListenableFuture<Void> enforceCurrentPoliciesForCriticalFailure();
+
+    /**
      * Get the launch intent for current enforced state.
      */
     ListenableFuture<Intent> getLaunchIntentForCurrentState();
@@ -71,6 +77,7 @@ public interface DevicePolicyController {
             LockTaskType.UNDEFINED,
             LockTaskType.NOT_IN_LOCK_TASK,
             LockTaskType.LANDING_ACTIVITY,
+            LockTaskType.CRITICAL_ERROR,
             LockTaskType.KIOSK_SETUP_ACTIVITY,
             LockTaskType.KIOSK_LOCK_ACTIVITY
     })
@@ -83,10 +90,13 @@ public interface DevicePolicyController {
         /* Device lock controller landing activity */
         int LANDING_ACTIVITY = 1;
 
+        /* Hit a critical error during policy enforcement, device will be reset */
+        int CRITICAL_ERROR = 2;
+
         /* Kiosk app setup activity */
-        int KIOSK_SETUP_ACTIVITY = 2;
+        int KIOSK_SETUP_ACTIVITY = 3;
 
         /* Kiosk app lock activity */
-        int KIOSK_LOCK_ACTIVITY = 3;
+        int KIOSK_LOCK_ACTIVITY = 4;
     }
 }

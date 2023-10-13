@@ -16,6 +16,7 @@
 
 package com.android.devicelockcontroller.policy;
 
+import static com.android.devicelockcontroller.activities.ProvisioningActivity.EXTRA_SHOW_CRITICAL_PROVISION_FAILED_UI_ON_START;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_FINANCING_PROVISIONING;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_SUBSIDY_PROVISIONING;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.CLEARED;
@@ -51,6 +52,7 @@ import androidx.work.WorkManager;
 import com.android.devicelockcontroller.SystemDeviceLockManager;
 import com.android.devicelockcontroller.SystemDeviceLockManagerImpl;
 import com.android.devicelockcontroller.activities.LandingActivity;
+import com.android.devicelockcontroller.activities.ProvisioningActivity;
 import com.android.devicelockcontroller.common.DeviceLockConstants.ProvisioningType;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
 import com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState;
@@ -135,6 +137,28 @@ public final class DevicePolicyControllerImpl implements DevicePolicyController 
 
     @Override
     public ListenableFuture<Void> enforceCurrentPolicies() {
+        return Futures.transformAsync(enforceCurrentPoliciesWithoutStartingLockTaskMode(
+                /* failure= */ false),
+                this::startLockTaskModeIfNeeded,
+                mBgExecutor);
+    }
+
+    @Override
+    public ListenableFuture<Void> enforceCurrentPoliciesForCriticalFailure() {
+        return Futures.transformAsync(enforceCurrentPoliciesWithoutStartingLockTaskMode(
+                /* failure= */ true),
+                unused -> startLockTaskModeIfNeeded(LockTaskType.CRITICAL_ERROR), mBgExecutor);
+    }
+
+    /**
+     * Enforce current policies, but do no start lock task mode.
+     *
+     * @param failure true if this enforcement is due to resetting policies in case of failure.
+     *
+     * @return A future for the lock task type corresponding to the current policies.
+     */
+    private ListenableFuture<@LockTaskType Integer>
+            enforceCurrentPoliciesWithoutStartingLockTaskMode(boolean failure) {
         synchronized (this) {
             // current lock task type must be assigned to a local variable; otherwise, if
             // retrieved down the execution flow, it will be returning the new type after execution.
@@ -147,15 +171,19 @@ public final class DevicePolicyControllerImpl implements DevicePolicyController 
                                     mProvisionStateController.getState(),
                                     this::enforcePoliciesForProvisionState, mBgExecutor),
                             mBgExecutor);
-            // To prevent exception propagate to future policies enforcement, catch any exceptions
-            // that might happen during the execution and fallback to previous type if exception
-            // happens.
-            mCurrentEnforcedLockTaskTypeFuture = Futures.catchingAsync(policiesEnforcementFuture,
-                    Exception.class, unused -> currentLockTaskType,
-                    MoreExecutors.directExecutor());
-            return Futures.transformAsync(policiesEnforcementFuture,
-                    this::startLockTaskModeIfNeeded,
-                    mBgExecutor);
+            if (failure) {
+                mCurrentEnforcedLockTaskTypeFuture = Futures.immediateFuture(
+                        LockTaskType.CRITICAL_ERROR);
+            } else {
+                // To prevent exception propagate to future policies enforcement, catch any
+                // exceptions that might happen during the execution and fallback to previous type
+                // if exception happens.
+                mCurrentEnforcedLockTaskTypeFuture = Futures.catchingAsync(
+                        policiesEnforcementFuture,
+                        Exception.class, unused -> currentLockTaskType,
+                        MoreExecutors.directExecutor());
+            }
+            return policiesEnforcementFuture;
         }
     }
 
@@ -320,6 +348,13 @@ public final class DevicePolicyControllerImpl implements DevicePolicyController 
                 }, mBgExecutor);
     }
 
+    private ListenableFuture<Intent> getProvisioningActivityIntentForCriticalFailure() {
+        final Intent intent = new Intent(mContext, ProvisioningActivity.class)
+                .putExtra(EXTRA_SHOW_CRITICAL_PROVISION_FAILED_UI_ON_START, true);
+        return Futures.immediateFuture(intent);
+    }
+
+
     @Override
     public ListenableFuture<Intent> getLaunchIntentForCurrentState() {
         return Futures.transformAsync(getCurrentEnforcedLockTaskType(),
@@ -329,6 +364,8 @@ public final class DevicePolicyControllerImpl implements DevicePolicyController 
                             return Futures.immediateFuture(null);
                         case LockTaskType.LANDING_ACTIVITY:
                             return getLandingActivityIntent();
+                        case LockTaskType.CRITICAL_ERROR:
+                            return getProvisioningActivityIntentForCriticalFailure();
                         case LockTaskType.KIOSK_SETUP_ACTIVITY:
                             return getKioskSetupActivityIntent();
                         case LockTaskType.KIOSK_LOCK_ACTIVITY:

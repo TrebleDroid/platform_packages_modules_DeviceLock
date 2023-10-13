@@ -97,6 +97,7 @@ public final class DeviceLockConstants {
             ProvisionFailureReason.PLAY_INSTALLATION_FAILED,
             ProvisionFailureReason.COUNTRY_INFO_UNAVAILABLE,
             ProvisionFailureReason.NOT_IN_ELIGIBLE_COUNTRY,
+            ProvisionFailureReason.POLICY_ENFORCEMENT_FAILED,
     })
     public @interface ProvisionFailureReason {
         int UNKNOWN_REASON = 0;
@@ -104,6 +105,7 @@ public final class DeviceLockConstants {
         int PLAY_INSTALLATION_FAILED = 2;
         int COUNTRY_INFO_UNAVAILABLE = 3;
         int NOT_IN_ELIGIBLE_COUNTRY = 4;
+        int POLICY_ENFORCEMENT_FAILED = 5;
     }
 
     public static final String EXTRA_KIOSK_PACKAGE =
