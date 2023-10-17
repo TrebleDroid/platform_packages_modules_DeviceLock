@@ -22,7 +22,6 @@ android_test {
     defaults: ["cts_defaults"],
     srcs: [
         "src/**/*.java",
-        ":service-devicelock-sources-shared-with-tests",
         ":framework-devicelock-sources-shared-with-tests",
     ],
     static_libs: [

@@ -16,31 +16,24 @@
 
 package com.android.cts.devicelock;
 
-import static android.devicelock.DeviceId.DEVICE_ID_TYPE_IMEI;
-import static android.devicelock.DeviceId.DEVICE_ID_TYPE_MEID;
-
 import static com.google.common.truth.Truth.assertThat;
-import static com.google.common.truth.Truth.assertWithMessage;
 
 import static org.junit.Assert.assertThrows;
-import static org.junit.Assume.assumeTrue;
 
-import android.app.admin.DevicePolicyManager;
 import android.content.Context;
 import android.devicelock.DeviceId;
 import android.devicelock.DeviceLockManager;
 import android.os.Build;
 import android.os.OutcomeReceiver;
 import android.os.UserHandle;
-import android.telephony.TelephonyManager;
 import android.util.ArrayMap;
 
 import androidx.concurrent.futures.CallbackToFutureAdapter;
 import androidx.test.filters.SdkSuppress;
 import androidx.test.platform.app.InstrumentationRegistry;
 
+import com.android.compatibility.common.util.ApiTest;
 import com.android.compatibility.common.util.SystemUtil;
-import com.android.server.devicelock.DeviceLockControllerPackageUtils;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -67,15 +60,6 @@ public final class DeviceLockManagerTest {
 
     private final DeviceLockManager mDeviceLockManager =
             mContext.getSystemService(DeviceLockManager.class);
-
-    private final TelephonyManager mTelephonyManager =
-            mContext.getSystemService(TelephonyManager.class);
-
-    private final DevicePolicyManager mDevicePolicyManager =
-            mContext.getSystemService(DevicePolicyManager.class);
-
-    private final DeviceLockControllerPackageUtils mPackageUtils =
-            new DeviceLockControllerPackageUtils(mContext);
 
     private static final int TIMEOUT = 1;
 
@@ -198,6 +182,7 @@ public final class DeviceLockManagerTest {
     }
 
     @Test
+    @ApiTest(apis = {"android.devicelock.DeviceLockManager#lockDevice"})
     public void lockDevicePermissionCheck() {
         ListenableFuture<Void> lockDeviceFuture = getLockDeviceFuture();
 
@@ -212,6 +197,7 @@ public final class DeviceLockManagerTest {
     }
 
     @Test
+    @ApiTest(apis = {"android.devicelock.DeviceLockManager#unlockDevice"})
     public void unlockDevicePermissionCheck() {
         ListenableFuture<Void> unlockDeviceFuture = getUnlockDeviceFuture();
 
@@ -226,6 +212,7 @@ public final class DeviceLockManagerTest {
     }
 
     @Test
+    @ApiTest(apis = {"android.devicelock.DeviceLockManager#isDeviceLocked"})
     public void isDeviceLockedPermissionCheck() {
         ListenableFuture<Boolean> isDeviceLockedFuture = getIsDeviceLockedFuture();
 
@@ -240,6 +227,7 @@ public final class DeviceLockManagerTest {
     }
 
     @Test
+    @ApiTest(apis = {"android.devicelock.DeviceLockManager#getDeviceId"})
     public void getDeviceIdPermissionCheck() {
         ListenableFuture<DeviceId> deviceIdFuture = getDeviceIdFuture();
 
@@ -254,6 +242,12 @@ public final class DeviceLockManagerTest {
     }
 
     @Test
+    @ApiTest(
+            apis = {
+                "android.devicelock.DeviceLockManager#isDeviceLocked",
+                "android.devicelock.DeviceLockManager#lockDevice",
+                "android.devicelock.DeviceLockManager#unlockDevice"
+            })
     public void deviceShouldLockAndUnlock() throws InterruptedException, ExecutionException,
             TimeoutException {
 
@@ -277,40 +271,12 @@ public final class DeviceLockManagerTest {
         }
     }
 
-    private void skipIfNoIdAvailable() {
-        final StringBuilder errorMessage = new StringBuilder();
-        final int deviceIdTypeBitmap =
-                mPackageUtils.getDeviceIdTypeBitmap(errorMessage);
-        assertWithMessage(errorMessage.toString()).that(deviceIdTypeBitmap).isGreaterThan(-1);
-
-        String imei;
-        String meid;
-
-        try {
-            adoptShellPermissions();
-
-            imei = mTelephonyManager.getImei();
-            meid = mTelephonyManager.getMeid();
-        } finally {
-            dropShellPermissions();
-        }
-
-        final boolean imeiAvailable = (imei != null)
-                && ((deviceIdTypeBitmap & (1 << DEVICE_ID_TYPE_IMEI)) != 0);
-        final boolean meidAvailable = (meid != null)
-                && ((deviceIdTypeBitmap & (1 << DEVICE_ID_TYPE_MEID)) != 0);
-        final boolean idAvailable = imeiAvailable || meidAvailable;
-
-        assumeTrue("No id available", idAvailable);
-    }
-
     @Test
+    @ApiTest(apis = {"android.devicelock.DeviceLockManager#getDeviceId"})
     public void getDeviceIdShouldReturnAnId()
             throws ExecutionException, InterruptedException, TimeoutException {
         try {
             addFinancedDeviceKioskRole();
-
-            skipIfNoIdAvailable();
 
             // The device ID is supposed to be obtained from the DeviceLock backend service, passed
             // to the DeviceLockController app, then passed to the DeviceLock system service. Since
@@ -326,6 +292,7 @@ public final class DeviceLockManagerTest {
     }
 
     @Test
+    @ApiTest(apis = {"android.devicelock.DeviceLockManager#getKioskApps"})
     public void getKioskApp_financedRoleHolderExists_returnsMapping()
             throws ExecutionException, InterruptedException, TimeoutException {
         final ArrayMap expectedKioskApps = new ArrayMap<Integer, String>();
@@ -344,6 +311,7 @@ public final class DeviceLockManagerTest {
     }
 
     @Test
+    @ApiTest(apis = {"android.devicelock.DeviceLockManager#getKioskApps"})
     public void getKioskApp_financedRoleHolderDoesNotExist_returnsEmptyMapping()
             throws ExecutionException, InterruptedException, TimeoutException {
         Map<Integer, String> kioskAppsMap = getKioskAppsFuture().get(TIMEOUT, TimeUnit.SECONDS);
