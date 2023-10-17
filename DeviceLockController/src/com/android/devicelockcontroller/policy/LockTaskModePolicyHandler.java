@@ -50,18 +50,18 @@ import java.util.concurrent.Executor;
 
 /** Handles lock task mode features. */
 final class LockTaskModePolicyHandler implements PolicyHandler {
-    private static final int DEFAULT_LOCK_TASK_FEATURES_FOR_DLC =
+    static final int DEFAULT_LOCK_TASK_FEATURES_FOR_DLC =
             (DevicePolicyManager.LOCK_TASK_FEATURE_SYSTEM_INFO
                     | DevicePolicyManager.LOCK_TASK_FEATURE_KEYGUARD
                     | DevicePolicyManager.LOCK_TASK_FEATURE_GLOBAL_ACTIONS
                     | DevicePolicyManager.LOCK_TASK_FEATURE_BLOCK_ACTIVITY_START_IN_TASK);
-    private static final int DEFAULT_LOCK_TASK_FEATURES_FOR_KIOSK =
+    static final int DEFAULT_LOCK_TASK_FEATURES_FOR_KIOSK =
             DEFAULT_LOCK_TASK_FEATURES_FOR_DLC | DevicePolicyManager.LOCK_TASK_FEATURE_HOME;
     private static final String TAG = "LockTaskModePolicyHandler";
     private final Context mContext;
     private final DevicePolicyManager mDpm;
     private final Executor mBgExecutor;
-    private UserManager mUserManager;
+    private final UserManager mUserManager;
 
     LockTaskModePolicyHandler(Context context, DevicePolicyManager dpm, Executor bgExecutor) {
         mContext = context;
