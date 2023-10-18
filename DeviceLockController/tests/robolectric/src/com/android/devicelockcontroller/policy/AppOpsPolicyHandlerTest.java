@@ -38,17 +38,17 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.mockito.stubbing.Answer;
 import org.robolectric.RobolectricTestRunner;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 
 @RunWith(RobolectricTestRunner.class)
-public class AppOpsPolicyHandlerTest {
+public final class AppOpsPolicyHandlerTest {
     public static final String TEST_PACKAGE = "test-package";
 
     @Rule
@@ -60,12 +60,12 @@ public class AppOpsPolicyHandlerTest {
     private AppOpsPolicyHandler mHandler;
 
     @Before
-    public void setUp() {
+    public void setUp() throws ExecutionException, InterruptedException {
         mHandler = new AppOpsPolicyHandler(mSystemDeviceLockManagerMock,
                 TestingExecutors.sameThreadScheduledExecutor());
         Bundle bundle = new Bundle();
         bundle.putString(EXTRA_KIOSK_PACKAGE, TEST_PACKAGE);
-        SetupParametersClient.getInstance().createPrefs(bundle);
+        SetupParametersClient.getInstance().createPrefs(bundle).get();
         doAnswer((Answer<Boolean>) invocation -> {
             OutcomeReceiver<Void, Exception> callback = invocation.getArgument(2 /* callback */);
             callback.onResult(null /* result */);
@@ -74,7 +74,7 @@ public class AppOpsPolicyHandlerTest {
         }).when(mSystemDeviceLockManagerMock)
                 .setExemptFromActivityBackgroundStartRestriction(anyBoolean(),
                         any(Executor.class),
-                        ArgumentMatchers.<OutcomeReceiver<Void, Exception>>any());
+                        any());
 
         doAnswer((Answer<Boolean>) invocation -> {
             OutcomeReceiver<Void, Exception> callback = invocation.getArgument(3 /* callback */);
@@ -84,65 +84,101 @@ public class AppOpsPolicyHandlerTest {
         }).when(mSystemDeviceLockManagerMock)
                 .setExemptFromHibernation(anyString(), anyBoolean(),
                         any(Executor.class),
-                        ArgumentMatchers.<OutcomeReceiver<Void, Exception>>any());
+                        any());
     }
 
     @Test
-    public void onProvisioned_shouldExemptBackgroundStartAndHibernation() {
-        mHandler.onProvisioned();
+    public void onProvisioned_shouldExemptBackgroundStartAndHibernation()
+            throws ExecutionException, InterruptedException {
+        mHandler.onProvisioned().get();
 
         verify(mSystemDeviceLockManagerMock)
                 .setExemptFromActivityBackgroundStartRestriction(
                         eq(true),
                         any(Executor.class),
-                        ArgumentMatchers.<OutcomeReceiver<Void, Exception>>any());
+                        any());
         verify(mSystemDeviceLockManagerMock)
                 .setExemptFromHibernation(anyString(),
                         eq(true),
                         any(Executor.class),
-                        ArgumentMatchers.<OutcomeReceiver<Void, Exception>>any());
+                        any());
     }
 
     @Test
-    public void onProvisionInProgress_shouldExemptBackgroundStartAndHibernation() {
-        mHandler.onProvisionInProgress();
+    public void onProvisionInProgress_shouldExemptBackgroundStartNotHibernation()
+            throws ExecutionException, InterruptedException {
+        mHandler.onProvisionInProgress().get();
 
         verify(mSystemDeviceLockManagerMock)
                 .setExemptFromActivityBackgroundStartRestriction(
                         eq(true),
                         any(Executor.class),
-                        ArgumentMatchers.<OutcomeReceiver<Void, Exception>>any());
+                        any());
         verify(mSystemDeviceLockManagerMock, never())
                 .setExemptFromHibernation(anyString(),
                         eq(true),
                         any(Executor.class),
-                        ArgumentMatchers.<OutcomeReceiver<Void, Exception>>any());
+                        any());
     }
 
     @Test
-    public void onProvisionFailed_shouldBanBackgroundStart() {
-        mHandler.onProvisionFailed();
+    public void onProvisionFailed_shouldBanBackgroundStart()
+            throws ExecutionException, InterruptedException {
+        mHandler.onProvisionFailed().get();
 
         verify(mSystemDeviceLockManagerMock)
                 .setExemptFromActivityBackgroundStartRestriction(
                         eq(false),
                         any(Executor.class),
-                        ArgumentMatchers.<OutcomeReceiver<Void, Exception>>any());
+                        any());
     }
 
     @Test
-    public void onCleared_shouldBanBackagorundStartAndHibernation() {
-        mHandler.onCleared();
+    public void onCleared_shouldBanBackgroundStartAndHibernation()
+            throws ExecutionException, InterruptedException {
+        mHandler.onCleared().get();
 
         verify(mSystemDeviceLockManagerMock)
                 .setExemptFromActivityBackgroundStartRestriction(
                         eq(false),
                         any(Executor.class),
-                        ArgumentMatchers.<OutcomeReceiver<Void, Exception>>any());
+                        any());
         verify(mSystemDeviceLockManagerMock)
                 .setExemptFromHibernation(anyString(),
                         eq(false),
                         any(Executor.class),
-                        ArgumentMatchers.<OutcomeReceiver<Void, Exception>>any());
+                        any());
+    }
+
+    @Test
+    public void onLocked_shouldExemptBackgroundStartAndHibernation()
+            throws ExecutionException, InterruptedException {
+        mHandler.onLocked().get();
+        verify(mSystemDeviceLockManagerMock)
+                .setExemptFromActivityBackgroundStartRestriction(
+                        eq(true),
+                        any(Executor.class),
+                        any());
+        verify(mSystemDeviceLockManagerMock)
+                .setExemptFromHibernation(anyString(),
+                        eq(true),
+                        any(Executor.class),
+                        any());
+    }
+
+    @Test
+    public void onUnlocked_shouldExemptHibernationNotBackgroundStart()
+            throws ExecutionException, InterruptedException {
+        mHandler.onUnlocked().get();
+        verify(mSystemDeviceLockManagerMock, never())
+                .setExemptFromActivityBackgroundStartRestriction(
+                        eq(true),
+                        any(Executor.class),
+                        any());
+        verify(mSystemDeviceLockManagerMock)
+                .setExemptFromHibernation(anyString(),
+                        eq(true),
+                        any(Executor.class),
+                        any());
     }
 }
