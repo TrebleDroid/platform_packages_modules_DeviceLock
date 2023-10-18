@@ -48,7 +48,10 @@ public final class SystemDeviceLockManagerImpl implements SystemDeviceLockManage
         final DeviceLockManager deviceLockManager =
                 context.getSystemService(DeviceLockManager.class);
 
-        mIDeviceLockService = deviceLockManager.getService();
+        if (deviceLockManager != null)
+            mIDeviceLockService = deviceLockManager.getService();
+        else
+            mIDeviceLockService = null;
     }
 
     private SystemDeviceLockManagerImpl() {
