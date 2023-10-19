@@ -16,9 +16,6 @@
 
 package com.android.devicelockcontroller.provision.worker;
 
-import static com.android.devicelockcontroller.DevicelockStatsLog.DEVICE_LOCK_CHECK_IN_REQUEST_REPORTED__TYPE__REPORT_DEVICE_PROVISION_STATE;
-import static com.android.devicelockcontroller.DevicelockStatsLog.DEVICE_LOCK_CHECK_IN_REQUEST_REPORTED__TYPE__REPORT_DEVICE_PROVISIONING_COMPLETE;
-
 import android.content.Context;
 
 import androidx.annotation.NonNull;
@@ -31,16 +28,17 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.WorkerParameters;
 
-import com.android.devicelockcontroller.DevicelockStatsLog;
 import com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState;
 import com.android.devicelockcontroller.common.DeviceLockConstants.ProvisionFailureReason;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.ReportDeviceProvisionStateGrpcResponse;
 import com.android.devicelockcontroller.schedule.DeviceLockControllerScheduler;
 import com.android.devicelockcontroller.schedule.DeviceLockControllerSchedulerProvider;
+import com.android.devicelockcontroller.stats.StatsLoggerProvider;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.storage.UserParameters;
 import com.android.devicelockcontroller.util.LogUtil;
+import com.android.devicelockcontroller.stats.StatsLogger;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -53,6 +51,8 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
     public static final String KEY_IS_PROVISION_SUCCESSFUL = "is-provision-successful";
     public static final String KEY_PROVISION_FAILURE_REASON = "provision-failure-reason";
     public static final String REPORT_PROVISION_STATE_WORK_NAME = "report-provision-state";
+
+    private final StatsLogger mStatsLogger;
 
     /**
      * Report provision failure and get next failed step
@@ -108,6 +108,9 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
             @NonNull WorkerParameters workerParams, DeviceCheckInClient client,
             ListeningExecutorService executorService) {
         super(context, workerParams, client, executorService);
+        StatsLoggerProvider loggerProvider =
+                (StatsLoggerProvider) context.getApplicationContext();
+        mStatsLogger = loggerProvider.getStatsLogger();
     }
 
     @NonNull
@@ -145,12 +148,11 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
             Futures.getUnchecked(globalParametersClient.setLastReceivedProvisionState(nextState));
             scheduler.scheduleNextProvisionFailedStepAlarm(
                     shouldRunNextStepImmediately(Futures.getDone(lastState), nextState));
-            DevicelockStatsLog.write(
-                    DevicelockStatsLog.DEVICE_LOCK_CHECK_IN_REQUEST_REPORTED,
-                    nextState == DeviceProvisionState.PROVISION_STATE_SUCCESS
-                            ? DEVICE_LOCK_CHECK_IN_REQUEST_REPORTED__TYPE__REPORT_DEVICE_PROVISIONING_COMPLETE
-                            : DEVICE_LOCK_CHECK_IN_REQUEST_REPORTED__TYPE__REPORT_DEVICE_PROVISION_STATE
-            );
+            if (DeviceProvisionState.PROVISION_STATE_SUCCESS == nextState) {
+                mStatsLogger.logReportDeviceProvisioningComplete();
+            } else {
+                mStatsLogger.logReportDeviceProvisionState();
+            }
             return Result.success();
         }, mExecutorService);
     }
