@@ -196,6 +196,8 @@ enum ClientProvisionFailureReason {
   PROVISION_FAILURE_REASON_COUNTRY_INFO_UNAVAILABLE = 3;
   // Provision failed due to device is not in an eligible country or region.
   PROVISION_FAILURE_REASON_NOT_IN_ELIGIBLE_COUNTRY = 4;
+  // Provision failed due to inability to enforce policies.
+  PROVISION_FAILURE_REASON_POLICY_ENFORCEMENT_FAILED = 5;
 }
 
 // The different provision states of a device.

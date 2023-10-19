@@ -20,6 +20,7 @@ import static com.android.devicelockcontroller.proto.ClientProvisionFailureReaso
 import static com.android.devicelockcontroller.proto.ClientProvisionFailureReason.PROVISION_FAILURE_REASON_NOT_IN_ELIGIBLE_COUNTRY;
 import static com.android.devicelockcontroller.proto.ClientProvisionFailureReason.PROVISION_FAILURE_REASON_PLAY_INSTALLATION_FAILED;
 import static com.android.devicelockcontroller.proto.ClientProvisionFailureReason.PROVISION_FAILURE_REASON_PLAY_TASK_UNAVAILABLE;
+import static com.android.devicelockcontroller.proto.ClientProvisionFailureReason.PROVISION_FAILURE_REASON_POLICY_ENFORCEMENT_FAILED;
 import static com.android.devicelockcontroller.proto.ClientProvisionFailureReason.PROVISION_FAILURE_REASON_UNSPECIFIED;
 
 import android.util.ArraySet;
@@ -241,6 +242,9 @@ public final class DeviceCheckInClientImpl extends DeviceCheckInClient {
                 break;
             case ProvisionFailureReason.NOT_IN_ELIGIBLE_COUNTRY:
                 reasonProto = PROVISION_FAILURE_REASON_NOT_IN_ELIGIBLE_COUNTRY;
+                break;
+            case ProvisionFailureReason.POLICY_ENFORCEMENT_FAILED:
+                reasonProto = PROVISION_FAILURE_REASON_POLICY_ENFORCEMENT_FAILED;
                 break;
             default:
                 throw new IllegalArgumentException("Unexpected value: " + reason);
