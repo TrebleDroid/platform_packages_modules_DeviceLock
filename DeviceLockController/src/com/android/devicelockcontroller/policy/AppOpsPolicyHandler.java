@@ -123,14 +123,14 @@ final class AppOpsPolicyHandler implements PolicyHandler {
         return getExemptFromBackgroundStartAndHibernationFuture(/* exempt= */ false);
     }
 
-    // Due to some reason, AppOpsManager does not persist exemption after reboot. Therefore we
+    // Due to some reason, AppOpsManager does not persist exemption after reboot, therefore we
     // need to always set them from our end.
     @Override
     public ListenableFuture<Boolean> onLocked() {
         return getExemptFromBackgroundStartAndHibernationFuture(/* exempt= */ true);
     }
 
-    // Due to some reason, AppOpsManager does not persist exemption after reboot. Therefore we
+    // Due to some reason, AppOpsManager does not persist exemption after reboot, therefore we
     // need to always set them from our end.
     @Override
     public ListenableFuture<Boolean> onUnlocked() {
