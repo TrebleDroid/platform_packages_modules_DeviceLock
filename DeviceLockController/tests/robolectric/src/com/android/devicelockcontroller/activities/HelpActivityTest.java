@@ -26,7 +26,6 @@ import android.content.Intent;
 import androidx.test.core.app.ApplicationProvider;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
@@ -44,7 +43,6 @@ public final class HelpActivityTest {
         mContext = ApplicationProvider.getApplicationContext();
     }
 
-    @Ignore("http://b/269463682")
     @Test
     public void helpActivity_loadUrlSuccess() {
         Intent intent = new Intent(mContext, HelpActivity.class);
@@ -53,14 +51,12 @@ public final class HelpActivityTest {
         assertThat(shadowOf(activity.getWebView()).getLastLoadedUrl()).isEqualTo(TEST_URL);
     }
 
-    @Ignore("http://b/269463682")
     @Test
     public void helpActivity_finishWhenExtrasNotPresent() {
         HelpActivity activity = Robolectric.buildActivity(HelpActivity.class).setup().get();
         assertThat(activity.isFinishing()).isTrue();
     }
 
-    @Ignore("http://b/269463682")
     @Test
     public void helpActivity_finishWhenURLNotPresent() {
         Intent intent = new Intent(mContext, HelpActivity.class);

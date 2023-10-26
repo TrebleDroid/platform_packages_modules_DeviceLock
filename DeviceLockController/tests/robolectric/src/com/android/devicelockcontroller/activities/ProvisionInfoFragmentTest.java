@@ -16,15 +16,18 @@
 
 package com.android.devicelockcontroller.activities;
 
+import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_FINANCING_PROVISIONING;
+
 import static com.google.common.truth.Truth.assertThat;
 
 import static org.robolectric.Shadows.shadowOf;
 
+import android.content.Intent;
+import android.os.Looper;
 import android.widget.ImageView;
 
 import com.android.devicelockcontroller.R;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
@@ -33,10 +36,13 @@ import org.robolectric.RobolectricTestRunner;
 @RunWith(RobolectricTestRunner.class)
 public final class ProvisionInfoFragmentTest {
 
-    @Ignore("http://b/269463682")
     @Test
     public void onCreateView_viewIsInflated() {
-        LandingActivity activity = Robolectric.buildActivity(LandingActivity.class).setup().get();
+        Intent intent = new Intent();
+        intent.setAction(ACTION_START_DEVICE_FINANCING_PROVISIONING);
+        LandingActivity activity = Robolectric.buildActivity(LandingActivity.class,
+                intent).setup().get();
+        shadowOf(Looper.getMainLooper()).idle();
         ImageView imageView = activity.findViewById(R.id.header_icon);
         assertThat(shadowOf(imageView.getDrawable()).getCreatedFromResId()).isEqualTo(
                 R.drawable.ic_info_24px);

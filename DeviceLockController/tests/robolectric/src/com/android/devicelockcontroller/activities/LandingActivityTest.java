@@ -16,14 +16,17 @@
 
 package com.android.devicelockcontroller.activities;
 
+import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_FINANCING_PROVISIONING;
+
 import static com.google.common.truth.Truth.assertThat;
+
+import android.content.Intent;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
 
 import com.android.devicelockcontroller.R;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
@@ -32,10 +35,12 @@ import org.robolectric.RobolectricTestRunner;
 @RunWith(RobolectricTestRunner.class)
 public final class LandingActivityTest {
 
-    @Ignore("http://b/269463682")
     @Test
     public void landingActivity_setsProvisionInfoFragment() {
-        LandingActivity activity = Robolectric.buildActivity(LandingActivity.class).setup().get();
+        Intent intent = new Intent();
+        intent.setAction(ACTION_START_DEVICE_FINANCING_PROVISIONING);
+        LandingActivity activity = Robolectric.buildActivity(LandingActivity.class,
+                intent).setup().get();
         FragmentContainerView fragmentContainerView = activity.findViewById(
                 R.id.fragment_container);
 
