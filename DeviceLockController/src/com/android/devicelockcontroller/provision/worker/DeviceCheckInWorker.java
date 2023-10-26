@@ -22,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.work.WorkerParameters;
 
+import com.android.devicelockcontroller.DevicelockStatsLog;
 import com.android.devicelockcontroller.FcmRegistrationTokenProvider;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrpcResponse;
@@ -34,6 +35,8 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 
 import java.time.Duration;
+
+import static com.android.devicelockcontroller.DevicelockStatsLog.DEVICE_LOCK_CHECK_IN_REQUEST_REPORTED__TYPE__GET_DEVICE_CHECK_IN_STATUS;
 
 /**
  * A worker class dedicated to execute the check-in operation for device lock program.
@@ -88,6 +91,10 @@ public final class DeviceCheckInWorker extends AbstractCheckInWorker {
                             return Result.retry();
                         }
                         if (response.isSuccessful()) {
+                            DevicelockStatsLog.write(
+                                    DevicelockStatsLog.DEVICE_LOCK_CHECK_IN_REQUEST_REPORTED,
+                                    DEVICE_LOCK_CHECK_IN_REQUEST_REPORTED__TYPE__GET_DEVICE_CHECK_IN_STATUS
+                            );
                             return mCheckInHelper.handleGetDeviceCheckInStatusResponse(response,
                                     scheduler)
                                     ? Result.success()

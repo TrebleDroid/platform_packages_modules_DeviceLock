@@ -38,6 +38,15 @@ filegroup {
     ],
 }
 
+genrule {
+  name: "statslog-devicelock-java-gen",
+  tools: ["stats-log-api-gen"],
+  cmd: "$(location stats-log-api-gen) --java $(out) --module devicelock" +
+          " --javaPackage com.android.devicelockcontroller" +
+          " --javaClass DevicelockStatsLog",
+  out: ["com/android/devicelockcontroller/DevicelockStatsLog.java"],
+}
+
 java_library {
     name: "devicelockcontroller-interface",
     sdk_version: "module_current",
@@ -108,7 +117,10 @@ android_library {
     name: "devicelockcontroller-lib",
     sdk_version: "module_current",
     min_sdk_version: "UpsideDownCake",
-    srcs: ["src/**/*.java"],
+    srcs: [
+        "src/**/*.java",
+        ":statslog-devicelock-java-gen",
+    ],
     exclude_srcs: [
         ":devicelockcontroller-grpc-impl-sources",
         "src/com/android/devicelockcontroller/debug/*.java",
@@ -118,6 +130,7 @@ android_library {
         "framework-annotations-lib",
         "framework-devicelock.impl",
         "org.apache.http.legacy",
+        "framework-statsd",
     ],
     static_libs: [
         "androidx.annotation_annotation",

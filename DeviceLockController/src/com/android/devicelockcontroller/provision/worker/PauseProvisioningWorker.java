@@ -16,6 +16,7 @@
 
 package com.android.devicelockcontroller.provision.worker;
 
+import static com.android.devicelockcontroller.DevicelockStatsLog.DEVICE_LOCK_CHECK_IN_REQUEST_REPORTED__TYPE__PAUSE_DEVICE_PROVISIONING;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.REASON_UNSPECIFIED;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.USER_DEFERRED_DEVICE_PROVISIONING;
 
@@ -31,6 +32,7 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.WorkerParameters;
 
+import com.android.devicelockcontroller.DevicelockStatsLog;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.PauseDeviceProvisioningGrpcResponse;
 import com.android.devicelockcontroller.util.LogUtil;
@@ -91,6 +93,10 @@ public final class PauseProvisioningWorker extends AbstractCheckInWorker {
                 return Result.retry();
             }
             if (response.isSuccessful()) {
+                DevicelockStatsLog.write(
+                        DevicelockStatsLog.DEVICE_LOCK_CHECK_IN_REQUEST_REPORTED,
+                        DEVICE_LOCK_CHECK_IN_REQUEST_REPORTED__TYPE__PAUSE_DEVICE_PROVISIONING
+                );
                 return Result.success();
             }
             LogUtil.w(TAG, "Pause provisioning request failed: " + response);
