@@ -16,6 +16,8 @@
 
 package android.devicelock;
 
+import android.devicelock.ParcelableException;
+
 /**
   * Callback for a lockDevice()/unlockDevice() request.
   * {@hide}
@@ -23,8 +25,5 @@ package android.devicelock;
 oneway interface ILockUnlockDeviceCallback {
     void onDeviceLockedUnlocked();
 
-    const int ERROR_UNKNOWN = 0;
-    const int ERROR_SECURITY = 1;
-
-    void onError(int error);
+    void onError(in ParcelableException parcelableException);
 }

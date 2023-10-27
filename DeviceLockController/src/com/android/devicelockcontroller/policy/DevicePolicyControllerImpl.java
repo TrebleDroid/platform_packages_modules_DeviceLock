@@ -21,6 +21,7 @@ import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION
 import static com.android.devicelockcontroller.common.DeviceLockConstants.ACTION_START_DEVICE_SUBSIDY_PROVISIONING;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.CLEARED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.LOCKED;
+import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNDEFINED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNLOCKED;
 import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState.KIOSK_PROVISIONED;
 import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState.PROVISION_FAILED;
@@ -254,6 +255,9 @@ public final class DevicePolicyControllerImpl implements DevicePolicyController 
                     break;
                 case CLEARED:
                     futures.add(policy.onCleared());
+                    break;
+                case UNDEFINED:
+                    // No policies to enforce in this state.
                     break;
                 default:
                     throw new IllegalArgumentException(

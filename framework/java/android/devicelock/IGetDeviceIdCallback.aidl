@@ -16,6 +16,8 @@
 
 package android.devicelock;
 
+import android.devicelock.ParcelableException;
+
 /**
   * Callback for a getDeviceId() request.
   * {@hide}
@@ -23,10 +25,5 @@ package android.devicelock;
 oneway interface IGetDeviceIdCallback {
     void onDeviceIdReceived(int type, in String id);
 
-    const int ERROR_UNKNOWN = 0;
-    const int ERROR_SECURITY = 1;
-    const int ERROR_INVALID_DEVICE_ID_TYPE_BITMAP = 2;
-    const int ERROR_CANNOT_GET_DEVICE_ID = 3;
-
-    void onError(int error);
+    void onError(in ParcelableException parcelableException);
 }

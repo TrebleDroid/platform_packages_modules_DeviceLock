@@ -28,6 +28,7 @@ import static android.devicelock.DeviceId.DEVICE_ID_TYPE_MEID;
 
 import android.Manifest;
 import android.annotation.NonNull;
+import android.annotation.Nullable;
 import android.app.AppOpsManager;
 import android.app.role.RoleManager;
 import android.content.BroadcastReceiver;
@@ -47,6 +48,7 @@ import android.devicelock.IGetDeviceIdCallback;
 import android.devicelock.IGetKioskAppsCallback;
 import android.devicelock.IIsDeviceLockedCallback;
 import android.devicelock.ILockUnlockDeviceCallback;
+import android.devicelock.ParcelableException;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -299,12 +301,12 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
     }
 
     private void reportDeviceLockedUnlocked(@NonNull ILockUnlockDeviceCallback callback,
-            boolean success) {
+            @Nullable Exception exception) {
         try {
-            if (success) {
+            if (exception == null) {
                 callback.onDeviceLockedUnlocked();
             } else {
-                callback.onError(ILockUnlockDeviceCallback.ERROR_UNKNOWN);
+                callback.onError(getParcelableException(exception));
             }
         } catch (RemoteException e) {
             Slog.e(TAG, "Unable to send result to the callback", e);
@@ -317,22 +319,28 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
             @Override
             public void onResult(Void ignored) {
                 Slog.i(TAG, successMessage);
-                reportDeviceLockedUnlocked(callback, true /* success */);
+                reportDeviceLockedUnlocked(callback, /* exception= */ null);
             }
 
             @Override
             public void onError(Exception ex) {
                 Slog.e(TAG, "Exception: ", ex);
-                reportDeviceLockedUnlocked(callback, false /* success */);
+                reportDeviceLockedUnlocked(callback, ex);
             }
         };
+    }
+
+    private ParcelableException getParcelableException(Exception exception) {
+        return exception instanceof ParcelableException
+                ? (ParcelableException) exception
+                : new ParcelableException(exception);
     }
 
     @Override
     public void lockDevice(@NonNull ILockUnlockDeviceCallback callback) {
         if (!checkCallerPermission()) {
             try {
-                callback.onError(ILockUnlockDeviceCallback.ERROR_SECURITY);
+                callback.onError(new ParcelableException(new SecurityException()));
             } catch (RemoteException e) {
                 Slog.e(TAG, "lockDevice() - Unable to send error to the callback", e);
             }
@@ -347,7 +355,7 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
     public void unlockDevice(@NonNull ILockUnlockDeviceCallback callback) {
         if (!checkCallerPermission()) {
             try {
-                callback.onError(ILockUnlockDeviceCallback.ERROR_SECURITY);
+                callback.onError(new ParcelableException(new SecurityException()));
             } catch (RemoteException e) {
                 Slog.e(TAG, "unlockDevice() - Unable to send error to the callback", e);
             }
@@ -362,7 +370,7 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
     public void isDeviceLocked(@NonNull IIsDeviceLockedCallback callback) {
         if (!checkCallerPermission()) {
             try {
-                callback.onError(IIsDeviceLockedCallback.ERROR_SECURITY);
+                callback.onError(new ParcelableException(new SecurityException()));
             } catch (RemoteException e) {
                 Slog.e(TAG, "isDeviceLocked() - Unable to send error to the callback", e);
             }
@@ -382,9 +390,9 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
 
             @Override
             public void onError(Exception ex) {
-                Slog.e(TAG, "Exception: ", ex);
+                Slog.e(TAG, "isDeviceLocked exception: ", ex);
                 try {
-                    callback.onError(ILockUnlockDeviceCallback.ERROR_UNKNOWN);
+                    callback.onError(getParcelableException(ex));
                 } catch (RemoteException e) {
                     Slog.e(TAG, "isDeviceLocked() - Unable to send error to the " + "callback", e);
                 }
@@ -396,7 +404,7 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
     void getDeviceId(@NonNull IGetDeviceIdCallback callback, int deviceIdTypeBitmap) {
         try {
             if (deviceIdTypeBitmap < 0 || deviceIdTypeBitmap >= (1 << (LAST_DEVICE_ID_TYPE + 1))) {
-                callback.onError(IGetDeviceIdCallback.ERROR_INVALID_DEVICE_ID_TYPE_BITMAP);
+                callback.onError(new ParcelableException("Invalid device type"));
                 return;
             }
         } catch (RemoteException e) {
@@ -443,7 +451,7 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
                     //
                     // TODO(b/270392813): Send the device ID back to the callback with
                     //  UNSPECIFIED device ID type.
-                    callback.onError(IGetDeviceIdCallback.ERROR_CANNOT_GET_DEVICE_ID);
+                    callback.onError(new ParcelableException("Unable to get device id"));
                 } catch (RemoteException e) {
                     Slog.e(TAG, "getDeviceId() - Unable to send result to the callback", e);
                 }
@@ -453,7 +461,7 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
             public void onError(Exception ex) {
                 Slog.e(TAG, "Exception: ", ex);
                 try {
-                    callback.onError(IGetDeviceIdCallback.ERROR_CANNOT_GET_DEVICE_ID);
+                    callback.onError(getParcelableException(ex));
                 } catch (RemoteException e) {
                     Slog.e(TAG,
                             "getDeviceId() - " + "Unable to send error to" + " the " + "callback",
@@ -467,7 +475,7 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
     public void getDeviceId(@NonNull IGetDeviceIdCallback callback) {
         if (!checkCallerPermission()) {
             try {
-                callback.onError(IGetDeviceIdCallback.ERROR_SECURITY);
+                callback.onError(new ParcelableException(new SecurityException()));
             } catch (RemoteException e) {
                 Slog.e(TAG, "getDeviceId() - Unable to send error to the callback", e);
             }

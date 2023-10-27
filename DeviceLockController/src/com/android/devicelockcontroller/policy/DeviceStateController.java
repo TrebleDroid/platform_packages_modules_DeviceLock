@@ -53,13 +53,15 @@ public interface DeviceStateController {
     @Target(ElementType.TYPE_USE)
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({
+            DeviceState.UNDEFINED,
             DeviceState.UNLOCKED,
             DeviceState.LOCKED,
             DeviceState.CLEARED,
     })
     @interface DeviceState {
-        int UNLOCKED = 0;
-        int LOCKED = 1;
-        int CLEARED = 2;
+        int UNDEFINED = 0;
+        int UNLOCKED = 1;
+        int LOCKED = 2;
+        int CLEARED = 3;
     }
 }
