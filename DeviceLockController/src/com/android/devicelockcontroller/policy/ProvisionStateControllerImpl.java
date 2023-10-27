@@ -64,7 +64,7 @@ import java.util.concurrent.Executors;
  * An implementation of the {@link ProvisionStateController}. This class guarantees thread safety
  * by synchronizing read/write operations of the state value on background threads in the order of
  * when the API calls happen. That is, a pre-exist state value read/write operation will always
- * blocks a incoming read/write request until the former completes.
+ * block an incoming read/write request until the former completes.
  */
 public final class ProvisionStateControllerImpl implements ProvisionStateController {
 
