@@ -106,7 +106,7 @@ final class GlobalParameters {
      */
     @DeviceState
     static int getDeviceState(Context context) {
-        return getSharedPreferences(context).getInt(KEY_DEVICE_STATE, DeviceState.UNLOCKED);
+        return getSharedPreferences(context).getInt(KEY_DEVICE_STATE, DeviceState.UNDEFINED);
     }
 
     /**
