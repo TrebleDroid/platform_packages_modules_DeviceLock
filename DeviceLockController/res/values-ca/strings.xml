@@ -43,7 +43,7 @@
     <string name="exposure_install_text" msgid="2631074166447765453">"Si l\'aplicació <xliff:g id="CREDITOR_APP">%1$s</xliff:g> està instal·lada o desinstal·lada"</string>
     <string name="exposure_lock_unlock_text" msgid="6827412845847260579">"Qualsevol sol·licitud de bloqueig o desbloqueig de l\'aplicació <xliff:g id="CREDITOR_APP">%1$s</xliff:g>"</string>
     <string name="exposure_disable_dlc_text" msgid="2898692398106736423">"Si l\'aplicació <xliff:g id="CREDITOR_APP">%1$s</xliff:g> no està disponible"</string>
-    <string name="open_source_licenses" msgid="6464389386262455443">"Llicències de programari lliure"</string>
+    <string name="open_source_licenses" msgid="6464389386262455443">"Llicències de codi obert"</string>
     <string name="footer_notice_content_description" msgid="2160540400079419440">"Les funcions de gestió que hi ha a la secció del dispositiu finançat de la configuració de seguretat no s\'apliquen en aquest dispositiu."</string>
     <string name="device_provided_by_provider" msgid="290593329676291991">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> proporciona aquest dispositiu"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"L\'aplicació de quiosc es baixarà i s\'instal·larà automàticament."</string>
