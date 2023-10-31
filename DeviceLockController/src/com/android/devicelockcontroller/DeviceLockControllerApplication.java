@@ -48,7 +48,8 @@ public class DeviceLockControllerApplication extends Application implements
         PolicyObjectsInterface,
         Configuration.Provider,
         DeviceLockControllerSchedulerProvider,
-        FcmRegistrationTokenProvider {
+        FcmRegistrationTokenProvider,
+        PlayInstallPackageTaskClassProvider {
     private static final String TAG = "DeviceLockControllerApplication";
 
     private static Context sApplicationContext;
@@ -113,6 +114,7 @@ public class DeviceLockControllerApplication extends Application implements
                 .build();
     }
 
+    @Override
     @Nullable
     public Class<? extends ListenableWorker> getPlayInstallPackageTaskClass() {
         return null;
