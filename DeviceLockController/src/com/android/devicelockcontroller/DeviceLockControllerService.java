@@ -19,11 +19,13 @@ package com.android.devicelockcontroller;
 import android.app.Service;
 import android.app.admin.DevicePolicyManager;
 import android.content.Intent;
+import android.devicelock.ParcelableException;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteCallback;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.android.devicelockcontroller.policy.DevicePolicyController;
 import com.android.devicelockcontroller.policy.DeviceStateController;
@@ -54,21 +56,21 @@ public final class DeviceLockControllerService extends Service {
                 @Override
                 public void lockDevice(RemoteCallback remoteCallback) {
                     Futures.addCallback(mDeviceStateController.lockDevice(),
-                            remoteCallbackWrapper(remoteCallback, KEY_LOCK_DEVICE_RESULT),
+                            remoteCallbackWrapper(remoteCallback),
                             MoreExecutors.directExecutor());
                 }
 
                 @Override
                 public void unlockDevice(RemoteCallback remoteCallback) {
                     Futures.addCallback(mDeviceStateController.unlockDevice(),
-                            remoteCallbackWrapper(remoteCallback, KEY_UNLOCK_DEVICE_RESULT),
+                            remoteCallbackWrapper(remoteCallback),
                             MoreExecutors.directExecutor());
                 }
 
                 @Override
                 public void isDeviceLocked(RemoteCallback remoteCallback) {
                     Futures.addCallback(mDeviceStateController.isLocked(),
-                            remoteCallbackWrapper(remoteCallback, KEY_IS_DEVICE_LOCKED_RESULT),
+                            remoteCallbackWrapper(remoteCallback, KEY_RESULT),
                             MoreExecutors.directExecutor());
                 }
 
@@ -76,7 +78,7 @@ public final class DeviceLockControllerService extends Service {
                 public void getDeviceIdentifier(RemoteCallback remoteCallback) {
                     Futures.addCallback(
                             GlobalParametersClient.getInstance().getRegisteredDeviceId(),
-                            remoteCallbackWrapper(remoteCallback, KEY_HARDWARE_ID_RESULT),
+                            remoteCallbackWrapper(remoteCallback, KEY_RESULT),
                             MoreExecutors.directExecutor());
                 }
 
@@ -86,14 +88,14 @@ public final class DeviceLockControllerService extends Service {
                             Futures.transformAsync(mDeviceStateController.clearDevice(),
                                     unused -> mFinalizationController.notifyRestrictionsCleared(),
                                     MoreExecutors.directExecutor()),
-                            remoteCallbackWrapper(remoteCallback, KEY_CLEAR_DEVICE_RESULT),
+                            remoteCallbackWrapper(remoteCallback),
                             MoreExecutors.directExecutor());
                 }
 
                 @Override
                 public void onUserSwitching(RemoteCallback remoteCallback) {
                     Futures.addCallback(mPolicyController.enforceCurrentPolicies(),
-                            remoteCallbackWrapper(remoteCallback, KEY_ON_USER_SWITCHING_RESULT),
+                            remoteCallbackWrapper(remoteCallback),
                             MoreExecutors.directExecutor());
                 }
 
@@ -104,48 +106,64 @@ public final class DeviceLockControllerService extends Service {
                             /* admin= */ null,
                             List.of(getPackageName()));
                     Futures.addCallback(mPolicyController.onUserUnlocked(),
-                            remoteCallbackWrapper(remoteCallback, KEY_ON_USER_UNLOCKED_RESULT),
+                            remoteCallbackWrapper(remoteCallback),
                             MoreExecutors.directExecutor());
                 }
 
                 @Override
                 public void onKioskAppCrashed(RemoteCallback remoteCallback) {
                     Futures.addCallback(mPolicyController.onKioskAppCrashed(),
-                            remoteCallbackWrapper(remoteCallback,
-                                    KEY_ON_KIOSK_APP_CRASHED_RESULT),
+                            remoteCallbackWrapper(remoteCallback),
                             MoreExecutors.directExecutor());
                 }
             };
 
     @NonNull
     private static FutureCallback<Object> remoteCallbackWrapper(RemoteCallback remoteCallback,
-            final String key) {
+            @Nullable final String key) {
         return new FutureCallback<>() {
             @Override
             public void onSuccess(Object result) {
-                if (result == null) {
-                    // The caller can not tell if the call is successful if the result bundle is
-                    // empty, therefore sending a true value to indicate the call is successful.
-                    result = true;
-                }
                 sendResult(key, remoteCallback, result);
             }
 
             @Override
             public void onFailure(Throwable t) {
                 LogUtil.e(TAG, "Failed to perform the request", t);
-                sendResult(key, remoteCallback, null);
+                sendFailure(t, remoteCallback);
             }
         };
     }
 
-    private static void sendResult(String key, RemoteCallback remoteCallback, Object result) {
+    @NonNull
+    private static FutureCallback<Object> remoteCallbackWrapper(RemoteCallback remoteCallback) {
+        return remoteCallbackWrapper(remoteCallback, /* key= */ null);
+    }
+
+    /**
+     * Send result to caller.
+     *
+     * @param key Key to use in bundle for result. null if no result is needed
+     * @param remoteCallback remote callback used to send the result.
+     * @param result Value to return in bundle.
+     */
+    private static void sendResult(@Nullable String key, RemoteCallback remoteCallback,
+            Object result) {
         final Bundle bundle = new Bundle();
-        if (result instanceof Boolean) {
-            bundle.putBoolean(key, (Boolean) result);
-        } else if (result instanceof String) {
-            bundle.putString(key, (String) result);
+        if (key != null) {
+            if (result instanceof Boolean) {
+                bundle.putBoolean(key, (Boolean) result);
+            } else if (result instanceof String) {
+                bundle.putString(key, (String) result);
+            }
         }
+        remoteCallback.sendResult(bundle);
+    }
+
+    private static void sendFailure(Throwable t, RemoteCallback remoteCallback) {
+        final Bundle bundle = new Bundle();
+        bundle.putParcelable(IDeviceLockControllerService.KEY_PARCELABLE_EXCEPTION,
+                new ParcelableException(t instanceof Exception ? (Exception) t : new Exception(t)));
         remoteCallback.sendResult(bundle);
     }
 

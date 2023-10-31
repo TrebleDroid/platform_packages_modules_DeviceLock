@@ -16,16 +16,15 @@
 
 package android.devicelock;
 
+import android.devicelock.ParcelableException;
+
 /**
   * Callback for a isDeviceLocked() request.
   * {@hide}
   */
 oneway interface IIsDeviceLockedCallback {
 
-    void onIsDeviceLocked(boolean locked);
+    void onIsDeviceLocked(in boolean locked);
 
-    const int ERROR_UNKNOWN = 0;
-    const int ERROR_SECURITY = 1;
-
-    void onError(int error);
+    void onError(in ParcelableException parcelableException);
 }

@@ -22,6 +22,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.devicelock.ParcelableException;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -270,16 +271,36 @@ final class DeviceLockControllerConnectorImpl implements DeviceLockControllerCon
         }
     }
 
+    /**
+     * Report an exception (if any) using the callback.
+     *
+     * @param callback Callback used to report the exception.
+     * @param bundle Bundle where to look for a parcelable exception.
+     *
+     * @return true if an exception was reported.
+     */
+    private boolean maybeReportException(@NonNull OutcomeReceiver<?, Exception> callback,
+            @NonNull Bundle bundle) {
+        bundle.setClassLoader(this.getClass().getClassLoader());
+        final ParcelableException parcelableException =
+                bundle.getSerializable(IDeviceLockControllerService.KEY_PARCELABLE_EXCEPTION,
+                        ParcelableException.class);
+        if (parcelableException != null) {
+            mHandler.post(() -> callback.onError(parcelableException));
+            return true;
+        }
+
+        return false;
+    }
+
     @Override
     public void lockDevice(OutcomeReceiver<Void, Exception> callback) {
         RemoteCallback remoteCallback = new RemoteCallback(checkTimeout(callback, result -> {
-            final boolean success =
-                    result.getBoolean(IDeviceLockControllerService.KEY_LOCK_DEVICE_RESULT);
-            if (success) {
-                mHandler.post(() -> callback.onResult(null));
-            } else {
-                mHandler.post(() -> callback.onError(new Exception("Failed to lock device")));
+            if (maybeReportException(callback, result)) {
+                return;
             }
+
+            mHandler.post(() -> callback.onResult(null));
         }));
 
         callControllerApi(new Callable<Void>() {
@@ -295,13 +316,11 @@ final class DeviceLockControllerConnectorImpl implements DeviceLockControllerCon
     @Override
     public void unlockDevice(OutcomeReceiver<Void, Exception> callback) {
         RemoteCallback remoteCallback = new RemoteCallback(checkTimeout(callback, result -> {
-            final boolean success =
-                    result.getBoolean(IDeviceLockControllerService.KEY_UNLOCK_DEVICE_RESULT);
-            if (success) {
-                mHandler.post(() -> callback.onResult(null));
-            } else {
-                mHandler.post(() -> callback.onError(new Exception("Failed to unlock device")));
+            if (maybeReportException(callback, result)) {
+                return;
             }
+
+            mHandler.post(() -> callback.onResult(null));
         }));
 
         callControllerApi(new Callable<Void>() {
@@ -317,8 +336,12 @@ final class DeviceLockControllerConnectorImpl implements DeviceLockControllerCon
     @Override
     public void isDeviceLocked(OutcomeReceiver<Boolean, Exception> callback) {
         RemoteCallback remoteCallback = new RemoteCallback(checkTimeout(callback, result -> {
+            if (maybeReportException(callback, result)) {
+                return;
+            }
+
             final boolean isLocked =
-                    result.getBoolean(IDeviceLockControllerService.KEY_IS_DEVICE_LOCKED_RESULT);
+                    result.getBoolean(IDeviceLockControllerService.KEY_RESULT);
             mHandler.post(() -> callback.onResult(isLocked));
         }));
 
@@ -335,8 +358,12 @@ final class DeviceLockControllerConnectorImpl implements DeviceLockControllerCon
     @Override
     public void getDeviceId(OutcomeReceiver<String, Exception> callback) {
         RemoteCallback remoteCallback = new RemoteCallback(checkTimeout(callback, result -> {
+            if (maybeReportException(callback, result)) {
+                return;
+            }
+
             final String deviceId =
-                    result.getString(IDeviceLockControllerService.KEY_HARDWARE_ID_RESULT);
+                    result.getString(IDeviceLockControllerService.KEY_RESULT);
             if (TextUtils.isEmpty(deviceId)) { // If the deviceId is null or empty
                 mHandler.post(() -> callback.onError(new IllegalStateException(
                         "No registered Device ID found")));
@@ -358,13 +385,11 @@ final class DeviceLockControllerConnectorImpl implements DeviceLockControllerCon
     @Override
     public void clearDeviceRestrictions(OutcomeReceiver<Void, Exception> callback) {
         RemoteCallback remoteCallback = new RemoteCallback(checkTimeout(callback, result -> {
-            final boolean success =
-                    result.getBoolean(IDeviceLockControllerService.KEY_CLEAR_DEVICE_RESULT);
-            if (success) {
-                mHandler.post(() -> callback.onResult(null));
-            } else {
-                mHandler.post(() -> callback.onError(new Exception("Failed to clear device")));
+            if (maybeReportException(callback, result)) {
+                return;
             }
+
+            mHandler.post(() -> callback.onResult(null));
         }));
 
         callControllerApi(new Callable<Void>() {
@@ -380,14 +405,11 @@ final class DeviceLockControllerConnectorImpl implements DeviceLockControllerCon
     @Override
     public void onUserSwitching(OutcomeReceiver<Void, Exception> callback) {
         RemoteCallback remoteCallback = new RemoteCallback(checkTimeout(callback, result -> {
-            final boolean success =
-                    result.getBoolean(IDeviceLockControllerService.KEY_ON_USER_SWITCHING_RESULT);
-            if (success) {
-                mHandler.post(() -> callback.onResult(null));
-            } else {
-                mHandler.post(() -> callback.onError(new Exception("Failed to report "
-                        + "user switching")));
+            if (maybeReportException(callback, result)) {
+                return;
             }
+
+            mHandler.post(() -> callback.onResult(null));
         }));
 
         callControllerApi(new Callable<Void>() {
@@ -403,14 +425,11 @@ final class DeviceLockControllerConnectorImpl implements DeviceLockControllerCon
     @Override
     public void onUserUnlocked(OutcomeReceiver<Void, Exception> callback) {
         RemoteCallback remoteCallback = new RemoteCallback(checkTimeout(callback, result -> {
-            final boolean success =
-                    result.getBoolean(IDeviceLockControllerService.KEY_ON_USER_UNLOCKED_RESULT);
-            if (success) {
-                mHandler.post(() -> callback.onResult(null));
-            } else {
-                mHandler.post(
-                        () -> callback.onError(new Exception("Failed to report user unlocked")));
+            if (maybeReportException(callback, result)) {
+                return;
             }
+
+            mHandler.post(() -> callback.onResult(null));
         }));
 
         callControllerApi(new Callable<Void>() {
@@ -426,14 +445,11 @@ final class DeviceLockControllerConnectorImpl implements DeviceLockControllerCon
     @Override
     public void onKioskAppCrashed(OutcomeReceiver<Void, Exception> callback) {
         RemoteCallback remoteCallback = new RemoteCallback(checkTimeout(callback, result -> {
-            final boolean success = result.getBoolean(
-                    IDeviceLockControllerService.KEY_ON_KIOSK_APP_CRASHED_RESULT);
-            if (success) {
-                mHandler.post(() -> callback.onResult(null));
-            } else {
-                mHandler.post(() -> callback.onError(new Exception("Failed to notify controller "
-                        + "about kiosk app crash")));
+            if (maybeReportException(callback, result)) {
+                return;
             }
+
+            mHandler.post(() -> callback.onResult(null));
         }));
 
         callControllerApi(new Callable<Void>() {
