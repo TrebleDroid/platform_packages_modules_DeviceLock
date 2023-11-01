@@ -27,6 +27,7 @@ import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
 import com.android.devicelockcontroller.storage.UserParameters;
 import com.android.devicelockcontroller.util.ThreadUtils;
 
+import com.google.common.collect.Range;
 import com.google.common.util.concurrent.Futures;
 
 import org.junit.Before;
@@ -43,6 +44,8 @@ public final class RecordBootTimestampReceiverTest {
     private RecordBootTimestampReceiver mReceiver;
     private final TestDeviceLockControllerApplication mTestApplication =
             ApplicationProvider.getApplicationContext();
+    // Maximum allowed drift due to difference in sampling between current time and elapsed time.
+    private static final long MAX_DRIFT = 500;
 
     @Before
     public void setUp() {
@@ -54,11 +57,14 @@ public final class RecordBootTimestampReceiverTest {
         long bootTime = Instant.now(Clock.systemUTC())
                 .minusMillis(SystemClock.elapsedRealtime()).toEpochMilli();
 
+        // Receiver records boot time to user parameters.
         mReceiver.onReceive(mTestApplication, INTENT);
+
         Futures.getUnchecked(
                 Futures.submit(
                         () -> assertThat(
-                                UserParameters.getBootTimeMillis(mTestApplication)).isEqualTo(
-                                bootTime), ThreadUtils.getSequentialSchedulerExecutor()));
+                                UserParameters.getBootTimeMillis(mTestApplication))
+                                .isIn(Range.closed(bootTime, bootTime + MAX_DRIFT)),
+                        ThreadUtils.getSequentialSchedulerExecutor()));
     }
 }
