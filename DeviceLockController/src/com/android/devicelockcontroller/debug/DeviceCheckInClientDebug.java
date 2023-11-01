@@ -19,8 +19,9 @@ package com.android.devicelockcontroller.debug;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState.PROVISION_STATE_UNSPECIFIED;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.READY_FOR_PROVISION;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.SystemClock;
-import android.os.SystemProperties;
 import android.util.ArraySet;
 
 import androidx.annotation.Keep;
@@ -37,6 +38,8 @@ import com.android.devicelockcontroller.provision.grpc.IsDeviceInApprovedCountry
 import com.android.devicelockcontroller.provision.grpc.PauseDeviceProvisioningGrpcResponse;
 import com.android.devicelockcontroller.provision.grpc.ProvisioningConfiguration;
 import com.android.devicelockcontroller.provision.grpc.ReportDeviceProvisionStateGrpcResponse;
+import com.android.devicelockcontroller.util.LogUtil;
+import com.android.devicelockcontroller.util.ThreadAsserts;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -44,12 +47,72 @@ import java.util.List;
 
 /**
  * An implementation of the {@link DeviceCheckInClient} which simulate server responses by
- * reading it from {@link  SystemProperties}.
+ * reading it from local storage.
  */
 @Keep
 public final class DeviceCheckInClientDebug extends DeviceCheckInClient {
 
     public static final String TAG = "DeviceCheckInClientDebug";
+    public static final String DEBUG_DEVICELOCK_CHECKIN_STATUS = "debug.devicelock.checkin.status";
+    public static final String DEBUG_DEVICELOCK_CHECKIN_RETRY_DELAY =
+            "debug.devicelock.checkin.retry-delay";
+    public static final String DEBUG_DEVICELOCK_CHECKIN_FORCE_PROVISIONING =
+            "debug.devicelock.checkin.force-provisioning";
+    public static final String DEBUG_DEVICELOCK_CHECKIN_APPROVED_COUNTRY =
+            "debug.devicelock.checkin.approved-country";
+    public static final String DEBUG_DEVICELOCK_CHECKIN_NEXT_PROVISION_STATE =
+            "debug.devicelock.checkin.next-provision-state";
+    public static final String DEBUG_DEVICELOCK_CHECKIN_DAYS_LEFT_UNTIL_RESET =
+            "debug.devicelock.checkin.days-left-until-reset";
+
+    static void setDebugDevicelockCheckinClientEnabled(Context context, boolean enabled) {
+        getSharedPreferences(context).edit().putBoolean(DEBUG_DEVICELOCK_CHECKIN, enabled).apply();
+    }
+
+    static void setDebugDevicelockCheckinStatus(Context context, @DeviceCheckInStatus int status) {
+        getSharedPreferences(context).edit().putInt(DEBUG_DEVICELOCK_CHECKIN_STATUS,
+                status).apply();
+    }
+
+    static void setDebugDevicelockCheckinForceProvisioning(Context context, boolean isForced) {
+        getSharedPreferences(context).edit().putBoolean(DEBUG_DEVICELOCK_CHECKIN_FORCE_PROVISIONING,
+                isForced).apply();
+    }
+
+    static void setDebugDevicelockCheckinRetryDelay(Context context, int delayMinute) {
+        getSharedPreferences(context).edit().putInt(DEBUG_DEVICELOCK_CHECKIN_RETRY_DELAY,
+                delayMinute).apply();
+    }
+
+    static void setDebugDevicelockCheckinApprovedCountry(Context context,
+            boolean isInApprovedCountry) {
+        getSharedPreferences(context).edit().putBoolean(DEBUG_DEVICELOCK_CHECKIN_APPROVED_COUNTRY,
+                isInApprovedCountry).apply();
+    }
+
+    static void setDebugDevicelockCheckinNextProvisionState(
+            Context context, @DeviceProvisionState int provisionState) {
+        getSharedPreferences(context).edit().putInt(DEBUG_DEVICELOCK_CHECKIN_NEXT_PROVISION_STATE,
+                provisionState).apply();
+    }
+
+    static void setDebugDevicelockCheckinDaysLeftUntilReset(Context context,
+            int daysLeftUntilReset) {
+        getSharedPreferences(context).edit().putInt(DEBUG_DEVICELOCK_CHECKIN_DAYS_LEFT_UNTIL_RESET,
+                daysLeftUntilReset).apply();
+    }
+
+    static void dumpDebugCheckInClientResponses(Context context) {
+        LogUtil.d(TAG,
+                "Current Debug Client Responses:\n" + getSharedPreferences(context).getAll());
+    }
+
+    static <T> T getSharedPreference(String key, T defValue) {
+        SharedPreferences preferences = getSharedPreferences(/* context= */ null);
+        if (preferences == null) return defValue;
+        T value = (T) preferences.getAll().get(key);
+        return value == null ? defValue : value;
+    }
 
     /**
      * Check In with DeviceLock backend server and get the next step for the device.
@@ -57,28 +120,27 @@ public final class DeviceCheckInClientDebug extends DeviceCheckInClient {
     @Override
     public GetDeviceCheckInStatusGrpcResponse getDeviceCheckInStatus(ArraySet<DeviceId> deviceIds,
             String carrierInfo, @Nullable String fcmRegistrationToken) {
+        ThreadAsserts.assertWorkerThread("getDeviceCheckInStatus");
         return new GetDeviceCheckInStatusGrpcResponse() {
             @Override
             @DeviceCheckInStatus
             public int getDeviceCheckInStatus() {
                 return DebugLogUtil.logAndReturn(TAG,
-                        SystemProperties.getInt("debug.devicelock.checkin.status",
-                                READY_FOR_PROVISION));
+                        getSharedPreference(DEBUG_DEVICELOCK_CHECKIN_STATUS, READY_FOR_PROVISION));
             }
 
             @Nullable
             @Override
             public String getRegisteredDeviceIdentifier() {
                 return DebugLogUtil.logAndReturn(TAG,
-                        deviceIds.size() > 0 ? deviceIds.valueAt(0).getId() : null);
+                        !deviceIds.isEmpty() ? deviceIds.valueAt(0).getId() : null);
             }
 
             @Nullable
             @Override
             public Instant getNextCheckInTime() {
                 Duration delay = Duration.ofMinutes(
-                        SystemProperties.getInt(
-                                "debug.devicelock.checkin.retry-delay", /* def= */ 1));
+                        getSharedPreference(DEBUG_DEVICELOCK_CHECKIN_RETRY_DELAY, /* def= */ 1));
                 return DebugLogUtil.logAndReturn(TAG,
                         SystemClock.currentNetworkTimeClock().instant().plus(delay));
             }
@@ -112,16 +174,14 @@ public final class DeviceCheckInClientDebug extends DeviceCheckInClient {
 
             @Override
             public boolean isProvisionForced() {
-                return DebugLogUtil.logAndReturn(TAG, SystemProperties.getBoolean(
-                        "debug.devicelock.checkin.force-provisioning",
-                        false));
+                return DebugLogUtil.logAndReturn(TAG,
+                        getSharedPreference(DEBUG_DEVICELOCK_CHECKIN_FORCE_PROVISIONING, false));
             }
 
             @Override
             public boolean isDeviceInApprovedCountry() {
-                return DebugLogUtil.logAndReturn(TAG, SystemProperties.getBoolean(
-                        "debug.devicelock.checkin.approved-country",
-                        true));
+                return DebugLogUtil.logAndReturn(TAG,
+                        getSharedPreference(DEBUG_DEVICELOCK_CHECKIN_APPROVED_COUNTRY, true));
             }
         };
     }
@@ -132,12 +192,12 @@ public final class DeviceCheckInClientDebug extends DeviceCheckInClient {
     @Override
     public IsDeviceInApprovedCountryGrpcResponse isDeviceInApprovedCountry(
             @Nullable String carrierInfo) {
+        ThreadAsserts.assertWorkerThread("isDeviceInApprovedCountry");
         return new IsDeviceInApprovedCountryGrpcResponse() {
             @Override
             public boolean isDeviceInApprovedCountry() {
-                return DebugLogUtil.logAndReturn(TAG, SystemProperties.getBoolean(
-                        "debug.devicelock.checkin.approved-country",
-                        true));
+                return DebugLogUtil.logAndReturn(TAG,
+                        getSharedPreference(DEBUG_DEVICELOCK_CHECKIN_APPROVED_COUNTRY, true));
             }
         };
     }
@@ -147,6 +207,7 @@ public final class DeviceCheckInClientDebug extends DeviceCheckInClient {
      */
     @Override
     public PauseDeviceProvisioningGrpcResponse pauseDeviceProvisioning(int reason) {
+        ThreadAsserts.assertWorkerThread("pauseDeviceProvisioning");
         return new PauseDeviceProvisioningGrpcResponse();
     }
 
@@ -157,20 +218,21 @@ public final class DeviceCheckInClientDebug extends DeviceCheckInClient {
     public ReportDeviceProvisionStateGrpcResponse reportDeviceProvisionState(
             int lastReceivedProvisionState, boolean isSuccessful,
             @ProvisionFailureReason int reason) {
+        ThreadAsserts.assertWorkerThread("reportDeviceProvisionState");
         return new ReportDeviceProvisionStateGrpcResponse() {
             @Override
             @DeviceProvisionState
             public int getNextClientProvisionState() {
-                return DebugLogUtil.logAndReturn(TAG, SystemProperties.getInt(
-                        "debug.devicelock.checkin.next-provision-state",
+                return DebugLogUtil.logAndReturn(TAG, getSharedPreference(
+                        DEBUG_DEVICELOCK_CHECKIN_NEXT_PROVISION_STATE,
                         PROVISION_STATE_UNSPECIFIED));
             }
 
             @Override
             public int getDaysLeftUntilReset() {
                 return DebugLogUtil.logAndReturn(TAG,
-                        SystemProperties.getInt(
-                                "debug.devicelock.checkin.days-left", /* def= */ 1));
+                        getSharedPreference(
+                                DEBUG_DEVICELOCK_CHECKIN_DAYS_LEFT_UNTIL_RESET, /* def= */ 1));
             }
         };
     }

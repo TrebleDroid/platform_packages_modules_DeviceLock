@@ -61,7 +61,7 @@ public abstract class AbstractCheckInWorker extends ListenableWorker {
             mClient = Futures.transform(
                     GlobalParametersClient.getInstance().getRegisteredDeviceId(),
                     registeredId -> DeviceCheckInClient.getInstance(
-                            className, hostName, portNumber, apikey, registeredId),
+                            context, className, hostName, portNumber, apikey, registeredId),
                     MoreExecutors.directExecutor());
         }
         mContext = context;
