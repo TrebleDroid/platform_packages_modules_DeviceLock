@@ -88,6 +88,15 @@ final class UserRestrictionsPolicyHandler implements PolicyHandler {
     }
 
     @Override
+    public ListenableFuture<Boolean> onUnlocked() {
+        setupRestrictions(mAlwaysOnRestrictions, true);
+        return Futures.whenAllSucceed(
+                        setupRestrictions(retrieveOptionalAlwaysOnRestrictions(), true),
+                        setupRestrictions(retrieveLockModeRestrictions(), false))
+                .call(() -> true, MoreExecutors.directExecutor());
+    }
+
+    @Override
     public ListenableFuture<Boolean> onCleared() {
         setupRestrictions(mAlwaysOnRestrictions, false);
         return Futures.whenAllSucceed(

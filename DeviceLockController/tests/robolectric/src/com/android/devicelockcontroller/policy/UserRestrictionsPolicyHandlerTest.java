@@ -370,7 +370,41 @@ public final class UserRestrictionsPolicyHandlerTest {
     }
 
     @Test
-    public void onUnlocked_shouldDoNothing() throws ExecutionException, InterruptedException {
+    public void onUnlockedDebug_withDisableOutgoingCallShouldSetExpectedUserRestrictions()
+            throws ExecutionException, InterruptedException {
+        Bundle preferences = new Bundle();
+        preferences.putString(EXTRA_KIOSK_PACKAGE, TEST_PACKAGE);
+        preferences.putBoolean(EXTRA_KIOSK_DISABLE_OUTGOING_CALLS, true);
+        SetupParametersClient.getInstance().createPrefs(preferences).get();
+
+        Bundle userRestrictions = new Bundle();
+        when(mMockUserManager.getUserRestrictions()).thenReturn(userRestrictions);
+        UserRestrictionsPolicyHandler handler = new UserRestrictionsPolicyHandler(mMockDpm,
+                mMockUserManager,
+                /* isDebug =*/ true,
+                Executors.newSingleThreadExecutor());
+
+        handler.onUnlocked().get();
+
+        verify(mMockDpm, times(1)).addUserRestriction(eq(null),
+                mSetUserRestrictionCaptor.capture());
+        List<String> allUserRestrictions = mSetUserRestrictionCaptor.getAllValues();
+        assertThat(allUserRestrictions).containsExactlyElementsIn(
+                new String[]{UserManager.DISALLOW_SAFE_BOOT});
+        verify(mMockDpm, never()).clearUserRestriction(eq(null),
+                mClearUserRestrictionCaptor.capture());
+    }
+
+    @Test
+    public void onUnlocked_withDisableOutgoingCallShouldSetExpectedUserRestrictions()
+            throws ExecutionException, InterruptedException {
+        Bundle preferences = new Bundle();
+        preferences.putString(EXTRA_KIOSK_PACKAGE, TEST_PACKAGE);
+        preferences.putBoolean(EXTRA_KIOSK_DISABLE_OUTGOING_CALLS, true);
+        SetupParametersClient.getInstance().createPrefs(preferences).get();
+
+        Bundle userRestrictions = new Bundle();
+        when(mMockUserManager.getUserRestrictions()).thenReturn(userRestrictions);
         UserRestrictionsPolicyHandler handler = new UserRestrictionsPolicyHandler(mMockDpm,
                 mMockUserManager,
                 /* isDebug =*/ false,
@@ -378,8 +412,41 @@ public final class UserRestrictionsPolicyHandlerTest {
 
         handler.onUnlocked().get();
 
-        verifyNoInteractions(mMockDpm);
-        verifyNoInteractions(mMockUserManager);
+        verify(mMockDpm, times(2)).addUserRestriction(eq(null),
+                mSetUserRestrictionCaptor.capture());
+        List<String> allUserRestrictions = mSetUserRestrictionCaptor.getAllValues();
+        assertThat(allUserRestrictions).containsExactlyElementsIn(
+                new String[]{UserManager.DISALLOW_SAFE_BOOT,
+                        UserManager.DISALLOW_DEBUGGING_FEATURES});
+        verify(mMockDpm).clearUserRestriction(eq(null), mClearUserRestrictionCaptor.capture());
+        assertThat(mClearUserRestrictionCaptor.getValue()).isEqualTo(
+                UserManager.DISALLOW_DEBUGGING_FEATURES);
+    }
+
+    @Test
+    public void onUnlocked_withDisableOutgoingCallAndUnknownSourcesShouldSetExpectedRestrictions()
+            throws ExecutionException, InterruptedException {
+        setupSetupParameters();
+
+        Bundle userRestrictions = new Bundle();
+        when(mMockUserManager.getUserRestrictions()).thenReturn(userRestrictions);
+        UserRestrictionsPolicyHandler handler = new UserRestrictionsPolicyHandler(mMockDpm,
+                mMockUserManager,
+                /* isDebug =*/ false,
+                Executors.newSingleThreadExecutor());
+
+        handler.onUnlocked().get();
+
+        verify(mMockDpm, times(3)).addUserRestriction(eq(null),
+                mSetUserRestrictionCaptor.capture());
+        List<String> allUserRestrictions = mSetUserRestrictionCaptor.getAllValues();
+        assertThat(allUserRestrictions).containsExactlyElementsIn(
+                new String[]{UserManager.DISALLOW_SAFE_BOOT,
+                        UserManager.DISALLOW_DEBUGGING_FEATURES,
+                        UserManager.DISALLOW_INSTALL_UNKNOWN_SOURCES});
+        verify(mMockDpm).clearUserRestriction(eq(null), mClearUserRestrictionCaptor.capture());
+        assertThat(mClearUserRestrictionCaptor.getValue()).isEqualTo(
+                UserManager.DISALLOW_DEBUGGING_FEATURES);
     }
 
     @Test
