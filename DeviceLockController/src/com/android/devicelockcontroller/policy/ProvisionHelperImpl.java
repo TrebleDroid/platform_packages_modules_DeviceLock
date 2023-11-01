@@ -33,6 +33,7 @@ import android.os.Build;
 import android.telephony.TelephonyManager;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.work.Constraints;
 import androidx.work.Data;
@@ -42,7 +43,7 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
-import com.android.devicelockcontroller.DeviceLockControllerApplication;
+import com.android.devicelockcontroller.PlayInstallPackageTaskClassProvider;
 import com.android.devicelockcontroller.activities.DeviceLockNotificationManager;
 import com.android.devicelockcontroller.activities.ProvisioningProgress;
 import com.android.devicelockcontroller.activities.ProvisioningProgressController;
@@ -62,7 +63,7 @@ import com.google.common.util.concurrent.Futures;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 /**
@@ -73,15 +74,22 @@ public final class ProvisionHelperImpl implements ProvisionHelper {
 
     private final Context mContext;
     private final ProvisionStateController mStateController;
-    private static final ExecutorService sExecutor = Executors.newCachedThreadPool();
+    private final Executor mExecutor;
     private final DeviceLockControllerScheduler mScheduler;
 
     public ProvisionHelperImpl(Context context, ProvisionStateController stateController) {
+        this(context, stateController, Executors.newCachedThreadPool());
+    }
+
+    @VisibleForTesting
+    ProvisionHelperImpl(Context context, ProvisionStateController stateController,
+            Executor executor) {
         mContext = context;
         mStateController = stateController;
         DeviceLockControllerSchedulerProvider schedulerProvider =
                 (DeviceLockControllerSchedulerProvider) mContext.getApplicationContext();
         mScheduler = schedulerProvider.getDeviceLockControllerScheduler();
+        mExecutor = executor;
     }
 
     @Override
@@ -90,7 +98,7 @@ public final class ProvisionHelperImpl implements ProvisionHelper {
                 Futures.transformAsync(
                         GlobalParametersClient.getInstance().setProvisionForced(true),
                         unused -> mStateController.setNextStateForEvent(PROVISION_PAUSE),
-                        sExecutor),
+                        mExecutor),
                 new FutureCallback<>() {
                     @Override
                     public void onSuccess(Void unused) {
@@ -104,7 +112,7 @@ public final class ProvisionHelperImpl implements ProvisionHelper {
                     public void onFailure(Throwable t) {
                         throw new RuntimeException("Failed to delay setup", t);
                     }
-                }, sExecutor);
+                }, mExecutor);
     }
 
     @Override
@@ -140,7 +148,7 @@ public final class ProvisionHelperImpl implements ProvisionHelper {
                     private void installFromPlay(String kioskPackage) {
                         Context applicationContext = mContext.getApplicationContext();
                         final Class<? extends ListenableWorker> playInstallTaskClass =
-                                ((DeviceLockControllerApplication) applicationContext)
+                                ((PlayInstallPackageTaskClassProvider) applicationContext)
                                         .getPlayInstallPackageTaskClass();
                         WorkManager workManager = WorkManager.getInstance(mContext);
                         if (playInstallTaskClass == null) {
@@ -181,19 +189,6 @@ public final class ProvisionHelperImpl implements ProvisionHelper {
                                         }));
                     }
 
-                    @NonNull
-                    private OneTimeWorkRequest getIsDeviceInApprovedCountryWork(
-                            String carrierInfo) {
-                        return new OneTimeWorkRequest.Builder(
-                                IsDeviceInApprovedCountryWorker.class)
-                                .setConstraints(
-                                        new Constraints.Builder().setRequiredNetworkType(
-                                                NetworkType.CONNECTED).build())
-                                .setInputData(new Data.Builder().putString(
-                                        IsDeviceInApprovedCountryWorker.KEY_CARRIER_INFO,
-                                        carrierInfo).build()).build();
-                    }
-
                     @Override
                     public void onFailure(Throwable t) {
                         LogUtil.w(TAG, "Failed to install kiosk app!", t);
@@ -212,17 +207,29 @@ public final class ProvisionHelperImpl implements ProvisionHelper {
                                     ProvisioningProgress.PROVISIONING_FAILED);
                         }
                     }
-                }, sExecutor);
+                }, mExecutor);
     }
 
     @NonNull
-    private static OneTimeWorkRequest getPlayInstallPackageTask(
+    static OneTimeWorkRequest getIsDeviceInApprovedCountryWork(String carrierInfo) {
+        return new OneTimeWorkRequest.Builder(
+                IsDeviceInApprovedCountryWorker.class)
+                .setConstraints(new Constraints.Builder().setRequiredNetworkType(
+                        NetworkType.CONNECTED).build())
+                .setInputData(new Data.Builder().putString(
+                        IsDeviceInApprovedCountryWorker.KEY_CARRIER_INFO,
+                        carrierInfo).build()).build();
+    }
+
+    @NonNull
+    static OneTimeWorkRequest getPlayInstallPackageTask(
             Class<? extends ListenableWorker> playInstallTaskClass, String kioskPackageName) {
         return new OneTimeWorkRequest.Builder(playInstallTaskClass)
                 .setInputData(new Data.Builder().putString(
                         EXTRA_KIOSK_PACKAGE, kioskPackageName).build())
                 .setConstraints(new Constraints.Builder().setRequiredNetworkType(
-                        NetworkType.CONNECTED).build()).build();
+                        NetworkType.CONNECTED).build())
+                .build();
     }
 
     private void createNotification() {
