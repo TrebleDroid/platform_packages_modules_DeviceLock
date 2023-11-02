@@ -74,8 +74,7 @@ public final class DeviceStateControllerImplTest {
         assertThat(thrown).hasMessageThat().contains(USER_HAS_NOT_BEEN_PROVISIONED);
 
         assertThat(GlobalParametersClient.getInstance().getDeviceState().get()).isEqualTo(
-                DeviceState.UNLOCKED);
-        assertThat(mDeviceStateController.isLocked().get()).isFalse();
+                DeviceState.UNDEFINED);
     }
 
     @Test
@@ -90,8 +89,7 @@ public final class DeviceStateControllerImplTest {
         assertThat(thrown).hasMessageThat().contains(USER_HAS_NOT_BEEN_PROVISIONED);
 
         assertThat(GlobalParametersClient.getInstance().getDeviceState().get()).isEqualTo(
-                DeviceState.UNLOCKED);
-        assertThat(mDeviceStateController.isLocked().get()).isFalse();
+                DeviceState.UNDEFINED);
     }
 
     @Test
@@ -106,8 +104,7 @@ public final class DeviceStateControllerImplTest {
         assertThat(thrown).hasMessageThat().contains(USER_HAS_NOT_BEEN_PROVISIONED);
 
         assertThat(GlobalParametersClient.getInstance().getDeviceState().get()).isEqualTo(
-                DeviceState.UNLOCKED);
-        assertThat(mDeviceStateController.isLocked().get()).isFalse();
+                DeviceState.UNDEFINED);
     }
 
     @Test
@@ -122,24 +119,23 @@ public final class DeviceStateControllerImplTest {
         assertThat(thrown).hasMessageThat().contains(USER_HAS_NOT_BEEN_PROVISIONED);
 
         assertThat(GlobalParametersClient.getInstance().getDeviceState().get()).isEqualTo(
-                DeviceState.UNLOCKED);
-        assertThat(mDeviceStateController.isLocked().get()).isFalse();
+                DeviceState.UNDEFINED);
     }
 
     @Test
-    public void lockDevice_withKioskProvisionedState_shouldThrowException()
+    public void lockDevice_withKioskProvisionedState_shouldLockDevice()
             throws ExecutionException, InterruptedException {
         when(mMockProvisionStateController.getState()).thenReturn(
                 Futures.immediateFuture(ProvisionState.KIOSK_PROVISIONED));
-
-        ExecutionException thrown = assertThrows(ExecutionException.class,
-                () -> mDeviceStateController.lockDevice().get());
-        assertThat(thrown).hasCauseThat().isInstanceOf(RuntimeException.class);
-        assertThat(thrown).hasMessageThat().contains(USER_HAS_NOT_BEEN_PROVISIONED);
+        when(mMockDevicePolicyController.enforceCurrentPolicies()).thenReturn(
+                Futures.immediateVoidFuture());
+        when(mMockProvisionStateController.setNextStateForEvent(
+                eq(ProvisionEvent.PROVISION_SUCCESS))).thenReturn(
+                Futures.immediateVoidFuture());
+        mDeviceStateController.lockDevice().get();
 
         assertThat(GlobalParametersClient.getInstance().getDeviceState().get()).isEqualTo(
-                DeviceState.UNLOCKED);
-        assertThat(mDeviceStateController.isLocked().get()).isFalse();
+                DeviceState.LOCKED);
     }
 
     @Test
@@ -175,13 +171,15 @@ public final class DeviceStateControllerImplTest {
             throws ExecutionException, InterruptedException {
         when(mMockProvisionStateController.getState()).thenReturn(
                 Futures.immediateFuture(ProvisionState.KIOSK_PROVISIONED));
+        when(mMockDevicePolicyController.enforceCurrentPolicies()).thenReturn(
+                Futures.immediateVoidFuture());
         when(mMockProvisionStateController.setNextStateForEvent(
                 eq(ProvisionEvent.PROVISION_SUCCESS))).thenReturn(
                 Futures.immediateVoidFuture());
         mDeviceStateController.unlockDevice().get();
+
         assertThat(GlobalParametersClient.getInstance().getDeviceState().get()).isEqualTo(
                 DeviceState.UNLOCKED);
-        assertThat(mDeviceStateController.isLocked().get()).isFalse();
     }
 
     @Test
@@ -196,8 +194,7 @@ public final class DeviceStateControllerImplTest {
         assertThat(thrown).hasMessageThat().contains(USER_HAS_NOT_BEEN_PROVISIONED);
 
         assertThat(GlobalParametersClient.getInstance().getDeviceState().get()).isEqualTo(
-                DeviceState.UNLOCKED);
-        assertThat(mDeviceStateController.isLocked().get()).isFalse();
+                DeviceState.UNDEFINED);
     }
 
     @Test
@@ -212,8 +209,7 @@ public final class DeviceStateControllerImplTest {
         assertThat(thrown).hasMessageThat().contains(USER_HAS_NOT_BEEN_PROVISIONED);
 
         assertThat(GlobalParametersClient.getInstance().getDeviceState().get()).isEqualTo(
-                DeviceState.UNLOCKED);
-        assertThat(mDeviceStateController.isLocked().get()).isFalse();
+                DeviceState.UNDEFINED);
     }
 
     @Test
@@ -228,8 +224,7 @@ public final class DeviceStateControllerImplTest {
         assertThat(thrown).hasMessageThat().contains(USER_HAS_NOT_BEEN_PROVISIONED);
 
         assertThat(GlobalParametersClient.getInstance().getDeviceState().get()).isEqualTo(
-                DeviceState.UNLOCKED);
-        assertThat(mDeviceStateController.isLocked().get()).isFalse();
+                DeviceState.UNDEFINED);
     }
 
     @Test
@@ -244,8 +239,7 @@ public final class DeviceStateControllerImplTest {
         assertThat(thrown).hasMessageThat().contains(USER_HAS_NOT_BEEN_PROVISIONED);
 
         assertThat(GlobalParametersClient.getInstance().getDeviceState().get()).isEqualTo(
-                DeviceState.UNLOCKED);
-        assertThat(mDeviceStateController.isLocked().get()).isFalse();
+                DeviceState.UNDEFINED);
     }
 
     @Test
@@ -259,7 +253,6 @@ public final class DeviceStateControllerImplTest {
                 () -> mDeviceStateController.unlockDevice().get());
         assertThat(thrown).hasCauseThat().isInstanceOf(RuntimeException.class);
         assertThat(thrown).hasMessageThat().contains(DEVICE_HAS_BEEN_CLEARED);
-        assertThat(mDeviceStateController.isLocked().get()).isFalse();
     }
 
     @Test
@@ -288,8 +281,7 @@ public final class DeviceStateControllerImplTest {
         assertThat(thrown).hasMessageThat().contains(USER_HAS_NOT_BEEN_PROVISIONED);
 
         assertThat(GlobalParametersClient.getInstance().getDeviceState().get()).isEqualTo(
-                DeviceState.UNLOCKED);
-        assertThat(mDeviceStateController.isLocked().get()).isFalse();
+                DeviceState.UNDEFINED);
     }
 
     @Test
@@ -304,8 +296,7 @@ public final class DeviceStateControllerImplTest {
         assertThat(thrown).hasMessageThat().contains(USER_HAS_NOT_BEEN_PROVISIONED);
 
         assertThat(GlobalParametersClient.getInstance().getDeviceState().get()).isEqualTo(
-                DeviceState.UNLOCKED);
-        assertThat(mDeviceStateController.isLocked().get()).isFalse();
+                DeviceState.UNDEFINED);
     }
 
     @Test
@@ -320,8 +311,7 @@ public final class DeviceStateControllerImplTest {
         assertThat(thrown).hasMessageThat().contains(USER_HAS_NOT_BEEN_PROVISIONED);
 
         assertThat(GlobalParametersClient.getInstance().getDeviceState().get()).isEqualTo(
-                DeviceState.UNLOCKED);
-        assertThat(mDeviceStateController.isLocked().get()).isFalse();
+                DeviceState.UNDEFINED);
     }
 
     @Test
@@ -336,24 +326,23 @@ public final class DeviceStateControllerImplTest {
         assertThat(thrown).hasMessageThat().contains(USER_HAS_NOT_BEEN_PROVISIONED);
 
         assertThat(GlobalParametersClient.getInstance().getDeviceState().get()).isEqualTo(
-                DeviceState.UNLOCKED);
-        assertThat(mDeviceStateController.isLocked().get()).isFalse();
+                DeviceState.UNDEFINED);
     }
 
     @Test
-    public void clearDevice_withKioskProvisionedState_shouldThrowException()
+    public void clearDevice_withKioskProvisionedState_shouldClearDevice()
             throws ExecutionException, InterruptedException {
         when(mMockProvisionStateController.getState()).thenReturn(
                 Futures.immediateFuture(ProvisionState.KIOSK_PROVISIONED));
-
-        ExecutionException thrown = assertThrows(ExecutionException.class,
-                () -> mDeviceStateController.clearDevice().get());
-        assertThat(thrown).hasCauseThat().isInstanceOf(RuntimeException.class);
-        assertThat(thrown).hasMessageThat().contains(USER_HAS_NOT_BEEN_PROVISIONED);
+        when(mMockDevicePolicyController.enforceCurrentPolicies()).thenReturn(
+                Futures.immediateVoidFuture());
+        when(mMockProvisionStateController.setNextStateForEvent(
+                eq(ProvisionEvent.PROVISION_SUCCESS))).thenReturn(
+                Futures.immediateVoidFuture());
+        mDeviceStateController.clearDevice().get();
 
         assertThat(GlobalParametersClient.getInstance().getDeviceState().get()).isEqualTo(
-                DeviceState.UNLOCKED);
-        assertThat(mDeviceStateController.isLocked().get()).isFalse();
+                DeviceState.CLEARED);
     }
 
     @Test
@@ -367,7 +356,6 @@ public final class DeviceStateControllerImplTest {
                 () -> mDeviceStateController.clearDevice().get());
         assertThat(thrown).hasCauseThat().isInstanceOf(RuntimeException.class);
         assertThat(thrown).hasMessageThat().contains(DEVICE_HAS_BEEN_CLEARED);
-        assertThat(mDeviceStateController.isLocked().get()).isFalse();
     }
 
     @Test
