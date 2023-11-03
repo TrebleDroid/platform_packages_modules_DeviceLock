@@ -16,7 +16,6 @@
 
 package com.android.devicelockcontroller.provision.worker;
 
-import static com.android.devicelockcontroller.DevicelockStatsLog.DEVICE_LOCK_CHECK_IN_REQUEST_REPORTED__TYPE__PAUSE_DEVICE_PROVISIONING;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.REASON_UNSPECIFIED;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.USER_DEFERRED_DEVICE_PROVISIONING;
 
@@ -32,10 +31,11 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.WorkerParameters;
 
-import com.android.devicelockcontroller.DevicelockStatsLog;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.PauseDeviceProvisioningGrpcResponse;
+import com.android.devicelockcontroller.stats.StatsLoggerProvider;
 import com.android.devicelockcontroller.util.LogUtil;
+import com.android.devicelockcontroller.stats.StatsLogger;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -51,6 +51,8 @@ public final class PauseProvisioningWorker extends AbstractCheckInWorker {
             "PAUSE_DEVICE_PROVISIONING_REASON";
     public static final String REPORT_PROVISION_PAUSED_BY_USER_WORK =
             "report-provision-paused-by-user";
+
+    private final StatsLogger mStatsLogger;
 
     /**
      * Report provision has been paused by user to backend server by running a work item.
@@ -73,13 +75,16 @@ public final class PauseProvisioningWorker extends AbstractCheckInWorker {
 
     public PauseProvisioningWorker(@NonNull Context context,
             @NonNull WorkerParameters workerParams, ListeningExecutorService executorService) {
-        super(context, workerParams, null, executorService);
+        this(context, workerParams, null, executorService);
     }
 
     @VisibleForTesting
     PauseProvisioningWorker(@NonNull Context context, @NonNull WorkerParameters workerParams,
             DeviceCheckInClient client, ListeningExecutorService executorService) {
         super(context, workerParams, client, executorService);
+        StatsLoggerProvider loggerProvider =
+                (StatsLoggerProvider) context.getApplicationContext();
+        mStatsLogger = loggerProvider.getStatsLogger();
     }
 
     @NonNull
@@ -93,10 +98,7 @@ public final class PauseProvisioningWorker extends AbstractCheckInWorker {
                 return Result.retry();
             }
             if (response.isSuccessful()) {
-                DevicelockStatsLog.write(
-                        DevicelockStatsLog.DEVICE_LOCK_CHECK_IN_REQUEST_REPORTED,
-                        DEVICE_LOCK_CHECK_IN_REQUEST_REPORTED__TYPE__PAUSE_DEVICE_PROVISIONING
-                );
+                mStatsLogger.logPauseDeviceProvisioning();
                 return Result.success();
             }
             LogUtil.w(TAG, "Pause provisioning request failed: " + response);

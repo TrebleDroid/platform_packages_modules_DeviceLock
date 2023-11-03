@@ -40,6 +40,7 @@ import androidx.work.WorkerFactory;
 import androidx.work.WorkerParameters;
 import androidx.work.testing.TestListenableWorkerBuilder;
 
+import com.android.devicelockcontroller.DeviceLockControllerApplication;
 import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
 import com.android.devicelockcontroller.common.DeviceId;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
@@ -54,9 +55,14 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+
+import com.android.devicelockcontroller.stats.StatsLogger;
+import com.android.devicelockcontroller.stats.StatsLoggerProvider;
+
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
 public class DeviceCheckInWorkerTest {
@@ -73,6 +79,7 @@ public class DeviceCheckInWorkerTest {
     private DeviceCheckInClient mClient;
     @Mock
     private GetDeviceCheckInStatusGrpcResponse mResponse;
+    private StatsLogger mStatsLogger;
     private DeviceCheckInWorker mWorker;
 
     @Before
@@ -95,10 +102,14 @@ public class DeviceCheckInWorkerTest {
                                         : null;
                             }
                         }).build();
+        StatsLoggerProvider loggerProvider =
+                (StatsLoggerProvider) context.getApplicationContext();
+        mStatsLogger = loggerProvider.getStatsLogger();
     }
 
+
     @Test
-    public void checkIn_allInfoAvailable_checkInResponseSuccessfulAndHandleable_succeeded() {
+    public void checkIn_allInfoAvailable_checkInResponseSuccessfulAndHandleable_successAndLogged() {
         // GIVEN all device info available
         setDeviceIdAvailability(/* isAvailable= */ true);
         setCarrierInfoAvailability(/* isAvailable= */ true);
@@ -111,10 +122,12 @@ public class DeviceCheckInWorkerTest {
 
         // THEN work succeeded
         assertThat(result).isEqualTo(Result.success());
+        // THEN check in request was logged
+        verify(mStatsLogger).logGetDeviceCheckInStatus();
     }
 
     @Test
-    public void checkIn_allInfoAvailable_checkInResponseSuccessfulButNotHandleable_retry() {
+    public void checkIn_allInfoAvailable_checkInResponseSuccessfulButNotHandleable_retryAndLogged() {
         // GIVEN all device info available
         setDeviceIdAvailability(/* isAvailable= */ true);
         setCarrierInfoAvailability(/* isAvailable= */ true);
@@ -127,10 +140,12 @@ public class DeviceCheckInWorkerTest {
 
         // THEN work succeeded
         assertThat(result).isEqualTo(Result.retry());
+        // THEN check in request was logged
+        verify(mStatsLogger).logGetDeviceCheckInStatus();
     }
 
     @Test
-    public void checkIn_allInfoAvailable_checkInResponseHasRecoverableError_retry() {
+    public void checkIn_allInfoAvailable_checkInResponseHasRecoverableError_retryAndNotLogged() {
         // GIVEN all device info available
         setDeviceIdAvailability(/* isAvailable= */ true);
         setCarrierInfoAvailability(/* isAvailable= */ true);
@@ -143,10 +158,12 @@ public class DeviceCheckInWorkerTest {
 
         // THEN work succeeded
         assertThat(result).isEqualTo(Result.retry());
+        // THEN check in request was NOT logged
+        verify(mStatsLogger, never()).logGetDeviceCheckInStatus();
     }
 
     @Test
-    public void checkIn_allInfoAvailable_checkInResponseHasNonRecoverableError_failure() {
+    public void checkIn_allInfoAvailable_checkInResponseHasNonRecoverableError_failureAndNotLogged() {
         // GIVEN all device info available
         setDeviceIdAvailability(/* isAvailable= */ true);
         setCarrierInfoAvailability(/* isAvailable= */ true);
@@ -165,6 +182,8 @@ public class DeviceCheckInWorkerTest {
                 ((TestDeviceLockControllerApplication) ApplicationProvider.getApplicationContext())
                         .getDeviceLockControllerScheduler();
         verify(scheduler).scheduleRetryCheckInWork(eq(RETRY_ON_FAILURE_DELAY));
+        // THEN check in request was NOT logged
+        verify(mStatsLogger, never()).logGetDeviceCheckInStatus();
     }
 
     @Test
