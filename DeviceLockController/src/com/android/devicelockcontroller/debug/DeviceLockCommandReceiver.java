@@ -16,6 +16,8 @@
 
 package com.android.devicelockcontroller.debug;
 
+import static com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState.PROVISION_STATE_UNSPECIFIED;
+import static com.android.devicelockcontroller.common.DeviceLockConstants.READY_FOR_PROVISION;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.CLEARED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.LOCKED;
 import static com.android.devicelockcontroller.policy.DeviceStateController.DeviceState.UNLOCKED;
@@ -74,6 +76,12 @@ public final class DeviceLockCommandReceiver extends BroadcastReceiver {
 
     private static final String TAG = "DeviceLockCommandReceiver";
     private static final String EXTRA_COMMAND = "command";
+    private static final String EXTRA_CHECK_IN_STATUS = "check-in-status";
+    private static final String EXTRA_CHECK_IN_RETRY_DELAY = "check-in-retry-delay";
+    private static final String EXTRA_FORCE_PROVISION = "force-provision";
+    private static final String EXTRA_IS_IN_APPROVED_COUNTRY = "is-in-approved-country";
+    private static final String EXTRA_NEXT_PROVISION_STATE = "next-provision-state";
+    private static final String EXTRA_DAYS_LEFT_UNTIL_RESET = "days-left-until-reset";
 
     @Retention(SOURCE)
     @StringDef({
@@ -84,6 +92,10 @@ public final class DeviceLockCommandReceiver extends BroadcastReceiver {
             Commands.CLEAR,
             Commands.DUMP,
             Commands.FCM,
+            Commands.ENABLE_DEBUG_CLIENT,
+            Commands.DISABLE_DEBUG_CLIENT,
+            Commands.SET_DEBUG_CLIENT_RESPONSE,
+            Commands.DUMP_DEBUG_CLIENT_RESPONSE,
     })
     private @interface Commands {
         String RESET = "reset";
@@ -93,6 +105,10 @@ public final class DeviceLockCommandReceiver extends BroadcastReceiver {
         String CLEAR = "clear";
         String DUMP = "dump";
         String FCM = "fcm";
+        String ENABLE_DEBUG_CLIENT = "enable-debug-client";
+        String DISABLE_DEBUG_CLIENT = "disable-debug-client";
+        String SET_DEBUG_CLIENT_RESPONSE = "set-debug-client-response";
+        String DUMP_DEBUG_CLIENT_RESPONSE = "dump-debug-client-response";
     }
 
     @Override
@@ -146,9 +162,38 @@ public final class DeviceLockCommandReceiver extends BroadcastReceiver {
             case Commands.FCM:
                 logFcmToken(appContext);
                 break;
+            case Commands.ENABLE_DEBUG_CLIENT:
+                DeviceCheckInClientDebug.setDebugDevicelockCheckinClientEnabled(context, true);
+                break;
+            case Commands.DISABLE_DEBUG_CLIENT:
+                DeviceCheckInClientDebug.setDebugDevicelockCheckinClientEnabled(context, false);
+                break;
+            case Commands.SET_DEBUG_CLIENT_RESPONSE:
+                setDebugCheckInClientResponse(context, intent);
+                break;
+            case Commands.DUMP_DEBUG_CLIENT_RESPONSE:
+                DeviceCheckInClientDebug.dumpDebugCheckInClientResponses(context);
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported command: " + command);
         }
+    }
+
+    private static void setDebugCheckInClientResponse(Context context, Intent intent) {
+        DeviceCheckInClientDebug.setDebugDevicelockCheckinStatus(
+                context,
+                intent.getIntExtra(EXTRA_CHECK_IN_STATUS, READY_FOR_PROVISION));
+        DeviceCheckInClientDebug.setDebugDevicelockCheckinForceProvisioning(
+                context,
+                intent.getBooleanExtra(EXTRA_FORCE_PROVISION, false));
+        DeviceCheckInClientDebug.setDebugDevicelockCheckinApprovedCountry(context,
+                intent.getBooleanExtra(EXTRA_IS_IN_APPROVED_COUNTRY, true));
+        DeviceCheckInClientDebug.setDebugDevicelockCheckinNextProvisionState(context,
+                intent.getIntExtra(EXTRA_NEXT_PROVISION_STATE, PROVISION_STATE_UNSPECIFIED));
+        DeviceCheckInClientDebug.setDebugDevicelockCheckinDaysLeftUntilReset(
+                context, intent.getIntExtra(EXTRA_DAYS_LEFT_UNTIL_RESET, /* days_left*/ 1));
+        DeviceCheckInClientDebug.setDebugDevicelockCheckinRetryDelay(context,
+                intent.getIntExtra(EXTRA_CHECK_IN_RETRY_DELAY, /* delay_minute= */ 1));
     }
 
     private static void dumpStorage(Context context) {

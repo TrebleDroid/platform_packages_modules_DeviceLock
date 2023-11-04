@@ -16,8 +16,10 @@
 
 package com.android.devicelockcontroller.provision.grpc;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
-import android.os.SystemProperties;
+import android.os.UserHandle;
 import android.util.ArraySet;
 import android.util.Pair;
 
@@ -36,8 +38,11 @@ import com.android.devicelockcontroller.util.LogUtil;
  */
 public abstract class DeviceCheckInClient {
     private static final String TAG = "DeviceCheckInClient";
+    private static final String FILENAME = "debug-check-in-preferences";
+
     public static final String DEVICE_CHECK_IN_CLIENT_DEBUG_CLASS_NAME =
             "com.android.devicelockcontroller.debug.DeviceCheckInClientDebug";
+    protected static final String DEBUG_DEVICELOCK_CHECKIN = "debug.devicelock.checkin";
     private static volatile DeviceCheckInClient sClient;
 
     @Nullable
@@ -47,17 +52,34 @@ public abstract class DeviceCheckInClient {
     protected static Pair<String, String> sApiKey = new Pair<>("", "");
     private static volatile boolean sUseDebugClient;
 
+    @Nullable
+    private static volatile SharedPreferences sSharedPreferences;
+
+    @Nullable
+    protected static synchronized SharedPreferences getSharedPreferences(
+            @Nullable Context context) {
+        if (sSharedPreferences == null && context != null) {
+            sSharedPreferences =
+                    context.createContextAsUser(UserHandle.SYSTEM, /* flags= */
+                            0).createDeviceProtectedStorageContext().getSharedPreferences(FILENAME,
+                            Context.MODE_PRIVATE);
+        }
+        return sSharedPreferences;
+    }
+
     /**
      * Get an instance of DeviceCheckInClient object.
      */
     public static DeviceCheckInClient getInstance(
+            Context context,
             String className,
             String hostName,
             int portNumber,
             Pair<String, String> apiKey,
             @Nullable String registeredId) {
         boolean useDebugClient = Build.isDebuggable()
-                && SystemProperties.getBoolean("debug.devicelock.checkin", /* def= */ false);
+                && getSharedPreferences(context).getBoolean(DEBUG_DEVICELOCK_CHECKIN,
+                /* def= */ false);
         synchronized (DeviceCheckInClient.class) {
             try {
                 boolean createRequired =
