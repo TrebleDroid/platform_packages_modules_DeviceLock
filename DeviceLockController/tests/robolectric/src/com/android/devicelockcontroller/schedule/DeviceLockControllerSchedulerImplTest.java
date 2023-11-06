@@ -39,6 +39,7 @@ import androidx.work.testing.WorkManagerTestInitHelper;
 import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
 import com.android.devicelockcontroller.common.DeviceLockConstants;
 import com.android.devicelockcontroller.provision.worker.DeviceCheckInWorker;
+import com.android.devicelockcontroller.shadows.ShadowBuild;
 import com.android.devicelockcontroller.storage.UserParameters;
 import com.android.devicelockcontroller.util.ThreadUtils;
 
@@ -347,6 +348,39 @@ public final class DeviceLockControllerSchedulerImplTest {
 
     @Test
     public void scheduleNextProvisionFailedStepAlarm_initialStep_noDelay() {
+        // GIVEN no alarm is scheduled
+        ShadowAlarmManager alarmManager = Shadows.shadowOf(
+                mTestApp.getSystemService(AlarmManager.class));
+        assertThat(alarmManager.peekNextScheduledAlarm()).isNull();
+
+        // GIVEN no existing timestamp
+        runBySequentialExecutor(() -> assertThat(
+                UserParameters.getNextProvisionFailedStepTimeMills(mTestApp)).isEqualTo(0));
+
+        // WHEN schedule next provision failed step alarm
+        runBySequentialExecutor(
+                () -> mScheduler.scheduleNextProvisionFailedStepAlarm(
+                        /* shouldGoOffImmediately= */ true));
+
+        // THEN correct alarm should be scheduled
+        PendingIntent actualPendingIntent = alarmManager.peekNextScheduledAlarm().operation;
+        assertThat(actualPendingIntent.isBroadcast()).isTrue();
+
+        // THEN alarm should be scheduled at correct time
+        long actualTriggerTime = alarmManager.peekNextScheduledAlarm().triggerAtTime;
+        assertThat(actualTriggerTime).isEqualTo(SystemClock.elapsedRealtime());
+
+        // THEN expected trigger time should be stored in storage
+        runBySequentialExecutor(() -> assertThat(
+                UserParameters.getNextProvisionFailedStepTimeMills(mTestApp)).isEqualTo(
+                TEST_CURRENT_TIME_MILLIS));
+    }
+
+    @Test
+    public void scheduleNextProvisionFailedStepAlarm_debuggable_initialStep_noDelay() {
+        // GIVEN build is debuggable build
+        ShadowBuild.setIsDebuggable(true);
+
         // GIVEN no alarm is scheduled
         ShadowAlarmManager alarmManager = Shadows.shadowOf(
                 mTestApp.getSystemService(AlarmManager.class));
