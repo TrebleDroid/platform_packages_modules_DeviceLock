@@ -18,7 +18,6 @@ package com.android.devicelockcontroller;
 
 import android.app.Application;
 import android.content.Context;
-import android.util.StatsLog;
 
 import androidx.annotation.GuardedBy;
 import androidx.annotation.NonNull;
@@ -37,9 +36,6 @@ import com.android.devicelockcontroller.policy.ProvisionStateControllerImpl;
 import com.android.devicelockcontroller.schedule.DeviceLockControllerScheduler;
 import com.android.devicelockcontroller.schedule.DeviceLockControllerSchedulerImpl;
 import com.android.devicelockcontroller.schedule.DeviceLockControllerSchedulerProvider;
-import com.android.devicelockcontroller.stats.StatsLogger;
-import com.android.devicelockcontroller.stats.StatsLoggerImpl;
-import com.android.devicelockcontroller.stats.StatsLoggerProvider;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import com.google.common.util.concurrent.Futures;
@@ -48,13 +44,12 @@ import com.google.common.util.concurrent.ListenableFuture;
 /**
  * Application class for Device Lock Controller.
  */
-public abstract class DeviceLockControllerApplication extends Application implements
+public class DeviceLockControllerApplication extends Application implements
         PolicyObjectsInterface,
         Configuration.Provider,
         DeviceLockControllerSchedulerProvider,
         FcmRegistrationTokenProvider,
-        PlayInstallPackageTaskClassProvider,
-        StatsLoggerProvider {
+        PlayInstallPackageTaskClassProvider {
     private static final String TAG = "DeviceLockControllerApplication";
 
     private static Context sApplicationContext;
@@ -64,8 +59,6 @@ public abstract class DeviceLockControllerApplication extends Application implem
     private FinalizationController mFinalizationController;
     @GuardedBy("this")
     private DeviceLockControllerScheduler mDeviceLockControllerScheduler;
-    @GuardedBy("this")
-    private StatsLogger mStatsLogger;
 
     @Override
     public void onCreate() {
@@ -98,14 +91,6 @@ public abstract class DeviceLockControllerApplication extends Application implem
             mFinalizationController = new FinalizationControllerImpl(this);
         }
         return mFinalizationController;
-    }
-
-    @Override
-    public synchronized StatsLogger getStatsLogger() {
-        if (null == mStatsLogger) {
-            mStatsLogger = new StatsLoggerImpl();
-        }
-        return mStatsLogger;
     }
 
     @Override

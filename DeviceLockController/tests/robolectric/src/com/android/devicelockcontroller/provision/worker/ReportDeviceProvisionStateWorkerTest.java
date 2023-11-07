@@ -17,14 +17,12 @@
 package com.android.devicelockcontroller.provision.worker;
 
 import static com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState.PROVISION_STATE_FACTORY_RESET;
-import static com.android.devicelockcontroller.common.DeviceLockConstants.DeviceProvisionState.PROVISION_STATE_SUCCESS;
 
 import static com.google.common.truth.Truth.assertThat;
 
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -44,8 +42,6 @@ import androidx.work.testing.WorkManagerTestInitHelper;
 import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.ReportDeviceProvisionStateGrpcResponse;
-import com.android.devicelockcontroller.stats.StatsLogger;
-import com.android.devicelockcontroller.stats.StatsLoggerProvider;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.storage.UserParameters;
 
@@ -72,7 +68,6 @@ public final class ReportDeviceProvisionStateWorkerTest {
     private DeviceCheckInClient mClient;
     @Mock
     private ReportDeviceProvisionStateGrpcResponse mResponse;
-    private StatsLogger mStatsLogger;
     private ReportDeviceProvisionStateWorker mWorker;
     private TestDeviceLockControllerApplication mTestApp;
 
@@ -104,35 +99,26 @@ public final class ReportDeviceProvisionStateWorkerTest {
                                         : null;
                             }
                         }).build();
-        StatsLoggerProvider loggerProvider =
-                (StatsLoggerProvider) mTestApp.getApplicationContext();
-        mStatsLogger = loggerProvider.getStatsLogger();
     }
 
     @Test
-    public void doWork_responseHasRecoverableError_returnRetryAndNotLogged() {
+    public void doWork_responseHasRecoverableError_returnRetry() {
         when(mResponse.hasRecoverableError()).thenReturn(true);
 
         assertThat(Futures.getUnchecked(mWorker.startWork())).isEqualTo(Result.retry());
-        // THEN report provisioning state or complete was NOT logged
-        verify(mStatsLogger, never()).logReportDeviceProvisionState();
-        verify(mStatsLogger, never()).logReportDeviceProvisioningComplete();
     }
 
     @Test
-    public void doWork_responseHasFatalError_returnFailureAndNotLogged() {
+    public void doWork_responseHasFatalError_returnFailure() {
         when(mResponse.hasFatalError()).thenReturn(true);
 
         assertThat(Futures.getUnchecked(mWorker.startWork())).isEqualTo(Result.failure());
         verify(mTestApp.getDeviceLockControllerScheduler()).scheduleNextProvisionFailedStepAlarm(
                 /* shouldGoOffImmediately= */ eq(false));
-        // THEN report provisioning state or complete was NOT logged
-        verify(mStatsLogger, never()).logReportDeviceProvisionState();
-        verify(mStatsLogger, never()).logReportDeviceProvisioningComplete();
     }
 
     @Test
-    public void doWork_responseIsSuccessful_globalParametersShouldBeSet_returnSuccessAndLogReportState()
+    public void doWork_responseIsSuccessful_globalParametersShouldBeSet_returnSuccess()
             throws Exception {
         when(mResponse.isSuccessful()).thenReturn(true);
         when(mResponse.getNextClientProvisionState()).thenReturn(PROVISION_STATE_FACTORY_RESET);
@@ -149,31 +135,5 @@ public final class ReportDeviceProvisionStateWorkerTest {
 
         verify(mTestApp.getDeviceLockControllerScheduler()).scheduleNextProvisionFailedStepAlarm(
                 /* shouldGoOffImmediately= */ eq(true));
-        // THEN report provisioning state was logged
-        verify(mStatsLogger).logReportDeviceProvisionState();
-        // THEN report provisioning complete was NOT logged
-        verify(mStatsLogger, never()).logReportDeviceProvisioningComplete();
-    }
-
-    @Test
-    public void doWork_responseIsSuccessfulAndProvisionComplete_globalParametersShouldBeSet_returnSuccessAndLogReportComplete()
-            throws Exception {
-        when(mResponse.isSuccessful()).thenReturn(true);
-        when(mResponse.getNextClientProvisionState()).thenReturn(PROVISION_STATE_SUCCESS);
-        when(mResponse.getDaysLeftUntilReset()).thenReturn(TEST_DAYS_LEFT_UNTIL_RESET);
-
-        assertThat(Futures.getUnchecked(mWorker.startWork())).isEqualTo(Result.success());
-
-        GlobalParametersClient globalParameters = GlobalParametersClient.getInstance();
-        assertThat(globalParameters.getLastReceivedProvisionState().get()).isEqualTo(
-                PROVISION_STATE_SUCCESS);
-        Executors.newSingleThreadExecutor().submit(
-                () -> assertThat(UserParameters.getDaysLeftUntilReset(mTestApp)).isEqualTo(
-                        TEST_DAYS_LEFT_UNTIL_RESET)).get();
-
-        // THEN report provisioning state was NOT logged
-        verify(mStatsLogger, never()).logReportDeviceProvisionState();
-        // THEN report provisioning complete was logged
-        verify(mStatsLogger).logReportDeviceProvisioningComplete();
     }
 }

@@ -22,14 +22,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.work.WorkerParameters;
 
+import com.android.devicelockcontroller.DevicelockStatsLog;
 import com.android.devicelockcontroller.FcmRegistrationTokenProvider;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrpcResponse;
 import com.android.devicelockcontroller.schedule.DeviceLockControllerScheduler;
 import com.android.devicelockcontroller.schedule.DeviceLockControllerSchedulerProvider;
-import com.android.devicelockcontroller.stats.StatsLoggerProvider;
 import com.android.devicelockcontroller.util.LogUtil;
-import com.android.devicelockcontroller.stats.StatsLogger;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -37,14 +36,14 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 
 import java.time.Duration;
 
+import static com.android.devicelockcontroller.DevicelockStatsLog.DEVICE_LOCK_CHECK_IN_REQUEST_REPORTED__TYPE__GET_DEVICE_CHECK_IN_STATUS;
+
 /**
  * A worker class dedicated to execute the check-in operation for device lock program.
  */
 public final class DeviceCheckInWorker extends AbstractCheckInWorker {
 
     private final AbstractDeviceCheckInHelper mCheckInHelper;
-
-    private final StatsLogger mStatsLogger;
 
     @VisibleForTesting
     static final Duration RETRY_ON_FAILURE_DELAY = Duration.ofDays(1);
@@ -60,9 +59,6 @@ public final class DeviceCheckInWorker extends AbstractCheckInWorker {
             ListeningExecutorService executorService) {
         super(context, workerParameters, client, executorService);
         mCheckInHelper = helper;
-        StatsLoggerProvider loggerProvider =
-                (StatsLoggerProvider) context.getApplicationContext();
-        mStatsLogger = loggerProvider.getStatsLogger();
     }
 
     @NonNull
@@ -95,7 +91,10 @@ public final class DeviceCheckInWorker extends AbstractCheckInWorker {
                             return Result.retry();
                         }
                         if (response.isSuccessful()) {
-                            mStatsLogger.logGetDeviceCheckInStatus();
+                            DevicelockStatsLog.write(
+                                    DevicelockStatsLog.DEVICE_LOCK_CHECK_IN_REQUEST_REPORTED,
+                                    DEVICE_LOCK_CHECK_IN_REQUEST_REPORTED__TYPE__GET_DEVICE_CHECK_IN_STATUS
+                            );
                             return mCheckInHelper.handleGetDeviceCheckInStatusResponse(response,
                                     scheduler)
                                     ? Result.success()
