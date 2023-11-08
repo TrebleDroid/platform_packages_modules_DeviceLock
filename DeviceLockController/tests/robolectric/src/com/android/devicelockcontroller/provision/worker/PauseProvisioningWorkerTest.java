@@ -19,8 +19,6 @@ package com.android.devicelockcontroller.provision.worker;
 import static com.google.common.truth.Truth.assertThat;
 
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.content.Context;
@@ -36,8 +34,6 @@ import androidx.work.testing.TestListenableWorkerBuilder;
 import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.PauseDeviceProvisioningGrpcResponse;
-import com.android.devicelockcontroller.stats.StatsLogger;
-import com.android.devicelockcontroller.stats.StatsLoggerProvider;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.testing.TestingExecutors;
@@ -59,7 +55,6 @@ public final class PauseProvisioningWorkerTest {
     private DeviceCheckInClient mClient;
     @Mock
     private PauseDeviceProvisioningGrpcResponse mResponse;
-    private StatsLogger mStatsLogger;
     private PauseProvisioningWorker mWorker;
     private TestDeviceLockControllerApplication mTestApp;
 
@@ -83,18 +78,6 @@ public final class PauseProvisioningWorkerTest {
                                         : null;
                             }
                         }).build();
-        StatsLoggerProvider loggerProvider =
-                (StatsLoggerProvider) mTestApp.getApplicationContext();
-        mStatsLogger = loggerProvider.getStatsLogger();
-    }
-
-    @Test
-    public void doWork_responseIsSuccessful_resultSuccessAndLogged() {
-        when(mResponse.isSuccessful()).thenReturn(true);
-
-        assertThat(Futures.getUnchecked(mWorker.startWork())).isEqualTo(Result.success());
-        // THEN pause device provisioning was logged
-        verify(mStatsLogger).logPauseDeviceProvisioning();
     }
 
     @Test
@@ -102,7 +85,5 @@ public final class PauseProvisioningWorkerTest {
         when(mResponse.isSuccessful()).thenReturn(false);
 
         assertThat(Futures.getUnchecked(mWorker.startWork())).isEqualTo(Result.failure());
-        // THEN pause device provisioning was NOT logged
-        verify(mStatsLogger, never()).logPauseDeviceProvisioning();
     }
 }

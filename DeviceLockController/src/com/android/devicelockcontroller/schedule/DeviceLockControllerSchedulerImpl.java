@@ -217,20 +217,19 @@ public final class DeviceLockControllerSchedulerImpl implements DeviceLockContro
 
     @Override
     public void scheduleNextProvisionFailedStepAlarm(boolean shouldRunImmediately) {
+        LogUtil.d(TAG,
+                "Scheduling next provision failed step alarm. Run immediately: "
+                        + shouldRunImmediately);
         long lastTimestamp = UserParameters.getNextProvisionFailedStepTimeMills(mContext);
         long nextTimestamp;
         if (lastTimestamp == 0) {
             lastTimestamp = Instant.now(mClock).toEpochMilli();
         }
-        Duration delay = shouldRunImmediately
-                ? Duration.ZERO
-                : Duration.ofMinutes(PROVISION_STATE_REPORT_INTERVAL_DEFAULT_MINUTES);
-        if (Build.isDebuggable()) {
-            long minutes = SystemProperties.getLong(
-                    KEY_PROVISION_REPORT_INTERVAL_MINUTES,
-                    PROVISION_STATE_REPORT_INTERVAL_DEFAULT_MINUTES);
-            delay = Duration.ofMinutes(minutes);
-        }
+        long minutes = Build.isDebuggable() ? SystemProperties.getLong(
+                KEY_PROVISION_REPORT_INTERVAL_MINUTES,
+                PROVISION_STATE_REPORT_INTERVAL_DEFAULT_MINUTES)
+                : PROVISION_STATE_REPORT_INTERVAL_DEFAULT_MINUTES;
+        Duration delay = shouldRunImmediately ? Duration.ZERO : Duration.ofMinutes(minutes);
         nextTimestamp = lastTimestamp + delay.toMillis();
         scheduleNextProvisionFailedStepAlarm(
                 Duration.between(Instant.now(mClock), Instant.ofEpochMilli(nextTimestamp)));
