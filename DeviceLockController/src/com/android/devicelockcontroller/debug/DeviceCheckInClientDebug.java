@@ -65,38 +65,38 @@ public final class DeviceCheckInClientDebug extends DeviceCheckInClient {
     public static final String DEBUG_DEVICELOCK_CHECKIN_DAYS_LEFT_UNTIL_RESET =
             "debug.devicelock.checkin.days-left-until-reset";
 
-    static void setDebugDevicelockCheckinClientEnabled(Context context, boolean enabled) {
+    static void setDebugClientEnabled(Context context, boolean enabled) {
         getSharedPreferences(context).edit().putBoolean(DEBUG_DEVICELOCK_CHECKIN, enabled).apply();
     }
 
-    static void setDebugDevicelockCheckinStatus(Context context, @DeviceCheckInStatus int status) {
+    static void setDebugCheckInStatus(Context context, @DeviceCheckInStatus int status) {
         getSharedPreferences(context).edit().putInt(DEBUG_DEVICELOCK_CHECKIN_STATUS,
                 status).apply();
     }
 
-    static void setDebugDevicelockCheckinForceProvisioning(Context context, boolean isForced) {
+    static void setDebugForceProvisioning(Context context, boolean isForced) {
         getSharedPreferences(context).edit().putBoolean(DEBUG_DEVICELOCK_CHECKIN_FORCE_PROVISIONING,
                 isForced).apply();
     }
 
-    static void setDebugDevicelockCheckinRetryDelay(Context context, int delayMinute) {
+    static void setDebugCheckInRetryDelay(Context context, int delayMinute) {
         getSharedPreferences(context).edit().putInt(DEBUG_DEVICELOCK_CHECKIN_RETRY_DELAY,
                 delayMinute).apply();
     }
 
-    static void setDebugDevicelockCheckinApprovedCountry(Context context,
+    static void setDebugApprovedCountry(Context context,
             boolean isInApprovedCountry) {
         getSharedPreferences(context).edit().putBoolean(DEBUG_DEVICELOCK_CHECKIN_APPROVED_COUNTRY,
                 isInApprovedCountry).apply();
     }
 
-    static void setDebugDevicelockCheckinNextProvisionState(
+    static void setDebugNextProvisionState(
             Context context, @DeviceProvisionState int provisionState) {
         getSharedPreferences(context).edit().putInt(DEBUG_DEVICELOCK_CHECKIN_NEXT_PROVISION_STATE,
                 provisionState).apply();
     }
 
-    static void setDebugDevicelockCheckinDaysLeftUntilReset(Context context,
+    static void setDebugDaysLeftUntilReset(Context context,
             int daysLeftUntilReset) {
         getSharedPreferences(context).edit().putInt(DEBUG_DEVICELOCK_CHECKIN_DAYS_LEFT_UNTIL_RESET,
                 daysLeftUntilReset).apply();
@@ -107,7 +107,11 @@ public final class DeviceCheckInClientDebug extends DeviceCheckInClient {
                 "Current Debug Client Responses:\n" + getSharedPreferences(context).getAll());
     }
 
-    static <T> T getSharedPreference(String key, T defValue) {
+    static void clear(Context context) {
+        getSharedPreferences(context).edit().clear().apply();
+    }
+
+    private static <T> T getSharedPreference(String key, T defValue) {
         SharedPreferences preferences = getSharedPreferences(/* context= */ null);
         if (preferences == null) return defValue;
         T value = (T) preferences.getAll().get(key);
