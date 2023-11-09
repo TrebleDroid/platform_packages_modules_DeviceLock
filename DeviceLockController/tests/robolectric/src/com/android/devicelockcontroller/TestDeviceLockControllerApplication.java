@@ -22,7 +22,6 @@ import static org.mockito.Mockito.when;
 import android.app.Application;
 import android.content.Context;
 
-import androidx.annotation.GuardedBy;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.work.ListenableWorker;
