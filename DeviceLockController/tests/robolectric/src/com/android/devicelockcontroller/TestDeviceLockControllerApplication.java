@@ -22,6 +22,7 @@ import static org.mockito.Mockito.when;
 import android.app.Application;
 import android.content.Context;
 
+import androidx.annotation.GuardedBy;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.work.ListenableWorker;
@@ -34,6 +35,8 @@ import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
 import com.android.devicelockcontroller.policy.ProvisionStateController;
 import com.android.devicelockcontroller.schedule.DeviceLockControllerScheduler;
 import com.android.devicelockcontroller.schedule.DeviceLockControllerSchedulerProvider;
+import com.android.devicelockcontroller.stats.StatsLogger;
+import com.android.devicelockcontroller.stats.StatsLoggerProvider;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.storage.GlobalParametersService;
 import com.android.devicelockcontroller.storage.SetupParametersClient;
@@ -56,7 +59,8 @@ public final class TestDeviceLockControllerApplication extends Application imple
         TestLifecycleApplication,
         DeviceLockControllerSchedulerProvider,
         FcmRegistrationTokenProvider,
-        PlayInstallPackageTaskClassProvider {
+        PlayInstallPackageTaskClassProvider,
+        StatsLoggerProvider {
 
     private DevicePolicyController mPolicyController;
     private DeviceStateController mStateController;
@@ -65,6 +69,7 @@ public final class TestDeviceLockControllerApplication extends Application imple
     private DeviceLockControllerScheduler mDeviceLockControllerScheduler;
     private SetupParametersClient mSetupParametersClient;
     private GlobalParametersClient mGlobalParametersClient;
+    private StatsLogger mStatsLogger;
 
     @Override
     public DeviceStateController getDeviceStateController() {
@@ -100,6 +105,14 @@ public final class TestDeviceLockControllerApplication extends Application imple
             mFinalizationController = mock(FinalizationController.class);
         }
         return mFinalizationController;
+    }
+
+    @Override
+    public synchronized StatsLogger getStatsLogger() {
+        if (null == mStatsLogger) {
+            mStatsLogger = mock(StatsLogger.class);
+        }
+        return mStatsLogger;
     }
 
     @Override

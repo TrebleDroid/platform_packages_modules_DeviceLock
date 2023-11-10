@@ -18,6 +18,7 @@ package com.android.devicelockcontroller;
 
 import android.app.Application;
 import android.content.Context;
+import android.util.StatsLog;
 
 import androidx.annotation.GuardedBy;
 import androidx.annotation.NonNull;
@@ -36,6 +37,9 @@ import com.android.devicelockcontroller.policy.ProvisionStateControllerImpl;
 import com.android.devicelockcontroller.schedule.DeviceLockControllerScheduler;
 import com.android.devicelockcontroller.schedule.DeviceLockControllerSchedulerImpl;
 import com.android.devicelockcontroller.schedule.DeviceLockControllerSchedulerProvider;
+import com.android.devicelockcontroller.stats.StatsLogger;
+import com.android.devicelockcontroller.stats.StatsLoggerImpl;
+import com.android.devicelockcontroller.stats.StatsLoggerProvider;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import com.google.common.util.concurrent.Futures;
@@ -49,7 +53,8 @@ public class DeviceLockControllerApplication extends Application implements
         Configuration.Provider,
         DeviceLockControllerSchedulerProvider,
         FcmRegistrationTokenProvider,
-        PlayInstallPackageTaskClassProvider {
+        PlayInstallPackageTaskClassProvider,
+        StatsLoggerProvider {
     private static final String TAG = "DeviceLockControllerApplication";
 
     private static Context sApplicationContext;
@@ -59,6 +64,8 @@ public class DeviceLockControllerApplication extends Application implements
     private FinalizationController mFinalizationController;
     @GuardedBy("this")
     private DeviceLockControllerScheduler mDeviceLockControllerScheduler;
+    @GuardedBy("this")
+    private StatsLogger mStatsLogger;
 
     @Override
     public void onCreate() {
@@ -91,6 +98,14 @@ public class DeviceLockControllerApplication extends Application implements
             mFinalizationController = new FinalizationControllerImpl(this);
         }
         return mFinalizationController;
+    }
+
+    @Override
+    public synchronized StatsLogger getStatsLogger() {
+        if (null == mStatsLogger) {
+            mStatsLogger = new StatsLoggerImpl();
+        }
+        return mStatsLogger;
     }
 
     @Override
