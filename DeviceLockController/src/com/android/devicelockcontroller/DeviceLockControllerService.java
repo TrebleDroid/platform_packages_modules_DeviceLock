@@ -19,6 +19,7 @@ package com.android.devicelockcontroller;
 import android.app.Service;
 import android.app.admin.DevicePolicyManager;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.devicelock.ParcelableException;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -31,7 +32,10 @@ import com.android.devicelockcontroller.policy.DevicePolicyController;
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.FinalizationController;
 import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
+import com.android.devicelockcontroller.stats.StatsLoggerProvider;
+import com.android.devicelockcontroller.stats.StatsLogger;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
+import com.android.devicelockcontroller.storage.SetupParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
 
 import com.google.common.util.concurrent.FutureCallback;
@@ -50,11 +54,14 @@ public final class DeviceLockControllerService extends Service {
     private DeviceStateController mDeviceStateController;
     private DevicePolicyController mPolicyController;
     private FinalizationController mFinalizationController;
+    private PackageManager mPackageManager;
+    private StatsLogger mStatsLogger;
 
     private final IDeviceLockControllerService.Stub mBinder =
             new IDeviceLockControllerService.Stub() {
                 @Override
                 public void lockDevice(RemoteCallback remoteCallback) {
+                    logKioskAppRequest();
                     Futures.addCallback(mDeviceStateController.lockDevice(),
                             remoteCallbackWrapper(remoteCallback),
                             MoreExecutors.directExecutor());
@@ -62,6 +69,7 @@ public final class DeviceLockControllerService extends Service {
 
                 @Override
                 public void unlockDevice(RemoteCallback remoteCallback) {
+                    logKioskAppRequest();
                     Futures.addCallback(mDeviceStateController.unlockDevice(),
                             remoteCallbackWrapper(remoteCallback),
                             MoreExecutors.directExecutor());
@@ -69,6 +77,7 @@ public final class DeviceLockControllerService extends Service {
 
                 @Override
                 public void isDeviceLocked(RemoteCallback remoteCallback) {
+                    logKioskAppRequest();
                     Futures.addCallback(mDeviceStateController.isLocked(),
                             remoteCallbackWrapper(remoteCallback, KEY_RESULT),
                             MoreExecutors.directExecutor());
@@ -76,6 +85,7 @@ public final class DeviceLockControllerService extends Service {
 
                 @Override
                 public void getDeviceIdentifier(RemoteCallback remoteCallback) {
+                    logKioskAppRequest();
                     Futures.addCallback(
                             GlobalParametersClient.getInstance().getRegisteredDeviceId(),
                             remoteCallbackWrapper(remoteCallback, KEY_RESULT),
@@ -84,6 +94,7 @@ public final class DeviceLockControllerService extends Service {
 
                 @Override
                 public void clearDeviceRestrictions(RemoteCallback remoteCallback) {
+                    logKioskAppRequest();
                     Futures.addCallback(
                             Futures.transformAsync(mDeviceStateController.clearDevice(),
                                     unused -> mFinalizationController.notifyRestrictionsCleared(),
@@ -115,6 +126,29 @@ public final class DeviceLockControllerService extends Service {
                     Futures.addCallback(mPolicyController.onKioskAppCrashed(),
                             remoteCallbackWrapper(remoteCallback),
                             MoreExecutors.directExecutor());
+                }
+
+                private void logKioskAppRequest() {
+                    Futures.addCallback(SetupParametersClient.getInstance().getKioskPackage(),
+                            new FutureCallback<>() {
+                                @Override
+                                public void onSuccess(String result) {
+                                    try {
+                                        final int uid = mPackageManager.getPackageUid(
+                                                result, /* flags= */ 0);
+                                        mStatsLogger.logKioskAppRequest(uid);
+                                    } catch (PackageManager.NameNotFoundException e) {
+                                        LogUtil.e(TAG, "Kiosk App package name not found", e);
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Throwable t) {
+                                    LogUtil.e(TAG, "Failed to get Kiosk app package name", t);
+                                }
+                            },
+                            MoreExecutors.directExecutor());
+
                 }
             };
 
@@ -172,9 +206,12 @@ public final class DeviceLockControllerService extends Service {
         LogUtil.d(TAG, "onCreate");
 
         final PolicyObjectsInterface policyObjects = (PolicyObjectsInterface) getApplication();
+        final StatsLoggerProvider statsLoggerProvider = (StatsLoggerProvider) getApplication();
         mDeviceStateController = policyObjects.getDeviceStateController();
         mPolicyController = policyObjects.getPolicyController();
         mFinalizationController = policyObjects.getFinalizationController();
+        mPackageManager = getPackageManager();
+        mStatsLogger = statsLoggerProvider.getStatsLogger();
     }
 
     @Override

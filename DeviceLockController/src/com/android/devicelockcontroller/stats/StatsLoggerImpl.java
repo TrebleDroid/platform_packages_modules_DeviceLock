@@ -20,6 +20,7 @@ import static com.android.devicelockcontroller.DevicelockStatsLog.DEVICE_LOCK_CH
 import static com.android.devicelockcontroller.DevicelockStatsLog.DEVICE_LOCK_CHECK_IN_REQUEST_REPORTED__TYPE__PAUSE_DEVICE_PROVISIONING;
 import static com.android.devicelockcontroller.DevicelockStatsLog.DEVICE_LOCK_CHECK_IN_REQUEST_REPORTED__TYPE__REPORT_DEVICE_PROVISIONING_COMPLETE;
 import static com.android.devicelockcontroller.DevicelockStatsLog.DEVICE_LOCK_CHECK_IN_REQUEST_REPORTED__TYPE__REPORT_DEVICE_PROVISION_STATE;
+import static com.android.devicelockcontroller.DevicelockStatsLog.DEVICE_LOCK_KIOSK_APP_REQUEST_REPORTED;
 
 import com.android.devicelockcontroller.DevicelockStatsLog;
 
@@ -46,5 +47,10 @@ public final class StatsLoggerImpl implements StatsLogger{
     public void logReportDeviceProvisionState() {
         DevicelockStatsLog.write(DevicelockStatsLog.DEVICE_LOCK_CHECK_IN_REQUEST_REPORTED,
                 DEVICE_LOCK_CHECK_IN_REQUEST_REPORTED__TYPE__REPORT_DEVICE_PROVISION_STATE);
+    }
+
+    @Override
+    public void logKioskAppRequest(int uid) {
+        DevicelockStatsLog.write(DEVICE_LOCK_KIOSK_APP_REQUEST_REPORTED, uid);
     }
 }

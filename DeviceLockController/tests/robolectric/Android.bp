@@ -26,6 +26,7 @@ android_robolectric_test {
     srcs: ["src/**/*.java"],
     static_libs: [
         "androidx.test.core",
+        "androidx.test.rules",
         "mockito-robolectric-prebuilt",
         "truth",
         "guava-android-testlib",
