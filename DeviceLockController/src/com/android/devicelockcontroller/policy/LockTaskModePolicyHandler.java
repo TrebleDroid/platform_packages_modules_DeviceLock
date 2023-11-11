@@ -105,8 +105,14 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
         return disableLockTaskMode();
     }
 
-    private ListenableFuture<Void> updateAllowlist(boolean includeController) {
-        return Futures.transform(composeAllowlist(includeController),
+    /**
+     * Updates the allowlist for lock task mode
+     *
+     * @param includeKiosk true if the kiosk app and the kiosk-specified allowlist should be added
+     * @return future for when the lock task mode allowlist has been updated
+     */
+    private ListenableFuture<Void> updateAllowlist(boolean includeKiosk) {
+        return Futures.transform(composeAllowlist(includeKiosk),
                 allowlist -> {
                     TelecomManager telecomManager = mContext.getSystemService(
                             TelecomManager.class);
@@ -144,7 +150,7 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
     }
 
     private ListenableFuture<Boolean> enableLockTaskModeForController() {
-        return Futures.transform(updateAllowlist(/* includeController= */ true),
+        return Futures.transform(updateAllowlist(/* includeKiosk= */ false),
                 unused -> {
                     mDpm.setLockTaskFeatures(/* admin= */ null, DEFAULT_LOCK_TASK_FEATURES_FOR_DLC);
                     return true;
@@ -156,7 +162,7 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
                 SetupParametersClient.getInstance().isNotificationsInLockTaskModeEnabled();
         return Futures.whenAllSucceed(
                         notificationsInLockTaskModeEnabled,
-                        updateAllowlist(/* includeController= */ false))
+                        updateAllowlist(/* includeKiosk= */ true))
                 .call(() -> {
                     int flags = DEFAULT_LOCK_TASK_FEATURES_FOR_KIOSK;
                     if (Futures.getDone(notificationsInLockTaskModeEnabled)) {
@@ -199,10 +205,10 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
      *   3. Find the default app used for Settings (should be a System App).
      *   4. Find the default app used for permissions (should be a System App).
      *   5. Find the default InputMethod.
-     *   6. DLC or Kiosk app depending on the input.
-     *   7. Append the packages allow-listed through setup parameters if applicable.
+     *   6. Add the DLC app.
+     *   7. Append the kiosk and packages allow-listed through setup parameters if applicable.
      */
-    private ListenableFuture<ArraySet<String>> composeAllowlist(boolean includeController) {
+    private ListenableFuture<ArraySet<String>> composeAllowlist(boolean includeKiosk) {
         return Futures.submit(() -> {
             String[] allowlistArray =
                     mContext.getResources().getStringArray(R.array.lock_task_allowlist);
@@ -213,10 +219,8 @@ final class LockTaskModePolicyHandler implements PolicyHandler {
                     allowlistPackages);
             allowlistInputMethod(allowlistPackages);
             allowlistCellBroadcastReceiver(allowlistPackages);
-            if (includeController) {
-                allowlistPackages.add(mContext.getPackageName());
-            } else {
-                allowlistPackages.remove(mContext.getPackageName());
+            allowlistPackages.add(mContext.getPackageName());
+            if (includeKiosk) {
                 SetupParametersClient setupParametersClient = SetupParametersClient.getInstance();
                 allowlistPackages.add(
                         Futures.getUnchecked(setupParametersClient.getKioskPackage()));

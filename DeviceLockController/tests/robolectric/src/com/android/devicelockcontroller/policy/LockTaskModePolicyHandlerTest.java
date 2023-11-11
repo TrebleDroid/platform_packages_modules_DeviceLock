@@ -81,7 +81,8 @@ public final class LockTaskModePolicyHandlerTest {
     private static final String DEVICELOCK_CONTROLLER_PACKAGE = "com.android.devicelockcontroller";
     private static final String PACKAGE_OVERRIDING_HOME = "com.home.package";
     private static final String[] EXPECTED_ALLOWLIST_PACKAGES =
-            new String[]{TEST_PACKAGE, SETTINGS_PACKAGE, DIALER_PACKAGE};
+            new String[]{TEST_PACKAGE, SETTINGS_PACKAGE, DIALER_PACKAGE,
+                    DEVICELOCK_CONTROLLER_PACKAGE};
     private static final String TEST_ACTIVITY = "TestActivity";
     private static final String CELL_BROADCAST_RECEIVER_PACKAGE =
             "test.cell.broadcast.receiver";
@@ -173,7 +174,8 @@ public final class LockTaskModePolicyHandlerTest {
             throws ExecutionException, InterruptedException {
         final String[] expectedAllowlistPackages =
                 new String[]{TEST_PACKAGE, SETTINGS_PACKAGE, DIALER_PACKAGE, IME_PACKAGE,
-                        PERMISSION_PACKAGE, CELL_BROADCAST_RECEIVER_PACKAGE};
+                        PERMISSION_PACKAGE, CELL_BROADCAST_RECEIVER_PACKAGE,
+                        DEVICELOCK_CONTROLLER_PACKAGE};
         Bundle bundle = new Bundle();
         bundle.putString(EXTRA_KIOSK_PACKAGE, TEST_PACKAGE);
         SetupParametersClient.getInstance().createPrefs(bundle).get();
