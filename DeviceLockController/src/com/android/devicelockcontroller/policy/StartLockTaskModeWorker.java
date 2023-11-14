@@ -68,7 +68,7 @@ public final class StartLockTaskModeWorker extends ListenableWorker {
         ActivityManager am =
                 Objects.requireNonNull(mContext.getSystemService(ActivityManager.class));
         DevicePolicyController devicePolicyController =
-                ((PolicyObjectsInterface) mContext.getApplicationContext())
+                ((PolicyObjectsProvider) mContext.getApplicationContext())
                         .getProvisionStateController().getDevicePolicyController();
         ListenableFuture<Boolean> isInLockTaskModeFuture =
                 Futures.submit(

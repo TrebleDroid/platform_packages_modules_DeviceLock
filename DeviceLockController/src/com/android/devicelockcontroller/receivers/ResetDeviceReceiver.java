@@ -20,10 +20,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
+import com.android.devicelockcontroller.policy.PolicyObjectsProvider;
 
 /**
- * A broadcast receiver that will factory reset the device when it receive a broadcast.
+ * A broadcast receiver that will factory reset the device when it receives a broadcast.
  */
 public final class ResetDeviceReceiver extends BroadcastReceiver {
 
@@ -32,7 +32,7 @@ public final class ResetDeviceReceiver extends BroadcastReceiver {
         if (!ResetDeviceReceiver.class.getName().equals(intent.getComponent().getClassName())) {
             throw new IllegalArgumentException("Can not handle implicit intent!");
         }
-        ((PolicyObjectsInterface) context.getApplicationContext())
+        ((PolicyObjectsProvider) context.getApplicationContext())
                 .getPolicyController().wipeDevice();
     }
 }

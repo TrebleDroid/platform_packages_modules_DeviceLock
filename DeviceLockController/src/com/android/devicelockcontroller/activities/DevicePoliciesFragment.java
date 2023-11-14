@@ -37,7 +37,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.devicelockcontroller.R;
-import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
+import com.android.devicelockcontroller.policy.PolicyObjectsProvider;
 import com.android.devicelockcontroller.policy.ProvisionHelper;
 import com.android.devicelockcontroller.policy.ProvisionHelperImpl;
 
@@ -86,7 +86,7 @@ public final class DevicePoliciesFragment extends Fragment {
 
         Context context = requireContext().getApplicationContext();
         ProvisionHelper provisionHelper = new ProvisionHelperImpl(context,
-                ((PolicyObjectsInterface) context).getProvisionStateController());
+                ((PolicyObjectsProvider) context).getProvisionStateController());
 
         ProvisioningProgressViewModel provisioningProgressViewModel =
                 new ViewModelProvider(requireActivity()).get(ProvisioningProgressViewModel.class);

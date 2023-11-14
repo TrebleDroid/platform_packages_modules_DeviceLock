@@ -20,13 +20,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
+import com.android.devicelockcontroller.policy.PolicyObjectsProvider;
 
 /** A receiver to handle explicit provision ready intent */
 public final class ProvisionReadyReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        ((PolicyObjectsInterface) context.getApplicationContext())
+        ((PolicyObjectsProvider) context.getApplicationContext())
                 .getProvisionStateController().notifyProvisioningReady();
     }
 }

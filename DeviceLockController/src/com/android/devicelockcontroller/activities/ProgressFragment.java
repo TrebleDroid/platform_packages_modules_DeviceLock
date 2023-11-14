@@ -39,7 +39,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.android.devicelockcontroller.R;
 import com.android.devicelockcontroller.activities.util.UrlUtils;
-import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
+import com.android.devicelockcontroller.policy.PolicyObjectsProvider;
 import com.android.devicelockcontroller.policy.ProvisionHelper;
 import com.android.devicelockcontroller.policy.ProvisionHelperImpl;
 import com.android.devicelockcontroller.policy.ProvisionStateController;
@@ -107,8 +107,8 @@ public final class ProgressFragment extends Fragment {
                         bottomView.setVisibility(View.VISIBLE);
                         Button retryButton = bottomView.findViewById(R.id.button_retry);
                         checkNotNull(retryButton);
-                        PolicyObjectsInterface policyObjects =
-                                (PolicyObjectsInterface) context.getApplicationContext();
+                        PolicyObjectsProvider policyObjects =
+                                (PolicyObjectsProvider) context.getApplicationContext();
                         ProvisionStateController provisionStateController =
                                 policyObjects.getProvisionStateController();
                         ProvisionHelper provisionHelper = new ProvisionHelperImpl(

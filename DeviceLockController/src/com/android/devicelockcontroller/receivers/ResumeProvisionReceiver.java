@@ -20,7 +20,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
+import com.android.devicelockcontroller.policy.PolicyObjectsProvider;
 import com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionEvent;
 import com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState;
 
@@ -38,7 +38,7 @@ public final class ResumeProvisionReceiver extends BroadcastReceiver {
                 intent.getComponent().getClassName())) {
             throw new IllegalArgumentException("Can not handle implicit intent!");
         }
-        ((PolicyObjectsInterface) context.getApplicationContext()).getProvisionStateController()
+        ((PolicyObjectsProvider) context.getApplicationContext()).getProvisionStateController()
                 .postSetNextStateForEventRequest(ProvisionEvent.PROVISION_RESUME);
     }
 }

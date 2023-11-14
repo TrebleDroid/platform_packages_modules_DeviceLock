@@ -19,7 +19,7 @@ package com.android.devicelockcontroller.policy;
 /**
  * Interface to retrieve singleton objects.
  */
-public interface PolicyObjectsInterface {
+public interface PolicyObjectsProvider {
     /** Returns an instance of DeviceStateController. */
     DeviceStateController getDeviceStateController();
 

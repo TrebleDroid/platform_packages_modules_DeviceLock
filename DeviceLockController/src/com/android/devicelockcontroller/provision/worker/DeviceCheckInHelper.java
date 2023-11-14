@@ -42,7 +42,7 @@ import androidx.annotation.WorkerThread;
 
 import com.android.devicelockcontroller.R;
 import com.android.devicelockcontroller.common.DeviceId;
-import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
+import com.android.devicelockcontroller.policy.PolicyObjectsProvider;
 import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrpcResponse;
 import com.android.devicelockcontroller.provision.grpc.ProvisioningConfiguration;
 import com.android.devicelockcontroller.receivers.CheckInBootCompletedReceiver;
@@ -147,7 +147,7 @@ public final class DeviceCheckInHelper extends AbstractDeviceCheckInHelper {
                 }
             case STOP_CHECK_IN:
                 final ListenableFuture<Void> clearRestrictionsFuture =
-                        ((PolicyObjectsInterface) mAppContext).getFinalizationController()
+                        ((PolicyObjectsProvider) mAppContext).getFinalizationController()
                                 .notifyRestrictionsCleared();
                 Futures.addCallback(clearRestrictionsFuture,
                         new FutureCallback<>() {

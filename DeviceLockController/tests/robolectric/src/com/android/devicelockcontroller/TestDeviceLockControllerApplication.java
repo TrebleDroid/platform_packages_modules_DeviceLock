@@ -22,7 +22,6 @@ import static org.mockito.Mockito.when;
 import android.app.Application;
 import android.content.Context;
 
-import androidx.annotation.GuardedBy;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.work.ListenableWorker;
@@ -31,7 +30,7 @@ import androidx.work.WorkerParameters;
 import com.android.devicelockcontroller.policy.DevicePolicyController;
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.FinalizationController;
-import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
+import com.android.devicelockcontroller.policy.PolicyObjectsProvider;
 import com.android.devicelockcontroller.policy.ProvisionStateController;
 import com.android.devicelockcontroller.schedule.DeviceLockControllerScheduler;
 import com.android.devicelockcontroller.schedule.DeviceLockControllerSchedulerProvider;
@@ -55,7 +54,7 @@ import java.lang.reflect.Method;
  * Application class that provides mock objects for tests.
  */
 public final class TestDeviceLockControllerApplication extends Application implements
-        PolicyObjectsInterface,
+        PolicyObjectsProvider,
         TestLifecycleApplication,
         DeviceLockControllerSchedulerProvider,
         FcmRegistrationTokenProvider,
