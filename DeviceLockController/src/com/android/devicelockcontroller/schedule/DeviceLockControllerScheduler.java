@@ -16,6 +16,8 @@
 
 package com.android.devicelockcontroller.schedule;
 
+import com.google.common.util.concurrent.ListenableFuture;
+
 import java.time.Duration;
 
 /**
@@ -32,7 +34,7 @@ public interface DeviceLockControllerScheduler {
     /**
      * Notify the scheduler that reschedule might be required for check-in work
      */
-    void notifyNeedRescheduleCheckIn();
+    ListenableFuture<Void> notifyNeedRescheduleCheckIn();
 
     /**
      * Schedule an alarm to resume the provision flow.
@@ -47,14 +49,20 @@ public interface DeviceLockControllerScheduler {
     /**
      * Schedule the initial check-in work when device first boot.
      */
-    void scheduleInitialCheckInWork();
+    ListenableFuture<Void> scheduleInitialCheckInWork();
 
     /**
      * Schedule the retry check-in work with a delay.
      *
      * @param delay The delayed duration to wait for performing retry check-in work.
      */
-    void scheduleRetryCheckInWork(Duration delay);
+    ListenableFuture<Void> scheduleRetryCheckInWork(Duration delay);
+
+    /**
+     * Schedule the initial check in (if not already done).
+     * Otherwise, if provision is not ready, reschedule the check in.
+     */
+    ListenableFuture<Void> maybeScheduleInitialCheckIn();
 
     /**
      * Schedule an alarm to perform next provision failed step.

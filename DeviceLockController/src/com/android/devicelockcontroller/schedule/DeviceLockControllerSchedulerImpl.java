@@ -22,6 +22,7 @@ import static com.android.devicelockcontroller.policy.ProvisionStateController.P
 import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState.PROVISION_PAUSED;
 import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState.UNPROVISIONED;
 import static com.android.devicelockcontroller.provision.worker.AbstractCheckInWorker.BACKOFF_DELAY;
+import static com.android.devicelockcontroller.WorkManagerExceptionHandler.AlarmReason;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -38,10 +39,12 @@ import androidx.work.Constraints;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
+import androidx.work.Operation;
 import androidx.work.OutOfQuotaPolicy;
 import androidx.work.WorkManager;
 
 import com.android.devicelockcontroller.DeviceLockControllerApplication;
+import com.android.devicelockcontroller.WorkManagerExceptionHandler;
 import com.android.devicelockcontroller.activities.DeviceLockNotificationManager;
 import com.android.devicelockcontroller.policy.ProvisionStateController;
 import com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState;
@@ -49,12 +52,16 @@ import com.android.devicelockcontroller.provision.worker.DeviceCheckInWorker;
 import com.android.devicelockcontroller.receivers.NextProvisionFailedStepReceiver;
 import com.android.devicelockcontroller.receivers.ResetDeviceReceiver;
 import com.android.devicelockcontroller.receivers.ResumeProvisionReceiver;
+import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.storage.UserParameters;
 import com.android.devicelockcontroller.util.LogUtil;
 import com.android.devicelockcontroller.util.ThreadUtils;
 
+import com.google.common.base.Function;
+import com.google.common.util.concurrent.FluentFuture;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 
 import java.time.Clock;
@@ -250,23 +257,64 @@ public final class DeviceLockControllerSchedulerImpl implements DeviceLockContro
     }
 
     @Override
-    public void scheduleInitialCheckInWork() {
+    public ListenableFuture<Void> scheduleInitialCheckInWork() {
         LogUtil.i(TAG, "Scheduling initial check-in work");
-        enqueueCheckInWorkRequest(/* isExpedited= */ true, Duration.ZERO);
-        UserParameters.initialCheckInScheduled(mContext);
+        final Operation operation =
+                enqueueCheckInWorkRequest(/* isExpedited= */ true, Duration.ZERO);
+        final ListenableFuture<Operation.State.SUCCESS> result = operation.getResult();
+
+        return FluentFuture.from(result)
+                .transform((Function<Operation.State.SUCCESS, Void>) ignored -> {
+                    UserParameters.initialCheckInScheduled(mContext);
+                    return null;
+                }, mSequentialExecutor)
+                .catching(Throwable.class, (e) -> {
+                    LogUtil.e(TAG, "Failed to enqueue initial check in work", e);
+                    WorkManagerExceptionHandler.scheduleAlarm(mContext,
+                            AlarmReason.INITIAL_CHECK_IN);
+                    throw new RuntimeException(e);
+                }, mSequentialExecutor);
     }
 
     @Override
-    public void scheduleRetryCheckInWork(Duration delay) {
+    public ListenableFuture<Void> scheduleRetryCheckInWork(Duration delay) {
         LogUtil.i(TAG, "Scheduling retry check-in work with delay: " + delay);
-        enqueueCheckInWorkRequest(/* isExpedited= */ false, delay);
-        Instant whenExpectedToRun = Instant.now(mClock).plus(delay);
-        UserParameters.setNextCheckInTimeMillis(mContext, whenExpectedToRun.toEpochMilli());
+        final Operation operation =
+                enqueueCheckInWorkRequest(/* isExpedited= */ false, delay);
+        final ListenableFuture<Operation.State.SUCCESS> result = operation.getResult();
+
+        return FluentFuture.from(result)
+                .transform((Function<Operation.State.SUCCESS, Void>) ignored -> {
+                    Instant whenExpectedToRun = Instant.now(mClock).plus(delay);
+                    UserParameters.setNextCheckInTimeMillis(mContext,
+                            whenExpectedToRun.toEpochMilli());
+                    return null;
+                }, mSequentialExecutor)
+                .catching(Throwable.class, (e) -> {
+                    LogUtil.e(TAG, "Failed to enqueue retry check in work", e);
+                    WorkManagerExceptionHandler.scheduleAlarm(mContext,
+                            AlarmReason.RETRY_CHECK_IN);
+                    throw new RuntimeException(e);
+                }, mSequentialExecutor);
     }
 
     @Override
-    public void notifyNeedRescheduleCheckIn() {
-        dispatchFuture(this::rescheduleRetryCheckInWork, "notifyNeedRescheduleCheckIn");
+    public ListenableFuture<Void> notifyNeedRescheduleCheckIn() {
+        final ListenableFuture<Void> result =
+                Futures.submit(this::rescheduleRetryCheckInWork, mSequentialExecutor);
+        Futures.addCallback(result,
+                new FutureCallback<>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        LogUtil.i(TAG, "Successfully called notifyNeedRescheduleCheckIn");
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+                        throw new RuntimeException("failed to call notifyNeedRescheduleCheckIn", t);
+                    }
+                }, MoreExecutors.directExecutor());
+        return result;
     }
 
     @VisibleForTesting
@@ -277,8 +325,44 @@ public final class DeviceLockControllerSchedulerImpl implements DeviceLockContro
                     Instant.now(mClock),
                     Instant.ofEpochMilli(nextCheckInTimeMillis));
             LogUtil.i(TAG, "Rescheduling retry check-in work with delay: " + delay);
-            enqueueCheckInWorkRequest(/* isExpedited= */ false, delay);
+            final Operation operation =
+                    enqueueCheckInWorkRequest(/* isExpedited= */ false, delay);
+            Futures.addCallback(operation.getResult(), new FutureCallback<>() {
+                @Override
+                public void onSuccess(Operation.State.SUCCESS result) {
+                    // No-op
+                }
+
+                @Override
+                public void onFailure(Throwable t) {
+                    LogUtil.e(TAG, "Failed to reschedule retry check in work", t);
+                    WorkManagerExceptionHandler.scheduleAlarm(mContext,
+                            AlarmReason.RESCHEDULE_CHECK_IN);
+                }
+            }, mSequentialExecutor);
         }
+    }
+
+    @Override
+    public ListenableFuture<Void> maybeScheduleInitialCheckIn() {
+        return FluentFuture.from(Futures.submit(() -> UserParameters.needInitialCheckIn(mContext),
+                        mSequentialExecutor))
+                .transformAsync(needCheckIn -> {
+                    if (needCheckIn) {
+                        return Futures.transform(scheduleInitialCheckInWork(),
+                                input -> false /* reschedule */, mSequentialExecutor);
+                    } else {
+                        return Futures.transform(
+                                GlobalParametersClient.getInstance().isProvisionReady(),
+                                ready -> !ready, mSequentialExecutor);
+                    }
+                }, mSequentialExecutor)
+                .transformAsync(reschedule -> {
+                    if (reschedule) {
+                        return notifyNeedRescheduleCheckIn();
+                    }
+                    return Futures.immediateVoidFuture();
+                }, mSequentialExecutor);
     }
 
     @Override
@@ -397,7 +481,7 @@ public final class DeviceLockControllerSchedulerImpl implements DeviceLockContro
                 }, MoreExecutors.directExecutor());
     }
 
-    private void enqueueCheckInWorkRequest(boolean isExpedited, Duration delay) {
+    private Operation enqueueCheckInWorkRequest(boolean isExpedited, Duration delay) {
         OneTimeWorkRequest.Builder builder =
                 new OneTimeWorkRequest.Builder(DeviceCheckInWorker.class)
                         .setConstraints(
@@ -406,7 +490,8 @@ public final class DeviceLockControllerSchedulerImpl implements DeviceLockContro
                         .setInitialDelay(delay)
                         .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, BACKOFF_DELAY);
         if (isExpedited) builder.setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST);
-        WorkManager.getInstance(mContext).enqueueUniqueWork(DEVICE_CHECK_IN_WORK_NAME,
+
+        return WorkManager.getInstance(mContext).enqueueUniqueWork(DEVICE_CHECK_IN_WORK_NAME,
                 ExistingWorkPolicy.REPLACE, builder.build());
     }
 
