@@ -18,7 +18,6 @@ package com.android.devicelockcontroller;
 
 import android.app.Application;
 import android.content.Context;
-import android.util.StatsLog;
 
 import androidx.annotation.GuardedBy;
 import androidx.annotation.NonNull;
@@ -31,7 +30,7 @@ import com.android.devicelockcontroller.policy.DevicePolicyController;
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.FinalizationController;
 import com.android.devicelockcontroller.policy.FinalizationControllerImpl;
-import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
+import com.android.devicelockcontroller.policy.PolicyObjectsProvider;
 import com.android.devicelockcontroller.policy.ProvisionStateController;
 import com.android.devicelockcontroller.policy.ProvisionStateControllerImpl;
 import com.android.devicelockcontroller.schedule.DeviceLockControllerScheduler;
@@ -49,7 +48,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * Application class for Device Lock Controller.
  */
 public class DeviceLockControllerApplication extends Application implements
-        PolicyObjectsInterface,
+        PolicyObjectsProvider,
         Configuration.Provider,
         DeviceLockControllerSchedulerProvider,
         FcmRegistrationTokenProvider,

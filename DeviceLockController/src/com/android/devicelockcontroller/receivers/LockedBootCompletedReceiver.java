@@ -26,7 +26,7 @@ import android.os.UserManager;
 
 import androidx.annotation.VisibleForTesting;
 
-import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
+import com.android.devicelockcontroller.policy.PolicyObjectsProvider;
 import com.android.devicelockcontroller.policy.ProvisionStateController;
 import com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState;
 import com.android.devicelockcontroller.schedule.DeviceLockControllerScheduler;
@@ -72,7 +72,7 @@ public final class LockedBootCompletedReceiver extends BroadcastReceiver {
         }
 
         Context applicationContext = context.getApplicationContext();
-        ProvisionStateController stateController = ((PolicyObjectsInterface) applicationContext)
+        ProvisionStateController stateController = ((PolicyObjectsProvider) applicationContext)
                 .getProvisionStateController();
 
         DeviceLockControllerSchedulerProvider schedulerProvider =

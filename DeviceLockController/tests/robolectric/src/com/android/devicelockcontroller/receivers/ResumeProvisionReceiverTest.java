@@ -26,7 +26,7 @@ import android.content.Intent;
 import androidx.test.core.app.ApplicationProvider;
 
 import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
-import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
+import com.android.devicelockcontroller.policy.PolicyObjectsProvider;
 import com.android.devicelockcontroller.policy.ProvisionStateController;
 
 import org.junit.Test;
@@ -43,7 +43,7 @@ public class ResumeProvisionReceiverTest {
         TestDeviceLockControllerApplication testApp = ApplicationProvider.getApplicationContext();
         Intent intent = new Intent(testApp, ResumeProvisionReceiver.class);
         ProvisionStateController stateController =
-                ((PolicyObjectsInterface) testApp).getProvisionStateController();
+                ((PolicyObjectsProvider) testApp).getProvisionStateController();
 
         resumeProvisionReceiver.onReceive(testApp, intent);
 

@@ -32,7 +32,7 @@ import androidx.annotation.VisibleForTesting;
 import androidx.work.WorkManager;
 
 import com.android.devicelockcontroller.activities.DeviceLockNotificationManager;
-import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
+import com.android.devicelockcontroller.policy.PolicyObjectsProvider;
 import com.android.devicelockcontroller.policy.ProvisionStateController;
 import com.android.devicelockcontroller.provision.worker.ReportDeviceProvisionStateWorker;
 import com.android.devicelockcontroller.schedule.DeviceLockControllerScheduler;
@@ -56,7 +56,7 @@ public final class NextProvisionFailedStepReceiver extends BroadcastReceiver {
     @VisibleForTesting
     static final String UNEXPECTED_PROVISION_STATE_ERROR_MESSAGE = "Unexpected provision state!";
     public static final String TAG = "NextProvisionFailedStepReceiver";
-    private Executor mExecutor;
+    private final Executor mExecutor;
 
     public NextProvisionFailedStepReceiver() {
         this(Executors.newSingleThreadExecutor());
@@ -75,7 +75,7 @@ public final class NextProvisionFailedStepReceiver extends BroadcastReceiver {
         }
         Context applicationContext = context.getApplicationContext();
         ProvisionStateController provisionStateController =
-                ((PolicyObjectsInterface) applicationContext)
+                ((PolicyObjectsProvider) applicationContext)
                         .getProvisionStateController();
 
         DeviceLockControllerSchedulerProvider schedulerProvider =

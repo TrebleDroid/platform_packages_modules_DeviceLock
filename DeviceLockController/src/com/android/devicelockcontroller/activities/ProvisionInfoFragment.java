@@ -44,7 +44,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.devicelockcontroller.R;
-import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
+import com.android.devicelockcontroller.policy.PolicyObjectsProvider;
 import com.android.devicelockcontroller.policy.ProvisionHelper;
 import com.android.devicelockcontroller.policy.ProvisionHelperImpl;
 import com.android.devicelockcontroller.util.LogUtil;
@@ -140,7 +140,7 @@ public final class ProvisionInfoFragment extends Fragment {
                 v -> startActivity(new Intent(context, ProvisioningActivity.class)));
 
         ProvisionHelper provisionHelper = new ProvisionHelperImpl(context,
-                ((PolicyObjectsInterface) context).getProvisionStateController());
+                ((PolicyObjectsProvider) context).getProvisionStateController());
         mResultLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(),
                 isGranted -> provisionHelper.pauseProvision());
         updatePreviousButton(checkNotNull(view.findViewById(R.id.button_previous)), viewModel,

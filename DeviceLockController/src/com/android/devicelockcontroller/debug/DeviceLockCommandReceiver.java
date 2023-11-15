@@ -45,7 +45,7 @@ import com.android.devicelockcontroller.FcmRegistrationTokenProvider;
 import com.android.devicelockcontroller.policy.DevicePolicyController;
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
-import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
+import com.android.devicelockcontroller.policy.PolicyObjectsProvider;
 import com.android.devicelockcontroller.policy.ProvisionStateController;
 import com.android.devicelockcontroller.provision.worker.DeviceCheckInWorker;
 import com.android.devicelockcontroller.provision.worker.PauseProvisioningWorker;
@@ -147,7 +147,7 @@ public final class DeviceLockCommandReceiver extends BroadcastReceiver {
         Context appContext = context.getApplicationContext();
 
         ProvisionStateController provisionStateController =
-                ((PolicyObjectsInterface) appContext).getProvisionStateController();
+                ((PolicyObjectsProvider) appContext).getProvisionStateController();
         DeviceStateController deviceStateController =
                 provisionStateController.getDeviceStateController();
 
@@ -332,12 +332,12 @@ public final class DeviceLockCommandReceiver extends BroadcastReceiver {
                 new Intent(context, ResumeProvisionReceiver.class),
                 PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE));
 
-        PolicyObjectsInterface policyObjectsInterface =
-                (PolicyObjectsInterface) context.getApplicationContext();
-        policyObjectsInterface.destroyObjects();
+        PolicyObjectsProvider policyObjectsProvider =
+                (PolicyObjectsProvider) context.getApplicationContext();
+        policyObjectsProvider.destroyObjects();
         UserParameters.setProvisionState(context, PROVISION_SUCCEEDED);
         GlobalParametersClient.getInstance().setDeviceState(CLEARED);
-        DevicePolicyController policyController = policyObjectsInterface.getPolicyController();
+        DevicePolicyController policyController = policyObjectsProvider.getPolicyController();
         ListenableFuture<Void> clearPolicies = Futures.catching(
                 policyController.enforceCurrentPolicies(),
                 RuntimeException.class, unused -> null,
@@ -404,7 +404,7 @@ public final class DeviceLockCommandReceiver extends BroadcastReceiver {
                                 : Futures.immediateVoidFuture(),
                         GlobalParametersClient.getInstance().clear())
                 .call(() -> {
-                    ((PolicyObjectsInterface) context.getApplicationContext()).destroyObjects();
+                    ((PolicyObjectsProvider) context.getApplicationContext()).destroyObjects();
                     return null;
                 }, context.getMainExecutor());
     }

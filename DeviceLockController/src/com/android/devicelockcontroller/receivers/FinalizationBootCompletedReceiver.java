@@ -21,7 +21,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.UserManager;
 
-import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
+import com.android.devicelockcontroller.policy.PolicyObjectsProvider;
 
 /**
  * Boot complete receiver to initialize finalization state on device.
@@ -41,7 +41,7 @@ public final class FinalizationBootCompletedReceiver extends BroadcastReceiver {
         }
 
         // Initialize finalization controller to apply device finalization state
-        ((PolicyObjectsInterface) context.getApplicationContext())
+        ((PolicyObjectsProvider) context.getApplicationContext())
                 .getFinalizationController().enforceInitialState();
     }
 }

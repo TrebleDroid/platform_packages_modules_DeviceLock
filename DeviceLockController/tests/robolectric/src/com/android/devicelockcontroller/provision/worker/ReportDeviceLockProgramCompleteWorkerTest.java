@@ -32,11 +32,13 @@ import androidx.work.WorkerParameters;
 import androidx.work.testing.TestListenableWorkerBuilder;
 
 import com.android.devicelockcontroller.policy.FinalizationController;
-import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
+import com.android.devicelockcontroller.policy.PolicyObjectsProvider;
 import com.android.devicelockcontroller.provision.grpc.DeviceFinalizeClient;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.testing.TestingExecutors;
+
+import io.grpc.Status;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -47,8 +49,6 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
 
-import io.grpc.Status;
-
 @RunWith(RobolectricTestRunner.class)
 public final class ReportDeviceLockProgramCompleteWorkerTest {
     @Rule
@@ -56,7 +56,7 @@ public final class ReportDeviceLockProgramCompleteWorkerTest {
     @Mock
     private DeviceFinalizeClient mClient;
     @Mock
-    private PolicyObjectsInterface mPolicyObjectsInterface;
+    private PolicyObjectsProvider mPolicyObjectsProvider;
     @Mock
     private FinalizationController mFinalizationController;
     private ReportDeviceLockProgramCompleteWorker mWorker;
@@ -64,7 +64,7 @@ public final class ReportDeviceLockProgramCompleteWorkerTest {
     @Before
     public void setUp() throws Exception {
         final Context context = ApplicationProvider.getApplicationContext();
-        when(mPolicyObjectsInterface.getFinalizationController())
+        when(mPolicyObjectsProvider.getFinalizationController())
                 .thenReturn(mFinalizationController);
         when(mFinalizationController.notifyFinalizationReportResult(any()))
                 .thenReturn(Futures.immediateVoidFuture());
@@ -79,7 +79,7 @@ public final class ReportDeviceLockProgramCompleteWorkerTest {
                                 return workerClassName.equals(
                                         ReportDeviceLockProgramCompleteWorker.class.getName())
                                         ? new ReportDeviceLockProgramCompleteWorker(context,
-                                        workerParameters, mClient, mPolicyObjectsInterface,
+                                        workerParameters, mClient, mPolicyObjectsProvider,
                                         TestingExecutors.sameThreadScheduledExecutor())
                                         : null;
                             }

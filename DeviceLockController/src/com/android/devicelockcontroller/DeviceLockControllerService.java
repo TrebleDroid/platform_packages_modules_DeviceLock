@@ -31,9 +31,9 @@ import androidx.annotation.Nullable;
 import com.android.devicelockcontroller.policy.DevicePolicyController;
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.FinalizationController;
-import com.android.devicelockcontroller.policy.PolicyObjectsInterface;
-import com.android.devicelockcontroller.stats.StatsLoggerProvider;
+import com.android.devicelockcontroller.policy.PolicyObjectsProvider;
 import com.android.devicelockcontroller.stats.StatsLogger;
+import com.android.devicelockcontroller.stats.StatsLoggerProvider;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.storage.SetupParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
@@ -205,7 +205,7 @@ public final class DeviceLockControllerService extends Service {
     public void onCreate() {
         LogUtil.d(TAG, "onCreate");
 
-        final PolicyObjectsInterface policyObjects = (PolicyObjectsInterface) getApplication();
+        final PolicyObjectsProvider policyObjects = (PolicyObjectsProvider) getApplication();
         final StatsLoggerProvider statsLoggerProvider = (StatsLoggerProvider) getApplication();
         mDeviceStateController = policyObjects.getDeviceStateController();
         mPolicyController = policyObjects.getPolicyController();
