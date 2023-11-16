@@ -30,11 +30,13 @@ import static com.android.devicelockcontroller.policy.ProvisionStateController.P
 import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState.PROVISION_SUCCEEDED;
 import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState.UNPROVISIONED;
 
+import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.ContentObserver;
 import android.net.Uri;
+import android.os.UserManager;
 import android.provider.Settings;
 
 import androidx.annotation.GuardedBy;
@@ -43,6 +45,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.work.WorkManager;
 
+import com.android.devicelockcontroller.SystemDeviceLockManagerImpl;
 import com.android.devicelockcontroller.common.DeviceLockConstants.ProvisionFailureReason;
 import com.android.devicelockcontroller.provision.worker.ReportDeviceProvisionStateWorker;
 import com.android.devicelockcontroller.receivers.LockedBootCompletedReceiver;
@@ -80,7 +83,13 @@ public final class ProvisionStateControllerImpl implements ProvisionStateControl
     public ProvisionStateControllerImpl(Context context) {
         mContext = context;
         mBgExecutor = Executors.newCachedThreadPool();
-        mPolicyController = new DevicePolicyControllerImpl(context, this, mBgExecutor);
+        mPolicyController =
+                new DevicePolicyControllerImpl(context,
+                        context.getSystemService(DevicePolicyManager.class),
+                        context.getSystemService(UserManager.class),
+                        SystemDeviceLockManagerImpl.getInstance(),
+                        this,
+                        mBgExecutor);
         mDeviceStateController = new DeviceStateControllerImpl(mPolicyController, this,
                 mBgExecutor);
     }
