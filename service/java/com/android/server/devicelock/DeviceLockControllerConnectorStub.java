@@ -65,6 +65,12 @@ public class DeviceLockControllerConnectorStub implements DeviceLockControllerCo
     }
 
     @Override
+    public void onUserSetupCompleted(OutcomeReceiver<Void, Exception> callback) {
+        // Do not throw exception as we expect this to be called
+        callback.onResult(null);
+    }
+
+    @Override
     public void onKioskAppCrashed(OutcomeReceiver<Void, Exception> callback) {
         setException(callback);
     }

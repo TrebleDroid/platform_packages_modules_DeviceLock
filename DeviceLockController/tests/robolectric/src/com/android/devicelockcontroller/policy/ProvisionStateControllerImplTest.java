@@ -194,7 +194,7 @@ public final class ProvisionStateControllerImplTest {
     }
 
     @Test
-    public void notifyProvisioningReady_whenSetupIsNotComplete_shouldSetExpectedProvisionState()
+    public void notifyProvisioningReady_whenSetupIsNotComplete_shouldNotGoToProvisionInProgress()
             throws ExecutionException, InterruptedException {
         when(mMockPolicyController.enforceCurrentPolicies()).thenReturn(
                 Futures.immediateVoidFuture());
@@ -205,14 +205,6 @@ public final class ProvisionStateControllerImplTest {
         shadowOf(Looper.getMainLooper()).idle();
         assertThat(mProvisionStateController.getState().get()).isEqualTo(
                 ProvisionState.UNPROVISIONED);
-
-        // Now mark device setup complete, it should trigger registered setup complete listener
-        ContentResolver contentResolver = mTestApp.getContentResolver();
-        Settings.Secure.putInt(contentResolver, Settings.Secure.USER_SETUP_COMPLETE, 1);
-        shadowOf(Looper.getMainLooper()).idle();
-
-        assertThat(mProvisionStateController.getState().get()).isEqualTo(
-                ProvisionState.PROVISION_IN_PROGRESS);
     }
 
     @Test
@@ -273,6 +265,23 @@ public final class ProvisionStateControllerImplTest {
         shadowOf(Looper.getMainLooper()).idle();
         assertThat(mProvisionStateController.getState().get()).isEqualTo(
                 ProvisionState.PROVISION_PAUSED);
+    }
+
+    @Test
+    public void onUserSetupCompleted_withProvisionReady_shouldGoToProvisionInProgress()
+            throws ExecutionException, InterruptedException {
+        when(mMockPolicyController.enforceCurrentPolicies()).thenReturn(
+                Futures.immediateVoidFuture());
+        GlobalParametersClient.getInstance().setProvisionReady(true).get();
+        // Device setup is complete
+        ContentResolver contentResolver = mTestApp.getContentResolver();
+        Settings.Secure.putInt(contentResolver, Settings.Secure.USER_SETUP_COMPLETE, 1);
+
+        mProvisionStateController.onUserSetupCompleted().get();
+
+        shadowOf(Looper.getMainLooper()).idle();
+        assertThat(mProvisionStateController.getState().get()).isEqualTo(
+                ProvisionState.PROVISION_IN_PROGRESS);
     }
 
     @Test

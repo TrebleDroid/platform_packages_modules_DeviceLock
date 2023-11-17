@@ -295,6 +295,22 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
                 });
     }
 
+    void onUserSetupCompleted(UserHandle userHandle) {
+        getDeviceLockControllerConnector(userHandle).onUserSetupCompleted(
+                new OutcomeReceiver<>() {
+                    @Override
+                    public void onResult(Void ignored) {
+                        Slog.i(TAG, "User set up complete reported for: " + userHandle);
+                    }
+
+                    @Override
+                    public void onError(Exception ex) {
+                        Slog.e(TAG, "Exception reporting user setup complete for: " + userHandle,
+                                ex);
+                    }
+                });
+    }
+
     private boolean checkCallerPermission() {
         return mContext.checkCallingOrSelfPermission(Manifest.permission.MANAGE_DEVICE_LOCK_STATE)
                 == PERMISSION_GRANTED;

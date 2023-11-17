@@ -73,6 +73,11 @@ public interface ProvisionStateController {
     ListenableFuture<Void> onUserUnlocked();
 
     /**
+     * Called when a user has completed set-up wizard.
+     */
+    ListenableFuture<Void> onUserSetupCompleted();
+
+    /**
      * State definitions related to provisioning flow.
      */
     @Target(ElementType.TYPE_USE)

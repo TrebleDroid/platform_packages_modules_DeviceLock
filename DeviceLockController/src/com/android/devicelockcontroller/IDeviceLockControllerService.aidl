@@ -75,6 +75,11 @@ oneway interface IDeviceLockControllerService {
     void onUserUnlocked(in RemoteCallback callback);
 
     /**
+     * Called when a user has completed set-up wizard.
+     */
+    void onUserSetupCompleted(in RemoteCallback callback);
+
+    /**
      * Called when the kiosk app has crashed.
      */
     void onKioskAppCrashed(in RemoteCallback callback);
