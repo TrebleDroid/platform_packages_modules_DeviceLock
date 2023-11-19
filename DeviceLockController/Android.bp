@@ -112,6 +112,21 @@ java_library {
     ],
 }
 
+java_test_helper_library {
+    name: "devicelockcontroller-stats",
+    sdk_version: "module_current",
+    srcs: [
+        "src/**/stats/*.java",
+        ":statslog-devicelock-java-gen",
+    ],
+    libs: [
+        "framework-statsd",
+    ],
+    visibility: [
+        "//packages/modules/DeviceLock:__subpackages__",
+    ],
+}
+
 // Library with all dependencies for building DeviceLockController
 android_library {
     name: "devicelockcontroller-lib",
