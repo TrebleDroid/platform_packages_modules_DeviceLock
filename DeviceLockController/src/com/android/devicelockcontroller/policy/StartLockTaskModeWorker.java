@@ -16,6 +16,8 @@
 
 package com.android.devicelockcontroller.policy;
 
+import static com.android.devicelockcontroller.policy.DevicePolicyControllerImpl.ACTION_DEVICE_LOCK_KIOSK_SETUP;
+
 import android.app.ActivityManager;
 import android.app.ActivityOptions;
 import android.app.admin.DevicePolicyManager;
@@ -23,11 +25,13 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.SystemClock;
 
 import androidx.annotation.NonNull;
 import androidx.work.ListenableWorker;
 import androidx.work.WorkerParameters;
 
+import com.android.devicelockcontroller.stats.StatsLoggerProvider;
 import com.android.devicelockcontroller.storage.UserParameters;
 import com.android.devicelockcontroller.util.LogUtil;
 
@@ -99,7 +103,18 @@ public final class StartLockTaskModeWorker extends ListenableWorker {
                         LogUtil.i(TAG, "Launching activity for intent: " + launchIntent);
                         mContext.startActivity(launchIntent,
                                 ActivityOptions.makeBasic().setLockTaskEnabled(true).toBundle());
-
+                        // If the intent of the activity to be launched is the Kiosk app, we treat
+                        // this as the end of the provisioning time.
+                        if (launchIntent.getAction() == ACTION_DEVICE_LOCK_KIOSK_SETUP) {
+                            long provisioningStartTime = UserParameters
+                                    .getProvisioningStartTimeMillis(mContext);
+                            if (provisioningStartTime > 0) {
+                                ((StatsLoggerProvider) mContext.getApplicationContext())
+                                        .getStatsLogger()
+                                        .logProvisioningComplete(SystemClock.elapsedRealtime()
+                                                - provisioningStartTime);
+                            }
+                        }
                         if (am.getLockTaskModeState() == ActivityManager.LOCK_TASK_MODE_LOCKED) {
                             LogUtil.i(TAG, "Successfully entered lock task mode");
                             return Result.success();
