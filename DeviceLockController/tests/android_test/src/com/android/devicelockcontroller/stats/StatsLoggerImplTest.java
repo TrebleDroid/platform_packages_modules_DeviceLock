@@ -54,14 +54,6 @@ public final class StatsLoggerImplTest {
     }
 
     @Test
-    public void logReportDeviceProvisioningComplete_shouldWriteCorrectLog() {
-        mStatsLogger.logReportDeviceProvisioningComplete();
-        verify(() -> DevicelockStatsLog.write(
-                DevicelockStatsLog.DEVICE_LOCK_CHECK_IN_REQUEST_REPORTED,
-                DEVICE_LOCK_CHECK_IN_REQUEST_REPORTED__TYPE__REPORT_DEVICE_PROVISIONING_COMPLETE));
-    }
-
-    @Test
     public void logReportDeviceProvisionState_shouldWriteCorrectLog() {
         mStatsLogger.logReportDeviceProvisionState();
         verify(() -> DevicelockStatsLog.write(

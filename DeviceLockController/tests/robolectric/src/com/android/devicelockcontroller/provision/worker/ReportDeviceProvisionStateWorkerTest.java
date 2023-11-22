@@ -116,7 +116,6 @@ public final class ReportDeviceProvisionStateWorkerTest {
         assertThat(Futures.getUnchecked(mWorker.startWork())).isEqualTo(Result.retry());
         // THEN report provisioning state or complete was NOT logged
         verify(mStatsLogger, never()).logReportDeviceProvisionState();
-        verify(mStatsLogger, never()).logReportDeviceProvisioningComplete();
     }
 
     @Test
@@ -128,7 +127,6 @@ public final class ReportDeviceProvisionStateWorkerTest {
                 /* shouldGoOffImmediately= */ eq(false));
         // THEN report provisioning state or complete was NOT logged
         verify(mStatsLogger, never()).logReportDeviceProvisionState();
-        verify(mStatsLogger, never()).logReportDeviceProvisioningComplete();
     }
 
     @Test
@@ -151,29 +149,5 @@ public final class ReportDeviceProvisionStateWorkerTest {
                 /* shouldGoOffImmediately= */ eq(true));
         // THEN report provisioning state was logged
         verify(mStatsLogger).logReportDeviceProvisionState();
-        // THEN report provisioning complete was NOT logged
-        verify(mStatsLogger, never()).logReportDeviceProvisioningComplete();
-    }
-
-    @Test
-    public void doWork_responseIsSuccessfulAndProvisionComplete_globalParametersShouldBeSet_returnSuccessAndLogReportComplete()
-            throws Exception {
-        when(mResponse.isSuccessful()).thenReturn(true);
-        when(mResponse.getNextClientProvisionState()).thenReturn(PROVISION_STATE_SUCCESS);
-        when(mResponse.getDaysLeftUntilReset()).thenReturn(TEST_DAYS_LEFT_UNTIL_RESET);
-
-        assertThat(Futures.getUnchecked(mWorker.startWork())).isEqualTo(Result.success());
-
-        GlobalParametersClient globalParameters = GlobalParametersClient.getInstance();
-        assertThat(globalParameters.getLastReceivedProvisionState().get()).isEqualTo(
-                PROVISION_STATE_SUCCESS);
-        Executors.newSingleThreadExecutor().submit(
-                () -> assertThat(UserParameters.getDaysLeftUntilReset(mTestApp)).isEqualTo(
-                        TEST_DAYS_LEFT_UNTIL_RESET)).get();
-
-        // THEN report provisioning state was NOT logged
-        verify(mStatsLogger, never()).logReportDeviceProvisionState();
-        // THEN report provisioning complete was logged
-        verify(mStatsLogger).logReportDeviceProvisioningComplete();
     }
 }

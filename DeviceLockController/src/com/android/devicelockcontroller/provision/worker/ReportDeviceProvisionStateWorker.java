@@ -148,11 +148,7 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
             Futures.getUnchecked(globalParametersClient.setLastReceivedProvisionState(nextState));
             scheduler.scheduleNextProvisionFailedStepAlarm(
                     shouldRunNextStepImmediately(Futures.getDone(lastState), nextState));
-            if (DeviceProvisionState.PROVISION_STATE_SUCCESS == nextState) {
-                mStatsLogger.logReportDeviceProvisioningComplete();
-            } else {
-                mStatsLogger.logReportDeviceProvisionState();
-            }
+            mStatsLogger.logReportDeviceProvisionState();
             return Result.success();
         }, mExecutorService);
     }
