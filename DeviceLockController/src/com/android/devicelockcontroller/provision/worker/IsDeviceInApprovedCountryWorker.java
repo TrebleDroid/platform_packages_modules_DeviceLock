@@ -26,6 +26,7 @@ import androidx.work.WorkerParameters;
 import com.android.devicelockcontroller.common.DeviceLockConstants.ProvisionFailureReason;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.IsDeviceInApprovedCountryGrpcResponse;
+import com.android.devicelockcontroller.stats.StatsLoggerProvider;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -70,6 +71,8 @@ public final class IsDeviceInApprovedCountryWorker extends
             String carrierInfo = getInputData().getString(KEY_CARRIER_INFO);
             IsDeviceInApprovedCountryGrpcResponse response =
                     client.isDeviceInApprovedCountry(carrierInfo);
+            ((StatsLoggerProvider) mContext.getApplicationContext()).getStatsLogger()
+                    .logIsDeviceInApprovedCountry();
             if (response.hasRecoverableError()) {
                 return Result.retry();
             }
