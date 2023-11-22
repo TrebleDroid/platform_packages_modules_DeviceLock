@@ -34,8 +34,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.work.WorkManager;
 
 import com.android.devicelockcontroller.R;
 import com.android.devicelockcontroller.activities.util.UrlUtils;
@@ -43,6 +45,7 @@ import com.android.devicelockcontroller.policy.PolicyObjectsProvider;
 import com.android.devicelockcontroller.policy.ProvisionHelper;
 import com.android.devicelockcontroller.policy.ProvisionHelperImpl;
 import com.android.devicelockcontroller.policy.ProvisionStateController;
+import com.android.devicelockcontroller.provision.worker.ReportDeviceProvisionStateWorker;
 
 import java.util.concurrent.TimeUnit;
 
@@ -50,6 +53,18 @@ import java.util.concurrent.TimeUnit;
  * A screen which always displays a progress bar.
  */
 public final class ProgressFragment extends Fragment {
+
+    private ProvisionHelper mProvisionHelper;
+
+    public ProgressFragment() {
+        super();
+    }
+
+    @VisibleForTesting
+    ProgressFragment(ProvisionHelper provisionHelper) {
+        super();
+        mProvisionHelper = provisionHelper;
+    }
 
     @Nullable
     @Override
@@ -111,11 +126,13 @@ public final class ProgressFragment extends Fragment {
                                 (PolicyObjectsProvider) context.getApplicationContext();
                         ProvisionStateController provisionStateController =
                                 policyObjects.getProvisionStateController();
-                        ProvisionHelper provisionHelper = new ProvisionHelperImpl(
-                                context,
-                                provisionStateController);
+                        if (mProvisionHelper == null) {
+                            mProvisionHelper = new ProvisionHelperImpl(
+                                    context,
+                                    provisionStateController);
+                        }
                         retryButton.setOnClickListener(
-                                view -> provisionHelper.scheduleKioskAppInstallation(
+                                view -> mProvisionHelper.scheduleKioskAppInstallation(
                                         requireActivity(),
                                         provisioningProgressViewModel,
                                         /* isProvisionMandatory= */ false));
@@ -123,8 +140,13 @@ public final class ProgressFragment extends Fragment {
                         Button exitButton = bottomView.findViewById(R.id.button_exit);
                         checkNotNull(exitButton);
                         exitButton.setOnClickListener(
-                                view -> provisionStateController.postSetNextStateForEventRequest(
-                                        PROVISION_FAILURE));
+                                view -> {
+                                    ReportDeviceProvisionStateWorker.reportSetupFailed(
+                                            WorkManager.getInstance(requireContext()),
+                                            provisioningProgress.mFailureReason);
+                                    provisionStateController.postSetNextStateForEventRequest(
+                                            PROVISION_FAILURE);
+                                });
                     } else {
                         bottomView.setVisibility(View.GONE);
                     }

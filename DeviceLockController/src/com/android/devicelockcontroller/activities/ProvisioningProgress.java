@@ -16,7 +16,12 @@
 
 package com.android.devicelockcontroller.activities;
 
+import static com.android.devicelockcontroller.common.DeviceLockConstants.ProvisionFailureReason.UNKNOWN_REASON;
+
 import com.android.devicelockcontroller.R;
+import com.android.devicelockcontroller.common.DeviceLockConstants.ProvisionFailureReason;
+
+import java.util.Objects;
 
 /**
  * Different stages of the provisioning progress.
@@ -30,16 +35,9 @@ public final class ProvisioningProgress {
             R.drawable.ic_downloading_24px, R.string.installing_kiosk_app);
     public static final ProvisioningProgress OPENING_KIOSK_APP = new ProvisioningProgress(
             R.drawable.ic_open_in_new_24px, R.string.opening_kiosk_app);
-
-    public static final ProvisioningProgress PROVISIONING_FAILED = new ProvisioningProgress(
-            R.drawable.ic_warning_24px, R.string.provisioning_failed,
-            R.string.click_to_contact_financier, /* progressBarVisible=*/ false,
-            /* bottomViewVisible= */ true, /* countTimerVisible= */ false);
-
-    public static final ProvisioningProgress PROVISION_FAILED_MANDATORY = new ProvisioningProgress(
-            R.drawable.ic_warning_24px, R.string.provisioning_failed,
-            R.string.click_to_contact_financier, /* progressBarVisible=*/ false,
-            /* bottomViewVisible= */ false, /* countTimerVisible= */ true);
+    public static final ProvisioningProgress MANDATORY_FAILED_PROVISION =
+            new ProvisioningProgress(/* bottomViewVisible= */ false, /* countTimerVisible= */ true,
+                    UNKNOWN_REASON);
 
     final int mIconId;
     final int mHeaderId;
@@ -49,22 +47,78 @@ public final class ProvisioningProgress {
 
     final boolean mCountDownTimerVisible;
 
+    @ProvisionFailureReason
+    final int mFailureReason;
+
     ProvisioningProgress(int iconId, int headerId) {
         this(iconId, headerId, 0);
     }
 
     ProvisioningProgress(int iconId, int headerId, int subheaderId) {
         this(iconId, headerId, subheaderId, /* progressBarVisible= */ true,
-                /* bottomViewVisible= */ false, /* countTimerVisible= */ false);
+                /* bottomViewVisible= */ false, /* countTimerVisible= */ false, UNKNOWN_REASON);
+    }
+
+    ProvisioningProgress(boolean bottomViewVisible, boolean countDownTimerVisible,
+            @ProvisionFailureReason int failureReason) {
+        this(R.drawable.ic_warning_24px, R.string.provisioning_failed,
+                R.string.click_to_contact_financier, /* progressBarVisible=*/ false,
+                bottomViewVisible, countDownTimerVisible, failureReason);
     }
 
     ProvisioningProgress(int iconId, int headerId, int subheaderId, boolean progressBarVisible,
-            boolean bottomViewVisible, boolean countTimerVisible) {
+            boolean bottomViewVisible, boolean countTimerVisible,
+            @ProvisionFailureReason int failureReason) {
         mHeaderId = headerId;
         mIconId = iconId;
         mSubheaderId = subheaderId;
         mProgressBarVisible = progressBarVisible;
         mBottomViewVisible = bottomViewVisible;
         mCountDownTimerVisible = countTimerVisible;
+        mFailureReason = failureReason;
+    }
+
+    /**
+     * Get the provision failure progress item for non-mandatory case with the failure reason.
+     *
+     * @param failureReason one of {@link ProvisionFailureReason} The reason why provision failed.
+     */
+    public static ProvisioningProgress getNonMandatoryProvisioningFailedProgress(
+            @ProvisionFailureReason int failureReason) {
+        return new ProvisioningProgress(
+                /* bottomViewVisible= */ true, /* countTimerVisible= */ false, failureReason);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ProvisioningProgress that = (ProvisioningProgress) o;
+        return mIconId == that.mIconId && mHeaderId == that.mHeaderId
+                && mSubheaderId == that.mSubheaderId
+                && mProgressBarVisible == that.mProgressBarVisible
+                && mBottomViewVisible == that.mBottomViewVisible
+                && mCountDownTimerVisible == that.mCountDownTimerVisible
+                && mFailureReason == that.mFailureReason;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(mIconId, mHeaderId, mSubheaderId, mProgressBarVisible,
+                mBottomViewVisible,
+                mCountDownTimerVisible, mFailureReason);
+    }
+
+    @Override
+    public String toString() {
+        return "ProvisioningProgress{"
+                + "mIconId=" + mIconId
+                + ", mHeaderId=" + mHeaderId
+                + ", mSubheaderId=" + mSubheaderId
+                + ", mProgressBarVisible=" + mProgressBarVisible
+                + ", mBottomViewVisible=" + mBottomViewVisible
+                + ", mCountDownTimerVisible=" + mCountDownTimerVisible
+                + ", mFailureReason=" + mFailureReason
+                + '}';
     }
 }

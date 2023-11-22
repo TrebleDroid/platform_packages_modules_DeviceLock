@@ -16,6 +16,8 @@
 
 package com.android.devicelockcontroller.activities;
 
+import static com.android.devicelockcontroller.common.DeviceLockConstants.ProvisionFailureReason.UNKNOWN_REASON;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.WindowInsets;
@@ -67,10 +69,11 @@ public final class ProvisioningActivity extends AppCompatActivity {
         final Intent intent = getIntent();
         if (intent.getBooleanExtra(EXTRA_SHOW_CRITICAL_PROVISION_FAILED_UI_ON_START, false)) {
             LogUtil.d(TAG, "showing critical provision failed ui");
-            viewModel.setProvisioningProgress(ProvisioningProgress.PROVISION_FAILED_MANDATORY);
+            viewModel.setProvisioningProgress(ProvisioningProgress.MANDATORY_FAILED_PROVISION);
         } else if (intent.getBooleanExtra(EXTRA_SHOW_PROVISION_FAILED_UI_ON_START, false)) {
             LogUtil.d(TAG, "showing provision failed ui");
-            viewModel.setProvisioningProgress(ProvisioningProgress.PROVISIONING_FAILED);
+            viewModel.setProvisioningProgress(
+                    ProvisioningProgress.getNonMandatoryProvisioningFailedProgress(UNKNOWN_REASON));
         }
         getSupportFragmentManager()
                 .beginTransaction()

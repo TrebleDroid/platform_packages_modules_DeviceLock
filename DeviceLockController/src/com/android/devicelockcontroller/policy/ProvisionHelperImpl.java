@@ -37,6 +37,7 @@ import androidx.annotation.VisibleForTesting;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.work.Constraints;
 import androidx.work.Data;
+import androidx.work.ExistingWorkPolicy;
 import androidx.work.ListenableWorker;
 import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
@@ -71,6 +72,8 @@ import java.util.concurrent.Executors;
  */
 public final class ProvisionHelperImpl implements ProvisionHelper {
     private static final String TAG = "ProvisionHelperImpl";
+    @VisibleForTesting
+    static final String INSTALLATION_TASKS_NAME = "Installation Tasks";
 
     private final Context mContext;
     private final ProvisionStateController mStateController;
@@ -163,7 +166,8 @@ public final class ProvisionHelperImpl implements ProvisionHelper {
                                 getIsDeviceInApprovedCountryWork(carrierInfo);
                         OneTimeWorkRequest playInstallPackageTask =
                                 getPlayInstallPackageTask(playInstallTaskClass, kioskPackage);
-                        workManager.beginWith(isDeviceInApprovedCountryWork).then(
+                        workManager.beginUniqueWork(INSTALLATION_TASKS_NAME,
+                                ExistingWorkPolicy.REPLACE, isDeviceInApprovedCountryWork).then(
                                 playInstallPackageTask).enqueue();
                         mContext.getMainExecutor().execute(
                                 () -> workManager.getWorkInfoByIdLiveData(
@@ -196,15 +200,20 @@ public final class ProvisionHelperImpl implements ProvisionHelper {
                     }
 
                     private void handleFailure(@ProvisionFailureReason int reason) {
-                        ReportDeviceProvisionStateWorker.reportSetupFailed(
-                                WorkManager.getInstance(mContext), reason);
                         if (isMandatory) {
+                            ReportDeviceProvisionStateWorker.reportSetupFailed(
+                                    WorkManager.getInstance(mContext), reason);
                             progressController.setProvisioningProgress(
-                                    ProvisioningProgress.PROVISION_FAILED_MANDATORY);
+                                    ProvisioningProgress.MANDATORY_FAILED_PROVISION);
                             mScheduler.scheduleMandatoryResetDeviceAlarm();
                         } else {
+                            // For non-mandatory provisioning, failure should only be reported after
+                            // user exits the provisioning UI; otherwise, it could be reported
+                            // multiple times if user choose to retry, which can break the
+                            // 7-days failure flow.
                             progressController.setProvisioningProgress(
-                                    ProvisioningProgress.PROVISIONING_FAILED);
+                                    ProvisioningProgress.getNonMandatoryProvisioningFailedProgress(
+                                            reason));
                         }
                     }
                 }, mExecutor);
