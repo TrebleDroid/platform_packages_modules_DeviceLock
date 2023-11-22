@@ -27,16 +27,20 @@ public final class ProvisionInfoTest {
 
     @Test
     public void equals_withDifferentFieldValues_returnsFalse() {
-        ProvisionInfo p1 = new ProvisionInfo(/* drawableId= */0, /* textId= */1);
-        ProvisionInfo p2 = new ProvisionInfo(/* drawableId= */100, /* textId= */101);
+        ProvisionInfo p1 = new ProvisionInfo(/* drawableId= */0, /* textId= */
+                1, /* termsAndConditionsLinkIncluded= */false);
+        ProvisionInfo p2 = new ProvisionInfo(/* drawableId= */100, /* textId= */
+                101, /* termsAndConditionsLinkIncluded= */true);
 
         assertThat(p1.equals(p2)).isFalse();
     }
 
     @Test
     public void equals_withSameFieldValues_returnsTrue() {
-        ProvisionInfo p1 = new ProvisionInfo(/* drawableId= */0, /* textId= */1);
-        ProvisionInfo p2 = new ProvisionInfo(/* drawableId= */0, /* textId= */1);
+        ProvisionInfo p1 = new ProvisionInfo(/* drawableId= */0, /* textId= */
+                1, /* termsAndConditionsLinkIncluded= */true);
+        ProvisionInfo p2 = new ProvisionInfo(/* drawableId= */0, /* textId= */
+                1, /* termsAndConditionsLinkIncluded= */true);
 
         assertThat(p1.equals(p2)).isTrue();
     }

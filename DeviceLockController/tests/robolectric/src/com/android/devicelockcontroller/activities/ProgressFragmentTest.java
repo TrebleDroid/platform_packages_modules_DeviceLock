@@ -173,9 +173,6 @@ public final class ProgressFragmentTest {
             TextView subHeaderView = activity.findViewById(
                     R.id.subheader_text);
             CharSequence actualSubHeaderText = subHeaderView.getText();
-            CharSequence expectedSubHeaderText = activity.getString(
-                    mProvisioningProgress.mSubheaderId,
-                    provisioningProgressViewModel.mSupportUrlLiveData.getValue());
             SpannableString actualUrlSubHeader = new SpannableString(
                     Html.fromHtml(String.valueOf(actualSubHeaderText),
                             Html.FROM_HTML_MODE_COMPACT));
