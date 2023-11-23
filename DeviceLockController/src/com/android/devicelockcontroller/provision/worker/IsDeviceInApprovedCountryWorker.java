@@ -16,6 +16,8 @@
 
 package com.android.devicelockcontroller.provision.worker;
 
+import static com.android.devicelockcontroller.provision.worker.ReportDeviceProvisionStateWorker.KEY_PROVISION_FAILURE_REASON;
+
 import android.content.Context;
 
 import androidx.annotation.NonNull;
@@ -68,8 +70,11 @@ public final class IsDeviceInApprovedCountryWorker extends
                 return Result.success(builder.putBoolean(KEY_IS_IN_APPROVED_COUNTRY,
                         response.isDeviceInApprovedCountry()).build());
             }
-            return Result.failure(builder.putInt(
-                    ReportDeviceProvisionStateWorker.KEY_PROVISION_FAILURE_REASON,
+            // Note we need to return a success result to pass the failure reason data through
+            // the chain of worker.
+            // Callers should always check if output data includes KEY_PROVISION_FAILURE_REASON.
+            return Result.success(builder.putInt(
+                    KEY_PROVISION_FAILURE_REASON,
                     ProvisionFailureReason.COUNTRY_INFO_UNAVAILABLE).build());
         }, MoreExecutors.directExecutor());
     }

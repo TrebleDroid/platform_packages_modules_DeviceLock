@@ -107,10 +107,10 @@ public final class IsDeviceInApprovedCountryWorkerTest {
     }
 
     @Test
-    public void doWork_responseIsNotSuccessful_failureResult() {
+    public void doWork_responseIsNotSuccessful_successResult() {
         when(mResponse.isSuccessful()).thenReturn(false);
         when(mResponse.isDeviceInApprovedCountry()).thenReturn(false);
-        Result expected = Result.failure(new Data.Builder().putInt(
+        Result expected = Result.success(new Data.Builder().putInt(
                 ReportDeviceProvisionStateWorker.KEY_PROVISION_FAILURE_REASON,
                 DeviceLockConstants.ProvisionFailureReason.COUNTRY_INFO_UNAVAILABLE).build());
 
