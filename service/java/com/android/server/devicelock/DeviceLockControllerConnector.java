@@ -64,6 +64,11 @@ public interface DeviceLockControllerConnector {
     void onUserUnlocked(OutcomeReceiver<Void, Exception> callback);
 
     /**
+     * Called when the user has completed setup.
+     */
+    void onUserSetupCompleted(OutcomeReceiver<Void, Exception> callback);
+
+    /**
      * Called when the kiosk app has crashed.
      */
     void onKioskAppCrashed(OutcomeReceiver<Void, Exception> callback);

@@ -66,6 +66,11 @@ public interface DevicePolicyController {
     ListenableFuture<Void> onUserUnlocked();
 
     /**
+     * Called when a user has completed set-up wizard.
+     */
+    ListenableFuture<Void> onUserSetupCompleted();
+
+    /**
      * Called by {@link com.android.devicelockcontroller.DeviceLockControllerService} when the
      * kiosk app crashed.
      */
