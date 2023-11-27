@@ -188,10 +188,15 @@ final class DeviceLockServiceImpl extends IDeviceLockService.Stub {
     }
 
     DeviceLockServiceImpl(@NonNull Context context) {
+        this(context, context.getSystemService(TelephonyManager.class));
+    }
+
+    @VisibleForTesting
+    DeviceLockServiceImpl(@NonNull Context context, TelephonyManager telephonyManager) {
         mContext = context;
+        mTelephonyManager = telephonyManager;
 
         mRoleManager = context.getSystemService(RoleManager.class);
-        mTelephonyManager = context.getSystemService(TelephonyManager.class);
         mAppOpsManager = context.getSystemService(AppOpsManager.class);
 
         mDeviceLockControllerConnectors = new ArrayMap<>();
