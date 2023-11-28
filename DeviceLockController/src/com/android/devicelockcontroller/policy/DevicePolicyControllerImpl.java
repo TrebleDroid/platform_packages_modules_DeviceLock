@@ -434,6 +434,11 @@ public final class DevicePolicyControllerImpl implements DevicePolicyController 
     }
 
     @Override
+    public ListenableFuture<Void> onUserSetupCompleted() {
+        return mProvisionStateController.onUserSetupCompleted();
+    }
+
+    @Override
     public ListenableFuture<Void> onKioskAppCrashed() {
         return Futures.transformAsync(getCurrentEnforcedLockTaskType(),
                 this::startLockTaskModeIfNeeded,

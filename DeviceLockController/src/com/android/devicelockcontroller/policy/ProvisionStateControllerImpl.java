@@ -34,14 +34,11 @@ import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.database.ContentObserver;
-import android.net.Uri;
 import android.os.UserManager;
 import android.provider.Settings;
 
 import androidx.annotation.GuardedBy;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.work.WorkManager;
 
@@ -178,9 +175,6 @@ public final class ProvisionStateControllerImpl implements ProvisionStateControl
     public void notifyProvisioningReady() {
         if (isUserSetupComplete()) {
             postSetNextStateForEventRequest(PROVISION_READY);
-        } else {
-            registerUserSetupCompleteListener(
-                    () -> postSetNextStateForEventRequest(PROVISION_READY));
         }
     }
 
@@ -263,18 +257,10 @@ public final class ProvisionStateControllerImpl implements ProvisionStateControl
 
     @Override
     public ListenableFuture<Void> onUserUnlocked() {
-        GlobalParametersClient globalParametersClient = GlobalParametersClient.getInstance();
         return Futures.transformAsync(getState(),
                 state -> {
                     if (state == UNPROVISIONED) {
-                        return Futures.transformAsync(globalParametersClient.isProvisionReady(),
-                                isReady -> {
-                                    if (isReady) {
-                                        notifyProvisioningReady();
-                                    }
-                                    return Futures.immediateVoidFuture();
-                                },
-                                mBgExecutor);
+                        return checkReadyToStartProvisioning();
                     } else {
                         return mPolicyController.enforceCurrentPolicies();
                     }
@@ -282,18 +268,33 @@ public final class ProvisionStateControllerImpl implements ProvisionStateControl
                 mBgExecutor);
     }
 
-    private void registerUserSetupCompleteListener(Runnable listener) {
-        Uri setupCompleteUri = Settings.Secure.getUriFor(Settings.Secure.USER_SETUP_COMPLETE);
-        mContext.getContentResolver().registerContentObserver(setupCompleteUri,
-                false /* notifyForDescendants */, new ContentObserver(null /* handler */) {
-                    @Override
-                    public void onChange(boolean selfChange, @Nullable Uri uri) {
-                        if (setupCompleteUri.equals(uri) && isUserSetupComplete()) {
-                            mContext.getContentResolver().unregisterContentObserver(this);
-                            listener.run();
-                        }
+    @Override
+    public ListenableFuture<Void> onUserSetupCompleted() {
+        return checkReadyToStartProvisioning();
+    }
+
+
+    private ListenableFuture<Void> checkReadyToStartProvisioning() {
+        if (!isUserSetupComplete()) {
+            return Futures.immediateVoidFuture();
+        }
+        return Futures.transformAsync(getState(),
+                state -> {
+                    if (state != UNPROVISIONED) {
+                        return Futures.immediateVoidFuture();
                     }
-                });
+                    GlobalParametersClient globalParametersClient =
+                            GlobalParametersClient.getInstance();
+                    return Futures.transformAsync(globalParametersClient.isProvisionReady(),
+                            isReady -> {
+                                if (isReady) {
+                                    notifyProvisioningReady();
+                                }
+                                return Futures.immediateVoidFuture();
+                            },
+                            mBgExecutor);
+                },
+                mBgExecutor);
     }
 
     private boolean isUserSetupComplete() {
