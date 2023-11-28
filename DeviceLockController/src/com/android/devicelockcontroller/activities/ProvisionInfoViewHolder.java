@@ -52,16 +52,16 @@ public final class ProvisionInfoViewHolder extends RecyclerView.ViewHolder {
             return;
         }
 
-        // The Terms and Conditions URL is known at runtime and required for the string used for the
-        // Device Subsidy program.
-        if (provisionInfo.getTextId() == R.string.restrict_device_if_dont_make_payment) {
+        // The Terms and Conditions URL is known at runtime and required for the string used for
+        // any DeviceLock programs.
+        if (provisionInfo.isTermsAndConditionsLinkIncluded()) {
             if (TextUtils.isEmpty(termsAndConditionsUrl)) {
                 LogUtil.i(TAG, "Terms and Conditions URL is not ready,");
                 return;
             }
             UrlUtils.setUrlText(mTextView, String.format(
-                    context.getString(R.string.restrict_device_if_dont_make_payment),
-                    providerName, termsAndConditionsUrl));
+                    context.getString(provisionInfo.getTextId()), providerName,
+                    termsAndConditionsUrl));
         } else {
             mTextView.setText(context.getString(provisionInfo.getTextId(), providerName));
         }
