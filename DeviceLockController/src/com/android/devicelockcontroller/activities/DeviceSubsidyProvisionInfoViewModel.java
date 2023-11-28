@@ -25,26 +25,23 @@ import java.util.List;
  */
 public final class DeviceSubsidyProvisionInfoViewModel extends ProvisionInfoViewModel {
 
-    private static final int HEADER_DRAWABLE_ID = R.drawable.ic_info_24px;
-
     private static final int MANDATORY_HEADER_TEXT_ID = R.string.subsidy_program_header;
+    private static final int SUB_HEADER_TEXT_ID = R.string.enroll_your_device_subsidy_subheader;
 
     private static final ProvisionInfo[] PROVISION_INFOS = new ProvisionInfo[]{
             new ProvisionInfo(R.drawable.ic_file_download_24px,
-                    R.string.download_kiosk_app, /* termsAndConditionsLinkIncluded= */ false),
+                    R.string.download_kiosk_app,
+                    ProvisionInfo.ProvisionInfoType.REGULAR),
             new ProvisionInfo(R.drawable.ic_lock_outline_24px,
                     R.string.restrict_device_if_dont_make_payment,
-                    /* termsAndConditionsLinkIncluded= */ true)};
-
-    private static final int HEADER_TEXT_ID = R.string.enroll_your_device_header;
-
-    private static final int SUB_HEADER_TEXT_ID = R.string.enroll_your_device_subsidy_subheader;
+                    ProvisionInfo.ProvisionInfoType.TERMS_AND_CONDITIONS),
+            new ProvisionInfo(R.drawable.ic_help_24px,
+                    R.string.contact_provider_for_help,
+                    ProvisionInfo.ProvisionInfoType.SUPPORT)};
 
     public DeviceSubsidyProvisionInfoViewModel() {
-        mHeaderDrawableId = HEADER_DRAWABLE_ID;
-        mMandatoryHeaderTextId = MANDATORY_HEADER_TEXT_ID;
-        mHeaderTextId = HEADER_TEXT_ID;
         mSubHeaderTextId = SUB_HEADER_TEXT_ID;
+        mMandatoryHeaderTextId = MANDATORY_HEADER_TEXT_ID;
         mProvisionInfoList = List.of(PROVISION_INFOS);
         retrieveData();
     }

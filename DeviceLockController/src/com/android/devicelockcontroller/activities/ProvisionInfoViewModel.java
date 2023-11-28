@@ -16,13 +16,12 @@
 
 package com.android.devicelockcontroller.activities;
 
-import android.text.TextUtils;
 import android.util.Pair;
 
-import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.android.devicelockcontroller.R;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.storage.SetupParametersClient;
 import com.android.devicelockcontroller.util.LogUtil;
@@ -40,21 +39,17 @@ import java.util.List;
  */
 public abstract class ProvisionInfoViewModel extends ViewModel {
 
-    public static final String TAG = "ProvisionInfoViewModel";
-    int mHeaderDrawableId;
+    private static final String TAG = "ProvisionInfoViewModel";
+    static final int HEADER_DRAWABLE_ID = R.drawable.ic_info_24px;
+    static final int HEADER_TEXT_ID = R.string.enroll_your_device_header;
     int mMandatoryHeaderTextId;
-    int mHeaderTextId;
-    int mMandatorySubHeaderTextId;
     int mSubHeaderTextId;
     List<ProvisionInfo> mProvisionInfoList;
     final MutableLiveData<Boolean> mIsMandatoryLiveData = new MutableLiveData<>();
-    final MutableLiveData<String> mProviderNameLiveData = new MutableLiveData<>();
-    final MutableLiveData<String> mTermsAndConditionsUrlLiveData = new MutableLiveData<>();
     final MutableLiveData<Boolean> mIsProvisionForcedLiveData = new MutableLiveData<>();
     final MutableLiveData<Pair<Integer, String>> mHeaderTextLiveData = new MutableLiveData<>();
     final MutableLiveData<Pair<Integer, String>> mSubHeaderTextLiveData = new MutableLiveData<>();
-    final MediatorLiveData<List<ProvisionInfo>> mProvisionInfoListLiveData =
-            new MediatorLiveData<>();
+    final MutableLiveData<List<ProvisionInfo>> mProvisionInfoListLiveData = new MutableLiveData<>();
 
     void retrieveData() {
         SetupParametersClient setupParametersClient = SetupParametersClient.getInstance();
@@ -63,37 +58,39 @@ public abstract class ProvisionInfoViewModel extends ViewModel {
         ListenableFuture<Boolean> isMandatoryFuture = setupParametersClient.isProvisionMandatory();
         ListenableFuture<String> termsAndConditionsUrlFuture =
                 setupParametersClient.getTermsAndConditionsUrl();
+        ListenableFuture<String> supportUrlFuture = setupParametersClient.getSupportUrl();
         ListenableFuture<Boolean> isProvisionForcedFuture =
                 GlobalParametersClient.getInstance().isProvisionForced();
-
-        mProvisionInfoListLiveData.addSource(mProviderNameLiveData,
-                unused -> mProvisionInfoListLiveData.setValue(mProvisionInfoList));
-        mProvisionInfoListLiveData.addSource(mTermsAndConditionsUrlLiveData,
-                unused -> mProvisionInfoListLiveData.setValue(mProvisionInfoList));
-        ListenableFuture<Void> result = Futures.whenAllSucceed(
-                        kioskAppProviderNameFuture,
-                        isMandatoryFuture,
-                        termsAndConditionsUrlFuture,
+        ListenableFuture<Void> result = Futures.whenAllSucceed(isMandatoryFuture,
+                        kioskAppProviderNameFuture, termsAndConditionsUrlFuture, supportUrlFuture,
                         isProvisionForcedFuture)
                 .call(() -> {
-                    String providerName = Futures.getDone(kioskAppProviderNameFuture);
                     boolean isMandatory = Futures.getDone(isMandatoryFuture);
+                    String providerName = Futures.getDone(kioskAppProviderNameFuture);
                     String termsAndConditionUrl = Futures.getDone(termsAndConditionsUrlFuture);
-                    if (TextUtils.isEmpty(providerName)) {
-                        LogUtil.w(TAG, "Device provider name is empty!");
+                    String supportUrl = Futures.getDone(supportUrlFuture);
+                    for (int i = 0, size = mProvisionInfoList.size(); i < size; ++i) {
+                        ProvisionInfo provisionInfo = mProvisionInfoList.get(i);
+                        switch (provisionInfo.getType()) {
+                            case ProvisionInfo.ProvisionInfoType.REGULAR -> provisionInfo.setUrl(
+                                    "");
+                            case ProvisionInfo.ProvisionInfoType.TERMS_AND_CONDITIONS ->
+                                    provisionInfo.setUrl(termsAndConditionUrl);
+                            case ProvisionInfo.ProvisionInfoType.SUPPORT -> provisionInfo.setUrl(
+                                    supportUrl);
+                            default -> throw new IllegalStateException(
+                                    "Unexpected value: " + provisionInfo.getType());
+                        }
+                        provisionInfo.setProviderName(providerName);
                     }
-                    if (TextUtils.isEmpty(termsAndConditionUrl)) {
-                        LogUtil.w(TAG, "Terms and Conditions URL is empty!");
-                    }
-                    mProviderNameLiveData.postValue(providerName);
+                    mProvisionInfoListLiveData.postValue(mProvisionInfoList);
                     mIsMandatoryLiveData.postValue(isMandatory);
                     mHeaderTextLiveData.postValue(
-                            new Pair<>(isMandatory ? mMandatoryHeaderTextId : mHeaderTextId,
+                            new Pair<>(isMandatory ? mMandatoryHeaderTextId : HEADER_TEXT_ID,
                                     providerName));
                     mSubHeaderTextLiveData.postValue(
-                            new Pair<>(isMandatory ? mMandatorySubHeaderTextId : mSubHeaderTextId,
+                            new Pair<>(isMandatory ? 0 : mSubHeaderTextId,
                                     providerName));
-                    mTermsAndConditionsUrlLiveData.postValue(termsAndConditionUrl);
                     mIsProvisionForcedLiveData.postValue(Futures.getDone(isProvisionForcedFuture));
                     return null;
                 }, MoreExecutors.directExecutor());

@@ -16,7 +16,10 @@
 
 package com.android.devicelockcontroller.activities;
 
+import androidx.annotation.VisibleForTesting;
+
 import com.android.devicelockcontroller.R;
+import com.android.devicelockcontroller.activities.ProvisionInfo.ProvisionInfoType;
 
 import java.util.List;
 
@@ -25,25 +28,23 @@ import java.util.List;
  */
 public class DeviceFinancingProvisionInfoViewModel extends ProvisionInfoViewModel {
 
-    private static final int HEADER_DRAWABLE_ID = R.drawable.ic_info_24px;
-
     private static final int MANDATORY_HEADER_TEXT_ID = R.string.device_provided_by_provider;
+    private static final int SUB_HEADER_TEXT_ID = R.string.enroll_your_device_financing_subheader;
 
-    private static final ProvisionInfo[] PROVISION_INFOS = new ProvisionInfo[]{
+    @VisibleForTesting
+    static final ProvisionInfo[] PROVISION_INFOS = new ProvisionInfo[]{
             new ProvisionInfo(R.drawable.ic_file_download_24px,
-                    R.string.download_kiosk_app, /* termsAndConditionsLinkIncluded= */ false),
+                    R.string.download_kiosk_app,
+                    ProvisionInfoType.REGULAR),
             new ProvisionInfo(R.drawable.ic_lock_outline_24px,
                     R.string.restrict_device_if_missing_payment,
-                    /* termsAndConditionsLinkIncluded= */ true)};
-    private static final int HEADER_TEXT_ID = R.string.enroll_your_device_header;
-
-    private static final int SUB_HEADER_TEXT_ID =
-            R.string.enroll_your_device_financing_subheader;
+                    ProvisionInfoType.TERMS_AND_CONDITIONS),
+            new ProvisionInfo(R.drawable.ic_help_24px,
+                    R.string.contact_provider_for_help,
+                    ProvisionInfoType.SUPPORT)};
 
     public DeviceFinancingProvisionInfoViewModel() {
-        mHeaderDrawableId = HEADER_DRAWABLE_ID;
         mMandatoryHeaderTextId = MANDATORY_HEADER_TEXT_ID;
-        mHeaderTextId = HEADER_TEXT_ID;
         mSubHeaderTextId = SUB_HEADER_TEXT_ID;
         mProvisionInfoList = List.of(PROVISION_INFOS);
         retrieveData();
