@@ -16,8 +16,6 @@
 
 package com.android.devicelockcontroller.provision.worker;
 
-import static com.android.devicelockcontroller.provision.worker.ReportDeviceProvisionStateWorker.KEY_PROVISION_FAILURE_REASON;
-
 import android.content.Context;
 
 import androidx.annotation.NonNull;
@@ -36,6 +34,16 @@ import com.google.common.util.concurrent.MoreExecutors;
 
 /**
  * A worker class dedicated to check whether device is in approved country.
+ * Note that this worker always returns {@link androidx.work.ListenableWorker.Result.Success}
+ * regardless of the success of the underlying rpc.
+ *
+ * Child workers or observers should check input/output data for a boolean value associated with
+ * {@link KEY_IS_IN_APPROVED_COUNTRY}:
+ * - If a true boolean value presents, then device is in approved country;
+ * - If a false boolean value presents, then device is not in approved country and provision should
+ * fail due to {@link ProvisionFailureReason#NOT_IN_ELIGIBLE_COUNTRY};
+ * - If no boolean value presents, then device country info is unavailable and provision should fail
+ * due to {@link ProvisionFailureReason#COUNTRY_INFO_UNAVAILABLE};
  */
 public final class IsDeviceInApprovedCountryWorker extends
         AbstractCheckInWorker {
@@ -70,12 +78,7 @@ public final class IsDeviceInApprovedCountryWorker extends
                 return Result.success(builder.putBoolean(KEY_IS_IN_APPROVED_COUNTRY,
                         response.isDeviceInApprovedCountry()).build());
             }
-            // Note we need to return a success result to pass the failure reason data through
-            // the chain of worker.
-            // Callers should always check if output data includes KEY_PROVISION_FAILURE_REASON.
-            return Result.success(builder.putInt(
-                    KEY_PROVISION_FAILURE_REASON,
-                    ProvisionFailureReason.COUNTRY_INFO_UNAVAILABLE).build());
+            return Result.success();
         }, MoreExecutors.directExecutor());
     }
 }

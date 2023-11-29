@@ -34,7 +34,6 @@ import androidx.work.WorkerFactory;
 import androidx.work.WorkerParameters;
 import androidx.work.testing.TestListenableWorkerBuilder;
 
-import com.android.devicelockcontroller.common.DeviceLockConstants;
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.IsDeviceInApprovedCountryGrpcResponse;
 
@@ -92,6 +91,8 @@ public final class IsDeviceInApprovedCountryWorkerTest {
         Result actual = Futures.getUnchecked(mWorker.startWork());
 
         assertThat(actual).isEqualTo(expected);
+        assertThat(actual.getOutputData().hasKeyWithValueOfType(KEY_IS_IN_APPROVED_COUNTRY,
+                Boolean.class)).isTrue();
     }
 
     @Test
@@ -104,18 +105,20 @@ public final class IsDeviceInApprovedCountryWorkerTest {
         Result actual = Futures.getUnchecked(mWorker.startWork());
 
         assertThat(actual).isEqualTo(expected);
+        assertThat(actual.getOutputData().hasKeyWithValueOfType(KEY_IS_IN_APPROVED_COUNTRY,
+                Boolean.class)).isTrue();
     }
 
     @Test
     public void doWork_responseIsNotSuccessful_successResult() {
         when(mResponse.isSuccessful()).thenReturn(false);
         when(mResponse.isDeviceInApprovedCountry()).thenReturn(false);
-        Result expected = Result.success(new Data.Builder().putInt(
-                ReportDeviceProvisionStateWorker.KEY_PROVISION_FAILURE_REASON,
-                DeviceLockConstants.ProvisionFailureReason.COUNTRY_INFO_UNAVAILABLE).build());
+        Result expected = Result.success();
 
         Result actual = Futures.getUnchecked(mWorker.startWork());
 
         assertThat(actual).isEqualTo(expected);
+        assertThat(actual.getOutputData().hasKeyWithValueOfType(KEY_IS_IN_APPROVED_COUNTRY,
+                Boolean.class)).isFalse();
     }
 }

@@ -26,13 +26,6 @@ package {
     ],
 }
 
-LITE_PROTO_CMD = "mkdir -p $(genDir)/gen && " +
-    "$(location aprotoc) --java_opt=annotate_code=false " +
-    "-Iexternal/protobuf/src -Ipackages/modules/DeviceLock/DeviceLockController/proto " +
-    "--plugin=protoc-gen-grpc-java=$(location protoc-gen-grpc-java-plugin) " +
-    "--grpc-java_out=lite:$(genDir)/gen $(in) && " +
-    "$(location soong_zip) -o $(out) -C $(genDir)/gen -D $(genDir)/gen"
-
 genrule {
     name: "checkIn-service-stub-lite",
     tools: [
@@ -40,7 +33,12 @@ genrule {
         "protoc-gen-grpc-java-plugin",
         "soong_zip",
     ],
-    cmd: LITE_PROTO_CMD,
+    cmd: "mkdir -p $(genDir)/gen && " +
+        "$(location aprotoc) --java_opt=annotate_code=false " +
+        "-Iexternal/protobuf/src -Ipackages/modules/DeviceLock/DeviceLockController/proto " +
+        "--plugin=protoc-gen-grpc-java=$(location protoc-gen-grpc-java-plugin) " +
+        "--grpc-java_out=lite:$(genDir)/gen $(locations *.proto) && " +
+        "$(location soong_zip) -o $(out) -C $(genDir)/gen -D $(genDir)/gen",
     srcs: [
         "*.proto",
         ":libprotobuf-internal-protos",

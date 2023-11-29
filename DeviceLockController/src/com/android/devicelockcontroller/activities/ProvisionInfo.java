@@ -23,13 +23,19 @@ import java.util.Objects;
  */
 public final class ProvisionInfo {
 
+    private final boolean mTermsAndConditionsLinkIncluded;
     private final int mDrawableId;
 
     private final int mTextId;
 
-    public ProvisionInfo(int drawableId, int textId) {
+    public ProvisionInfo(int drawableId, int textId, boolean termsAndConditionsLinkIncluded) {
         mDrawableId = drawableId;
         mTextId = textId;
+        mTermsAndConditionsLinkIncluded = termsAndConditionsLinkIncluded;
+    }
+
+    public boolean isTermsAndConditionsLinkIncluded() {
+        return mTermsAndConditionsLinkIncluded;
     }
 
     public int getDrawableId() {

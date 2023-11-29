@@ -35,11 +35,6 @@ public interface StatsLogger {
     void logPauseDeviceProvisioning();
 
     /**
-     * Logs the analytics event of successfully completing the device provisioning.
-     */
-    void logReportDeviceProvisioningComplete();
-
-    /**
      * Logs the analytics event of successfully reporting the device provisioning state to the
      * server.
      */
