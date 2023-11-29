@@ -3,10 +3,5 @@
     {
       "name": "CtsDeviceLockTestCases"
     }
-  ],
-  "postsubmit": [
-    {
-      "name": "DeviceLockUnitTests"
-    }
   ]
 }
