@@ -48,7 +48,8 @@
     <string name="device_provided_by_provider" msgid="290593329676291991">"ឧបករណ៍នេះត្រូវបានផ្ដល់ដោយ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"កម្មវិធីបញ្ជរនឹង​ត្រូវបានទាញយក និងដំឡើងដោយស្វ័យប្រវត្តិ"</string>
     <string name="install_kiosk_app_secondary_user" msgid="49911908012320834">"កម្មវិធីបញ្ជរនឹងត្រូវបានដំឡើងសម្រាប់អ្នកប្រើប្រាស់នេះ"</string>
-    <string name="restrict_device_if_missing_payment" msgid="2907880869705064855">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> អាចដាក់កំហិត​ឧបករណ៍នេះ ប្រសិនបើអ្នកខកខានការបង់ប្រាក់"</string>
+    <!-- no translation found for restrict_device_if_missing_payment (8883980285859496904) -->
+    <skip />
     <string name="restrict_device_if_dont_make_payment" msgid="1619095674945507015">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> អាចដាក់កំហិត​ឧបករណ៍នេះ ប្រសិនបើអ្នកមិនធ្វើការបង់ប្រាក់​ដែលចាំបាច់។ សម្រាប់ព័ត៌មានលម្អិត សូមមើល<xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>លក្ខខណ្ឌ<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g>។"</string>
     <string name="previous" msgid="5241891780917802570">"មុន"</string>
     <string name="next" msgid="8248291863254324326">"បន្ទាប់"</string>

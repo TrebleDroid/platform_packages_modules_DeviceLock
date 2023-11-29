@@ -48,7 +48,8 @@
     <string name="device_provided_by_provider" msgid="290593329676291991">"यह डिवाइस <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ने दिया है"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"कीऑस्क ऐप्लिकेशन, अपने-आप डाउनलोड और इंस्टॉल हो जाएगा"</string>
     <string name="install_kiosk_app_secondary_user" msgid="49911908012320834">"इस उपयोगकर्ता के लिए कीऑस्क ऐप्लिकेशन इंस्टॉल किया जाएगा"</string>
-    <string name="restrict_device_if_missing_payment" msgid="2907880869705064855">"पेमेंट न करने पर, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> डिवाइस पर पाबंदी लगा सकता है"</string>
+    <!-- no translation found for restrict_device_if_missing_payment (8883980285859496904) -->
+    <skip />
     <string name="restrict_device_if_dont_make_payment" msgid="1619095674945507015">"ज़रूरी पेमेंट न करने पर, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> इस डिवाइस पर पाबंदी लगा सकता है. ज़्यादा जानकारी के लिए, <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>नियम और शर्तें<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g> देखें."</string>
     <string name="previous" msgid="5241891780917802570">"पीछे जाएं"</string>
     <string name="next" msgid="8248291863254324326">"आगे बढ़ें"</string>
