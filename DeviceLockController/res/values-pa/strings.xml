@@ -48,7 +48,8 @@
     <string name="device_provided_by_provider" msgid="290593329676291991">"ਇਹ ਡੀਵਾਈਸ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ਵੱਲੋਂ ਮੁਹੱਈਆ ਕਰਵਾਇਆ ਗਿਆ ਹੈ"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"ਕਿਓਸਕ ਐਪ ਸਵੈਚਲਿਤ ਤੌਰ \'ਤੇ ਡਾਊਨਲੋਡ ਅਤੇ ਸਥਾਪਤ ਹੋ ਜਾਵੇਗੀ"</string>
     <string name="install_kiosk_app_secondary_user" msgid="49911908012320834">"ਕਿਓਸਕ ਐਪ ਇਸ ਵਰਤੋਂਕਾਰ ਲਈ ਸਥਾਪਤ ਕੀਤੀ ਜਾਵੇਗੀ"</string>
-    <string name="restrict_device_if_missing_payment" msgid="2907880869705064855">"ਜੇ ਤੁਸੀਂ ਭੁਗਤਾਨ ਖੁੰਝਾ ਦਿੰਦੇ ਹੋ, ਤਾਂ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ਵੱਲੋਂ ਡੀਵਾਈਸ ਨੂੰ ਪ੍ਰਤਿਬੰਧਿਤ ਕੀਤਾ ਜਾ ਸਕਦਾ ਹੈ"</string>
+    <!-- no translation found for restrict_device_if_missing_payment (8883980285859496904) -->
+    <skip />
     <string name="restrict_device_if_dont_make_payment" msgid="1619095674945507015">"ਤੁਹਾਡੇ ਵੱਲੋਂ ਲੋੜੀਂਦੇ ਭੁਗਤਾਨ ਨਾ ਕਰਨ \'ਤੇ, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ਇਸ ਡੀਵਾਈਸ ਨੂੰ ਪ੍ਰਤਿਬੰਧਿਤ ਕਰ ਸਕਦਾ ਹੈ। ਵੇਰਵਿਆਂ ਲਈ, <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>ਨਿਯਮ ਅਤੇ ਸ਼ਰਤਾਂ<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g> ਦੇਖੋ।"</string>
     <string name="previous" msgid="5241891780917802570">"ਪਿੱਛੇ"</string>
     <string name="next" msgid="8248291863254324326">"ਅੱਗੇ"</string>

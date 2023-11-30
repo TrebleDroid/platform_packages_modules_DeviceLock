@@ -48,7 +48,8 @@
     <string name="device_provided_by_provider" msgid="290593329676291991">"এই ডিভাইচটো <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>এ প্ৰদান কৰিছে"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Kiosk এপ্‌টো স্বয়ংক্ৰিয়ভাৱে ডাউনল’ড কৰি ইনষ্টল কৰা হ’ব"</string>
     <string name="install_kiosk_app_secondary_user" msgid="49911908012320834">"এই ব্যৱহাৰকাৰীগৰাকীৰ বাবে Kiosk এপ্‌টো ইনষ্টল কৰা হ’ব"</string>
-    <string name="restrict_device_if_missing_payment" msgid="2907880869705064855">"আপুনি পৰিশোধ নকৰিলে <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>এ এই ডিভাইচটো সীমাবদ্ধ কৰিব পাৰে"</string>
+    <!-- no translation found for restrict_device_if_missing_payment (8883980285859496904) -->
+    <skip />
     <string name="restrict_device_if_dont_make_payment" msgid="1619095674945507015">"যদি আপুনি আৱশ্যকীয় পৰিশোধসমূহ নকৰে <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>এ এই ডিভাইচটো সীমাবদ্ধ কৰিব পাৰে। সবিশেষৰ বাবে, <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>নিয়ম আৰু চৰ্তাৱলী<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g> চাওক।"</string>
     <string name="previous" msgid="5241891780917802570">"পূৰ্বৱৰ্তী"</string>
     <string name="next" msgid="8248291863254324326">"পৰৱৰ্তী"</string>
