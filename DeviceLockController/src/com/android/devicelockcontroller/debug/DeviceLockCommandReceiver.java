@@ -46,6 +46,7 @@ import com.android.devicelockcontroller.policy.DevicePolicyController;
 import com.android.devicelockcontroller.policy.DeviceStateController;
 import com.android.devicelockcontroller.policy.DeviceStateController.DeviceState;
 import com.android.devicelockcontroller.policy.PolicyObjectsProvider;
+import com.android.devicelockcontroller.policy.ProvisionHelperImpl;
 import com.android.devicelockcontroller.policy.ProvisionStateController;
 import com.android.devicelockcontroller.provision.worker.DeviceCheckInWorker;
 import com.android.devicelockcontroller.provision.worker.PauseProvisioningWorker;
@@ -125,6 +126,8 @@ public final class DeviceLockCommandReceiver extends BroadcastReceiver {
         String DUMP_DEBUG_CLIENT_RESPONSE = "dump-debug-client-response";
         String SET_UP_DEBUG_SCHEDULER = "set-up-debug-scheduler";
         String DUMP_DEBUG_SCHEDULER = "dump-debug-scheduler";
+        String ENABLE_PREINSTALLED_KIOSK = "enable-preinstalled-kiosk";
+        String DISABLE_PREINSTALLED_KIOSK = "disable-preinstalled-kiosk";
     }
 
     @Override
@@ -196,6 +199,12 @@ public final class DeviceLockCommandReceiver extends BroadcastReceiver {
                 break;
             case Commands.DUMP_DEBUG_SCHEDULER:
                 DeviceLockControllerSchedulerImpl.dumpDebugScheduler(context);
+                break;
+            case Commands.ENABLE_PREINSTALLED_KIOSK:
+                ProvisionHelperImpl.setPreinstalledKioskAllowed(context, true);
+                break;
+            case Commands.DISABLE_PREINSTALLED_KIOSK:
+                ProvisionHelperImpl.setPreinstalledKioskAllowed(context, false);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported command: " + command);
