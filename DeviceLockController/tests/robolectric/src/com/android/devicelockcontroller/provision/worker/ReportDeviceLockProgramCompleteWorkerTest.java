@@ -105,7 +105,7 @@ public final class ReportDeviceLockProgramCompleteWorkerTest {
     @Test
     public void doWork_responseHasFatalError_returnFailure() {
         when(mClient.reportDeviceProgramComplete()).thenReturn(
-                new DeviceFinalizeClient.ReportDeviceProgramCompleteResponse(Status.UNKNOWN));
+                new DeviceFinalizeClient.ReportDeviceProgramCompleteResponse(Status.UNIMPLEMENTED));
 
         assertThat(Futures.getUnchecked(mWorker.startWork())).isEqualTo(Result.failure());
     }
