@@ -23,7 +23,6 @@ import static com.android.devicelockcontroller.provision.worker.ReportDeviceLock
 import static com.google.common.truth.Truth.assertThat;
 
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.os.OutcomeReceiver;
 
 import androidx.annotation.NonNull;
@@ -57,12 +56,13 @@ public final class FinalizationControllerImplTest {
 
     private static final int TIMEOUT_MS = 1000;
 
-    private SystemDeviceLockManager mSystemDeviceLockManager = new TestSystemDeviceLockManager();
+    private final SystemDeviceLockManager mSystemDeviceLockManager =
+            new TestSystemDeviceLockManager();
     private Context mContext;
     private FinalizationControllerImpl mFinalizationController;
     private FinalizationStateDispatchQueue mDispatchQueue;
-    private ExecutionSequencer mExecutionSequencer = ExecutionSequencer.create();
-    private Executor mBgExecutor = Executors.newCachedThreadPool();
+    private final ExecutionSequencer mExecutionSequencer = ExecutionSequencer.create();
+    private final Executor mBgExecutor = Executors.newCachedThreadPool();
     private GlobalParametersClient mGlobalParametersClient;
 
     @Before
@@ -110,7 +110,6 @@ public final class FinalizationControllerImplTest {
         Futures.getChecked(reportedFuture, Exception.class, TIMEOUT_MS, TimeUnit.MILLISECONDS);
 
         // THEN the disk value is set to finalized
-        PackageManager pm = mContext.getPackageManager();
         assertThat(mGlobalParametersClient.getFinalizationState().get()).isEqualTo(FINALIZED);
     }
 
