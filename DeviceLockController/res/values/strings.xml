@@ -86,6 +86,8 @@
     <string name="restrict_device_if_missing_payment"><xliff:g id="provider name">%1$s</xliff:g> can restrict the device if you miss a payment. For details, view the <xliff:g id="terms_and_conditions_link_start">&lt;a href="%2$s"></xliff:g>Terms &amp; Conditions<xliff:g id="terms_and_conditions_link_end">&lt;/a&gt;</xliff:g>.</string>
     <!-- Text explaining that the device can be restricted if the user does not make payments. [CHAR_LIMIT=NONE] -->
     <string name="restrict_device_if_dont_make_payment"><xliff:g id="provider name">%1$s</xliff:g> can restrict this device if you don\'t make the necessary payments. For details, view the <xliff:g id="terms_and_conditions_link_start">&lt;a href="%2$s"></xliff:g>Terms &amp; Conditions<xliff:g id="terms_and_conditions_link_end">&lt;/a&gt;</xliff:g>.</string>
+    <!-- Text explaining that user can reach out to the device provider for help. [CHAR_LIMIT=NONE] -->
+    <string name="contact_provider_for_help">For help, <xliff:g id="support_link_start">&lt;a href="%2$s"></xliff:g>contact <xliff:g id="provider name">%1$s</xliff:g><xliff:g id="support_link_end">&lt;/a&gt;</xliff:g>.</string>
     <!-- Button text. This button lets a user go back to previous screen. [CHAR_LIMIT=20] -->
     <string name="previous">Previous</string>
     <!-- Button text. This button lets a user go to the next screen. [CHAR_LIMIT=20] -->

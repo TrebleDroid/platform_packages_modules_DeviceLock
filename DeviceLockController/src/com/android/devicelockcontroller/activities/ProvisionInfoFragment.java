@@ -90,7 +90,7 @@ public final class ProvisionInfoFragment extends Fragment {
             LogUtil.e(TAG, "Could not find provision info RecyclerView, should not reach here.");
             return;
         }
-        ProvisionInfoListAdapter adapter = new ProvisionInfoListAdapter(viewModel);
+        ProvisionInfoListAdapter adapter = new ProvisionInfoListAdapter();
         viewModel.mProvisionInfoListLiveData.observe(getViewLifecycleOwner(),
                 adapter::submitList);
         recyclerView.setAdapter(adapter);
@@ -99,7 +99,7 @@ public final class ProvisionInfoFragment extends Fragment {
             LogUtil.e(TAG, "Could not find header ImageView, should not reach here.");
             return;
         }
-        imageView.setImageResource(viewModel.mHeaderDrawableId);
+        imageView.setImageResource(ProvisionInfoViewModel.HEADER_DRAWABLE_ID);
 
         TextView headerTextView = view.findViewById(R.id.header_text);
         if (headerTextView == null) {
