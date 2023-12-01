@@ -31,7 +31,6 @@ import com.android.devicelockcontroller.stats.StatsLoggerProvider;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
-import com.google.common.util.concurrent.MoreExecutors;
 
 /**
  * A worker class dedicated to check whether device is in approved country.
@@ -46,8 +45,7 @@ import com.google.common.util.concurrent.MoreExecutors;
  * - If no boolean value presents, then device country info is unavailable and provision should fail
  * due to {@link ProvisionFailureReason#COUNTRY_INFO_UNAVAILABLE};
  */
-public final class IsDeviceInApprovedCountryWorker extends
-        AbstractCheckInWorker {
+public final class IsDeviceInApprovedCountryWorker extends AbstractCheckInWorker {
 
     public static final String KEY_CARRIER_INFO = "carrier-info";
     public static final String KEY_IS_IN_APPROVED_COUNTRY = "is-in-approved-country";
@@ -82,6 +80,6 @@ public final class IsDeviceInApprovedCountryWorker extends
                         response.isDeviceInApprovedCountry()).build());
             }
             return Result.success();
-        }, MoreExecutors.directExecutor());
+        }, mExecutorService);
     }
 }
