@@ -48,7 +48,8 @@
     <string name="device_provided_by_provider" msgid="290593329676291991">"මෙම උපාංගය <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> මගින් සපයනු ලබයි"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Kiosk යෙදුම ස්වයංක්‍රීයව බාගත කර ස්ථාපනය කරනු ලැබේ"</string>
     <string name="install_kiosk_app_secondary_user" msgid="49911908012320834">"මෙම පරිශීලකයා සඳහා Kiosk යෙදුම ස්ථාපනය කරනු ලැබේ"</string>
-    <string name="restrict_device_if_missing_payment" msgid="2907880869705064855">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> හට ඔබට ගෙවීමක් මඟ හැරුණහොත් උපාංගය සීමා කළ හැක"</string>
+    <!-- no translation found for restrict_device_if_missing_payment (8883980285859496904) -->
+    <skip />
     <string name="restrict_device_if_dont_make_payment" msgid="1619095674945507015">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> හට ඔබ අවශ්‍ය ගෙවීම් නොකරන්නේ නම් මෙම උපාංගය සීමා කළ හැක. විස්තර සඳහා, <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>නියමයන් සහ කොන්දේසි<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g> බලන්න."</string>
     <string name="previous" msgid="5241891780917802570">"පෙර"</string>
     <string name="next" msgid="8248291863254324326">"මීළඟ"</string>

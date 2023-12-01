@@ -48,7 +48,8 @@
     <string name="device_provided_by_provider" msgid="290593329676291991">"Este dispositivo é fornecido pela <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"O aplicativo de quiosque será transferido por download e instalado automaticamente"</string>
     <string name="install_kiosk_app_secondary_user" msgid="49911908012320834">"O aplicativo de quiosque será instalado para este usuário"</string>
-    <string name="restrict_device_if_missing_payment" msgid="2907880869705064855">"O provedor <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> pode restringir o dispositivo caso você atrase um pagamento"</string>
+    <!-- no translation found for restrict_device_if_missing_payment (8883980285859496904) -->
+    <skip />
     <string name="restrict_device_if_dont_make_payment" msgid="1619095674945507015">"A <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> pode restringir este dispositivo caso você não faça os pagamentos necessários. Para mais detalhes, consulte os <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>Termos e Condições<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g>."</string>
     <string name="previous" msgid="5241891780917802570">"Anterior"</string>
     <string name="next" msgid="8248291863254324326">"Próxima"</string>
