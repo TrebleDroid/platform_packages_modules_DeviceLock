@@ -31,6 +31,7 @@ import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.pm.PackageManager;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.provider.Settings;
 
 import androidx.test.core.app.ApplicationProvider;
@@ -137,6 +138,18 @@ public final class ProvisionStateControllerImplTest {
         // Two times invocation of enforceCurrentPolicies method is expected because we are calling
         // setNextStateForEvent twice.
         verify(mMockPolicyController, times(2)).enforceCurrentPolicies();
+    }
+
+    @Test
+    public void setNextStateForEvent_shouldWriteStartTimeToUserParameters_whenProvisonReady()
+            throws ExecutionException, InterruptedException {
+        when(mMockPolicyController.enforceCurrentPolicies()).thenReturn(
+                Futures.immediateVoidFuture());
+
+        mProvisionStateController.setNextStateForEvent(ProvisionEvent.PROVISION_READY).get();
+
+        assertThat(UserParameters.getProvisioningStartTimeMillis(mTestApp))
+                .isEqualTo(SystemClock.elapsedRealtime());
     }
 
     @Test

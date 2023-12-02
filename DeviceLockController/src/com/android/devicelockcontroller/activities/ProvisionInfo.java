@@ -16,26 +16,40 @@
 
 package com.android.devicelockcontroller.activities;
 
+import androidx.annotation.IntDef;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.Objects;
 
 /**
  * A data model class which is used to hold the data needed to render the RecyclerView.
  */
 public final class ProvisionInfo {
-
-    private final boolean mTermsAndConditionsLinkIncluded;
-    private final int mDrawableId;
-
-    private final int mTextId;
-
-    public ProvisionInfo(int drawableId, int textId, boolean termsAndConditionsLinkIncluded) {
-        mDrawableId = drawableId;
-        mTextId = textId;
-        mTermsAndConditionsLinkIncluded = termsAndConditionsLinkIncluded;
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef(value = {ProvisionInfoType.REGULAR, ProvisionInfoType.TERMS_AND_CONDITIONS,
+            ProvisionInfoType.SUPPORT})
+    public @interface ProvisionInfoType {
+        // The general type of provision info without any link
+        int REGULAR = 0;
+        // The type of provision info with a link for terms and conditions.
+        int TERMS_AND_CONDITIONS = 1;
+        // The type of provision info with a link for custom support.
+        int SUPPORT = 2;
     }
 
-    public boolean isTermsAndConditionsLinkIncluded() {
-        return mTermsAndConditionsLinkIncluded;
+    @ProvisionInfoType
+    private final int mType;
+    private final int mDrawableId;
+    private final int mTextId;
+
+    private String mProviderName;
+    private String mUrl;
+
+    public ProvisionInfo(int drawableId, int textId, @ProvisionInfoType int type) {
+        mDrawableId = drawableId;
+        mTextId = textId;
+        mType = type;
     }
 
     public int getDrawableId() {
@@ -46,20 +60,41 @@ public final class ProvisionInfo {
         return mTextId;
     }
 
+    @ProvisionInfoType
+    public int getType() {
+        return mType;
+    }
+
+    public String getProviderName() {
+        return mProviderName;
+    }
+
+    public void setProviderName(String providerName) {
+        mProviderName = providerName;
+    }
+
+    public String getUrl() {
+        return mUrl;
+    }
+
+    public void setUrl(String url) {
+        mUrl = url;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof ProvisionInfo)) {
+        if (!(obj instanceof ProvisionInfo that)) {
             return false;
         }
-        ProvisionInfo that = (ProvisionInfo) obj;
-        return this.mDrawableId == that.mDrawableId && this.mTextId == that.mTextId;
+        return this.mDrawableId == that.mDrawableId && this.mTextId == that.mTextId
+                && this.mType == that.mType;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(mDrawableId, mTextId);
+        return Objects.hash(mDrawableId, mTextId, mType);
     }
 }

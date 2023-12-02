@@ -48,6 +48,8 @@ public final class UserParameters {
             "next-provision-failed-step-time-millis";
     private static final String KEY_RESET_DEVICE_TIME_MILLIS = "reset-device-time-millis";
     private static final String KEY_DAYS_LEFT_UNTIL_RESET = "days-left-until-reset";
+    private static final String KEY_PROVISIONING_START_TIME_MILLIS =
+            "provisioning-start-time-millis";
     public static final String KEY_NEED_INITIAL_CHECK_IN = "need-initial-check-in";
 
     private UserParameters() {
@@ -197,6 +199,17 @@ public final class UserParameters {
     /** Set the number of days before device should factory reset */
     public static void setDaysLeftUntilReset(Context context, int days) {
         getSharedPreferences(context).edit().putInt(KEY_DAYS_LEFT_UNTIL_RESET, days).apply();
+    }
+
+    public static long getProvisioningStartTimeMillis(Context context) {
+        return getSharedPreferences(context).getLong(KEY_PROVISIONING_START_TIME_MILLIS,
+                /* defValue = */-1L);
+    }
+
+    public static void setProvisioningStartTimeMillis(Context context,
+            @CurrentTimeMillisLong long provisioningStartTime) {
+        getSharedPreferences(context).edit().putLong(KEY_PROVISIONING_START_TIME_MILLIS,
+                provisioningStartTime).apply();
     }
 
     /**

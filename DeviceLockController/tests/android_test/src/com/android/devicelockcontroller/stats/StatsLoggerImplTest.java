@@ -17,13 +17,15 @@
 package com.android.devicelockcontroller.stats;
 
 import static com.android.devicelockcontroller.DevicelockStatsLog.DEVICE_LOCK_CHECK_IN_REQUEST_REPORTED__TYPE__GET_DEVICE_CHECK_IN_STATUS;
+import static com.android.devicelockcontroller.DevicelockStatsLog.DEVICE_LOCK_CHECK_IN_REQUEST_REPORTED__TYPE__IS_DEVICE_IN_APPROVED_COUNTRY;
 import static com.android.devicelockcontroller.DevicelockStatsLog.DEVICE_LOCK_CHECK_IN_REQUEST_REPORTED__TYPE__PAUSE_DEVICE_PROVISIONING;
-import static com.android.devicelockcontroller.DevicelockStatsLog.DEVICE_LOCK_CHECK_IN_REQUEST_REPORTED__TYPE__REPORT_DEVICE_PROVISIONING_COMPLETE;
 import static com.android.devicelockcontroller.DevicelockStatsLog.DEVICE_LOCK_CHECK_IN_REQUEST_REPORTED__TYPE__REPORT_DEVICE_PROVISION_STATE;
 import static com.android.devicelockcontroller.DevicelockStatsLog.DEVICE_LOCK_KIOSK_APP_REQUEST_REPORTED;
+import static com.android.devicelockcontroller.DevicelockStatsLog.DEVICE_LOCK_PROVISIONING_COMPLETE_REPORTED;
 import static com.android.dx.mockito.inline.extended.ExtendedMockito.verify;
 
 import com.android.modules.utils.testing.ExtendedMockitoRule;
+
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -31,6 +33,7 @@ import com.android.devicelockcontroller.DevicelockStatsLog;
 
 public final class StatsLoggerImplTest {
     private static final int UID = 123;
+    private static final long PROVISIONING_TIME_MILLIS = 2000;
     private final StatsLogger mStatsLogger = new StatsLoggerImpl();
 
     @Rule
@@ -65,5 +68,21 @@ public final class StatsLoggerImplTest {
     public void logKioskAppRequest_shouldWriteCorrectLog() {
         mStatsLogger.logKioskAppRequest(UID);
         verify(() -> DevicelockStatsLog.write(DEVICE_LOCK_KIOSK_APP_REQUEST_REPORTED, UID));
+    }
+
+    @Test
+    public void logProvisioningComplete_afterStartTimerForProvisioning_shouldWriteCorrectLog() {
+        mStatsLogger.logProvisioningComplete(PROVISIONING_TIME_MILLIS);
+
+        verify(() -> DevicelockStatsLog.write(DEVICE_LOCK_PROVISIONING_COMPLETE_REPORTED,
+                PROVISIONING_TIME_MILLIS));
+    }
+
+    @Test
+    public void logIsDeviceInApprovedCountry_shouldWriteCorrectLog() {
+        mStatsLogger.logIsDeviceInApprovedCountry();
+        verify(() -> DevicelockStatsLog.write(
+                DevicelockStatsLog.DEVICE_LOCK_CHECK_IN_REQUEST_REPORTED,
+                DEVICE_LOCK_CHECK_IN_REQUEST_REPORTED__TYPE__IS_DEVICE_IN_APPROVED_COUNTRY));
     }
 }

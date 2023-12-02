@@ -34,6 +34,9 @@ import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.database.ContentObserver;
+import android.net.Uri;
+import android.os.SystemClock;
 import android.os.UserManager;
 import android.provider.Settings;
 
@@ -48,6 +51,7 @@ import com.android.devicelockcontroller.provision.worker.ReportDeviceProvisionSt
 import com.android.devicelockcontroller.receivers.LockedBootCompletedReceiver;
 import com.android.devicelockcontroller.schedule.DeviceLockControllerScheduler;
 import com.android.devicelockcontroller.schedule.DeviceLockControllerSchedulerProvider;
+import com.android.devicelockcontroller.stats.StatsLoggerProvider;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
 import com.android.devicelockcontroller.storage.UserParameters;
 import com.android.devicelockcontroller.util.LogUtil;
@@ -145,6 +149,12 @@ public final class ProvisionStateControllerImpl implements ProvisionStateControl
                                 int newState = getNextState(currentState, event);
                                 UserParameters.setProvisionState(mContext, newState);
                                 handleNewState(newState);
+                                // We treat when the event is PROVISION_READY as the start of the
+                                // provisioning time.
+                                if (PROVISION_READY == event) {
+                                    UserParameters.setProvisioningStartTimeMillis(mContext,
+                                            SystemClock.elapsedRealtime());
+                                }
                                 return newState;
                             }, mBgExecutor);
             // To prevent exception propagate to future state transitions, catch any exceptions

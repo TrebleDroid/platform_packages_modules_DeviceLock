@@ -15,6 +15,7 @@
  */
 
 package com.android.devicelockcontroller.stats;
+
 import com.android.devicelockcontroller.DevicelockStatsLog;
 
 /**
@@ -41,9 +42,21 @@ public interface StatsLogger {
     void logReportDeviceProvisionState();
 
     /**
+     * Logs the analytics event of receiving a result from the server of the
+     * IsDeviceInApprovedCountry gRPC call.
+     */
+    void logIsDeviceInApprovedCountry();
+
+    /**
      * Logs the analytics event of receiving a request from the Kisok app.
      *
      * @param uid The UID of the Kiosk app, which can be acquired from the PackageManager.
      */
     void logKioskAppRequest(int uid);
+
+    /**
+     * Logs the analytics event of starting the provisioning process, starting the Kiosk app, and
+     * the time elapsed in between.
+     */
+    void logProvisioningComplete(long timeSpentInProvisioningMillis);
 }
