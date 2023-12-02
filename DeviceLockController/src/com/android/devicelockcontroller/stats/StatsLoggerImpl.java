@@ -25,6 +25,8 @@ import static com.android.devicelockcontroller.DevicelockStatsLog.DEVICE_LOCK_PR
 
 import com.android.devicelockcontroller.DevicelockStatsLog;
 
+import java.util.concurrent.TimeUnit;
+
 public final class StatsLoggerImpl implements StatsLogger{
     @Override
     public void logGetDeviceCheckInStatus() {
@@ -58,6 +60,6 @@ public final class StatsLoggerImpl implements StatsLogger{
     @Override
     public void logProvisioningComplete(long timeSpentInProvisioningMillis) {
         DevicelockStatsLog.write(DEVICE_LOCK_PROVISIONING_COMPLETE_REPORTED,
-                timeSpentInProvisioningMillis);
+                TimeUnit.MILLISECONDS.toSeconds(timeSpentInProvisioningMillis));
     }
 }
