@@ -33,14 +33,13 @@ import androidx.work.WorkerParameters;
 
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.PauseDeviceProvisioningGrpcResponse;
+import com.android.devicelockcontroller.stats.StatsLogger;
 import com.android.devicelockcontroller.stats.StatsLoggerProvider;
 import com.android.devicelockcontroller.util.LogUtil;
-import com.android.devicelockcontroller.stats.StatsLogger;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
-import com.google.common.util.concurrent.MoreExecutors;
 
 /**
  * Despite the naming, this worker class is only to report provision has been paused by user to
@@ -103,6 +102,6 @@ public final class PauseProvisioningWorker extends AbstractCheckInWorker {
             }
             LogUtil.w(TAG, "Pause provisioning request failed: " + response);
             return Result.failure();
-        }, MoreExecutors.directExecutor());
+        }, mExecutorService);
     }
 }
