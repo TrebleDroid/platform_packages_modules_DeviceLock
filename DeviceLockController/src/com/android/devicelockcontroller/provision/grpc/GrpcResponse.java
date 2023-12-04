@@ -39,17 +39,24 @@ abstract class GrpcResponse {
     }
 
     public boolean hasRecoverableError() {
-        return mStatus != null && mStatus.getCode() == Code.UNAVAILABLE;
+        return mStatus != null
+                && (mStatus.getCode() == Code.UNAVAILABLE
+                || mStatus.getCode() == Code.UNKNOWN
+                || mStatus.getCode() == Code.INVALID_ARGUMENT
+                || mStatus.getCode() == Code.PERMISSION_DENIED
+                || mStatus.getCode() == Code.DEADLINE_EXCEEDED
+                || mStatus.getCode() == Code.RESOURCE_EXHAUSTED
+                || mStatus.getCode() == Code.ABORTED
+                || mStatus.getCode() == Code.DATA_LOSS
+                || mStatus.getCode() == Code.UNAUTHENTICATED);
     }
 
     public boolean isSuccessful() {
-        return mStatus == null;
+        return mStatus == null || mStatus.isOk();
     }
 
     public boolean hasFatalError() {
-        return mStatus != null
-                && mStatus.getCode() != Code.OK
-                && mStatus.getCode() != Code.UNAVAILABLE;
+        return !isSuccessful() && !hasRecoverableError() && !isInterrupted();
     }
 
     public boolean isInterrupted() {

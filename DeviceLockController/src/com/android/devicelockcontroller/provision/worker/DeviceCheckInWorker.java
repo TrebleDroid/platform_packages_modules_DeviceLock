@@ -27,9 +27,9 @@ import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrpcResponse;
 import com.android.devicelockcontroller.schedule.DeviceLockControllerScheduler;
 import com.android.devicelockcontroller.schedule.DeviceLockControllerSchedulerProvider;
+import com.android.devicelockcontroller.stats.StatsLogger;
 import com.android.devicelockcontroller.stats.StatsLoggerProvider;
 import com.android.devicelockcontroller.util.LogUtil;
-import com.android.devicelockcontroller.stats.StatsLogger;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -92,6 +92,8 @@ public final class DeviceCheckInWorker extends AbstractCheckInWorker {
                                 client.getDeviceCheckInStatus(
                                         deviceIds, carrierInfo, fcmToken);
                         if (response.hasRecoverableError()) {
+                            LogUtil.w(TAG, "Check-in failed w/ recoverable error" + response
+                                    + "\nRetrying...");
                             return Result.retry();
                         }
                         if (response.isSuccessful()) {
@@ -107,7 +109,7 @@ public final class DeviceCheckInWorker extends AbstractCheckInWorker {
                             return Result.failure();
                         }
 
-                        LogUtil.w(TAG, "CheckIn failed: " + response + "\nRetry check-in in: "
+                        LogUtil.e(TAG, "CheckIn failed: " + response + "\nRetry check-in in: "
                                 + RETRY_ON_FAILURE_DELAY);
                         scheduler.scheduleRetryCheckInWork(RETRY_ON_FAILURE_DELAY);
                         return Result.failure();

@@ -20,6 +20,7 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
+import androidx.work.BackoffPolicy;
 import androidx.work.Constraints;
 import androidx.work.Data;
 import androidx.work.ExistingWorkPolicy;
@@ -91,6 +92,7 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
                 new OneTimeWorkRequest.Builder(ReportDeviceProvisionStateWorker.class)
                         .setConstraints(constraints)
                         .setInputData(inputData)
+                        .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, BACKOFF_DELAY)
                         .build();
         workManager.enqueueUniqueWork(
                 REPORT_PROVISION_STATE_WORK_NAME,
@@ -133,9 +135,13 @@ public final class ReportDeviceProvisionStateWorker extends AbstractCheckInWorke
                             Futures.getDone(lastState),
                             isSuccessful,
                             failureReason);
-            if (response.hasRecoverableError()) return Result.retry();
+            if (response.hasRecoverableError()) {
+                LogUtil.w(TAG, "Report provision state failed w/ recoverable error" + response
+                        + "\nRetrying...");
+                return Result.retry();
+            }
             if (response.hasFatalError()) {
-                LogUtil.w(TAG,
+                LogUtil.e(TAG,
                         "Report provision state failed: " + response + "\nRetry current step");
                 scheduler.scheduleNextProvisionFailedStepAlarm(/* shouldGoOffImmediately= */ false);
                 return Result.failure();

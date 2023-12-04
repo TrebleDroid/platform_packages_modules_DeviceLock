@@ -27,6 +27,7 @@ import com.android.devicelockcontroller.common.DeviceLockConstants.ProvisionFail
 import com.android.devicelockcontroller.provision.grpc.DeviceCheckInClient;
 import com.android.devicelockcontroller.provision.grpc.IsDeviceInApprovedCountryGrpcResponse;
 import com.android.devicelockcontroller.stats.StatsLoggerProvider;
+import com.android.devicelockcontroller.util.LogUtil;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -72,6 +73,8 @@ public final class IsDeviceInApprovedCountryWorker extends AbstractCheckInWorker
             ((StatsLoggerProvider) mContext.getApplicationContext()).getStatsLogger()
                     .logIsDeviceInApprovedCountry();
             if (response.hasRecoverableError()) {
+                LogUtil.w(TAG, "Is in approve country failed w/ recoverable error" + response
+                        + "\nRetrying...");
                 return Result.retry();
             }
             Data.Builder builder = new Data.Builder();

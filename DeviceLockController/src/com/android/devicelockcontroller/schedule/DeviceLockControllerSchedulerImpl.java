@@ -21,6 +21,7 @@ import static com.android.devicelockcontroller.common.DeviceLockConstants.NON_MA
 import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState.PROVISION_FAILED;
 import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState.PROVISION_PAUSED;
 import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState.UNPROVISIONED;
+import static com.android.devicelockcontroller.provision.worker.AbstractCheckInWorker.BACKOFF_DELAY;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -86,7 +87,6 @@ public final class DeviceLockControllerSchedulerImpl implements DeviceLockContro
     public static final long PROVISION_STATE_REPORT_INTERVAL_DEFAULT_MINUTES =
             TimeUnit.DAYS.toMinutes(1);
     private final Context mContext;
-    private static final int CHECK_IN_INTERVAL_MINUTE = 60;
     private final Clock mClock;
     private final Executor mSequentialExecutor;
     private final ProvisionStateController mProvisionStateController;
@@ -404,8 +404,7 @@ public final class DeviceLockControllerSchedulerImpl implements DeviceLockContro
                                 new Constraints.Builder().setRequiredNetworkType(
                                         NetworkType.CONNECTED).build())
                         .setInitialDelay(delay)
-                        .setBackoffCriteria(BackoffPolicy.LINEAR,
-                                Duration.ofMinutes(CHECK_IN_INTERVAL_MINUTE));
+                        .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, BACKOFF_DELAY);
         if (isExpedited) builder.setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST);
         WorkManager.getInstance(mContext).enqueueUniqueWork(DEVICE_CHECK_IN_WORK_NAME,
                 ExistingWorkPolicy.REPLACE, builder.build());
