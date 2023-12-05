@@ -31,6 +31,8 @@ import org.junit.Test;
 
 import com.android.devicelockcontroller.DevicelockStatsLog;
 
+import java.util.concurrent.TimeUnit;
+
 public final class StatsLoggerImplTest {
     private static final int UID = 123;
     private static final long PROVISIONING_TIME_MILLIS = 2000;
@@ -75,7 +77,7 @@ public final class StatsLoggerImplTest {
         mStatsLogger.logProvisioningComplete(PROVISIONING_TIME_MILLIS);
 
         verify(() -> DevicelockStatsLog.write(DEVICE_LOCK_PROVISIONING_COMPLETE_REPORTED,
-                PROVISIONING_TIME_MILLIS));
+                TimeUnit.MILLISECONDS.toSeconds(PROVISIONING_TIME_MILLIS)));
     }
 
     @Test

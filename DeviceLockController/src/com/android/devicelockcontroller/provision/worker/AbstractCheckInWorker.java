@@ -34,11 +34,14 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 
+import java.time.Duration;
+
 /**
  * A base class for workers that execute gRPC requests with DeviceLock backend server.
  */
 public abstract class AbstractCheckInWorker extends ListenableWorker {
 
+    public static final Duration BACKOFF_DELAY = Duration.ofMinutes(1);
     static final String TAG = "CheckInWorker";
     final ListenableFuture<DeviceCheckInClient> mClient;
     final ListeningExecutorService mExecutorService;

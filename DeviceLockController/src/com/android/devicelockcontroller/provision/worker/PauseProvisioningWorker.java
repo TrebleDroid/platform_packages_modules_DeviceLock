@@ -23,6 +23,7 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
+import androidx.work.BackoffPolicy;
 import androidx.work.Constraints;
 import androidx.work.Data;
 import androidx.work.ExistingWorkPolicy;
@@ -66,6 +67,7 @@ public final class PauseProvisioningWorker extends AbstractCheckInWorker {
         OneTimeWorkRequest work =
                 new OneTimeWorkRequest.Builder(PauseProvisioningWorker.class)
                         .setConstraints(constraints)
+                        .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, BACKOFF_DELAY)
                         .setInputData(inputData)
                         .build();
         workManager.enqueueUniqueWork(REPORT_PROVISION_PAUSED_BY_USER_WORK,
@@ -94,13 +96,15 @@ public final class PauseProvisioningWorker extends AbstractCheckInWorker {
                     REASON_UNSPECIFIED);
             PauseDeviceProvisioningGrpcResponse response = client.pauseDeviceProvisioning(reason);
             if (response.hasRecoverableError()) {
+                LogUtil.w(TAG, "Report paused provisioning failed w/ recoverable error" + response
+                        + "\nRetrying...");
                 return Result.retry();
             }
             if (response.isSuccessful()) {
                 mStatsLogger.logPauseDeviceProvisioning();
                 return Result.success();
             }
-            LogUtil.w(TAG, "Pause provisioning request failed: " + response);
+            LogUtil.e(TAG, "Pause provisioning request failed: " + response);
             return Result.failure();
         }, mExecutorService);
     }

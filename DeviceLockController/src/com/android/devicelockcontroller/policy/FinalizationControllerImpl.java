@@ -20,6 +20,7 @@ import static com.android.devicelockcontroller.policy.FinalizationControllerImpl
 import static com.android.devicelockcontroller.policy.FinalizationControllerImpl.FinalizationState.FINALIZED_UNREPORTED;
 import static com.android.devicelockcontroller.policy.FinalizationControllerImpl.FinalizationState.UNFINALIZED;
 import static com.android.devicelockcontroller.policy.FinalizationControllerImpl.FinalizationState.UNINITIALIZED;
+import static com.android.devicelockcontroller.provision.worker.AbstractCheckInWorker.BACKOFF_DELAY;
 import static com.android.devicelockcontroller.provision.worker.ReportDeviceLockProgramCompleteWorker.REPORT_DEVICE_LOCK_PROGRAM_COMPLETE_WORK_NAME;
 
 import android.annotation.IntDef;
@@ -33,6 +34,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.annotation.WorkerThread;
 import androidx.concurrent.futures.CallbackToFutureAdapter;
+import androidx.work.BackoffPolicy;
 import androidx.work.Constraints;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.ListenableWorker;
@@ -215,6 +217,7 @@ public final class FinalizationControllerImpl implements FinalizationController 
         OneTimeWorkRequest work =
                 new OneTimeWorkRequest.Builder(mReportDeviceFinalizedWorkerClass)
                         .setConstraints(constraints)
+                        .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, BACKOFF_DELAY)
                         .build();
         ListenableFuture<Operation.State.SUCCESS> result =
                 workManager.enqueueUniqueWork(REPORT_DEVICE_LOCK_PROGRAM_COMPLETE_WORK_NAME,
