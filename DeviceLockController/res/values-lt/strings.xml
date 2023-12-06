@@ -48,9 +48,9 @@
     <string name="device_provided_by_provider" msgid="290593329676291991">"Šį įrenginį teikia „<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>“"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"Viešojo terminalo programa bus atsiųsta ir įdiegta automatiškai"</string>
     <string name="install_kiosk_app_secondary_user" msgid="49911908012320834">"Viešojo terminalo programa bus įdiegta šiam naudotojui"</string>
-    <!-- no translation found for restrict_device_if_missing_payment (8883980285859496904) -->
-    <skip />
+    <string name="restrict_device_if_missing_payment" msgid="8883980285859496904">"„<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>“ gali apriboti įrenginį, jei praleisite mokėjimą. Jei reikia išsamios informacijos, žr. skiltį <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>„Taisyklės ir nuostatos“<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g>."</string>
     <string name="restrict_device_if_dont_make_payment" msgid="1619095674945507015">"„<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>“ gali apriboti šį įrenginį, jei neatliksite reikiamų mokėjimų. Jei reikia išsamios informacijos, žr. skiltį <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>„Taisyklės ir nuostatos“<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g>."</string>
+    <string name="contact_provider_for_help" msgid="3872028089834808884">"Jei reikia pagalbos, <xliff:g id="SUPPORT_LINK_START">&lt;a href=%2$s&gt;</xliff:g>susisiekite su „<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>“<xliff:g id="SUPPORT_LINK_END">&lt;/a&gt;</xliff:g>."</string>
     <string name="previous" msgid="5241891780917802570">"Ankstesnis"</string>
     <string name="next" msgid="8248291863254324326">"Kitas"</string>
     <string name="start" msgid="2842214844667658537">"Pradėti"</string>

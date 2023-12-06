@@ -48,9 +48,9 @@
     <string name="device_provided_by_provider" msgid="290593329676291991">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ले यो डिभाइस उपलब्ध गराएको हो"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"किअस्क एप स्वतः डाउनलोड गरी इन्स्टल गरिने छ"</string>
     <string name="install_kiosk_app_secondary_user" msgid="49911908012320834">"यी प्रयोगकर्ताका लागि किअस्क एप इन्स्टल गरिने छ"</string>
-    <!-- no translation found for restrict_device_if_missing_payment (8883980285859496904) -->
-    <skip />
+    <string name="restrict_device_if_missing_payment" msgid="8883980285859496904">"तपाईंले समयमै रकम भुक्तानी गर्नुभएन भने <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ले डिभाइसमाथि प्रतिबन्ध लगाउन सक्छन्। विवरणहरू प्राप्त गर्न <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>सेवाका सर्तहरू<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g> हेर्नुहोस्।"</string>
     <string name="restrict_device_if_dont_make_payment" msgid="1619095674945507015">"तपाईंले तिर्नु पर्ने रकम भुक्तानी गर्नुभएन भने <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> ले यो डिभाइसमाथि प्रतिबन्ध लगाउन सक्छ। विवरणहरू प्राप्त गर्न <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>सेवाका सर्तहरू<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g> हेर्नुहोस्।"</string>
+    <string name="contact_provider_for_help" msgid="3872028089834808884">"मद्दत प्राप्त गर्न <xliff:g id="SUPPORT_LINK_START">&lt;a href=%2$s&gt;</xliff:g><xliff:g id="PROVIDER_NAME">%1$s</xliff:g> मा सम्पर्क गर्नुहोस्<xliff:g id="SUPPORT_LINK_END">&lt;/a&gt;</xliff:g>।"</string>
     <string name="previous" msgid="5241891780917802570">"अघिल्लो"</string>
     <string name="next" msgid="8248291863254324326">"अर्को"</string>
     <string name="start" msgid="2842214844667658537">"सुरु गर्नुहोस्"</string>
