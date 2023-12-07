@@ -122,6 +122,9 @@ java_test_helper_library {
     libs: [
         "framework-statsd",
     ],
+    static_libs: [
+        "modules-utils-expresslog",
+    ],
     visibility: [
         "//packages/modules/DeviceLock:__subpackages__",
     ],
@@ -162,6 +165,7 @@ android_library {
         "dagger2",
         "SettingsLibCollapsingToolbarBaseActivity",
         "SettingsLibTopIntroPreference",
+        "modules-utils-expresslog",
     ],
     manifest: "AndroidManifestBase.xml",
     apex_available: [
