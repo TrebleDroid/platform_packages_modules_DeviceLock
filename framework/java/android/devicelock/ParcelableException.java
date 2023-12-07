@@ -31,7 +31,7 @@ public final class ParcelableException extends Exception implements Parcelable {
     }
 
     public ParcelableException(String message) {
-        super(message);
+        super(new Exception(message));
     }
 
     private static Exception readFromParcel(Parcel in) {

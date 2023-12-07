@@ -39,8 +39,7 @@ import java.util.List;
 public final class DeviceLockControllerPackageUtils {
     private final Context mContext;
 
-    @VisibleForTesting
-    static final String SERVICE_ACTION =
+    private static final String SERVICE_ACTION =
             "android.app.action.DEVICE_LOCK_CONTROLLER_SERVICE";
 
     public DeviceLockControllerPackageUtils(Context context) {
