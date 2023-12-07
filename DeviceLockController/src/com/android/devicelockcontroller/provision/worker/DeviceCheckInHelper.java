@@ -25,11 +25,10 @@ import static com.android.devicelockcontroller.common.DeviceLockConstants.RETRY_
 import static com.android.devicelockcontroller.common.DeviceLockConstants.STATUS_UNSPECIFIED;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.STOP_CHECK_IN;
 import static com.android.devicelockcontroller.common.DeviceLockConstants.TOTAL_DEVICE_ID_TYPES;
+import static com.android.devicelockcontroller.receivers.CheckInBootCompletedReceiver.disableCheckInBootCompletedReceiver;
 
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.os.UserHandle;
@@ -45,7 +44,6 @@ import com.android.devicelockcontroller.common.DeviceId;
 import com.android.devicelockcontroller.policy.PolicyObjectsProvider;
 import com.android.devicelockcontroller.provision.grpc.GetDeviceCheckInStatusGrpcResponse;
 import com.android.devicelockcontroller.provision.grpc.ProvisioningConfiguration;
-import com.android.devicelockcontroller.receivers.CheckInBootCompletedReceiver;
 import com.android.devicelockcontroller.receivers.ProvisionReadyReceiver;
 import com.android.devicelockcontroller.schedule.DeviceLockControllerScheduler;
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
@@ -130,7 +128,7 @@ public final class DeviceCheckInHelper extends AbstractDeviceCheckInHelper {
         switch (response.getDeviceCheckInStatus()) {
             case READY_FOR_PROVISION:
                 boolean result = handleProvisionReadyResponse(response);
-                disableCheckInBootCompletedReceiver();
+                disableCheckInBootCompletedReceiver(mAppContext);
                 return result;
             case RETRY_CHECK_IN:
                 try {
@@ -162,7 +160,7 @@ public final class DeviceCheckInHelper extends AbstractDeviceCheckInHelper {
                             }
                         }, MoreExecutors.directExecutor()
                 );
-                disableCheckInBootCompletedReceiver();
+                disableCheckInBootCompletedReceiver(mAppContext);
                 return true;
             case STATUS_UNSPECIFIED:
             default:
@@ -193,11 +191,5 @@ public final class DeviceCheckInHelper extends AbstractDeviceCheckInHelper {
                 new Intent(mAppContext, ProvisionReadyReceiver.class),
                 UserHandle.ALL);
         return true;
-    }
-
-    private void disableCheckInBootCompletedReceiver() {
-        mAppContext.getPackageManager().setComponentEnabledSetting(
-                new ComponentName(mAppContext, CheckInBootCompletedReceiver.class),
-                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
     }
 }

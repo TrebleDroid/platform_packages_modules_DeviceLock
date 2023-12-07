@@ -17,8 +17,10 @@
 package com.android.devicelockcontroller.receivers;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 
 import androidx.annotation.VisibleForTesting;
 
@@ -63,8 +65,12 @@ public final class CheckInBootCompletedReceiver extends BroadcastReceiver {
         LogUtil.i(TAG, "Received boot completed intent");
 
         if (!context.getUser().isSystem()) {
-            throw new IllegalStateException(
-                    "This receiver should not run on anything besides the system user");
+            // This is not *supposed* to happen since the receiver is marked systemUserOnly but
+            // there seems to be some edge case where it does. See b/304318606.
+            // In this case, we'll just disable and return early.
+            LogUtil.w(TAG, "Called check in boot receiver on non-system user!");
+            disableCheckInBootCompletedReceiver(context);
+            return;
         }
         Context applicationContext = context.getApplicationContext();
         DeviceLockControllerSchedulerProvider schedulerProvider =
@@ -97,5 +103,16 @@ public final class CheckInBootCompletedReceiver extends BroadcastReceiver {
                         throw new RuntimeException(t);
                     }
                 }, mExecutor);
+    }
+
+    /**
+     * Disable the receiver for the current user
+     *
+     * @param context context of current user
+     */
+    public static void disableCheckInBootCompletedReceiver(Context context) {
+        context.getPackageManager().setComponentEnabledSetting(
+                new ComponentName(context, CheckInBootCompletedReceiver.class),
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
     }
 }
