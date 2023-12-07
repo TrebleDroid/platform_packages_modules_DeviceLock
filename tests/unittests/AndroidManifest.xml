@@ -15,14 +15,6 @@
   ~ limitations under the License.
   -->
 
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.android.server.devicelock.tests" >
-
-    <application android:debuggable="true">
-        <uses-library android:name="android.test.runner" />
-    </application>
-
-    <instrumentation android:name="androidx.test.runner.AndroidJUnitRunner"
-                     android:targetPackage="com.android.server.devicelock.tests"
-                     android:label="Device Lock unit tests"/>
+<manifest package="com.android.server.devicelock.tests" >
+    <application/>
 </manifest>
