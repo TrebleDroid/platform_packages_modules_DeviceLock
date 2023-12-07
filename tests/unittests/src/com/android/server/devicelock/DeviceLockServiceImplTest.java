@@ -19,102 +19,116 @@ package com.android.server.devicelock;
 import static android.devicelock.DeviceId.DEVICE_ID_TYPE_IMEI;
 import static android.devicelock.DeviceId.DEVICE_ID_TYPE_MEID;
 
-import static com.android.server.devicelock.DeviceLockControllerPackageUtils.SERVICE_ACTION;
-import static com.android.server.devicelock.TestUtils.eventually;
+import static com.android.dx.mockito.inline.extended.ExtendedMockito.anyString;
+import static com.android.dx.mockito.inline.extended.ExtendedMockito.doNothing;
+import static com.android.dx.mockito.inline.extended.ExtendedMockito.verify;
+import static com.android.dx.mockito.inline.extended.ExtendedMockito.when;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
-import static org.robolectric.Shadows.shadowOf;
 
-import android.app.Application;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.pm.ServiceInfo;
 import android.devicelock.IGetDeviceIdCallback;
 import android.os.Binder;
 import android.os.Bundle;
-import android.os.Looper;
 import android.os.RemoteCallback;
 import android.telephony.TelephonyManager;
 
-import androidx.test.core.app.ApplicationProvider;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.android.devicelockcontroller.IDeviceLockControllerService;
+import com.android.dx.mockito.inline.extended.ExtendedMockito;
 
+import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
+import org.mockito.Mockito;
+import org.mockito.MockitoSession;
+import org.mockito.quality.Strictness;
 import org.mockito.stubbing.Answer;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.shadows.ShadowApplication;
-import org.robolectric.shadows.ShadowPackageManager;
-import org.robolectric.shadows.ShadowTelephonyManager;
+
+import java.util.List;
 
 /**
  * Tests for {@link com.android.server.devicelock.DeviceLockServiceImpl}.
  */
-@RunWith(RobolectricTestRunner.class)
 public final class DeviceLockServiceImplTest {
     private static final String DLC_PACKAGE_NAME = "test.package";
 
     private static final String DLC_SERVICE_NAME = "test.service";
 
-    private static final long ONE_SEC_MILLIS = 1000;
+    private Context mMockContext;
 
-    @Rule
-    public MockitoRule mMockitoRule = MockitoJUnit.rule();
+    @Mock
+    private PackageManager mPackageManager;
 
-    private ShadowTelephonyManager mShadowTelephonyManager;
+    @Mock
+    private TelephonyManager mTelephonyManager;
 
     @Mock
     private IDeviceLockControllerService mDeviceLockControllerService;
 
-    private ShadowApplication mShadowApplication;
+    @Captor
+    private ArgumentCaptor<ServiceConnection> mConnectionCaptor;
+
+    private MockitoSession mSession;
 
     private DeviceLockServiceImpl mService;
 
+    private static final long ONE_SEC_MILLIS = 1000;
+
     @Before
-    public void setup() {
-        Context context = ApplicationProvider.getApplicationContext();
-        mShadowApplication = shadowOf((Application) context);
+    public void setup() throws Exception {
+        mSession = ExtendedMockito.mockitoSession()
+                .initMocks(this)
+                .strictness(Strictness.LENIENT)
+                .startMocking();
 
-        PackageManager packageManager = context.getPackageManager();
-        ShadowPackageManager shadowPackageManager = shadowOf(packageManager);
+        mMockContext = Mockito.spy(InstrumentationRegistry.getInstrumentation().getContext());
+        doNothing().when(mMockContext).enforceCallingPermission(anyString(), anyString());
+        doReturn(new Intent()).when(mMockContext).registerReceiverForAllUsers(
+                any(), any(), any(), any(), anyInt());
+        doReturn(mMockContext).when(mMockContext).createPackageContextAsUser(
+                any(), anyInt(), any());
+        doReturn(true).when(mMockContext).bindServiceAsUser(any(), any(), anyInt(), any());
+        when(mMockContext.getPackageManager()).thenReturn(mPackageManager);
 
-        PackageInfo dlcPackageInfo = new PackageInfo();
-        dlcPackageInfo.packageName = DLC_PACKAGE_NAME;
-        shadowPackageManager.installPackage(dlcPackageInfo);
+        final List<ResolveInfo> resolveInfos = List.of(makeDlcResolveInfo());
+        when(mPackageManager.queryIntentServicesAsUser(any(), anyInt(), any()))
+                .thenReturn(resolveInfos);
 
-        Intent intent = new Intent(SERVICE_ACTION);
-        ResolveInfo resolveInfo = makeDlcResolveInfo();
-        shadowPackageManager.addResolveInfoForIntent(intent, resolveInfo);
-
-        TelephonyManager telephonyManager = context.getSystemService(TelephonyManager.class);
-        mShadowTelephonyManager = shadowOf(telephonyManager);
-
-        mService = new DeviceLockServiceImpl(context, telephonyManager);
+        mService = new DeviceLockServiceImpl(mMockContext, mTelephonyManager);
     }
+
+    @After
+    public void teardown() {
+        if (mSession != null) {
+            mSession.finishMocking();
+        }
+    }
+
 
     @Test
     public void getDeviceId_withIMEIType_shouldReturnIMEI() throws Exception {
         // GIVEN an IMEI registered in telephony manager
         final String testImei = "983402979622353";
-        mShadowTelephonyManager.setActiveModemCount(1);
-        mShadowTelephonyManager.setImei(/* slotIndex= */ 0, testImei);
+        when(mTelephonyManager.getActiveModemCount()).thenReturn(1);
+        when(mTelephonyManager.getImei(0)).thenReturn(testImei);
 
         // GIVEN a successful service call to DLC app
         doAnswer((Answer<Void>) invocation -> {
@@ -129,7 +143,7 @@ public final class DeviceLockServiceImplTest {
 
         // WHEN the device id is requested with the IMEI device type
         mService.getDeviceId(mockCallback, 1 << DEVICE_ID_TYPE_IMEI);
-        waitUntilConnected();
+        mockServiceConnected();
 
         // THEN the IMEI id is received
         verify(mockCallback, timeout(ONE_SEC_MILLIS)).onDeviceIdReceived(
@@ -140,8 +154,8 @@ public final class DeviceLockServiceImplTest {
     public void getDeviceId_withMEIDType_shouldReturnMEID() throws Exception {
         // GIVEN an MEID registered in telephony manager
         final String testMeid = "354403064522046";
-        mShadowTelephonyManager.setActiveModemCount(1);
-        mShadowTelephonyManager.setMeid(/* slotIndex= */ 0, testMeid);
+        when(mTelephonyManager.getActiveModemCount()).thenReturn(1);
+        when(mTelephonyManager.getMeid(0)).thenReturn(testMeid);
 
         // GIVEN a successful service call to DLC app
         doAnswer((Answer<Void>) invocation -> {
@@ -156,7 +170,7 @@ public final class DeviceLockServiceImplTest {
 
         // WHEN the device id is requested with the MEID device type
         mService.getDeviceId(mockCallback, 1 << DEVICE_ID_TYPE_MEID);
-        waitUntilConnected();
+        mockServiceConnected();
 
         // THEN the MEID id is received
         verify(mockCallback, timeout(ONE_SEC_MILLIS)).onDeviceIdReceived(
@@ -167,8 +181,8 @@ public final class DeviceLockServiceImplTest {
      * Make the resolve info for the DLC package.
      */
     private ResolveInfo makeDlcResolveInfo() {
-        ApplicationInfo appInfo = new ApplicationInfo();
-        appInfo.privateFlags |= ApplicationInfo.PRIVATE_FLAG_PRIVILEGED;
+        ApplicationInfo appInfo = Mockito.spy(ApplicationInfo.class);
+        doReturn(true).when(appInfo).isPrivilegedApp();
         appInfo.flags |= ApplicationInfo.FLAG_SYSTEM;
         ServiceInfo serviceInfo = new ServiceInfo();
         serviceInfo.name = DLC_SERVICE_NAME;
@@ -176,22 +190,20 @@ public final class DeviceLockServiceImplTest {
         serviceInfo.applicationInfo = appInfo;
         ResolveInfo resolveInfo = new ResolveInfo();
         resolveInfo.serviceInfo = serviceInfo;
-
         return resolveInfo;
     }
 
     /**
      * Set-up calls to mock the service being connected.
      */
-    private void waitUntilConnected() {
-        eventually(() -> {
-            shadowOf(Looper.getMainLooper()).idle();
-            ServiceConnection connection = mShadowApplication.getBoundServiceConnections().get(0);
-            Binder binder = new Binder();
-            binder.attachInterface(mDeviceLockControllerService,
-                    IDeviceLockControllerService.class.getName());
-            connection.onServiceConnected(new ComponentName(DLC_PACKAGE_NAME, DLC_SERVICE_NAME),
-                    binder);
-        }, ONE_SEC_MILLIS);
+    private void mockServiceConnected() {
+        verify(mMockContext, timeout(ONE_SEC_MILLIS)).bindServiceAsUser(
+                any(), mConnectionCaptor.capture(), anyInt(), any());
+        ServiceConnection connection = mConnectionCaptor.getValue();
+        Binder binder = new Binder();
+        binder.attachInterface(mDeviceLockControllerService,
+                IDeviceLockControllerService.class.getName());
+        connection.onServiceConnected(new ComponentName(DLC_PACKAGE_NAME, DLC_SERVICE_NAME),
+                binder);
     }
 }

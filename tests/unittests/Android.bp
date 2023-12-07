@@ -15,30 +15,31 @@ package {
     default_applicable_licenses: ["Android-Apache-2.0"],
 }
 
-android_app {
-    name: "DeviceLockTestApp",
-    platform_apis: true,
-    srcs: [],
-}
-
-android_robolectric_test {
+android_test {
     name: "DeviceLockUnitTests",
     srcs: [
         "src/**/*.java",
         ":framework-devicelock-sources",
     ],
-    java_resource_dirs: ["config"],
     static_libs: [
         "service-devicelock",
-        "androidx.test.core",
+        "services.core",
         "androidx.test.runner",
-        "mockito-robolectric-prebuilt",
+        "mockito-target-extended-minus-junit4",
         "truth",
     ],
     libs: [
+        "android.test.mock",
+        "android.test.base",
+        "android.test.runner",
         "framework-annotations-lib",
     ],
-    instrumentation_for: "DeviceLockTestApp",
-    upstream: true,
+    jni_libs: [
+        // Required for ExtendedMockito
+        "libdexmakerjvmtiagent",
+        "libstaticjvmtiagent",
+    ],
+    compile_multilib: "both",
+    sdk_version: "module_current",
     test_suites: ["general-tests"],
 }
