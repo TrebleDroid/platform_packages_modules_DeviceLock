@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright (c) 2022, The Android Open Source Project
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -219,6 +218,14 @@
     <string name="settings_uninstall_kiosk_app">You can uninstall the <xliff:g id="kiosk_app">%1$s</xliff:g> app</string>
     <!-- Key of the settings_uninstall_kiosk_app Preference. translatable="false" -->
     <string name="settings_uninstall_kiosk_app_preference_key">settings_uninstall_kiosk_app_preference_key</string>
+    <!-- Section header. This sections shows what users can do if they need help. [CHAR LIMIT=60] -->
+    <string name="settings_support_category">To get help:</string>
+    <!-- Key of the settings_support_category preference. translatable="false" -->
+    <string name="settings_support_category_preference_key">settings_support_category_preference_key</string>
+    <!-- Label of a clickable URL text to let user to contact the device provider. [CHAR LIMIT=60] -->
+    <string name="settings_contact_provider"><xliff:g id="support_link_start">&lt;a href="%2$s"></xliff:g>Contact <xliff:g id="provider name">%1$s</xliff:g><xliff:g id="support_link_end">&lt;/a&gt;</xliff:g></string>
+    <!-- Key of the settings_contact_provider preference. translatable="false" -->
+    <string name="settings_contact_provider_preference_key">settings_contact_provider_preference_key</string>
     <!-- Name of a notification channel, the channel will be used to send provision related notifications. [CHAR LIMIT=40] -->
     <string name="provision_notification_channel_name">Provision</string>
     <!-- Title of the notification that device will be reset in days. [CHAR LIMIT=40] -->
