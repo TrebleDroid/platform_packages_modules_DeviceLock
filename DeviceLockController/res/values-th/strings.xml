@@ -48,9 +48,9 @@
     <string name="device_provided_by_provider" msgid="290593329676291991">"อุปกรณ์นี้ให้บริการโดย <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"ระบบจะดาวน์โหลดและติดตั้งแอปคีออสก์โดยอัตโนมัติ"</string>
     <string name="install_kiosk_app_secondary_user" msgid="49911908012320834">"ระบบจะติดตั้งแอปคีออสก์สำหรับผู้ใช้รายนี้"</string>
-    <!-- no translation found for restrict_device_if_missing_payment (8883980285859496904) -->
-    <skip />
+    <string name="restrict_device_if_missing_payment" msgid="8883980285859496904">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> สามารถจำกัดอุปกรณ์ได้หากคุณไม่ชำระเงิน ดูรายละเอียดได้ที่<xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>ข้อกำหนดและเงื่อนไข<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="restrict_device_if_dont_make_payment" msgid="1619095674945507015">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> สามารถจำกัดอุปกรณ์นี้ได้หากคุณไม่ชำระเงินตามที่กำหนด ดูรายละเอียดได้ที่<xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>ข้อกำหนดและเงื่อนไข<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g>"</string>
+    <string name="contact_provider_for_help" msgid="3872028089834808884">"หากต้องการความช่วยเหลือ โปรด<xliff:g id="SUPPORT_LINK_START">&lt;a href=%2$s&gt;</xliff:g>ติดต่อ <xliff:g id="PROVIDER_NAME">%1$s</xliff:g><xliff:g id="SUPPORT_LINK_END">&lt;/a&gt;</xliff:g>"</string>
     <string name="previous" msgid="5241891780917802570">"ก่อนหน้า"</string>
     <string name="next" msgid="8248291863254324326">"ถัดไป"</string>
     <string name="start" msgid="2842214844667658537">"เริ่ม"</string>

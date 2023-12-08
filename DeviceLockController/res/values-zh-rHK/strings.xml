@@ -48,9 +48,9 @@
     <string name="device_provided_by_provider" msgid="290593329676291991">"此裝置由「<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>」提供"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"系統將自動下載及安裝 Kiosk 應用程式"</string>
     <string name="install_kiosk_app_secondary_user" msgid="49911908012320834">"系統將為此使用者安裝 Kiosk 應用程式"</string>
-    <!-- no translation found for restrict_device_if_missing_payment (8883980285859496904) -->
-    <skip />
+    <string name="restrict_device_if_missing_payment" msgid="8883980285859496904">"如果你未按時支付款項，「<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>」可限制裝置。詳情請參閱《<xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>條款及細則<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g>》。"</string>
     <string name="restrict_device_if_dont_make_payment" msgid="1619095674945507015">"如果你未支付必要款項，「<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>」可限制此裝置。詳情請參閱《<xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>條款及細則<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g>》。"</string>
+    <string name="contact_provider_for_help" msgid="3872028089834808884">"如需協助，請<xliff:g id="SUPPORT_LINK_START">&lt;a href=%2$s&gt;</xliff:g>聯絡「<xliff:g id="PROVIDER_NAME">%1$s</xliff:g>」<xliff:g id="SUPPORT_LINK_END">&lt;/a&gt;</xliff:g>。"</string>
     <string name="previous" msgid="5241891780917802570">"返回"</string>
     <string name="next" msgid="8248291863254324326">"繼續"</string>
     <string name="start" msgid="2842214844667658537">"開始"</string>

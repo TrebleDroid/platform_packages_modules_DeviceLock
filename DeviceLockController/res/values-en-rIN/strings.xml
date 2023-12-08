@@ -48,9 +48,9 @@
     <string name="device_provided_by_provider" msgid="290593329676291991">"This device is provided by <xliff:g id="PROVIDER_NAME">%1$s</xliff:g>"</string>
     <string name="download_kiosk_app" msgid="1845089944897502656">"The kiosk app will be downloaded and installed automatically"</string>
     <string name="install_kiosk_app_secondary_user" msgid="49911908012320834">"The kiosk app will be installed for this user"</string>
-    <!-- no translation found for restrict_device_if_missing_payment (8883980285859496904) -->
-    <skip />
+    <string name="restrict_device_if_missing_payment" msgid="8883980285859496904">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> can restrict the device if you miss a payment. For details, view the <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>Terms &amp; Conditions<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g>."</string>
     <string name="restrict_device_if_dont_make_payment" msgid="1619095674945507015">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> can restrict this device if you don\'t make the necessary payments. For details, view the <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>Terms and Conditions<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g>."</string>
+    <string name="contact_provider_for_help" msgid="3872028089834808884">"For help, <xliff:g id="SUPPORT_LINK_START">&lt;a href=%2$s&gt;</xliff:g>contact <xliff:g id="PROVIDER_NAME">%1$s</xliff:g><xliff:g id="SUPPORT_LINK_END">&lt;/a&gt;</xliff:g>."</string>
     <string name="previous" msgid="5241891780917802570">"Previous"</string>
     <string name="next" msgid="8248291863254324326">"Next"</string>
     <string name="start" msgid="2842214844667658537">"Start"</string>
