@@ -16,12 +16,19 @@
 
 package com.android.devicelockcontroller.receivers;
 
+import static com.google.common.truth.Truth.assertThat;
+
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.UserHandle;
 
 import androidx.test.core.app.ApplicationProvider;
 
@@ -87,5 +94,21 @@ public final class CheckInBootCompletedReceiverTest {
 
         mShadowLooper.idle();
         verify(mScheduler).scheduleInitialCheckInWork();
+    }
+
+    @Test
+    public void onReceive_notSystemUser_disablesReceiver() {
+        Context secondaryUserContext = mTestApp.createContextAsUser(
+                UserHandle.of(/* userId= */ 1), /* flags= */ 0);
+        PackageManager packageManager = secondaryUserContext.getPackageManager();
+
+        mReceiver.onReceive(secondaryUserContext, INTENT);
+        mShadowLooper.idle();
+
+        ComponentName receiverCmp =
+                new ComponentName(secondaryUserContext, CheckInBootCompletedReceiver.class);
+        assertThat(packageManager.getComponentEnabledSetting(receiverCmp))
+                .isEqualTo(PackageManager.COMPONENT_ENABLED_STATE_DISABLED);
+        verifyNoInteractions(mScheduler);
     }
 }

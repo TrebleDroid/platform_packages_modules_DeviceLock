@@ -40,5 +40,4 @@ android_robolectric_test {
     ],
     instrumentation_for: "DeviceLockTestApp",
     upstream: true,
-    test_suites: ["general-tests"],
 }
