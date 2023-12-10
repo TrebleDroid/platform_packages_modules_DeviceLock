@@ -43,27 +43,24 @@ import java.util.List;
 public final class DeviceInfoSettingsViewModel extends ViewModel {
 
     private static final String TAG = "DeviceInfoSettingsViewModel";
+    private final List<Pair<Integer, Integer>> mPreferenceWithProviderNameKeyTitlePairs =
+            new ArrayList<>(Arrays.asList(
+                    new Pair<>(
+                            R.string.settings_credit_provider_capabilities_category_preference_key,
+                            R.string.settings_credit_provider_capabilities_category),
+                    new Pair<>(R.string.settings_allowlisted_apps_preference_key,
+                            R.string.settings_allowlisted_apps),
+                    new Pair<>(R.string.settings_restrictions_removed_preference_key,
+                            R.string.settings_restrictions_removed),
+                    new Pair<>(R.string.settings_uninstall_kiosk_app_preference_key,
+                            R.string.settings_uninstall_kiosk_app)));
 
-    // Preferences that need to be updated with provider name
-    private static final List<Pair<Integer, Integer>> PREFERENCE_KEY_TITLE_PAIRS = Arrays.asList(
-            new Pair<>(R.string.settings_credit_provider_capabilities_category_preference_key,
-                    R.string.settings_credit_provider_capabilities_category),
-            new Pair<>(R.string.settings_allowlisted_apps_preference_key,
-                    R.string.settings_allowlisted_apps),
-            new Pair<>(R.string.settings_restrictions_removed_preference_key,
-                    R.string.settings_restrictions_removed),
-            new Pair<>(R.string.settings_uninstall_kiosk_app_preference_key,
-                    R.string.settings_uninstall_kiosk_app));
-
-    final List<Pair<Integer, Integer>> mPreferenceKeyTitlePairs;
-
-    final MutableLiveData<String> mProviderNameLiveData;
-    final MutableLiveData<Boolean> mInstallFromUnknownSourcesDisallowedLiveData;
+    private String mSupportUrl;
+    private final MutableLiveData<String> mProviderNameLiveData = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> mInstallFromUnknownSourcesDisallowedLiveData =
+            new MutableLiveData<>();
 
     public DeviceInfoSettingsViewModel() {
-        mPreferenceKeyTitlePairs = new ArrayList<>(PREFERENCE_KEY_TITLE_PAIRS);
-        mProviderNameLiveData = new MutableLiveData<>();
-        mInstallFromUnknownSourcesDisallowedLiveData = new MutableLiveData<>();
 
         SetupParametersClient setupParametersClient = SetupParametersClient.getInstance();
         ListenableFuture<Integer> getProvisioningTypeFuture =
@@ -72,6 +69,7 @@ public final class DeviceInfoSettingsViewModel extends ViewModel {
                 setupParametersClient.getKioskAppProviderName();
         ListenableFuture<Boolean> isInstallFromUnknownSourcesDisallowedFuture =
                 setupParametersClient.isInstallingFromUnknownSourcesDisallowed();
+        ListenableFuture<String> getSupportUrlFuture = setupParametersClient.getSupportUrl();
         Futures.addCallback(isInstallFromUnknownSourcesDisallowedFuture,
                 new FutureCallback<>() {
                     @Override
@@ -89,19 +87,20 @@ public final class DeviceInfoSettingsViewModel extends ViewModel {
                 }, MoreExecutors.directExecutor());
 
         Futures.addCallback(
-                Futures.whenAllSucceed(getProvisioningTypeFuture, getKioskAppProviderNameFuture)
+                Futures.whenAllSucceed(getProvisioningTypeFuture, getKioskAppProviderNameFuture,
+                                getSupportUrlFuture)
                         .call(() -> {
                             Integer provisioningType = Futures.getDone(
                                     getProvisioningTypeFuture);
                             switch (provisioningType) {
                                 case TYPE_FINANCED:
-                                    mPreferenceKeyTitlePairs.add(
+                                    mPreferenceWithProviderNameKeyTitlePairs.add(
                                             new Pair<>(
                                                     R.string.settings_intro_preference_key,
                                                     R.string.settings_intro_device_financing));
                                     break;
                                 case TYPE_SUBSIDY:
-                                    mPreferenceKeyTitlePairs.add(
+                                    mPreferenceWithProviderNameKeyTitlePairs.add(
                                             new Pair<>(
                                                     R.string.settings_intro_preference_key,
                                                     R.string.settings_intro_device_subsidy));
@@ -110,7 +109,7 @@ public final class DeviceInfoSettingsViewModel extends ViewModel {
                                     throw new IllegalStateException(
                                             "Invalid provisioning type");
                             }
-
+                            mSupportUrl = Futures.getDone(getSupportUrlFuture);
                             mProviderNameLiveData.postValue(
                                     Futures.getDone(getKioskAppProviderNameFuture));
                             return null;
@@ -126,5 +125,21 @@ public final class DeviceInfoSettingsViewModel extends ViewModel {
                         LogUtil.e(TAG, "Failed to retrieve setup parameters", t);
                     }
                 }, MoreExecutors.directExecutor());
+    }
+
+    public MutableLiveData<String> getProviderNameLiveData() {
+        return mProviderNameLiveData;
+    }
+
+    public MutableLiveData<Boolean> getInstallFromUnknownSourcesDisallowedLiveData() {
+        return mInstallFromUnknownSourcesDisallowedLiveData;
+    }
+
+    public String getSupportUrl() {
+        return mSupportUrl;
+    }
+
+    public List<Pair<Integer, Integer>> getPreferenceWithProviderNameKeyTitlePairs() {
+        return mPreferenceWithProviderNameKeyTitlePairs;
     }
 }

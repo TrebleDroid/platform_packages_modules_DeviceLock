@@ -103,4 +103,17 @@
                     android:title="@string/settings_uninstall_kiosk_app"
                     android:selectable="false" />
     </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="@string/settings_support_category_preference_key"
+        android:order="500"
+        android:title="@string/settings_support_category"
+        android:contentDescription="@string/settings_support_category">
+        <com.android.devicelockcontroller.activities.UrlTextPreference
+            android:key="@string/settings_contact_provider_preference_key"
+            android:order="510"
+            android:layout_height="wrap_content"
+            android:title="@string/settings_contact_provider"
+            android:selectable="false" />
+    </PreferenceCategory>
 </PreferenceScreen>

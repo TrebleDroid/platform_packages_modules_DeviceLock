@@ -51,19 +51,26 @@ public final class DeviceInfoSettingsFragment extends PreferenceFragmentCompat {
                 DeviceInfoSettingsViewModel.class);
         PreferenceManager preferenceManager = getPreferenceManager();
         LifecycleOwner lifecycleOwner = getViewLifecycleOwner();
-        viewModel.mProviderNameLiveData.observe(lifecycleOwner, providerName -> {
+        viewModel.getProviderNameLiveData().observe(lifecycleOwner, providerName -> {
             requireActivity().setTitle(
                     getString(R.string.device_provided_by_provider, providerName));
 
             hideIconView(preferenceManager.getPreferenceScreen());
-            for (Pair<Integer, Integer> keyTitlePair : viewModel.mPreferenceKeyTitlePairs) {
+            for (Pair<Integer, Integer> keyTitlePair :
+                    viewModel.getPreferenceWithProviderNameKeyTitlePairs()) {
                 Preference preference = preferenceManager.findPreference(
                         getString(keyTitlePair.first));
                 checkNotNull(preference);
                 preference.setTitle(getString(keyTitlePair.second, providerName));
             }
+            Preference supportUrlPreference = preferenceManager.findPreference(
+                    getString(R.string.settings_contact_provider_preference_key));
+            checkNotNull(supportUrlPreference);
+            supportUrlPreference.setTitle(
+                    String.format(getString(R.string.settings_contact_provider), providerName,
+                            viewModel.getSupportUrl()));
         });
-        viewModel.mInstallFromUnknownSourcesDisallowedLiveData.observe(lifecycleOwner,
+        viewModel.getInstallFromUnknownSourcesDisallowedLiveData().observe(lifecycleOwner,
                 disallowed -> {
                     Preference preference = preferenceManager.findPreference(
                             getString(R.string.settings_install_apps_preference_key));
@@ -77,8 +84,7 @@ public final class DeviceInfoSettingsFragment extends PreferenceFragmentCompat {
      */
     private static void hideIconView(Preference preference) {
         preference.setIconSpaceReserved(false);
-        if (preference instanceof PreferenceGroup) {
-            PreferenceGroup preferenceGroup = (PreferenceGroup) preference;
+        if (preference instanceof PreferenceGroup preferenceGroup) {
             for (int i = 0; i < preferenceGroup.getPreferenceCount(); i++) {
                 hideIconView(preferenceGroup.getPreference(i));
             }
