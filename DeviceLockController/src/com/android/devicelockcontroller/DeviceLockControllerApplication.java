@@ -66,6 +66,14 @@ public class DeviceLockControllerApplication extends Application implements
     @GuardedBy("this")
     private StatsLogger mStatsLogger;
 
+    private WorkManagerExceptionHandler mWorkManagerExceptionHandler;
+
+    DeviceLockControllerApplication() {
+        super();
+
+        mWorkManagerExceptionHandler = new WorkManagerExceptionHandler(this);
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -125,6 +133,9 @@ public class DeviceLockControllerApplication extends Application implements
         return new Configuration.Builder()
                 .setWorkerFactory(factory)
                 .setMinimumLoggingLevel(android.util.Log.INFO)
+                .setInitializationExceptionHandler(
+                        mWorkManagerExceptionHandler::initializationExceptionHandler)
+                .setTaskExecutor(mWorkManagerExceptionHandler.getWorkManagerTaskExecutor())
                 .build();
     }
 

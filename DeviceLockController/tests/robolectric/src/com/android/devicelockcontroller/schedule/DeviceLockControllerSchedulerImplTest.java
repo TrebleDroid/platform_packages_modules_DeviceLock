@@ -316,6 +316,75 @@ public final class DeviceLockControllerSchedulerImplTest {
     }
 
     @Test
+    public void maybeScheduleInitialCheckIn_needInitialCheckIn_enqueuesWorker() throws Exception {
+        // Make sure the initial state is "initial check in needed"
+        runBySequentialExecutor(
+                () -> assertThat(UserParameters.needInitialCheckIn(mTestApp)).isTrue());
+
+        // GIVEN check-in work is not scheduled
+        WorkManager workManager = WorkManager.getInstance(mTestApp);
+        assertThat(workManager.getWorkInfosForUniqueWork(
+                DEVICE_CHECK_IN_WORK_NAME).get()).isEmpty();
+
+        // WHEN maybe schedule initial check-in work
+        mScheduler.maybeScheduleInitialCheckIn().get();
+
+        // THEN check-in work should be scheduled
+        assertThat(workManager.getWorkInfosForUniqueWork(
+                DEVICE_CHECK_IN_WORK_NAME).get()).isNotEmpty();
+    }
+
+    @Test
+    public void maybeScheduleInitialCheckIn_NoNeedInitialCheckIn_noWorker() throws Exception {
+        // GIVEN initial check in marked as scheduled
+        UserParameters.initialCheckInScheduled(mTestApp);
+
+        // GIVEN check-in work is not scheduled
+        WorkManager workManager = WorkManager.getInstance(mTestApp);
+        assertThat(workManager.getWorkInfosForUniqueWork(
+                DEVICE_CHECK_IN_WORK_NAME).get()).isEmpty();
+
+        // WHEN maybe schedule initial check-in work
+        mScheduler.maybeScheduleInitialCheckIn().get();
+
+        // THEN check-in work should not be scheduled
+        assertThat(workManager.getWorkInfosForUniqueWork(
+                DEVICE_CHECK_IN_WORK_NAME).get()).isEmpty();
+    }
+
+    @Test
+    public void maybeScheduleInitialCheckIn_noNeedCheckIn_reschedule() throws Exception {
+        // GIVEN check-in work is scheduled with original delay
+        OneTimeWorkRequest request =
+                new OneTimeWorkRequest.Builder(DeviceCheckInWorker.class)
+                        .setInitialDelay(TEST_RETRY_CHECK_IN_DELAY).build();
+        WorkManager workManager = WorkManager.getInstance(mTestApp);
+        workManager.enqueueUniqueWork(DEVICE_CHECK_IN_WORK_NAME,
+                ExistingWorkPolicy.REPLACE,
+                request);
+
+        // GIVEN initial check in marked as scheduled
+        UserParameters.initialCheckInScheduled(mTestApp);
+
+        // GIVEN expected trigger time
+        UserParameters.setNextCheckInTimeMillis(mTestApp, TEST_NEXT_CHECK_IN_TIME_MILLIS);
+
+        // WHEN maybe schedule initial check-in work
+        mScheduler.maybeScheduleInitialCheckIn().get();
+
+        // THEN retry check-in work should be scheduled with correct delay
+        List<WorkInfo> actualWorks = Futures.getUnchecked(workManager.getWorkInfosForUniqueWork(
+                DEVICE_CHECK_IN_WORK_NAME));
+        assertThat(actualWorks.size()).isEqualTo(1);
+        WorkInfo actualWorkInfo = actualWorks.get(0);
+        assertThat(actualWorkInfo.getConstraints().getRequiredNetworkType()).isEqualTo(
+                NetworkType.CONNECTED);
+
+        long expectedDelay = TEST_NEXT_CHECK_IN_TIME_MILLIS - TEST_CURRENT_TIME_MILLIS;
+        assertThat(actualWorkInfo.getInitialDelayMillis()).isEqualTo(expectedDelay);
+    }
+
+    @Test
     public void scheduleNextProvisionFailedStepAlarm_initialStep_defaultDelay() {
         // GIVEN no alarm is scheduled
         ShadowAlarmManager alarmManager = Shadows.shadowOf(

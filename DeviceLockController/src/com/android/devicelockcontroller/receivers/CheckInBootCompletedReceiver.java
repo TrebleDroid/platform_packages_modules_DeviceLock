@@ -26,14 +26,9 @@ import androidx.annotation.VisibleForTesting;
 
 import com.android.devicelockcontroller.schedule.DeviceLockControllerScheduler;
 import com.android.devicelockcontroller.schedule.DeviceLockControllerSchedulerProvider;
-import com.android.devicelockcontroller.storage.GlobalParametersClient;
-import com.android.devicelockcontroller.storage.UserParameters;
 import com.android.devicelockcontroller.util.LogUtil;
 
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.MoreExecutors;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -72,37 +67,17 @@ public final class CheckInBootCompletedReceiver extends BroadcastReceiver {
             disableCheckInBootCompletedReceiver(context);
             return;
         }
-        Context applicationContext = context.getApplicationContext();
-        DeviceLockControllerSchedulerProvider schedulerProvider =
-                (DeviceLockControllerSchedulerProvider) applicationContext;
-        DeviceLockControllerScheduler scheduler =
-                schedulerProvider.getDeviceLockControllerScheduler();
-        ListenableFuture<Boolean> needReschedule = Futures.transformAsync(
-                Futures.submit(() -> UserParameters.needInitialCheckIn(context), mExecutor),
-                needCheckIn -> {
-                    if (needCheckIn) {
-                        scheduler.scheduleInitialCheckInWork();
-                        return Futures.immediateFuture(false);
-                    } else {
-                        return Futures.transform(
-                                GlobalParametersClient.getInstance().isProvisionReady(),
-                                ready -> !ready, MoreExecutors.directExecutor());
-                    }
-                }, mExecutor);
-        Futures.addCallback(needReschedule,
-                new FutureCallback<>() {
-                    @Override
-                    public void onSuccess(Boolean result) {
-                        if (result) {
-                            scheduler.notifyNeedRescheduleCheckIn();
-                        }
-                    }
 
-                    @Override
-                    public void onFailure(Throwable t) {
-                        throw new RuntimeException(t);
-                    }
-                }, mExecutor);
+        final DeviceLockControllerSchedulerProvider schedulerProvider =
+                (DeviceLockControllerSchedulerProvider) context.getApplicationContext();
+        final DeviceLockControllerScheduler scheduler =
+                schedulerProvider.getDeviceLockControllerScheduler();
+
+        ListenableFuture<Void> scheduleCheckIn = scheduler.maybeScheduleInitialCheckIn();
+
+        final PendingResult pendingResult = goAsync();
+
+        scheduleCheckIn.addListener(pendingResult::finish, mExecutor);
     }
 
     /**
