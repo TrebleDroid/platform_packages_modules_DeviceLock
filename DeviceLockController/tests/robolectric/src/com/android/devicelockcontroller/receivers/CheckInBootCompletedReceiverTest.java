@@ -20,12 +20,14 @@ import static com.google.common.truth.Truth.assertThat;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
+import android.content.BroadcastReceiver.PendingResult;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.UserHandle;
@@ -34,17 +36,14 @@ import androidx.test.core.app.ApplicationProvider;
 
 import com.android.devicelockcontroller.TestDeviceLockControllerApplication;
 import com.android.devicelockcontroller.schedule.DeviceLockControllerScheduler;
-import com.android.devicelockcontroller.storage.GlobalParametersClient;
-import com.android.devicelockcontroller.storage.UserParameters;
 
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.MoreExecutors;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.Shadows;
-import org.robolectric.shadows.ShadowLooper;
 
 @RunWith(RobolectricTestRunner.class)
 public final class CheckInBootCompletedReceiverTest {
@@ -53,14 +52,12 @@ public final class CheckInBootCompletedReceiverTest {
     private DeviceLockControllerScheduler mScheduler;
     private CheckInBootCompletedReceiver mReceiver;
     private TestDeviceLockControllerApplication mTestApp;
-    private ShadowLooper mShadowLooper;
 
     @Before
     public void setUp() {
         HandlerThread handlerThread = new HandlerThread("test");
         handlerThread.start();
         Handler handler = handlerThread.getThreadHandler();
-        mShadowLooper = Shadows.shadowOf(handler.getLooper());
         mReceiver = new CheckInBootCompletedReceiver(
                 MoreExecutors.newSequentialExecutor(handler::post));
         mTestApp = ApplicationProvider.getApplicationContext();
@@ -68,32 +65,24 @@ public final class CheckInBootCompletedReceiverTest {
     }
 
     @Test
-    public void onReceive_initialCheckInScheduled_shouldRescheduleRetry() {
-        UserParameters.initialCheckInScheduled(mTestApp);
+    public void onReceive_shouldCallMaybeScheduleInitialCheckIn() {
+        when(mScheduler.maybeScheduleInitialCheckIn()).thenReturn(Futures.immediateVoidFuture());
+
+        final PendingResult pendingResult = new PendingResult(
+                1 /* resultCode */,
+                "resultData",
+                new Bundle(),
+                0 /* type */,
+                true /* ordered */,
+                false /*sticky*/,
+                null /* ibinder token */,
+                0 /* userid */,
+                0 /* flags */);
+        mReceiver.setPendingResult(pendingResult);
 
         mReceiver.onReceive(mTestApp, INTENT);
 
-        mShadowLooper.idle();
-        verify(mScheduler).notifyNeedRescheduleCheckIn();
-    }
-
-    @Test
-    public void onReceive_checkInSucceeded_noCheckInScheduled() throws Exception {
-        UserParameters.initialCheckInScheduled(mTestApp);
-        GlobalParametersClient.getInstance().setProvisionReady(true).get();
-
-        mReceiver.onReceive(mTestApp, INTENT);
-
-        mShadowLooper.idle();
-        verifyNoMoreInteractions(mScheduler);
-    }
-
-    @Test
-    public void onReceive_shouldScheduleInitialCheckIn() {
-        mReceiver.onReceive(mTestApp, INTENT);
-
-        mShadowLooper.idle();
-        verify(mScheduler).scheduleInitialCheckInWork();
+        verify(mScheduler).maybeScheduleInitialCheckIn();
     }
 
     @Test
@@ -103,7 +92,6 @@ public final class CheckInBootCompletedReceiverTest {
         PackageManager packageManager = secondaryUserContext.getPackageManager();
 
         mReceiver.onReceive(secondaryUserContext, INTENT);
-        mShadowLooper.idle();
 
         ComponentName receiverCmp =
                 new ComponentName(secondaryUserContext, CheckInBootCompletedReceiver.class);

@@ -199,6 +199,11 @@
             android:exported="false"
             android:singleUser="false" />
 
+        <receiver
+            android:name="com.android.devicelockcontroller.WorkManagerExceptionHandler$WorkFailureAlarmReceiver"
+            android:exported="false"
+            androidprv:systemUserOnly="true" />
+
         <service
             android:name="com.android.devicelockcontroller.DeviceLockControllerService"
             android:directBootAware="true"
