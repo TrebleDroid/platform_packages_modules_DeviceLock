@@ -23,6 +23,7 @@ import static com.android.devicelockcontroller.policy.DeviceStateController.Devi
 import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionEvent.PROVISION_SUCCESS;
 import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState.KIOSK_PROVISIONED;
 import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState.PROVISION_SUCCEEDED;
+import static com.android.devicelockcontroller.policy.ProvisionStateController.ProvisionState.UNPROVISIONED;
 
 import com.android.devicelockcontroller.storage.GlobalParametersClient;
 
@@ -38,6 +39,10 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
     private final DevicePolicyController mPolicyController;
     private final GlobalParametersClient mGlobalParametersClient;
     private final Executor mExecutor;
+    // Used to exercising APIs under CTS without actually applying any policies.
+    // This is not persistent across controller restarts, but should be good enough for the
+    // intended purpose.
+    private volatile @DeviceState int mPseudoDeviceState;
 
     public DeviceStateControllerImpl(DevicePolicyController policyController,
             ProvisionStateController provisionStateController, Executor executor) {
@@ -45,6 +50,7 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
         mProvisionStateController = provisionStateController;
         mGlobalParametersClient = GlobalParametersClient.getInstance();
         mExecutor = executor;
+        mPseudoDeviceState = UNDEFINED;
     }
 
     @Override
@@ -79,6 +85,13 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
                                 mProvisionStateController.setNextStateForEvent(PROVISION_SUCCESS);
                     } else if (provisionState == PROVISION_SUCCEEDED) {
                         maybeSetProvisioningSuccess = Futures.immediateVoidFuture();
+                    } else if (provisionState == UNPROVISIONED && (deviceState == LOCKED
+                        || deviceState == UNLOCKED)) {
+                        // During normal operation, we should not get lock/unlock requests in
+                        // the UNPROVISIONED state. Used for CTS compliance.
+                        mPseudoDeviceState = deviceState;
+                        // Do not apply any policies
+                        return Futures.immediateVoidFuture();
                     } else {
                         throw new RuntimeException("User has not been provisioned!");
                     }
@@ -99,14 +112,23 @@ public final class DeviceStateControllerImpl implements DeviceStateController {
 
     @Override
     public ListenableFuture<Boolean> isLocked() {
-        return Futures.transform(mGlobalParametersClient.getDeviceState(),
-                s -> {
-                    if (s == UNDEFINED) {
-                        throw new IllegalStateException("isLocked called before setting the "
-                                + "locked state (lockDevice/unlockDevice)");
+        return Futures.transformAsync(mProvisionStateController.getState(),
+                provisionState -> {
+                    if (provisionState == UNDEFINED) {
+                        // Used for CTS compliance.
+                        return Futures.immediateFuture(mPseudoDeviceState == LOCKED);
+                    } else {
+                        return Futures.transform(mGlobalParametersClient.getDeviceState(),
+                                s -> {
+                                    if (s == UNDEFINED) {
+                                        throw new IllegalStateException("isLocked called before "
+                                                + "setting the locked state "
+                                                + "(lockDevice/unlockDevice)");
+                                    }
+                                    return s == LOCKED;
+                                }, mExecutor);
                     }
-                    return s == LOCKED;
-            }, MoreExecutors.directExecutor());
+                }, mExecutor);
     }
 
     private ListenableFuture<Boolean> isCleared() {

@@ -68,7 +68,7 @@ public class DeviceLockControllerApplication extends Application implements
 
     private WorkManagerExceptionHandler mWorkManagerExceptionHandler;
 
-    DeviceLockControllerApplication() {
+    public DeviceLockControllerApplication() {
         super();
 
         mWorkManagerExceptionHandler = new WorkManagerExceptionHandler(this);

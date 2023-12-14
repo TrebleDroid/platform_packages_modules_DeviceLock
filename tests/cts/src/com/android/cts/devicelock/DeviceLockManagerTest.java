@@ -254,15 +254,15 @@ public final class DeviceLockManagerTest {
         try {
             addFinancedDeviceKioskRole();
 
-            assertThrows(ExecutionException.class,
-                    () -> getLockDeviceFuture().get(TIMEOUT, TimeUnit.SECONDS));
+            getLockDeviceFuture().get(TIMEOUT, TimeUnit.SECONDS);
 
-            assertThrows(ExecutionException.class,
-                    () -> getUnlockDeviceFuture().get(TIMEOUT, TimeUnit.SECONDS));
+            boolean locked = getIsDeviceLockedFuture().get(TIMEOUT, TimeUnit.SECONDS);
+            assertThat(locked).isTrue();
 
-            ExecutionException executionException = assertThrows(ExecutionException.class,
-                    () -> getIsDeviceLockedFuture().get(TIMEOUT, TimeUnit.SECONDS));
-            assertThat(executionException).hasCauseThat().isInstanceOf(IllegalStateException.class);
+            getUnlockDeviceFuture().get(TIMEOUT, TimeUnit.SECONDS);
+
+            locked = getIsDeviceLockedFuture().get(TIMEOUT, TimeUnit.SECONDS);
+            assertThat(locked).isFalse();
         } finally {
             removeFinancedDeviceKioskRole();
         }

@@ -63,16 +63,15 @@ public final class DeviceStateControllerImplTest {
     }
 
     @Test
-    public void lockDevice_withUnprovisionedState_shouldThrowException()
+    public void lockDevice_withUnprovisionedState_shouldPseudoLockDevice()
             throws ExecutionException, InterruptedException {
         when(mMockProvisionStateController.getState()).thenReturn(
                 Futures.immediateFuture(ProvisionState.UNPROVISIONED));
+        mDeviceStateController.lockDevice().get();
 
-        ExecutionException thrown = assertThrows(ExecutionException.class,
-                () -> mDeviceStateController.lockDevice().get());
-        assertThat(thrown).hasCauseThat().isInstanceOf(RuntimeException.class);
-        assertThat(thrown).hasMessageThat().contains(USER_HAS_NOT_BEEN_PROVISIONED);
+        assertThat(mDeviceStateController.isLocked().get()).isTrue();
 
+        // Should not have changed the real device state
         assertThat(GlobalParametersClient.getInstance().getDeviceState().get()).isEqualTo(
                 DeviceState.UNDEFINED);
     }
@@ -183,16 +182,15 @@ public final class DeviceStateControllerImplTest {
     }
 
     @Test
-    public void unlockDevice_withUnprovisionedState_shouldThrowException()
+    public void unlockDevice_withUnprovisionedState_shouldPseudoUnlock()
             throws ExecutionException, InterruptedException {
         when(mMockProvisionStateController.getState()).thenReturn(
                 Futures.immediateFuture(ProvisionState.UNPROVISIONED));
+        mDeviceStateController.unlockDevice().get();
 
-        ExecutionException thrown = assertThrows(ExecutionException.class,
-                () -> mDeviceStateController.unlockDevice().get());
-        assertThat(thrown).hasCauseThat().isInstanceOf(RuntimeException.class);
-        assertThat(thrown).hasMessageThat().contains(USER_HAS_NOT_BEEN_PROVISIONED);
+        assertThat(mDeviceStateController.isLocked().get()).isFalse();
 
+        // Should not have changed the real device state
         assertThat(GlobalParametersClient.getInstance().getDeviceState().get()).isEqualTo(
                 DeviceState.UNDEFINED);
     }
