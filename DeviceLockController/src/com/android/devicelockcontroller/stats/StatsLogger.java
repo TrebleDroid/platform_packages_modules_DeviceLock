@@ -59,4 +59,10 @@ public interface StatsLogger {
      * the time elapsed in between.
      */
     void logProvisioningComplete(long timeSpentInProvisioningMillis);
+
+    /**
+     * Logs the analytics event of resetting the device due to a failed provisioning.
+     * @param isProvisioningMandatory True if the provision is mandatory, false otherwise.
+     */
+    void logDeviceReset(boolean isProvisioningMandatory);
 }

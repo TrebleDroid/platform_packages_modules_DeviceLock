@@ -22,8 +22,11 @@ import static com.android.devicelockcontroller.DevicelockStatsLog.DEVICE_LOCK_CH
 import static com.android.devicelockcontroller.DevicelockStatsLog.DEVICE_LOCK_CHECK_IN_REQUEST_REPORTED__TYPE__REPORT_DEVICE_PROVISION_STATE;
 import static com.android.devicelockcontroller.DevicelockStatsLog.DEVICE_LOCK_KIOSK_APP_REQUEST_REPORTED;
 import static com.android.devicelockcontroller.DevicelockStatsLog.DEVICE_LOCK_PROVISIONING_COMPLETE_REPORTED;
+import static com.android.devicelockcontroller.stats.StatsLoggerImpl.TEX_ID_DEVICE_RESET_PROVISION_DEFERRED;
+import static com.android.devicelockcontroller.stats.StatsLoggerImpl.TEX_ID_DEVICE_RESET_PROVISION_MANDATORY;
 import static com.android.dx.mockito.inline.extended.ExtendedMockito.verify;
 
+import com.android.modules.expresslog.Counter;
 import com.android.modules.utils.testing.ExtendedMockitoRule;
 
 import org.junit.Rule;
@@ -40,7 +43,10 @@ public final class StatsLoggerImplTest {
 
     @Rule
     public final ExtendedMockitoRule mExtendedMockitoRule =
-            new ExtendedMockitoRule.Builder(this).mockStatic(DevicelockStatsLog.class).build();
+            new ExtendedMockitoRule.Builder(this)
+                    .mockStatic(DevicelockStatsLog.class)
+                    .mockStatic(Counter.class)
+                    .build();
 
     @Test
     public void logGetDeviceCheckInStatus_shouldWriteCorrectLog() {
@@ -86,5 +92,19 @@ public final class StatsLoggerImplTest {
         verify(() -> DevicelockStatsLog.write(
                 DevicelockStatsLog.DEVICE_LOCK_CHECK_IN_REQUEST_REPORTED,
                 DEVICE_LOCK_CHECK_IN_REQUEST_REPORTED__TYPE__IS_DEVICE_IN_APPROVED_COUNTRY));
+    }
+
+    @Test
+    public void logDeviceReset_provisionMandatory_shouldLogToTelemetryExpress() {
+        mStatsLogger.logDeviceReset(/* isProvisionMandatory */true);
+
+        verify(() -> Counter.logIncrement(TEX_ID_DEVICE_RESET_PROVISION_MANDATORY));
+    }
+
+    @Test
+    public void logDeviceReset_deferredProvision_shouldLogToTelemetryExpress() {
+        mStatsLogger.logDeviceReset(/* isProvisionMandatory */false);
+
+        verify(() -> Counter.logIncrement(TEX_ID_DEVICE_RESET_PROVISION_DEFERRED));
     }
 }
