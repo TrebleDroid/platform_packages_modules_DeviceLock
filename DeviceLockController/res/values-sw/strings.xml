@@ -94,7 +94,7 @@
     <string name="settings_developer_options_preference_key" msgid="6807036808722582954">"settings_developer_options_preference_key"</string>
     <string name="settings_credit_provider_capabilities_category" msgid="1274440595211820868">"Kifaa chako kikipata hitilafu, <xliff:g id="PROVIDER_NAME">%1$s</xliff:g> inaweza:"</string>
     <string name="settings_credit_provider_capabilities_category_preference_key" msgid="4571685720898641262">"settings_credit_provider_capabilities_category_preference_key"</string>
-    <string name="settings_IMEI" msgid="697965824361262506">"Kufikia nambari yako ya IMEI"</string>
+    <string name="settings_IMEI" msgid="697965824361262506">"Kufikia namba yako ya IMEI"</string>
     <string name="settings_IMEI_preference_key" msgid="608809590948249412">"settings_IMEI_preference_key"</string>
     <string name="settings_factory_reset" msgid="418045189048067625">"Kurejesha mipangilio ambayo kifaa chako kilitoka nayo kiwandani"</string>
     <string name="settings_factory_reset_preference_key" msgid="2168528486393635382">"settings_factory_reset_preference_key"</string>
@@ -116,6 +116,10 @@
     <string name="settings_restrictions_removed_preference_key" msgid="7741933477145197391">"settings_restrictions_removed_preference_key"</string>
     <string name="settings_uninstall_kiosk_app" msgid="2611134364295637875">"Unaweza kuondoa programu ya <xliff:g id="KIOSK_APP">%1$s</xliff:g>"</string>
     <string name="settings_uninstall_kiosk_app_preference_key" msgid="5578103644009268125">"settings_uninstall_kiosk_app_preference_key"</string>
+    <string name="settings_support_category" msgid="7210906871924935770">"Ili upate usaidizi:"</string>
+    <string name="settings_support_category_preference_key" msgid="1818953199283261021">"settings_support_category_preference_key"</string>
+    <string name="settings_contact_provider" msgid="2481819956474692039">"<xliff:g id="SUPPORT_LINK_START">&lt;a href=%2$s&gt;</xliff:g>Wasiliana na <xliff:g id="PROVIDER_NAME">%1$s</xliff:g><xliff:g id="SUPPORT_LINK_END">&lt;/a&gt;</xliff:g>"</string>
+    <string name="settings_contact_provider_preference_key" msgid="2703619536229342624">"settings_contact_provider_preference_key"</string>
     <string name="provision_notification_channel_name" msgid="6123500714047647805">"Fidia"</string>
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{Mipangilio ya kifaa itawekwa upya baada ya siku 1}other{Mipangilio ya kifaa itawekwa upya baada ya siku #}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"Mipangilio ya kifaa itabadilika baada ya <xliff:g id="TIMER">%s</xliff:g>"</string>

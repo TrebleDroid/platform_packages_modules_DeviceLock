@@ -20,7 +20,7 @@
     <string name="app_name" msgid="5655878067457216814">"DeviceLockController"</string>
     <string name="next_button" msgid="1856423430963548653">"次へ"</string>
     <string name="reset_button" msgid="4649354411129240809">"リセット"</string>
-    <string name="setup_more_button" msgid="4456370972302510109">"その他"</string>
+    <string name="setup_more_button" msgid="4456370972302510109">"続きを見る"</string>
     <string name="setup_info_title_text" msgid="299562193092219293">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> がこのデバイスを管理する仕組み"</string>
     <string name="setup_failed_title_text" msgid="9045111389981992536">"<xliff:g id="CREDITOR_APP">%1$s</xliff:g> アプリをインストールできません"</string>
     <string name="setup_failed_reset_device_text" msgid="178419033440060908">"デバイスをリセットしてもう一度お試しください。"</string>
@@ -116,6 +116,10 @@
     <string name="settings_restrictions_removed_preference_key" msgid="7741933477145197391">"settings_restrictions_removed_preference_key"</string>
     <string name="settings_uninstall_kiosk_app" msgid="2611134364295637875">"<xliff:g id="KIOSK_APP">%1$s</xliff:g> アプリをアンインストールできます"</string>
     <string name="settings_uninstall_kiosk_app_preference_key" msgid="5578103644009268125">"settings_uninstall_kiosk_app_preference_key"</string>
+    <string name="settings_support_category" msgid="7210906871924935770">"ヘルプ:"</string>
+    <string name="settings_support_category_preference_key" msgid="1818953199283261021">"settings_support_category_preference_key"</string>
+    <string name="settings_contact_provider" msgid="2481819956474692039">"<xliff:g id="SUPPORT_LINK_START">&lt;a href=%2$s&gt;</xliff:g><xliff:g id="PROVIDER_NAME">%1$s</xliff:g> に問い合わせる<xliff:g id="SUPPORT_LINK_END">&lt;/a&gt;</xliff:g>"</string>
+    <string name="settings_contact_provider_preference_key" msgid="2703619536229342624">"settings_contact_provider_preference_key"</string>
     <string name="provision_notification_channel_name" msgid="6123500714047647805">"プロビジョニング"</string>
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{デバイスは 1 日以内にリセットされます}other{デバイスは # 日以内にリセットされます}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"デバイスは <xliff:g id="TIMER">%s</xliff:g> にリセットされます"</string>
