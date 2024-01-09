@@ -50,8 +50,7 @@
     <string name="install_kiosk_app_secondary_user" msgid="49911908012320834">"Aplikacioni \"Kioskë\" do të instalohet për këtë përdorues"</string>
     <string name="restrict_device_if_missing_payment" msgid="8883980285859496904">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> mund ta kufizojë pajisjen nëse ti harron një pagesë. Për detaje, shiko <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>Kushtet e përgjithshme<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g>."</string>
     <string name="restrict_device_if_dont_make_payment" msgid="1619095674945507015">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> mund ta kufizojë këtë pajisje nëse nuk kryen pagesat e nevojshme. Për detaje, shiko <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>Kushtet e përgjithshme<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g>."</string>
-    <!-- no translation found for contact_provider_for_help (3872028089834808884) -->
-    <skip />
+    <string name="contact_provider_for_help" msgid="3872028089834808884">"Për ndihmë, <xliff:g id="SUPPORT_LINK_START">&lt;a href=%2$s&gt;</xliff:g>kontakto me <xliff:g id="PROVIDER_NAME">%1$s</xliff:g><xliff:g id="SUPPORT_LINK_END">&lt;/a&gt;</xliff:g>."</string>
     <string name="previous" msgid="5241891780917802570">"Prapa"</string>
     <string name="next" msgid="8248291863254324326">"Para"</string>
     <string name="start" msgid="2842214844667658537">"Nis"</string>
@@ -117,6 +116,10 @@
     <string name="settings_restrictions_removed_preference_key" msgid="7741933477145197391">"settings_restrictions_removed_preference_key"</string>
     <string name="settings_uninstall_kiosk_app" msgid="2611134364295637875">"Mund ta çinstalosh aplikacionin <xliff:g id="KIOSK_APP">%1$s</xliff:g>"</string>
     <string name="settings_uninstall_kiosk_app_preference_key" msgid="5578103644009268125">"settings_uninstall_kiosk_app_preference_key"</string>
+    <string name="settings_support_category" msgid="7210906871924935770">"Për të marrë ndihmë:"</string>
+    <string name="settings_support_category_preference_key" msgid="1818953199283261021">"settings_support_category_preference_key"</string>
+    <string name="settings_contact_provider" msgid="2481819956474692039">"<xliff:g id="SUPPORT_LINK_START">&lt;a href=%2$s&gt;</xliff:g>Kontakto me <xliff:g id="PROVIDER_NAME">%1$s</xliff:g><xliff:g id="SUPPORT_LINK_END">&lt;/a&gt;</xliff:g>"</string>
+    <string name="settings_contact_provider_preference_key" msgid="2703619536229342624">"settings_contact_provider_preference_key"</string>
     <string name="provision_notification_channel_name" msgid="6123500714047647805">"Përgatitja"</string>
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{Pajisja do të rivendoset pas 1 dite}other{Pajisja do të rivendoset pas # ditësh}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"Pajisja do të rivendoset pas: <xliff:g id="TIMER">%s</xliff:g>"</string>

@@ -116,6 +116,10 @@
     <string name="settings_restrictions_removed_preference_key" msgid="7741933477145197391">"settings_restrictions_removed_preference_key"</string>
     <string name="settings_uninstall_kiosk_app" msgid="2611134364295637875">"Puedes desinstalar la app de <xliff:g id="KIOSK_APP">%1$s</xliff:g>"</string>
     <string name="settings_uninstall_kiosk_app_preference_key" msgid="5578103644009268125">"settings_uninstall_kiosk_app_preference_key"</string>
+    <string name="settings_support_category" msgid="7210906871924935770">"Para obtener ayuda:"</string>
+    <string name="settings_support_category_preference_key" msgid="1818953199283261021">"settings_support_category_preference_key"</string>
+    <string name="settings_contact_provider" msgid="2481819956474692039">"<xliff:g id="SUPPORT_LINK_START">&lt;a href=%2$s&gt;</xliff:g>Comunícate con <xliff:g id="PROVIDER_NAME">%1$s</xliff:g><xliff:g id="SUPPORT_LINK_END">&lt;/a&gt;</xliff:g>"</string>
+    <string name="settings_contact_provider_preference_key" msgid="2703619536229342624">"settings_contact_provider_preference_key"</string>
     <string name="provision_notification_channel_name" msgid="6123500714047647805">"Provisión"</string>
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{Se restablecerá el dispositivo en 1 día}other{Se restablecerá el dispositivo en # días}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"Se restablecerá el dispositivo en <xliff:g id="TIMER">%s</xliff:g>"</string>

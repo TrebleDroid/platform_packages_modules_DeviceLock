@@ -50,8 +50,7 @@
     <string name="install_kiosk_app_secondary_user" msgid="49911908012320834">"L\'application kiosque sera installée pour cet utilisateur"</string>
     <string name="restrict_device_if_missing_payment" msgid="8883980285859496904">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> peut limiter l\'utilisation de l\'appareil en cas de manquement de paiement. Pour plus d\'informations, consultez les <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>Conditions d\'utilisation<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g>."</string>
     <string name="restrict_device_if_dont_make_payment" msgid="1619095674945507015">"<xliff:g id="PROVIDER_NAME">%1$s</xliff:g> peut limiter l\'utilisation de cet appareil si vous n\'effectuez pas les paiements nécessaires. Pour plus d\'informations, consultez les <xliff:g id="TERMS_AND_CONDITIONS_LINK_START">&lt;a href=%2$s&gt;</xliff:g>Conditions d\'utilisation<xliff:g id="TERMS_AND_CONDITIONS_LINK_END">&lt;/a&gt;</xliff:g>."</string>
-    <!-- no translation found for contact_provider_for_help (3872028089834808884) -->
-    <skip />
+    <string name="contact_provider_for_help" msgid="3872028089834808884">"Pour obtenir de l\'aide, <xliff:g id="SUPPORT_LINK_START">&lt;a href=%2$s&gt;</xliff:g>contactez <xliff:g id="PROVIDER_NAME">%1$s</xliff:g><xliff:g id="SUPPORT_LINK_END">&lt;/a&gt;</xliff:g>."</string>
     <string name="previous" msgid="5241891780917802570">"Précédent"</string>
     <string name="next" msgid="8248291863254324326">"Suivant"</string>
     <string name="start" msgid="2842214844667658537">"Commencer"</string>
@@ -117,6 +116,10 @@
     <string name="settings_restrictions_removed_preference_key" msgid="7741933477145197391">"settings_restrictions_removed_preference_key"</string>
     <string name="settings_uninstall_kiosk_app" msgid="2611134364295637875">"Vous pouvez désinstaller l\'application <xliff:g id="KIOSK_APP">%1$s</xliff:g>"</string>
     <string name="settings_uninstall_kiosk_app_preference_key" msgid="5578103644009268125">"settings_uninstall_kiosk_app_preference_key"</string>
+    <string name="settings_support_category" msgid="7210906871924935770">"Pour obtenir de l\'aide :"</string>
+    <string name="settings_support_category_preference_key" msgid="1818953199283261021">"settings_support_category_preference_key"</string>
+    <string name="settings_contact_provider" msgid="2481819956474692039">"<xliff:g id="SUPPORT_LINK_START">&lt;a href=%2$s&gt;</xliff:g>Contacter <xliff:g id="PROVIDER_NAME">%1$s</xliff:g><xliff:g id="SUPPORT_LINK_END">&lt;/a&gt;</xliff:g>"</string>
+    <string name="settings_contact_provider_preference_key" msgid="2703619536229342624">"settings_contact_provider_preference_key"</string>
     <string name="provision_notification_channel_name" msgid="6123500714047647805">"Provision"</string>
     <string name="device_reset_in_days_notification_title" msgid="920859483535317727">"{count,plural, =1{Réinitialisation de l\'appareil dans 1 j}one{Réinitialisation de l\'appareil dans # j}other{Réinitialisation de l\'appareil dans # j}}"</string>
     <string name="device_reset_timer_notification_title" msgid="301978346002711614">"Réinitialisation de l\'appareil dans <xliff:g id="TIMER">%s</xliff:g>"</string>
